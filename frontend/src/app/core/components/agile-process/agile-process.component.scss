@@ -1,0 +1,53 @@
+.agile-container {
+	position: relative;
+	width: 350px;
+	height: 240px;
+	scale: 0.95;
+
+	.filter-off {
+		filter: saturate(0%);
+	}
+
+	#plan {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+	}
+
+	#design {
+		position: absolute;
+		bottom: -26.5px;
+		left: 154px;
+	}
+
+	#develop {
+		position: absolute;
+		left: 193px;
+		bottom: 51px;
+	}
+
+	#test {
+		position: absolute;
+		top: 9px;
+		left: 146px;
+	}
+
+	#deploy {
+		position: absolute;
+		top: -17px;
+		left: 57.5px;
+	}
+
+	#review {
+		position: absolute;
+		top: 61px;
+		left: 19px;
+	}
+
+	#launch {
+		z-index: -1;
+		position: absolute;
+		top: 165px;
+		left: 68.5px;
+	}
+}

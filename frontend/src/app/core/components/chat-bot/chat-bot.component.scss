@@ -1,0 +1,164 @@
+$dark-color: #212121;
+$off-white-color: #f6f6f6;
+$white-color: #fff;
+$dark-grey: #393939;
+
+.chat-bot-container {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 415px;
+
+	.chat-bot-header {
+		background-color: $dark-color;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		z-index: 2;
+
+		.spacer {
+			flex: 1 1 auto;
+		}
+
+		svg {
+			margin: 0 auto;
+			padding: 15px 0 15px 17px;
+		}
+
+		p {
+			font-size: 14px;
+			margin-left: 14px;
+			color: $white-color;
+		}
+
+		mat-icon {
+			height: 100%;
+			width: 48px;
+			color: $white-color;
+		}
+	}
+
+	.chat-bot-body {
+		height: 0;
+		overflow-y: auto;
+		background-color: $off-white-color;
+		transition: height 0.3s ease-in-out;
+		z-index: -1;
+
+		.closed {
+			height: 0%;
+		}
+
+		.messages:nth-child(1) {
+			margin-top: 25px;
+		}
+
+		.messages > div {
+			margin-top: 15px;
+		}
+
+		.messages {
+			margin: 0 2em;
+
+			div > .content {
+				font-size: 200;
+				font-size: 13px;
+				margin-top: 4px;
+			}
+
+			.IA-message {
+				.identify {
+					display: flex;
+					align-items: center;
+
+					svg {
+						margin-right: 8px;
+					}
+
+					p {
+						font-size: 13px;
+						font-weight: 600;
+					}
+				}
+			}
+
+			.you-message {
+				.identify {
+					display: flex;
+					align-items: center;
+
+					mat-icon {
+						scale: 1.2;
+						margin-right: 8px;
+					}
+
+					p {
+						font-weight: 600;
+						font-size: 13px;
+					}
+				}
+			}
+		}
+	}
+
+	.input {
+		position: absolute;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+		background-color: $off-white-color;
+		width: 100%;
+		display: none;
+		transition: display 0.4s ease-in-out;
+		font-size: 13px;
+		overflow: visible;
+		height: auto;
+
+		hr {
+			opacity: 0.3;
+		}
+
+		.content {
+			position: relative;
+			display: flex;
+			z-index: 5;
+			overflow: visible;
+			height: auto;
+
+			.text {
+				display: block;
+				width: calc(100% - 100px);
+				padding: 15px 0 15px 30px;
+				border: none;
+				background-color: transparent;
+				font-size: 13px;
+				overflow: hidden;
+				resize: none;
+				font-size: inherit;
+				overflow: auto;
+				max-height: 200px;
+
+				&:focus {
+					outline: none;
+				}
+			}
+
+			.text[contenteditable]:empty::before {
+				content: "Type a message";
+				color: $dark-grey;
+				transform: translateY(20px);
+			}
+
+			button {
+				position: absolute;
+				right: 0;
+				padding-right: 15px;
+				width: 65px;
+				height: 50px;
+				border: none;
+				background-color: transparent;
+				cursor: pointer;
+			}
+		}
+	}
+}
