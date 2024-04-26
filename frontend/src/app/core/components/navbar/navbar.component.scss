@@ -1,45 +1,57 @@
 @use "../../../../assets/variables.scss" as v;
 
-#menu-bar {
-	height: 55px;
-	background-color: v.$dark-color;
-	padding: 0 2em;
+#menu-bar{
+    height: 55px;
+    background-color: v.$dark-color;
+    padding: 0 2em;
 
-	svg {
-		width: 50px;
-		margin-right: 45px;
-	}
+    svg{
+        width: 50px;
+        margin-right: 45px;
+    }
 
-	input {
-		height: 100%;
-		padding: 0 2em;
-		margin-left: 25px;
-		width: 350px;
-		border: none;
-		background-color: v.$light-grey-color;
+    input{
+        height: 100%;
+        padding: 0 2em;
+        margin-left: 25px;
+        width: 350px;
+        border: none;
+        background-color: v.$light-grey-color;
 
-		&::placeholder {
-			color: v.$dark-grey-color;
-		}
+        &::placeholder{
+            color: v.$dark-grey-color;
+        }
 
-		&:focus {
-			outline: none;
-		}
-	}
+        &:focus{
+            outline: none;
+        }
+    }
 
-	span {
-		font-size: 14px;
-		margin-right: 45px;
-		color: v.$white-color;
-	}
+    span{
+        font-size: 14px;
+        margin-right: 45px;
+        color: v.$white-color;
+    }
 
-	.spacer {
-		flex: 1 1 auto;
-	}
+    .spacer {
+        flex: 1 1 auto;
+    }
 
-	button {
-		mat-icon {
-			color: v.$white-color;
-		}
-	}
+    button{
+        mat-icon{
+            color: v.$white-color;
+        }
+    }
+}
+
+@media only screen and (max-width: 1500px) {
+    #menu-bar{
+        padding: 0 5em;
+    }
+}
+
+@media only screen and (min-width: 1800px) {
+    #menu-bar{
+        padding: 0 7em;
+    }
 }
