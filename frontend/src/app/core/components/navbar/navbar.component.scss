@@ -1,45 +1,72 @@
 @use "../../../../assets/variables.scss" as v;
 
-#menu-bar {
-	height: 55px;
-	background-color: v.$dark-color;
-	padding: 0 2em;
 
-	svg {
-		width: 50px;
-		margin-right: 45px;
-	}
+#menu-bar{
+    height: 55px;
+    background-color: v.$dark-color;
+    padding: 0 2em;
 
-	input {
-		height: 100%;
-		padding: 0 2em;
-		margin-left: 25px;
-		width: 350px;
-		border: none;
-		background-color: v.$light-grey-color;
+    mat-drawer-container{
+        z-index: 999;
+        .mat-drawer-inner-container {
+            height: 100svh;
+            background-color: red;
+        
+        }
+    }
+    
 
-		&::placeholder {
-			color: v.$dark-grey-color;
-		}
+    img{
+        width: 50px;
+        margin-right: 45px;
+    }
 
-		&:focus {
-			outline: none;
-		}
-	}
+    input{
+        height: 100%;
+        padding: 0 2em;
+        margin-left: 25px;
+        width: 350px;
+        border: none;
+        background-color: v.$light-grey-color;
 
-	span {
-		font-size: 14px;
-		margin-right: 45px;
-		color: v.$white-color;
-	}
+        &::placeholder{
+            color: v.$dark-grey-color;
+        }
 
-	.spacer {
-		flex: 1 1 auto;
-	}
+        &:focus{
+            outline: none;
+        }
+    }
 
-	button {
-		mat-icon {
-			color: v.$white-color;
-		}
-	}
+    span{
+        font-size: 14px;
+        margin-right: 45px;
+        color: v.$white-color;
+    }
+
+    .spacer {
+        flex: 1 1 auto;
+    }
+
+    button{
+        mat-icon{
+            color: v.$white-color;
+        }
+    }
+}
+
+@media only screen and (min-width: 968px) {
+
+}
+
+@media only screen and (max-width: 1500px) {
+    #menu-bar{
+        padding: 0 5em;
+    }
+}
+
+@media only screen and (min-width: 1800px) {
+    #menu-bar{
+        padding: 0 7em;
+    }
 }
