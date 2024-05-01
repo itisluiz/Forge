@@ -2,5 +2,6 @@ dist/
 node_modules/
 .angular/
 .vscode/
+.nx/
 .secrets.*
 !.secrets.*.template
