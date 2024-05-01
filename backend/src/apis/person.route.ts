@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Person from "forge-shared/dto/person";
+import Person from "forge-shared/dto/person.dto";
 
 const router = Router();
 
