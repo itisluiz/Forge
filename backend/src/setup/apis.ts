@@ -2,7 +2,7 @@ import { Express } from "express";
 import { directoryImport } from "../util/importing.js";
 
 export async function setupApis(app: Express) {
-	const routers = await directoryImport("dist/apis");
+	const routers = await directoryImport("dist/apis", ".route.js");
 	for (const name in routers) {
 		app.use(routers[name].default);
 	}
