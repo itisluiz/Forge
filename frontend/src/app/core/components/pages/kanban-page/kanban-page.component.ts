@@ -48,7 +48,7 @@ export class KanbanPageComponent implements OnInit {
 		  currentBehavior: 'Current behavior for Pick up groceries',
 		  expectedBehavior: 'Expected behavior for Pick up groceries',
 		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
+		  type: 'test'
 		},
 		{
 		  name: 'Go home',
@@ -56,7 +56,7 @@ export class KanbanPageComponent implements OnInit {
 		  currentBehavior: 'Current behavior for Go home',
 		  expectedBehavior: 'Expected behavior for Go home',
 		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
+		  type: 'bug'
 		},
 		{
 		  name: 'Fall asleep',
@@ -96,6 +96,10 @@ export class KanbanPageComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
+
+	  if (event.container.id !== 'cdk-drop-list-0' && event.container.data.length === 4) {
+		alert('A coluna atingiu 4 cards!');
+	  }
     }
   }
 }
