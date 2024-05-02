@@ -1,170 +1,160 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 @use "../../../../../assets/expansion-panel.scss";
 
-app-navbar{
-    width: 100vw;
-    position: fixed;
-    top: 0;
-    z-index: 99;
+app-navbar {
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	z-index: 99;
 }
 
-.kanban-page-content{
-    margin-top: 67px;
+.kanban-page-content {
+	margin-top: 67px;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    gap: 12px;
-    margin: 1em;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto;
+	gap: 12px;
+	margin: 1em;
 
-    & > div {
-        background-color: v.$white-color;
-        border-radius: 12px;
-        padding: 1em;
-    }
+	& > div {
+		background-color: v.$white-color;
+		border-radius: 12px;
+		padding: 1em;
+	}
 
-    & > .kanban-grid{
-        .title{
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
+	& > .kanban-grid {
+		.title {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
 
-            .left{
-                display: flex;
-                align-items: center;
+			.left {
+				display: flex;
+				align-items: center;
 
-                h2{
-                    font-size: v.$h2-font;
-                    font-weight: 500;
-                    margin-right: 11px;
-                }
-    
-                .items{
-                    display: flex;
-                    align-items: center;
-                    gap: 2px;
-                    background-color: v.$lemon-color;
-                    padding: 1px 2.5px;
-                    border-radius: 3px;
-                    height: fit-content;
-    
-                    span{
-                        font-size: 9px;
-                        color: v.$white-color;
-                    }
-                }
-            }
+				h2 {
+					font-size: v.$h2-font;
+					font-weight: 500;
+					margin-right: 11px;
+				}
 
-            .right{
-                display: flex;
-                flex-direction: column;
-                align-items: end;
-                
-                button{
-                    height: 24px;
-                    background-color: transparent;
-                    border: none;
-                    margin-bottom: 3.5px;
+				.items {
+					display: flex;
+					align-items: center;
+					gap: 2px;
+					background-color: v.$lemon-color;
+					padding: 1px 2.5px;
+					border-radius: 3px;
+					height: fit-content;
 
-                    mat-icon{
-                        transform: translateY(5px);
-                    }
-                }
+					span {
+						font-size: 9px;
+						color: v.$white-color;
+					}
+				}
+			}
 
-         
-            }
-        }
+			.right {
+				display: flex;
+				flex-direction: column;
+				align-items: end;
 
-        p{
-            font-size: v.$paragraph-font;
-            color: v.$grey-color;
-            font-weight: 400;
-            margin-top: 10px;
-        }
+				button {
+					height: 24px;
+					background-color: transparent;
+					border: none;
+					margin-bottom: 3.5px;
 
-        .desc{
-            transform: translateY(-27px);
-        }
-        
-    }
+					mat-icon {
+						transform: translateY(5px);
+					}
+				}
+			}
+		}
 
-    & > .header-grid {
-        grid-column: auto;
-        grid-row: 1;
-        z-index: 0;
-        padding: 2em 1em;
+		p {
+			font-size: v.$paragraph-font;
+			color: v.$grey-color;
+			font-weight: 400;
+			margin-top: 10px;
+		}
 
-        .breadcrumber{
-            display: flex;
-            align-items: center;
-            text-decoration: none;
+		.desc {
+			transform: translateY(-27px);
+		}
+	}
 
-            .spacer{
-                font-size: 11px;
-            }
+	& > .header-grid {
+		grid-column: auto;
+		grid-row: 1;
+		z-index: 0;
+		padding: 2em 1em;
 
-            li + div {
-                margin: 0 5px;
-            }
+		.breadcrumber {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
 
-            li{
-                font-size: v.$observation-font;
-                font-weight: 400;
-                cursor: pointer;
-                list-style: none;
+			.spacer {
+				font-size: 11px;
+			}
 
-                &:nth-last-child(1){
-                    font-weight: 500;
-                }
+			li + div {
+				margin: 0 5px;
+			}
 
-                a {
-                    text-decoration: none;
-                    color: v.$dark-green-color;
-                }
-            }
-        
-        }
+			li {
+				font-size: v.$observation-font;
+				font-weight: 400;
+				cursor: pointer;
+				list-style: none;
 
-        h1{
-            font-size: v.$title-font;
-            font-weight: 500;
-            margin-bottom: 19px;
-        }
+				&:nth-last-child(1) {
+					font-weight: 500;
+				}
 
-        p{
-            font-size: v.$sub-title-font;
-            color: v.$grey-color;
-            max-width: 550px;
-        
-        }
-    }
+				a {
+					text-decoration: none;
+					color: v.$dark-green-color;
+				}
+			}
+		}
 
+		h1 {
+			font-size: v.$title-font;
+			font-weight: 500;
+			margin-bottom: 19px;
+		}
+
+		p {
+			font-size: v.$sub-title-font;
+			color: v.$grey-color;
+			max-width: 550px;
+		}
+	}
 }
 
 @media only screen and (max-width: 1500px) {
-
-    .kanban-page-content{
-        margin: 67px 3em 0 3em;
-    }
-
+	.kanban-page-content {
+		margin: 67px 3em 0 3em;
+	}
 }
 
 @media only screen and (min-width: 1400px) {
-    .kanban-page-content{
-        .grid-container{
-            .agile-process-grid{
-                padding: 1em 2em 2em 2em;
-            }
-        }
-    }
+	.kanban-page-content {
+		.grid-container {
+			.agile-process-grid {
+				padding: 1em 2em 2em 2em;
+			}
+		}
+	}
 }
 
 @media only screen and (min-width: 1800px) {
-
-    .kanban-page-content{
-        margin: 67px 5em 0 5em;
-    }
-
+	.kanban-page-content {
+		margin: 67px 5em 0 5em;
+	}
 }

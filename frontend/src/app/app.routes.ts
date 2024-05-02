@@ -5,8 +5,8 @@ import { AgileProcessComponent } from "./core/components/agile-process/agile-pro
 import { KanbanPageComponent } from "./core/components/pages/kanban-page/kanban-page.component";
 
 export const routes: Routes = [
-	{ path: "", component: MainPageComponent},
-	{ path: "login", component: LoginPageComponent},
+	{ path: "", component: MainPageComponent },
+	{ path: "login", component: LoginPageComponent },
 	{ path: "agile", component: AgileProcessComponent },
-	{ path: "kanban", component: KanbanPageComponent}
+	{ path: "kanban", component: KanbanPageComponent },
 ];

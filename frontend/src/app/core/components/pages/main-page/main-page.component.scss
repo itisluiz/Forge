@@ -1,179 +1,172 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 
-app-navbar{
-    width: 100vw;
-    position: fixed;
-    top: 0;
-    z-index: 99;
+app-navbar {
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	z-index: 99;
 }
 
-.main-page-content{
-    margin-top: 67px;
+.main-page-content {
+	margin-top: 67px;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: auto auto;
-    gap: 12px;
-    margin: 1em;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: auto auto;
+	gap: 12px;
+	margin: 1em;
 
-    & > div {
-        background-color: v.$white-color;
-        border-radius: 12px;
-        padding: 1em;
-    }
+	& > div {
+		background-color: v.$white-color;
+		border-radius: 12px;
+		padding: 1em;
+	}
 
-    & > .agile-process-grid {
-        grid-column: span 3;
-        grid-row: 1;
-        z-index: 0;
-        
-        .chart{
-            display: flex;
-            align-items: end;
-            margin-bottom: 1.5em;
+	& > .agile-process-grid {
+		grid-column: span 3;
+		grid-row: 1;
+		z-index: 0;
 
-            .right-content{
-                margin-left: 1em;
-                .upper{
-                    margin-bottom: 1.5em;
-                    transform: translateX(-2.5em);
-                    h1{
-                        font-size: v.$title-font;
-                        font-weight: 500;
-                        margin-bottom: 10px;
-                    }
-                    p{
-                        font-size: v.$sub-title-font;
-                        color: v.$grey-color;
-                        max-width: 600px;
-                    }
-                }
+		.chart {
+			display: flex;
+			align-items: end;
+			margin-bottom: 1.5em;
 
-                .lower{
-                    p{
-                        font-size: v.$observation-font;
-                        font-weight: 500;
-                        margin-bottom: 1em;
-                    }
-                    
-                }
-            }
-        }
+			.right-content {
+				margin-left: 1em;
+				.upper {
+					margin-bottom: 1.5em;
+					transform: translateX(-2.5em);
+					h1 {
+						font-size: v.$title-font;
+						font-weight: 500;
+						margin-bottom: 10px;
+					}
+					p {
+						font-size: v.$sub-title-font;
+						color: v.$grey-color;
+						max-width: 600px;
+					}
+				}
 
-        .ai-feedback{
-            hr{
-                opacity: .2;
-                margin-bottom: 1.5em;
-            }
+				.lower {
+					p {
+						font-size: v.$observation-font;
+						font-weight: 500;
+						margin-bottom: 1em;
+					}
+				}
+			}
+		}
 
-            h3{
-                font-size: v.$sub-title-font;
-                color: v.$black-color;
-                margin-bottom: .6em;
-                font-weight: 500;
-            }
+		.ai-feedback {
+			hr {
+				opacity: 0.2;
+				margin-bottom: 1.5em;
+			}
 
-            p{
-                font-size: v.$sub-title-font;
-                color: v.$grey-color;
-            }
+			h3 {
+				font-size: v.$sub-title-font;
+				color: v.$black-color;
+				margin-bottom: 0.6em;
+				font-weight: 500;
+			}
 
+			p {
+				font-size: v.$sub-title-font;
+				color: v.$grey-color;
+			}
+		}
+	}
 
-        }
-    }
-      
-    & > .burndown-grid {
-        grid-column: span 2;
-        grid-row: 1;
+	& > .burndown-grid {
+		grid-column: span 2;
+		grid-row: 1;
 
-        h1{
-            font-size: v.$title-font;
-            font-weight: 500;
-            margin: .5em 0 30px .5em;
-        }
+		h1 {
+			font-size: v.$title-font;
+			font-weight: 500;
+			margin: 0.5em 0 30px 0.5em;
+		}
 
-        img{
-            width: 93%;
-        }
-    }
-      
-    & > .activity-grid {
-        grid-column: span 2;
-        grid-row: 2;
+		img {
+			width: 93%;
+		}
+	}
 
-        h1{
-            font-size: v.$title-font;
-            font-weight: 500;
-            margin: .5em 0 30px .5em;
-        }
+	& > .activity-grid {
+		grid-column: span 2;
+		grid-row: 2;
 
-        img{
-            margin-left: 1em;
-        }
-    }
-      
-    & > .gantt-grid {
-        grid-column: span 3;
-        grid-row: 2;
+		h1 {
+			font-size: v.$title-font;
+			font-weight: 500;
+			margin: 0.5em 0 30px 0.5em;
+		}
 
-        h1{
-            font-size: v.$title-font;
-            font-weight: 500;
-            margin: .5em 0 0 .5em;
-        }
+		img {
+			margin-left: 1em;
+		}
+	}
 
-        img{
-            width: 100%;
-            scale: .9;
-        }
-    }
+	& > .gantt-grid {
+		grid-column: span 3;
+		grid-row: 2;
+
+		h1 {
+			font-size: v.$title-font;
+			font-weight: 500;
+			margin: 0.5em 0 0 0.5em;
+		}
+
+		img {
+			width: 100%;
+			scale: 0.9;
+		}
+	}
 }
 
 @media only screen and (max-width: 1500px) {
+	.main-page-content {
+		margin: 67px 3em 0 3em;
+	}
+	.grid-container {
+		& > .agile-process-grid {
+			grid-column: span 5;
+			grid-row: 1;
+		}
 
-    .main-page-content{
-        margin: 67px 3em 0 3em;
-    }
-    .grid-container {
-        & > .agile-process-grid {
-            grid-column: span 5;
-            grid-row: 1;
-        }
+		& > .burndown-grid {
+			grid-column: span 3;
+			grid-row: 2;
+		}
 
-        & > .burndown-grid {
-            grid-column: span 3;
-            grid-row: 2;
-        }
+		& > .activity-grid {
+			grid-column: span 2;
+			grid-row: span 2;
+		}
 
-        & > .activity-grid {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        & > .gantt-grid {
-            grid-column: span 3;
-            grid-row: 3;
-        }
-    }
-
+		& > .gantt-grid {
+			grid-column: span 3;
+			grid-row: 3;
+		}
+	}
 }
 
 @media only screen and (min-width: 1400px) {
-    .main-page-content{
-        .grid-container{
-            .agile-process-grid{
-                padding: 1em 2em 2em 2em;
-            }
-        }
-    }
+	.main-page-content {
+		.grid-container {
+			.agile-process-grid {
+				padding: 1em 2em 2em 2em;
+			}
+		}
+	}
 }
 
 @media only screen and (min-width: 1800px) {
-
-    .main-page-content{
-        margin: 67px 5em 0 5em;
-    }
-
+	.main-page-content {
+		margin: 67px 5em 0 5em;
+	}
 }

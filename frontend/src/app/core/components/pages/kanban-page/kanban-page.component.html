@@ -1,253 +1,217 @@
 <app-navbar></app-navbar>
 <div class="kanban-page-content">
 	<div class="grid-container">
-        <div class="header-grid">
-            <ul class="breadcrumber">
-                <li><a href="">Squad BES</a></li>
-                <div class="spacer">></div>
-                <li><a href="">TCC 1</a></li>
-                <div class="spacer">></div>
-                <li><a href="/kanban">Kanban board</a></li>
-            </ul>
-            <h1>Kanban board</h1>
-            <p>Quadro Kanban para Gerenciamento de Features Disponíveis e Prontas para o Início do Desenvolvimento de Projetos.</p>
-        </div>
+		<div class="header-grid">
+			<ul class="breadcrumber">
+				<li><a href="">Squad BES</a></li>
+				<div class="spacer">></div>
+				<li><a href="">TCC 1</a></li>
+				<div class="spacer">></div>
+				<li><a href="/kanban">Kanban board</a></li>
+			</ul>
+			<h1>Kanban board</h1>
+			<p>Quadro Kanban para Gerenciamento de Features Disponíveis e Prontas para o Início do Desenvolvimento de Projetos.</p>
+		</div>
 
-        <div class="kanban-grid">
-            <div class="title">
-                <div class="left">
-                    <h2>Sprint 1</h2>
-                    <div class="items">
-                        <span>3</span>
-                        <span>items</span>
-                    </div>
-                </div>
+		<div class="kanban-grid">
+			<div class="title">
+				<div class="left">
+					<h2>Sprint 1</h2>
+					<div class="items">
+						<span>3</span>
+						<span>items</span>
+					</div>
+				</div>
 
-                <div class="right">
-                    <button mat-icon-button>
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-                    <p class="sprint-date">Inicio da Sprint: 28/02/2024 • 08:30 </p>
-                </div>
-                
-            </div>
-            <p class="desc">Breve descrição do que será feito na task</p>
-            
-            <mat-accordion multi>
-                <mat-expansion-panel hideToggle>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Key
-                    </mat-panel-title>
-                    <mat-panel-title>
-                      This is the expansion title
-                    </mat-panel-title>
-                    <mat-panel-description>
-                      This is a summary of the content
-                    </mat-panel-description>
-                  </mat-expansion-panel-header>
-               
-                <div cdkDropListGroup class="group-list">
-                    <div class="kanban-wrapper">
-                    <div class="title">
-                        <h2>To do</h2>
-                        <div class="count">
-                            <span>{{toDo.length}}</span>
-                            <span>left</span>
-                        </div>
-                    </div>
-                
-                    <div
-                        cdkDropList
-                        [cdkDropListData]="toDo"
-                        class="kanban-list"
-                        (cdkDropListDropped)="drop($event)">
-                        @for (item of toDo; track item) {
-                            <div class="container-item" cdkDrag>
-                                <div class="placeholder" *cdkDragPlaceholder></div>
-                                <div class="content">
-                                    <div [class]="item.type"></div>
-                                    <h3>{{item.name}}</h3>
-                                    <p class="desc">{{item.description}}</p>
-                                    <p class="behaviour">
-                                        <strong>Comportamento Atual: </strong>
-                                        {{item.currentBehavior}}
-                                    </p>
-                                    <p class="behaviour">
-                                        <strong>Comportamento Esperado: </strong>
-                                        {{item.expectedBehavior}}
-                                    </p>
-                                    <img [src]="item.photo">
-                                </div>
-                            </div>
-                        }
-                        </div>
-                    </div>
-                  
-                    <div class="kanban-wrapper">
-                        <div class="title">
-                            <h2>In progress</h2>
-                            <div class="count">
-                                <span>{{inProgress.length}}</span>
-                                <span>left</span>
-                            </div>
-                        </div>
-                  
-                        <div
-                        cdkDropList
-                        [cdkDropListData]="inProgress"
-                        class="kanban-list"
-                        (cdkDropListDropped)="drop($event)">
-                        @for (item of inProgress; track item) {
-                          <div class="container-item" cdkDrag>
-                            <div class="placeholder" *cdkDragPlaceholder></div>
-                            <div class="content">
-                                <div [class]="item.type"></div>
-                                <h3>{{item.name}}</h3>
-                                <p class="desc">{{item.description}}</p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Atual: </strong>
-                                    {{item.currentBehavior}}
-                                </p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Esperado: </strong>
-                                    {{item.expectedBehavior}}
-                                </p>
-                                <img [src]="item.photo">
-                            </div>
-                        </div>
-                        }
-                        </div>
-                    </div>
+				<div class="right">
+					<button mat-icon-button>
+						<mat-icon>more_horiz</mat-icon>
+					</button>
+					<p class="sprint-date">Inicio da Sprint: 28/02/2024 • 08:30</p>
+				</div>
+			</div>
+			<p class="desc">Breve descrição do que será feito na task</p>
 
-                    <div class="kanban-wrapper">
-                        <div class="title">
-                            <h2>Available to review</h2>
-                            <div class="count">
-                                <span>{{availableReview.length}}</span>
-                                <span>left</span>
-                            </div>
-                        </div>
-                  
-                        <div
-                        cdkDropList
-                        [cdkDropListData]="availableReview"
-                        class="kanban-list"
-                        (cdkDropListDropped)="drop($event)">
-                        @for (item of availableReview; track item) {
-                          <div class="container-item" cdkDrag>
-                            <div class="placeholder" *cdkDragPlaceholder></div>
-                            <div class="content">
-                                <div [class]="item.type"></div>
-                                <h3>{{item.name}}</h3>
-                                <p class="desc">{{item.description}}</p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Atual: </strong>
-                                    {{item.currentBehavior}}
-                                </p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Esperado: </strong>
-                                    {{item.expectedBehavior}}
-                                </p>
-                                <img [src]="item.photo">
-                            </div>
-                        </div>
-                        }
-                        </div>
-                    </div>
+			<mat-accordion multi>
+				<mat-expansion-panel hideToggle>
+					<mat-expansion-panel-header>
+						<mat-panel-title> Key </mat-panel-title>
+						<mat-panel-title> This is the expansion title </mat-panel-title>
+						<mat-panel-description> This is a summary of the content </mat-panel-description>
+					</mat-expansion-panel-header>
 
-                    <div class="kanban-wrapper">
-                        <div class="title">
-                            <h2>Reviewing</h2>
-                            <div class="count">
-                                <span>{{reviewing.length}}</span>
-                                <span>left</span>
-                            </div>
-                        </div>
-                  
-                        <div
-                        cdkDropList
-                        [cdkDropListData]="reviewing"
-                        class="kanban-list"
-                        (cdkDropListDropped)="drop($event)">
-                        @for (item of reviewing; track item) {
-                          <div class="container-item" cdkDrag>
-                            <div class="placeholder" *cdkDragPlaceholder></div>
-                            <div class="content">
-                                <div [class]="item.type"></div>
-                                <h3>{{item.name}}</h3>
-                                <p class="desc">{{item.description}}</p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Atual: </strong>
-                                    {{item.currentBehavior}}
-                                </p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Esperado: </strong>
-                                    {{item.expectedBehavior}}
-                                </p>
-                                <img [src]="item.photo">
-                            </div>
-                        </div>
-                        }
-                        </div>
-                    </div>
+					<div cdkDropListGroup class="group-list">
+						<div class="kanban-wrapper">
+							<div class="title">
+								<h2>To do</h2>
+								<div class="count">
+									<span>{{ toDo.length }}</span>
+									<span>left</span>
+								</div>
+							</div>
 
-                    <div class="kanban-wrapper">
-                        <div class="title">
-                            <h2>Done</h2>
-                            <div class="count">
-                                <span>{{toDo.length}}</span>
-                                <span>left</span>
-                            </div>
-                        </div>
-                  
-                        <div
-                        cdkDropList
-                        [cdkDropListData]="done"
-                        class="kanban-list"
-                        (cdkDropListDropped)="drop($event)">
-                        @for (item of done; track item) {
-                          <div class="container-item" cdkDrag>
-                            <div class="placeholder" *cdkDragPlaceholder></div>
-                            <div class="content">
-                                <div [class]="item.type"></div>
-                                <h3>{{item.name}}</h3>
-                                <p class="desc">{{item.description}}</p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Atual: </strong>
-                                    {{item.currentBehavior}}
-                                </p>
-                                <p class="behaviour">
-                                    <strong>Comportamento Esperado: </strong>
-                                    {{item.expectedBehavior}}
-                                </p>
-                                <img [src]="item.photo">
-                            </div>
-                        </div>
-                        }
-                        </div>
-                    </div>
+							<div cdkDropList [cdkDropListData]="toDo" class="kanban-list" (cdkDropListDropped)="drop($event)">
+								@for (item of toDo; track item) {
+									<div class="container-item" cdkDrag>
+										<div class="placeholder" *cdkDragPlaceholder></div>
+										<div class="content">
+											<div [class]="item.type"></div>
+											<h3>{{ item.name }}</h3>
+											<p class="desc">{{ item.description }}</p>
+											<p class="behaviour">
+												<strong>Comportamento Atual: </strong>
+												{{ item.currentBehavior }}
+											</p>
+											<p class="behaviour">
+												<strong>Comportamento Esperado: </strong>
+												{{ item.expectedBehavior }}
+											</p>
+											<img [src]="item.photo" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
 
-                  </div>
-                </mat-expansion-panel>
-    
-                <mat-expansion-panel hideToggle>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Key
-                    </mat-panel-title>
-                    <mat-panel-title>
-                      Self aware panel
-                    </mat-panel-title>
-                    <mat-panel-description>
-                      Currently I am 
-                    </mat-panel-description>
-                  </mat-expansion-panel-header>
-                  <p>I'm visible because I am open</p>
-                </mat-expansion-panel>
-            </mat-accordion>
-        </div>
+						<div class="kanban-wrapper">
+							<div class="title">
+								<h2>In progress</h2>
+								<div class="count">
+									<span>{{ inProgress.length }}</span>
+									<span>left</span>
+								</div>
+							</div>
 
-        
-    </div>
+							<div cdkDropList [cdkDropListData]="inProgress" class="kanban-list" (cdkDropListDropped)="drop($event)">
+								@for (item of inProgress; track item) {
+									<div class="container-item" cdkDrag>
+										<div class="placeholder" *cdkDragPlaceholder></div>
+										<div class="content">
+											<div [class]="item.type"></div>
+											<h3>{{ item.name }}</h3>
+											<p class="desc">{{ item.description }}</p>
+											<p class="behaviour">
+												<strong>Comportamento Atual: </strong>
+												{{ item.currentBehavior }}
+											</p>
+											<p class="behaviour">
+												<strong>Comportamento Esperado: </strong>
+												{{ item.expectedBehavior }}
+											</p>
+											<img [src]="item.photo" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="kanban-wrapper">
+							<div class="title">
+								<h2>Available to review</h2>
+								<div class="count">
+									<span>{{ availableReview.length }}</span>
+									<span>left</span>
+								</div>
+							</div>
+
+							<div cdkDropList [cdkDropListData]="availableReview" class="kanban-list" (cdkDropListDropped)="drop($event)">
+								@for (item of availableReview; track item) {
+									<div class="container-item" cdkDrag>
+										<div class="placeholder" *cdkDragPlaceholder></div>
+										<div class="content">
+											<div [class]="item.type"></div>
+											<h3>{{ item.name }}</h3>
+											<p class="desc">{{ item.description }}</p>
+											<p class="behaviour">
+												<strong>Comportamento Atual: </strong>
+												{{ item.currentBehavior }}
+											</p>
+											<p class="behaviour">
+												<strong>Comportamento Esperado: </strong>
+												{{ item.expectedBehavior }}
+											</p>
+											<img [src]="item.photo" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="kanban-wrapper">
+							<div class="title">
+								<h2>Reviewing</h2>
+								<div class="count">
+									<span>{{ reviewing.length }}</span>
+									<span>left</span>
+								</div>
+							</div>
+
+							<div cdkDropList [cdkDropListData]="reviewing" class="kanban-list" (cdkDropListDropped)="drop($event)">
+								@for (item of reviewing; track item) {
+									<div class="container-item" cdkDrag>
+										<div class="placeholder" *cdkDragPlaceholder></div>
+										<div class="content">
+											<div [class]="item.type"></div>
+											<h3>{{ item.name }}</h3>
+											<p class="desc">{{ item.description }}</p>
+											<p class="behaviour">
+												<strong>Comportamento Atual: </strong>
+												{{ item.currentBehavior }}
+											</p>
+											<p class="behaviour">
+												<strong>Comportamento Esperado: </strong>
+												{{ item.expectedBehavior }}
+											</p>
+											<img [src]="item.photo" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="kanban-wrapper">
+							<div class="title">
+								<h2>Done</h2>
+								<div class="count">
+									<span>{{ toDo.length }}</span>
+									<span>left</span>
+								</div>
+							</div>
+
+							<div cdkDropList [cdkDropListData]="done" class="kanban-list" (cdkDropListDropped)="drop($event)">
+								@for (item of done; track item) {
+									<div class="container-item" cdkDrag>
+										<div class="placeholder" *cdkDragPlaceholder></div>
+										<div class="content">
+											<div [class]="item.type"></div>
+											<h3>{{ item.name }}</h3>
+											<p class="desc">{{ item.description }}</p>
+											<p class="behaviour">
+												<strong>Comportamento Atual: </strong>
+												{{ item.currentBehavior }}
+											</p>
+											<p class="behaviour">
+												<strong>Comportamento Esperado: </strong>
+												{{ item.expectedBehavior }}
+											</p>
+											<img [src]="item.photo" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				</mat-expansion-panel>
+
+				<mat-expansion-panel hideToggle>
+					<mat-expansion-panel-header>
+						<mat-panel-title> Key </mat-panel-title>
+						<mat-panel-title> Self aware panel </mat-panel-title>
+						<mat-panel-description> Currently I am </mat-panel-description>
+					</mat-expansion-panel-header>
+					<p>I'm visible because I am open</p>
+				</mat-expansion-panel>
+			</mat-accordion>
+		</div>
+	</div>
 </div>
