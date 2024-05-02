@@ -3,10 +3,12 @@ import { LoginPageComponent } from "./core/components/pages/login-page/login-pag
 import { MainPageComponent } from "./core/components/pages/main-page/main-page.component";
 import { AgileProcessComponent } from "./core/components/agile-process/agile-process.component";
 import { KanbanPageComponent } from "./core/components/pages/kanban-page/kanban-page.component";
+import { EpicsPageComponent } from "./core/components/pages/epic-page/epics-page.component";
 
 export const routes: Routes = [
 	{ path: "", component: MainPageComponent},
 	{ path: "login", component: LoginPageComponent},
 	{ path: "agile", component: AgileProcessComponent },
-	{ path: "kanban", component: KanbanPageComponent}
+	{ path: "kanban", component: KanbanPageComponent},
+	{ path: "epics", component: EpicsPageComponent},
 ];
