@@ -1,17 +1,52 @@
-import { Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from '@angular/material/expansion';
-import {
-	CdkDragDrop,
-	CdkDrag,
-	CdkDropList,
-	CdkDropListGroup,
-	moveItemInArray,
-	transferArrayItem,
-	DragDropModule,
-	CdkDragPlaceholder,
-  } from '@angular/cdk/drag-drop';
+import {MatTable, MatTableModule} from '@angular/material/table';
+
+	export interface History {
+		key: string;
+		name: string;
+		description: string;
+		status: string;
+		priority: string;
+		time_created: string;
+	}
+
+	const HISTORIES_DATA: History[] = [
+		{
+			key: 'HTY-1',
+			name: 'História 1',
+			description: 'Descrição 1',
+			status: "Backlog",
+			priority: "Low",
+			time_created: '2024-02-01' 	
+		},
+		{
+			key: 'HTY-2',
+			name: 'História 2',
+			description: 'Descrição 2',
+			status: "Development",
+			priority: "Medium",
+			time_created: '2024-02-01'
+		},
+		{
+			key: 'HTY-3',
+			name: 'História 3',
+			description: 'Descrição 3',
+			status: "Production",
+			priority: "Medium",
+			time_created: '2024-02-01'
+		},
+		{
+			key: 'HTY-4',
+			name: 'História 4',
+			description: 'Descrição 4',
+			status: "Homologation",
+			priority: "High",
+			time_created: '2024-02-01'
+		}
+	];
 
 @Component({
 	selector: "app-kanban-page",
@@ -20,82 +55,59 @@ import {
 		NavbarComponent, 
 		MatIcon, 
 		MatExpansionModule, 
-		DragDropModule,
-		CdkDropListGroup, 
-		CdkDropList, 
-		CdkDrag,
-		CdkDragPlaceholder
+		MatTable,
+		MatTableModule,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
 })
-export class EpicsPageComponent implements OnInit {
+export class EpicsPageComponent implements AfterViewInit {
 
-	ngOnInit(): void {}
+  displayedColumns: string[] = ['key', 'name', 'description', 'status', 'priority', 'time_created'];
 
-	toDo: any= [
-		{
-		  name: 'Get to work',
-		  description: 'Description for Get to work',
-		  currentBehavior: 'Current behavior for Get to work',
-		  expectedBehavior: 'Expected behavior for Get to work',
-		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
-		},
-		{
-		  name: 'Pick up groceries',
-		  description: 'Description for Pick up groceries',
-		  currentBehavior: 'Current behavior for Pick up groceries',
-		  expectedBehavior: 'Expected behavior for Pick up groceries',
-		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
-		},
-		{
-		  name: 'Go home',
-		  description: 'Description for Go home',
-		  currentBehavior: 'Current behavior for Go home',
-		  expectedBehavior: 'Expected behavior for Go home',
-		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
-		},
-		{
-		  name: 'Fall asleep',
-		  description: 'Description for Fall asleep',
-		  currentBehavior: 'Current behavior for Fall asleep',
-		  expectedBehavior: 'Expected behavior for Fall asleep',
-		  photo: '../../../assets/photo.jpeg',
-		  type: 'feature'
-		}
-	];
+	histories = [...HISTORIES_DATA];
 
-	inProgress: any = [
-		
-	];
+	@ViewChildren('statusContainer')
+  statusContainer!: QueryList<ElementRef>;
 
-	availableReview: any = [
+	ngAfterViewInit(): void {
+    this.statusContainer.forEach(cell => {
+      let color;
+    	let background;
+      let textDecoration;
+      let fontWeight;
 
-	];
+      switch (cell.nativeElement.textContent.trim()) {
+        case 'Development': // IN_DEVELOPMENT
+          color = '#fff';
+          background = '#93C088';
+          break;
+        case 'Homologation': // IN_HOMOLOGATION
+          color = '#fff';
+					background = '#1A73DC';
+          break;
+        case 'Production': // IN_PRODUCTION
+					color = '#fff';
+          background = '#187600';
+          textDecoration = 'line-through';
+        break;
+        default: // BACKLOG
+          color = '#7A7A7A';
+          background = '#D8D8D8';
+          fontWeight = '400';
+      }
+      cell.nativeElement.style.backgroundColor = `${background}`;
+      cell.nativeElement.style.color = `${color}`;
+      cell.nativeElement.style.textDecoration = `${textDecoration}`;
+      cell.nativeElement.style.fontWeight = `${fontWeight}`;
+    });
+	}
 
-	reviewing: any = [
+  priorityParser(priority: string){
+    let pre = "../../../../../assets/";
+    let pos = ".svg";
 
-	];
-  
-  	done: any = [
-
-	];
-
-	
-
-  	drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
+    return pre + priority.toLowerCase() + pos;
   }
+
 }

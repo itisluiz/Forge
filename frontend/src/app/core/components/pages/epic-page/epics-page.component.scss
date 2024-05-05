@@ -25,7 +25,7 @@ app-navbar{
         padding: 1em;
     }
 
-    & > .kanban-grid{
+    & > .epics-grid{
         .title{
             display: flex;
             align-items: baseline;
@@ -44,7 +44,7 @@ app-navbar{
                     display: flex;
                     align-items: center;
                     gap: 2px;
-                    background-color: v.$lemon-color;
+                    background-color: v.$purple-color;
                     padding: 1px 2.5px;
                     border-radius: 3px;
                     height: fit-content;
@@ -66,8 +66,82 @@ app-navbar{
         }
         .desc-title{
             margin-bottom: 30px;
-            background-color: purple;
         } 
+				.mat-expansion-panel-header-title{
+					color: v.$black-color;
+					font-weight: 400;
+					
+					&:nth-of-type(1){
+							flex-grow: 0.2;
+							font-weight: 500;
+							color: v.$purple-color;
+					}
+				}
+				.epics-table {
+					width: 100%;
+					border-spacing: 0px 1.5px;
+					//background-color: red;
+					.mat-mdc-header-cell{
+							border: none;
+
+							&:nth-child(4){
+								text-align: center;
+							}
+
+							&:nth-child(5){
+									text-align: center;
+							}
+
+							&:nth-child(6){
+								text-align: center;
+							}
+					}
+
+					.mat-mdc-cell{
+							border: none;
+
+							&:nth-child(6){
+									text-align: center;
+							}
+
+							&:nth-child(1){
+									color: v.$epics-dark-green-color;
+									font-weight: 500;
+							}
+
+							&:nth-child(5){
+								text-align: center;
+							}
+
+							&:nth-child(4){
+									text-align: center;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									padding: 10px;
+									.status-container{
+											background-color: red;
+											border-radius: 2px;
+											font-weight: 500;
+											width: 110px;
+									}
+							}
+					}
+
+					.mat-mdc-row {
+							height: 40px;
+
+							&:nth-child(odd){
+									background-color: v.$background-grey;
+
+							}
+
+					}
+
+
+			}
+
+
     }
 
     & > .header-grid {
@@ -76,8 +150,17 @@ app-navbar{
         z-index: 0;
         padding: 2em 1em;
 
-        .breadcrumber{
-            display: flex;
+				.breadcrump-epics-wrapper {
+					display: grid; 
+					grid-template-columns: auto auto; 
+					grid-template-rows: auto auto; 
+					grid-template-areas: 
+							"top right"
+							"bottom right";
+
+					.breadcrumber{
+						grid-area: top;
+						display: flex;
             align-items: center;
             text-decoration: none;
 
@@ -105,13 +188,42 @@ app-navbar{
                 }
             }
         
-        }
+        	}
 
-        h1{
+        	h1{
+						grid-area: bottom;
             font-size: v.$title-font;
             font-weight: 500;
             margin-bottom: 19px;
-        }
+        	}
+
+					.buttons-header {
+						grid-area: right;
+						align-self: center; 
+						justify-self: end;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+
+						#button-create-epic {
+							height: 31px;
+							width: 127px;
+							background-color: v.$epics-light-grey-color;
+							border: none;
+							border-radius: 4px;
+							margin-right: 12px;
+						}
+
+						.mat-icon-button {
+							display: flex;
+							align-items: center;
+							background-color: transparent;
+							border: none;
+						}
+
+					}
+
+				}
 
         p{
             font-size: v.$sub-title-font;
