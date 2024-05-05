@@ -1,0 +1,152 @@
+<app-navbar></app-navbar>
+<div class="kanban-page-content">
+	<div class="grid-container">
+        <div class="header-grid">
+					<div class="breadcrump-epics-wrapper">
+						
+						<ul class="breadcrumber">
+							<li><a href="">Squad BES</a></li>
+							<div class="spacer">></div>
+							<li><a href="">TCC 1</a></li>
+							<div class="spacer">></div>
+							<li><a href="/epics">Epics</a></li>
+						</ul>
+						<h1>Epics</h1>
+						<div class="buttons-header">
+							<button id="button-create-epic" (click)="openPopUp()">Create an Epic</button>
+							<button mat-icon-button class="mat-icon-button">
+								<mat-icon>more_vert</mat-icon>
+							</button>
+						</div>
+
+					</div>
+            
+					<p>This board will manage your features that are available to start development</p>
+        </div>
+
+        <div class="epics-grid">
+            <div class="title">
+                <div class="left">
+                    <h2>Epic's list</h2>
+                    <div class="items">
+                        <span>2</span>
+                        <span>items</span>
+                    </div>
+                </div>
+                
+            </div>
+            <p class="desc-title">A brief description of what will be done in the task.</p>
+            
+            <mat-accordion multi>
+                <mat-expansion-panel hideToggle>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        EPC-1
+                    </mat-panel-title>
+                    <mat-panel-title>
+                      This is the expansion title
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      Implement a more robust notification system to ensure time...
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+									<table mat-table [dataSource]="histories" class="epics-table">
+										<!-- Key Column -->
+										<ng-container matColumnDef="key">
+											<th mat-header-cell *matHeaderCellDef>Key</th>
+											<td mat-cell *matCellDef="let element">{{element.key}}</td>
+										</ng-container>
+									
+										<!-- Name Column -->
+										<ng-container matColumnDef="name">
+											<th mat-header-cell *matHeaderCellDef>History</th>
+											<td mat-cell *matCellDef="let element">{{element.name}}</td>
+										</ng-container>
+									
+										<!-- Description Column -->
+										<ng-container matColumnDef="description">
+											<th mat-header-cell *matHeaderCellDef>Description</th>
+											<td mat-cell *matCellDef="let element">{{element.description}}</td>
+										</ng-container>
+									
+										<!-- Status Column -->
+										<ng-container matColumnDef="status">
+											<th mat-header-cell *matHeaderCellDef>Status</th>
+											<td mat-cell *matCellDef="let element">
+													<div #statusContainer class="status-container">
+															{{element.status}}
+													</div>         
+											</td>
+										</ng-container>
+
+										<!-- Priority Column -->
+										<ng-container matColumnDef="priority">
+											<th mat-header-cell *matHeaderCellDef>Priority</th>
+											<td mat-cell *matCellDef="let element">
+												<img src="{{priorityParser(element.priority)}}" alt="{{element.priority}} priority">
+											</td>
+										</ng-container>
+
+										<!-- Time Created Column -->
+										<ng-container matColumnDef="time_created">
+											<th mat-header-cell *matHeaderCellDef>Created</th>
+											<td mat-cell *matCellDef="let element">{{element.time_created}}</td>
+										</ng-container>										
+									
+										<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+										<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+									</table>
+
+                </mat-expansion-panel>
+    
+                <mat-expansion-panel hideToggle>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        EPC-2
+                    </mat-panel-title>
+                    <mat-panel-title>
+                      Self aware panel
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      Currently I am 
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <p>I'm visible because I am open</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        
+    </div>
+</div>
+
+@if(popUpActive) {
+
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Create a new Epic</h2>
+		</div>
+		<form [formGroup]="createEpicForm" class="pop-up-form" (ngSubmit)="createEpic()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="epic-name">Epic's Name</label>
+					<input type="text" id="epic-name" name="epic-name" formControlName="name" placeholder="Insert the name of the epic">
+					<span *ngIf="isNameInvalid()">  {{ nameErrorMessage }} </span>
+
+				</div>
+				<div class="input-wrapper">
+					<label for="epic-description">Description</label>
+					<textarea id="epic-description" name="epic-description" formControlName="description" placeholder="Insert a description"></textarea>
+					<span *ngIf="isDescriptionInvalid()"> {{ descriptionErrorMessage }} </span>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
+				<button type="submit">Create</button>
+			</div>
+		</form>
+	</div>
+
+}
