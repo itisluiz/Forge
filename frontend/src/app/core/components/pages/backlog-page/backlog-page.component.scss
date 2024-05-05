@@ -8,7 +8,7 @@ app-navbar{
     z-index: 99;
 }
 
-.kanban-page-content{
+.backlog-page-content{
     margin-top: 67px;
 }
 
@@ -25,7 +25,7 @@ app-navbar{
         padding: 1em;
     }
 
-    & > .kanban-grid{
+    & > .backlog-grid{
         .title{
             display: flex;
             align-items: baseline;
@@ -92,6 +92,85 @@ app-navbar{
             margin-top: 10px;
         }
         
+        .history-table {
+            width: 100%;
+            border-spacing: 0px 1.5px;
+
+            .mat-mdc-header-cell{
+                border: none;
+
+                &:nth-child(4){
+                    text-align: center;
+                
+                }
+
+                &:nth-child(6){
+                    text-align: center;
+                }
+            }
+
+            .mat-mdc-cell{
+                border: none;
+
+                &:nth-child(6){
+                    text-align: center;
+                }
+
+                &:nth-child(2){
+                    color: v.$dark-green-color;
+                    font-weight: 500;
+                }
+
+                &:nth-child(5){
+                    .assignee-container{
+                        display: flex;
+                        align-items: center;
+
+                        & > img{
+                            margin-right: 6px;
+                        }
+
+                        & > p{
+                            margin: 0;
+                        }
+                    }
+                }
+
+                &:nth-child(4){
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 10px;
+                   
+                    .status-container{
+                        background-color: red;
+                        border-radius: 2px;
+                        font-weight: 500;
+                        width: 100px;
+                    }
+                }
+            }
+            
+            .mat-mdc-row {
+                height: 40px;
+                background-color: v.$white-color;
+
+                &:hover{
+                    cursor: pointer;
+	                filter: brightness(0.9);
+                }
+
+                &:nth-child(odd){
+                    background-color: v.$background-grey;
+                
+                }
+                
+            }
+
+            
+        }
+          
     }
 
     & > .header-grid {
@@ -149,14 +228,14 @@ app-navbar{
 
 @media only screen and (max-width: 1500px) {
 
-    .kanban-page-content{
+    .backlog-page-content{
         margin: 67px 3em 0 3em;
     }
 
 }
 
 @media only screen and (min-width: 1400px) {
-    .kanban-page-content{
+    .backlog-page-content{
         .grid-container{
             .agile-process-grid{
                 padding: 1em 2em 2em 2em;
@@ -167,7 +246,7 @@ app-navbar{
 
 @media only screen and (min-width: 1800px) {
 
-    .kanban-page-content{
+    .backlog-page-content{
         margin: 67px 5em 0 5em;
     }
 
