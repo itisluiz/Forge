@@ -13,10 +13,10 @@
 						</ul>
 						<h1>Epics</h1>
 						<div class="buttons-header">
-							<button id="button-create-epic">Create an Epic</button>
+							<button id="button-create-epic" (click)="openPopUp()">Create an Epic</button>
 							<button mat-icon-button class="mat-icon-button">
 								<mat-icon>more_vert</mat-icon>
-						</button>
+							</button>
 						</div>
 
 					</div>
@@ -119,3 +119,34 @@
         
     </div>
 </div>
+
+@if(popUpActive) {
+
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Create a new Epic</h2>
+		</div>
+		<form [formGroup]="createEpicForm" class="pop-up-form" (ngSubmit)="createEpic()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="epic-name">Epic's Name</label>
+					<input type="text" id="epic-name" name="epic-name" formControlName="name" placeholder="Insert the name of the epic">
+					<span *ngIf="isNameInvalid()">  {{ nameErrorMessage }} </span>
+
+				</div>
+				<div class="input-wrapper">
+					<label for="epic-description">Description</label>
+					<textarea id="epic-description" name="epic-description" formControlName="description" placeholder="Insert a description"></textarea>
+					<span *ngIf="isDescriptionInvalid()"> {{ descriptionErrorMessage }} </span>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
+				<button type="submit">Create</button>
+			</div>
+		</form>
+	</div>
+
+}

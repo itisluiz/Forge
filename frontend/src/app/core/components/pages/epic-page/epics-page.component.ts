@@ -3,6 +3,11 @@ import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from '@angular/material/expansion';
 import {MatTable, MatTableModule} from '@angular/material/table';
+import {MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+
 
 	export interface History {
 		key: string;
@@ -57,11 +62,15 @@ import {MatTable, MatTableModule} from '@angular/material/table';
 		MatExpansionModule, 
 		MatTable,
 		MatTableModule,
+		MatSelectModule,
+		MatFormFieldModule, 
+		ReactiveFormsModule,
+		CommonModule,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
 })
-export class EpicsPageComponent implements AfterViewInit {
+export class EpicsPageComponent implements AfterViewInit, OnInit{
 
   displayedColumns: string[] = ['key', 'name', 'description', 'status', 'priority', 'time_created'];
 
@@ -69,6 +78,21 @@ export class EpicsPageComponent implements AfterViewInit {
 
 	@ViewChildren('statusContainer')
   statusContainer!: QueryList<ElementRef>;
+
+	popUpActive: boolean = false;
+
+	createEpicForm!: FormGroup;
+	creationFailed: boolean = false;
+	formSubmitted: boolean = false;
+
+	constructor(private formBuilder: FormBuilder) {}
+
+	ngOnInit(): void {
+		this.createEpicForm = this.formBuilder.group({
+			name: ["", [Validators.required, Validators.minLength(3)]],
+			description: ["", [Validators.required, Validators.minLength(3)]],
+		});
+	}
 
 	ngAfterViewInit(): void {
     this.statusContainer.forEach(cell => {
@@ -109,5 +133,65 @@ export class EpicsPageComponent implements AfterViewInit {
 
     return pre + priority.toLowerCase() + pos;
   }
+
+	openPopUp(){
+		this.popUpActive = true;
+	}
+
+	closePopUp() {
+		this.popUpActive = false;
+	}
+
+	createEpic() {
+		const name = this.createEpicForm.get("name");
+		const description = this.createEpicForm.get("description");
+		console.log(name?.value);
+		console.log(description?.value);
+
+		this.formSubmitted = true;
+		if (this.createEpicForm.invalid && (name?.value.length === 0 || 
+				description?.value.length === 0)) {
+			console.log("Invalid form");		
+			return;
+		}
+		if (this.createEpicForm.valid) {
+			// Lógica para criação do epic aqui
+			// Se a criação falhar, defina creationFailed como verdadeiro
+			console.log("Epic created");
+			this.creationFailed = true;
+		}
+		this.closePopUp();
+		
+	}
+
+	isNameInvalid(): boolean {
+		const name = this.createEpicForm.get("name");
+		if (!name!.errors?.["name"]) {
+			return false;
+		}
+		return name!.invalid && (name!.dirty || name!.touched);
+	}
+
+	isDescriptionInvalid(): boolean {
+		const description = this.createEpicForm.get("description");
+		if (description?.value.length === 0) {
+			return false;
+		}
+		return description!.invalid && (description!.dirty || description!.touched);
+	}
+
+	get nameErrorMessage(): string {
+		if (this.createEpicForm.get("name")!.errors) {
+			return "Name must have at least 3 characters.";
+		}
+		return "";
+	}
+
+	get descriptionErrorMessage(): string {
+		if (this.createEpicForm.get("description")!.errors) {
+			return "Description must have at least 3 characters.";
+		}
+		return "";
+	}
 
 }
