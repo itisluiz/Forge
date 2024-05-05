@@ -54,6 +54,7 @@ mat-accordion{
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 10px !important;
 
             h2{
                 font-size: v.$sub-title-font;

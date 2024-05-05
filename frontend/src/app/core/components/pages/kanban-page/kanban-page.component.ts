@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -29,9 +29,7 @@ import {
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",
 })
-export class KanbanPageComponent implements OnInit {
-
-	ngOnInit(): void {}
+export class KanbanPageComponent{
 
 	toDo: any= [
 		{
@@ -68,38 +66,30 @@ export class KanbanPageComponent implements OnInit {
 		}
 	];
 
-	inProgress: any = [
-		
-	];
+	inProgress: any = [];
 
-	availableReview: any = [
+	availableReview: any = [];
 
-	];
-
-	reviewing: any = [
-
-	];
+	reviewing: any = [];
   
-  	done: any = [
-
-	];
+  	done: any = [];
 
 	
 
   	drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+		if (event.previousContainer === event.container) {
+			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+		} else {
+			transferArrayItem(
+				event.previousContainer.data,
+				event.container.data,
+				event.previousIndex,
+				event.currentIndex,
+			);
 
-	  if (event.container.id !== 'cdk-drop-list-0' && event.container.data.length === 4) {
-		alert('A coluna atingiu 4 cards!');
-	  }
-    }
+			if (event.container.id !== 'cdk-drop-list-0' && event.container.data.length === 4) {
+				alert('A coluna atingiu 4 cards!');
+			}
+		}
   }
 }

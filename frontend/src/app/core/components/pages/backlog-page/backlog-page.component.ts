@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -14,7 +14,7 @@ export interface History {
   created: string;
 }
 
-const ELEMENT_DATA: History[] = [
+const historiesData: History[] = [
   { 
     type: 'Feature',
     key: 'TASK-001',
@@ -41,6 +41,33 @@ const ELEMENT_DATA: History[] = [
     assignee: 'Jane Smith',
     priority: 'Low',
     created: '2022-01-02'
+  },
+  { 
+    type: 'Feature',
+    key: 'TASK-001',
+    subject: 'Implement login functionality',
+    status: 'In Progress',
+    assignee: 'John Doe',
+    priority: 'High',
+    created: '2022-01-01'
+  },
+  { 
+    type: 'Feature',
+    key: 'BUG-001',
+    subject: 'Fix navigation bar alignment',
+    status: 'In Progress',
+    assignee: 'Jane Smith',
+    priority: 'Medium',
+    created: '2022-01-02'
+  },
+  { 
+    type: 'Tests',
+    key: 'BUG-001',
+    subject: 'Fix navigation bar alignment',
+    status: 'Done',
+    assignee: 'Jane Smith',
+    priority: 'Low',
+    created: '2022-01-02'
   }
 ];
 
@@ -51,7 +78,7 @@ const ELEMENT_DATA: History[] = [
     NavbarComponent, 
 		MatIcon, 
 		MatExpansionModule,
-    MatTableModule,
+    MatTableModule
   ],
   templateUrl: './backlog-page.component.html',
   styleUrl: './backlog-page.component.scss'
@@ -65,7 +92,18 @@ export class BacklogPageComponent implements AfterViewInit{
   @ViewChildren('statusContainer')
   statusContainer!: QueryList<ElementRef>;
 
+  @ViewChild(MatTable)
+  table!: MatTable<History>;
+
+  displayedColumns: string[] = ['type', 'key', 'subject', 'status', 'assignee', 'priority', 'created'];
+  dataSource = [...historiesData];
+
   ngAfterViewInit(): void {
+    this.setTypeColor();
+    this.setStatusStyle();
+  }
+
+  setTypeColor(){
     this.itemCell.forEach(cell => {
       let color;
       switch (cell.nativeElement.textContent.trim()) {
@@ -80,7 +118,9 @@ export class BacklogPageComponent implements AfterViewInit{
       }
       cell.nativeElement.style.borderLeft = `4px solid ${color}`;
     });
+  }
 
+  setStatusStyle(){
     this.statusContainer.forEach(cell => {
       let color;
       let background;
@@ -116,12 +156,6 @@ export class BacklogPageComponent implements AfterViewInit{
       cell.nativeElement.style.fontWeight = `${fontWeight}`;
     });
   }
-
-  displayedColumns: string[] = ['type', 'key', 'subject', 'status', 'assignee', 'priority', 'created'];
-  dataSource = [...ELEMENT_DATA];
-
-  @ViewChild(MatTable)
-  table!: MatTable<History>;
 
   priorityParser(priority: string){
     let pre = "../../../../../assets/";

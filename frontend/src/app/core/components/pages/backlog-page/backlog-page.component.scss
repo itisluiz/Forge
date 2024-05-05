@@ -151,9 +151,15 @@ app-navbar{
                     }
                 }
             }
-
+            
             .mat-mdc-row {
                 height: 40px;
+                background-color: v.$white-color;
+
+                &:hover{
+                    cursor: pointer;
+	                filter: brightness(0.9);
+                }
 
                 &:nth-child(odd){
                     background-color: v.$background-grey;
