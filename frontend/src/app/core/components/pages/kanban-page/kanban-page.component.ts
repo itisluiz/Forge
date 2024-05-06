@@ -74,8 +74,6 @@ export class KanbanPageComponent{
   
   	done: any = [];
 
-	
-
   	drop(event: CdkDragDrop<string[]>) {
 		if (event.previousContainer === event.container) {
 			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);

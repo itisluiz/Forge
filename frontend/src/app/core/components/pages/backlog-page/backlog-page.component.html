@@ -156,57 +156,7 @@
                         </mat-panel-description>
                     </mat-expansion-panel-header>
                       
-                    <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 history-table">
-
-                        <ng-container matColumnDef="type">
-                        <th mat-header-cell *matHeaderCellDef>Issue</th>
-                        <td #itemCell mat-cell *matCellDef="let element">{{element.type}}</td>
-                        </ng-container>   
-
-                        <ng-container matColumnDef="key">
-                        <th mat-header-cell *matHeaderCellDef>Key</th>
-                        <td mat-cell *matCellDef="let element">{{element.key}}</td>
-                        </ng-container>
-                    
-                        <ng-container matColumnDef="subject">
-                        <th mat-header-cell *matHeaderCellDef>Subject</th>
-                        <td mat-cell *matCellDef="let element">{{element.subject}}</td>
-                        </ng-container>
-                    
-                        <ng-container matColumnDef="status">
-                        <th mat-header-cell *matHeaderCellDef>Status</th>
-                        <td mat-cell *matCellDef="let element">
-                            <div #statusContainer class="status-container">
-                                {{element.status}}
-                            </div>         
-                        </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="assignee">
-                            <th mat-header-cell *matHeaderCellDef>Assigned by</th>
-                            <td mat-cell *matCellDef="let element">
-                                <div class="assignee-container">
-                                    <img src="../../../../../assets/image-fake.svg">
-                                    <p>{{element.assignee}}</p>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="priority">
-                            <th mat-header-cell *matHeaderCellDef>Priority</th>
-                            <td mat-cell *matCellDef="let element">
-                                <img [src]="priorityParser(element.priority)">
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="created">
-                            <th mat-header-cell *matHeaderCellDef>Created</th>
-                            <td mat-cell *matCellDef="let element">{{element.created}}</td>
-                        </ng-container>
-                    
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table> -->
+                    <!-- table -->
                       
                 </mat-expansion-panel>
     
@@ -228,3 +178,66 @@
         </div>
     </div>
 </div>
+
+@if(popUpActive) {
+
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<div class="history-pop-up">
+		<div class="history-pop-up-header">
+            <div class="status">
+                <p>Status:</p>
+                <div class="status-wrapper">
+                    <div id="container-status-pop" #statusPopUp>
+                        <span>
+                            {{ clickedItemDetails.status }}
+                        </span>
+                    </div>
+                    <span>{{ clickedItemDetails.key }}</span>
+                </div>
+            </div>
+			<h2>{{ clickedItemDetails.subject }}</h2>
+            <p class="history-desc">Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.</p>
+		</div>
+        <div class="pop-up-content">
+            <p class="title">Details</p>
+            <div class="info">
+                <div class="info-priority">
+                    <p>Priority:</p>
+                    <div class="content">
+                        <img [src]="priorityParser(clickedItemDetails.priority)">
+                        <span>{{ clickedItemDetails.priority }}</span>
+                    </div>
+                </div>
+
+                <div class="info-assignee">
+                    <p>Assignee:</p>
+                    <div class="content">
+                        <img src="../../../../../assets/image-fake.svg">
+                        <span>{{ clickedItemDetails.assignee }}</span>
+                    </div>
+                </div>
+
+                <div class="info-type">
+                    <p>Type:</p>
+                    <span>{{ clickedItemDetails.type }}</span>
+                </div>
+
+                <div class="info-created">
+                    <p>Created:</p>
+                    <span>{{ clickedItemDetails.created }}</span>
+                </div>
+
+                <div class="info-epic-link">
+                    <p>Epic link:</p>
+                    <span>Forge - especification-fea001</span>
+                </div>
+            </div>
+        </div>
+        <div class="pop-up-footer">
+            <button type="submit">Go to User stories</button>
+            <button class="cancel-history" (click)="closePopUp()">Close</button>
+        </div>
+	</div>
+
+}
