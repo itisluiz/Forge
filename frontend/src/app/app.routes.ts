@@ -5,6 +5,7 @@ import { AgileProcessComponent } from "./core/components/agile-process/agile-pro
 import { KanbanPageComponent } from "./core/components/pages/kanban-page/kanban-page.component";
 import { EpicsPageComponent } from "./core/components/pages/epic-page/epics-page.component";
 import { BacklogPageComponent } from "./core/components/pages/backlog-page/backlog-page.component";
+import { SignupPageComponent } from "./core/components/pages/signup-page/signup-page.component";
 
 export const routes: Routes = [
 	{ path: "", component: MainPageComponent},
@@ -12,5 +13,7 @@ export const routes: Routes = [
 	{ path: "agile", component: AgileProcessComponent },
 	{ path: "kanban", component: KanbanPageComponent},
 	{ path: "epics", component: EpicsPageComponent},
-	{ path: "backlog", component: BacklogPageComponent}
+	{ path: "backlog", component: BacklogPageComponent},
+	{ path: "signup", component: SignupPageComponent},
+	{ path: "**", redirectTo: "/"},
 ];

@@ -182,7 +182,6 @@ export class BacklogPageComponent implements AfterViewInit{
 		this.popUpActive = false;
 	}
 
-
   setTypeColor(){
     this.itemCell.forEach(cell => {
       let color;
