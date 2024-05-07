@@ -53,16 +53,19 @@ export class SignupPageComponent implements OnInit {
 		const formField = this.signupForm.get(field);
 		
 		if (field === 'name' || field === 'lastName') {
-		  return !formField!.value.match(this.regexName) && (formField!.dirty || formField!.touched);
+			if (formField?.value.length === 0) {
+				return false;
+			}
+		  	return !formField!.value.match(this.regexName) && (formField!.dirty || formField!.touched);
 
 		} else if (field === 'email') {
-		  return formField!.errors?.["email"] && (formField!.dirty || formField!.touched);
+		  	return formField!.errors?.["email"] && (formField!.dirty || formField!.touched);
 
 		} else if (field === 'password' || field === 'passwordConfirm') {
 			if (formField?.value.length === 0) {
 				return false;
 			}
-		  return formField!.invalid && (formField!.dirty || formField!.touched);
+		  	return formField!.invalid && (formField!.dirty || formField!.touched);
 		}
 		return false;
 	}

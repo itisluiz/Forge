@@ -6,6 +6,7 @@ import { KanbanPageComponent } from "./core/components/pages/kanban-page/kanban-
 import { EpicsPageComponent } from "./core/components/pages/epic-page/epics-page.component";
 import { BacklogPageComponent } from "./core/components/pages/backlog-page/backlog-page.component";
 import { SignupPageComponent } from "./core/components/pages/signup-page/signup-page.component";
+import { SelectProjectPageComponent } from "./core/components/pages/select-project-page/select-project-page.component";
 
 export const routes: Routes = [
 	{ path: "", component: MainPageComponent},
@@ -15,5 +16,6 @@ export const routes: Routes = [
 	{ path: "epics", component: EpicsPageComponent},
 	{ path: "backlog", component: BacklogPageComponent},
 	{ path: "signup", component: SignupPageComponent},
+	{ path: "select-project", component: SelectProjectPageComponent},
 	{ path: "**", redirectTo: "/"},
 ];
