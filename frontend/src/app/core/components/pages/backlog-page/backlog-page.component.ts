@@ -25,6 +25,7 @@ const historiesData: History[] = [
     assignee: 'John Doe',
     priority: 'High',
     created: '2022-01-01'
+
   },
   { 
     type: 'Bug',
@@ -85,7 +86,7 @@ const historiesData: History[] = [
     NavbarComponent, 
 		MatIcon, 
 		MatExpansionModule,
-    MatTableModule
+    MatTableModule,
   ],
   templateUrl: './backlog-page.component.html',
   styleUrl: './backlog-page.component.scss'
@@ -179,7 +180,20 @@ export class BacklogPageComponent implements AfterViewInit{
   }
 
 	closePopUp() {
-		this.popUpActive = false;
+
+    let backgroundPopUp = document.querySelector('.pop-up-background');
+    if (backgroundPopUp) {
+      backgroundPopUp.classList.add('fade-opacity');
+    }
+
+    let popUp = document.querySelector('.history-pop-up');
+    if (popUp) {
+      popUp.classList.add('fade-out');
+    }
+    setTimeout(() => {
+      this.popUpActive = false;
+    }, 200);
+
 	}
 
   setTypeColor(){

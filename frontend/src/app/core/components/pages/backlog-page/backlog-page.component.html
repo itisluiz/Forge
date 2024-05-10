@@ -184,8 +184,17 @@
 	<div class="pop-up-background" (click)="closePopUp()"></div>
 
 	<div class="history-pop-up">
+        <img class="close" src="../../../../../assets/double-arrow.svg" (click)="closePopUp()">
 		<div class="history-pop-up-header">
-            <div class="status">
+            <h2>{{ clickedItemDetails.subject }}</h2>
+            <p class="history-desc">Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.</p>
+		</div>
+        <div class="pop-up-content">
+            <div class="info key">
+                <p>Key:</p>
+                <span>{{ clickedItemDetails.key }}</span>
+            </div>
+            <div class="info status">
                 <p>Status:</p>
                 <div class="status-wrapper">
                     <div id="container-status-pop" #statusPopUp>
@@ -193,50 +202,70 @@
                             {{ clickedItemDetails.status }}
                         </span>
                     </div>
-                    <span>{{ clickedItemDetails.key }}</span>
                 </div>
             </div>
-			<h2>{{ clickedItemDetails.subject }}</h2>
-            <p class="history-desc">Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.</p>
-		</div>
-        <div class="pop-up-content">
-            <p class="title">Details</p>
-            <div class="info">
-                <div class="info-priority">
-                    <p>Priority:</p>
-                    <div class="content">
-                        <img [src]="priorityParser(clickedItemDetails.priority)">
-                        <span>{{ clickedItemDetails.priority }}</span>
-                    </div>
+            <div class="info priority">
+                <p>Priority:</p>
+                <div class="content">
+                    <img [src]="priorityParser(clickedItemDetails.priority)">
+                    <span>{{ clickedItemDetails.priority }}</span>
                 </div>
+            </div>
 
-                <div class="info-assignee">
-                    <p>Assignee:</p>
-                    <div class="content">
-                        <img src="../../../../../assets/image-fake.svg">
-                        <span>{{ clickedItemDetails.assignee }}</span>
-                    </div>
-                </div>
+            <div class="info type">
+                <p>Type:</p>
+                <span>{{ clickedItemDetails.type }}</span>
+            </div>
 
-                <div class="info-type">
-                    <p>Type:</p>
-                    <span>{{ clickedItemDetails.type }}</span>
+            <div class="info assignee">
+                <p>Assignee:</p>
+                <div class="content">
+                    <img src="../../../../../assets/image-fake.svg">
+                    <span>{{ clickedItemDetails.assignee }}</span>
                 </div>
+            </div>
 
-                <div class="info-created">
-                    <p>Created:</p>
-                    <span>{{ clickedItemDetails.created }}</span>
-                </div>
+            <div class="info created">
+                <p>Created:</p>
+                <span>{{ clickedItemDetails.created }}</span>
+            </div>
 
-                <div class="info-epic-link">
-                    <p>Epic link:</p>
-                    <span>Forge - especification-fea001</span>
-                </div>
+            <div class="info user-stories-link">
+                <p>User stories:</p>
+                <span>Forge - especification-fea001</span>
+            </div>
+
+            <div class="info epic-link">
+                <p>Epic link:</p>
+                <span>Forge - especification-fea001</span>
             </div>
         </div>
         <div class="pop-up-footer">
-            <button type="submit">Go to User stories</button>
-            <button class="cancel-history" (click)="closePopUp()">Close</button>
+            <div class="hr"></div>
+            <div class="comments-container">
+                <div class="comment">
+                    <div class="user">
+                        <div class="id">
+                            <img src="../../../../../assets/image-fake.svg">
+                            <p>Leonardo Alves</p>
+                            <span>1 hour ago</span>
+                        </div>
+                        <div class="actions">
+                            <button mat-icon-button>
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="message">
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa omnis fugit eligendi.
+                    </div>
+                </div>
+            </div>
+            <div class="input-comment">
+                <img src="../../../../../assets/image-fake.svg">
+                <input type="text" placeholder="Add a comment..">
+            </div>
+            <div class="hr"></div>
         </div>
 	</div>
 

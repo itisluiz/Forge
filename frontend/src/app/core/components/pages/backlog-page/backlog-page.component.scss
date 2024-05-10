@@ -238,31 +238,60 @@ app-navbar{
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: fadeInOpacity .2s ease-out;
 }
 
+.fade-opacity {
+    animation: fadeOutOpacity 0.2s ease-out !important;
+}
+
+.fade-out {
+    animation: fadeOut 0.2s ease-out !important;
+}
 
 .history-pop-up {
     background-color: v.$white-color;
-    border-radius: 12px;
     width: 500px;
+    height: 100svh;
     z-index: 100;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
+    top: 0;
+    right: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: baseline;
     flex-direction: column;
+    padding: 100px 60px 0 60px;
+    animation: fadeIn 0.2s forwards ease-out;
+
+    .close{
+        position: absolute;
+        top: 20px;
+        left: 25px;
+        cursor: pointer;
+    }
 
     .history-pop-up-header {
         display: flex;
         flex-direction: column;
-        margin: 29px 62px 0 62px;
+        
+
+        h2 {
+            font-size: v.$title-font;
+            font-weight: 500;
+        }
+
+    }
+
+    .pop-up-content{
+        margin-top: 45px;
+
+        .title{
+            font-size: v.$sub-title-font;
+            font-weight: 500;
+        }
 
         .status{
             display: flex;
-            flex-direction: column;
 
             & > p{
                 font-size: v.$sub-title-minor-font;
@@ -290,44 +319,27 @@ app-navbar{
             }
         }
 
-        h2 {
-            font-size: v.$title-font;
-            font-weight: 500;
-            margin: 20px 0 5px 0;
-        }
-
-    }
-
-    .pop-up-content{
-        margin: 27px 62px 46px 62px;
-
-        .title{
-            font-size: v.$sub-title-font;
-            font-weight: 500;
-        }
-
         .info{
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: auto auto;
-            gap: 12px;
-            margin-top: 9px;
+            display: flex;
+            position: relative;
+            margin-bottom: 15px;
 
-            & > div{
-                .content{
-                    display: flex;
-                    align-items: center;
-                    
-                    img{
-                        margin-right: 7px;
-                    }
-                }
+            & > p{
+                font-size: v.$paragraph-font;
+                color: v.$grey-color;
             }
 
-            & > div > p{
-                color: v.$label-background-dark-grey;
-                font-size: v.$major-observation-font;
-                font-weight: 500;
+            & > span, .status-wrapper, .content{
+                position: absolute;
+                left: 200px;
+                display: flex;
+                width: 250px;
+                white-space: nowrap;
+                font-size: v.$paragraph-font;
+
+                img{
+                    margin-right: 7px;
+                }
             }
         }
     }
@@ -335,25 +347,90 @@ app-navbar{
     .pop-up-footer {
         display: flex;
         flex-direction: column;
-        margin: 0 62px 39px 62px;
-        width: calc(100% - 124px);
-        
-        button {
+        margin-top: 25px;
+
+        .comments-container{
+            display: flex;
+            flex-direction: column;
+
+            .comment{
+                .user{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 9px;
+
+                    .id{
+                        display: flex;
+                        align-items: center;
+                        margin-top: 12px;
+
+                        img{
+                            margin-right: 12px;
+                            width: 22px;
+                            height: 22px;
+                        }
+
+                        p{
+                            margin-right: 8px;
+                            font-size: v.$sub-title-minor-font;
+                        }
+
+                        span{
+                            font-size: v.$observation-font;
+                            color: v.$label-background-dark-grey;
+                        }
+                    }
+
+                    .actions{
+                        height: 15px;
+                        button {
+                            background-color: transparent;
+                            border: none;
+                            color: v.$label-background-grey;
+                        }
+                    }
+                }
+
+                .message{
+                    font-size: v.$paragraph-font;
+                    margin-left: 34.5px;
+                    margin-bottom: 10px;
+                }
+
+            }
+        }
+
+        .input-comment{
+            display: flex;
+            align-items: center;
+
+            img{
+                margin-right: 12px;
+                width: 22px;
+                height: 22px;
+                margin-bottom: 11px;
+                margin-top: 12px;
+            }
+
+            input{
+                background-color: transparent;
+                color: v.$label-background-dark-grey;
+                border: none;
+                outline: none;
+                width: 100%;
+                font-size: v.$paragraph-font;
+            }
+        }
+
+        .hr{
+            height: 1px;
             width: 100%;
-            height: 40px;
-            text-align: center;
-            background-color: v.$green-color;
-            border: none;
-            border-radius: 2px;
-            cursor: pointer;
-            color: v.$white-color;
-            font-weight: 500;
+            background-color: v.$black-color;
+            opacity: .2;
         }
-        button.cancel-history {
-            color: v.$grey-color;
-            background-color: v.$white-color;
-            margin-top: 9px;
-        }
+        
+        
     }
 
 }
@@ -384,11 +461,38 @@ app-navbar{
 
 }
 
-@keyframes loading {
+@keyframes fadeIn {
     0% {
-        background-position: 200% 0;
+        transform: translateX(100%);
     }
     100% {
-        background-position: -200% 0;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes fadeOutOpacity {
+    0% {
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
     }
 }
