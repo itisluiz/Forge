@@ -4,7 +4,7 @@
 	"scripts": {
 		"start": "ng serve",
 		"build": "ng build",
-		"postinstall": "npm link ../shared"
+		"preinstall": "npm link ../shared"
 	},
 	"dependencies": {
 		"@angular/animations": "^17.0.0",
