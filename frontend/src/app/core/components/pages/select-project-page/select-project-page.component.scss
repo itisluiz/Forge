@@ -1,0 +1,129 @@
+@use "../../../../../../src/assets/variables.scss" as v;
+
+.select-project-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	min-height: calc(100svh - 65px);
+	width: 100vw;
+	margin-top: 2em;
+
+	.select-project-component > div {
+		margin: 3em 55px 0 55px;
+	}
+
+	.select-project-component {
+		background-color: v.$white-color;
+		border-radius: 12px;
+		display: flex;
+		flex-direction: column;
+		width: 1100px;
+
+		.title {
+			display: flex;
+			justify-content: space-between;
+
+			.left-side {
+				display: flex;
+				flex-direction: column;
+
+				h1 {
+					font-weight: 500;
+				}
+
+				p {
+					font-size: v.$h2-font;
+					max-width: 350px;
+				}
+			}
+
+			.right-side {
+				display: flex;
+				align-items: center;
+				height: 31px;
+
+				button {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background-color: transparent;
+					border: none;
+					height: 100%;
+				}
+
+				button:nth-child(1) {
+					width: 100px;
+					background-color: v.$epics-light-grey-color;
+					border-radius: 4px;
+					margin-right: 4px;
+				}
+			}
+		}
+
+		.projects {
+			.header {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 14px;
+			}
+
+			.list {
+				& > div {
+					cursor: pointer;
+
+					&:hover {
+						transition: 0.1s;
+						cursor: pointer;
+						filter: brightness(0.8);
+					}
+
+					.project-info {
+						display: flex;
+						height: 63px;
+						background-color: v.$background-grey;
+						border-radius: 2px;
+						margin-bottom: 4px;
+						align-items: center;
+						justify-content: center;
+
+						p {
+							margin-right: 5px;
+						}
+					}
+				}
+			}
+
+			.footer-next {
+				display: flex;
+				margin: 0 auto;
+				width: 320px;
+				height: 40px;
+				align-items: center;
+				justify-content: center;
+				color: v.$white-color;
+				font-weight: 500;
+				font-size: v.$button-font;
+				background-color: v.$green-color;
+				border: none;
+				border-radius: 2px;
+				margin-top: 120px;
+				margin-bottom: 64px;
+				cursor: pointer;
+
+				&:disabled {
+					background-color: v.$disabled-background-color;
+					color: v.$disabled-color;
+					cursor: not-allowed;
+				}
+			}
+		}
+	}
+
+	.copyright {
+		margin-top: 2em;
+		font-size: v.$paragraph-font;
+		color: v.$grey-color;
+	}
+}

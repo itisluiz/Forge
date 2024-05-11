@@ -2,11 +2,16 @@
 $black-color: #000;
 $white-color: #fff;
 $green-color: #6dc955;
+$alert-color: #ca7b1d;
+$blue-color: #1a73dc;
 $grey-color: #686868;
 
 $dark-color: #212121;
 $dark-grey-color: #393939;
 $dark-green-color: #289e0b;
+
+$lighter-green-color: #93c088;
+$darkest-green-color: #187600;
 
 $lemon-color: #72c800;
 $background-grey: #f4f4f4;
@@ -23,11 +28,20 @@ $input-color: #f2f2f2;
 $disabled-background-color: #ccc;
 $disabled-color: #888;
 
+$pop-up-background-color: #00000080;
+
+// Color for Epic`s page
+$epics-dark-green-color: #1c770d;
+$purple-color: #660b9e;
+$epics-light-grey-color: #ededed;
+
 // Font variables
 $title-font: 24px;
 $h2-font: 18px;
 $sub-title-font: 16px;
+$sub-title-minor-font: 15px;
 $paragraph-font: 14px;
+$major-observation-font: 13px;
 $observation-font: 12px;
 $button-font: 14px;
 

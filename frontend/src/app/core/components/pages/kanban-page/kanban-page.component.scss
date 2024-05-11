@@ -30,29 +30,35 @@ app-navbar {
 			display: flex;
 			align-items: baseline;
 			justify-content: space-between;
+			margin-bottom: 25px;
 
 			.left {
 				display: flex;
-				align-items: center;
+				flex-direction: column;
 
-				h2 {
-					font-size: v.$h2-font;
-					font-weight: 500;
-					margin-right: 11px;
-				}
-
-				.items {
+				.left-content {
 					display: flex;
 					align-items: center;
-					gap: 2px;
-					background-color: v.$lemon-color;
-					padding: 1px 2.5px;
-					border-radius: 3px;
-					height: fit-content;
 
-					span {
-						font-size: 9px;
-						color: v.$white-color;
+					h2 {
+						font-size: v.$h2-font;
+						font-weight: 500;
+						margin-right: 11px;
+					}
+
+					.items {
+						display: flex;
+						align-items: center;
+						gap: 2px;
+						background-color: v.$lemon-color;
+						padding: 1px 2.5px;
+						border-radius: 3px;
+						height: fit-content;
+
+						span {
+							font-size: 9px;
+							color: v.$white-color;
+						}
 					}
 				}
 			}
@@ -66,7 +72,7 @@ app-navbar {
 					height: 24px;
 					background-color: transparent;
 					border: none;
-					margin-bottom: 3.5px;
+					margin-bottom: 7px;
 
 					mat-icon {
 						transform: translateY(5px);
@@ -80,10 +86,6 @@ app-navbar {
 			color: v.$grey-color;
 			font-weight: 400;
 			margin-top: 10px;
-		}
-
-		.desc {
-			transform: translateY(-27px);
 		}
 	}
 
