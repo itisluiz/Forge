@@ -2,7 +2,8 @@
 	"name": "forge",
 	"version": "0.0.0",
 	"scripts": {
-		"normalize": "prettier . --write"
+		"normalize": "prettier . --write",
+		"postinstall": "husky"
 	},
 	"devDependencies": {
 		"husky": "^9.0.11",
