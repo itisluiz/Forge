@@ -1,10 +1,4 @@
 {
 	"name": "forge-shared",
-	"version": "0.0.0",
-	"scripts": {
-		"normalize": "prettier . --write"
-	},
-	"devDependencies": {
-		"prettier": "^3.2.5"
-	}
+	"version": "0.0.0"
 }

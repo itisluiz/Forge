@@ -1,0 +1,10 @@
+{
+	"name": "forge",
+	"version": "0.0.0",
+	"scripts": {
+		"normalize": "prettier . --write"
+	},
+	"devDependencies": {
+		"prettier": "^3.2.5"
+	}
+}
