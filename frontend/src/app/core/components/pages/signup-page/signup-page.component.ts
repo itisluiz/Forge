@@ -20,13 +20,16 @@ export class SignupPageComponent implements OnInit {
 	constructor(private formBuilder: FormBuilder) {}
 
 	ngOnInit(): void {
-		this.signupForm = this.formBuilder.group({
-			name: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
-			lastName: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
-			email: ["", [Validators.required, Validators.email]],
-			password: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
-			passwordConfirm: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
-		}, { validator: this.checkPasswords });
+		this.signupForm = this.formBuilder.group(
+			{
+				name: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
+				lastName: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
+				email: ["", [Validators.required, Validators.email]],
+				password: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
+				passwordConfirm: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
+			},
+			{ validator: this.checkPasswords },
+		);
 
 		this.signupForm.get("name")!.valueChanges.subscribe(() => {
 			this.signupFailed = false;
@@ -51,29 +54,26 @@ export class SignupPageComponent implements OnInit {
 
 	isFieldInvalid(field: string): boolean {
 		const formField = this.signupForm.get(field);
-		
-		if (field === 'name' || field === 'lastName') {
+
+		if (field === "name" || field === "lastName") {
 			if (formField?.value.length === 0) {
 				return false;
 			}
-		  	return !formField!.value.match(this.regexName) && (formField!.dirty || formField!.touched);
-
-		} else if (field === 'email') {
-		  	return formField!.errors?.["email"] && (formField!.dirty || formField!.touched);
-
-		} else if (field === 'password' || field === 'passwordConfirm') {
+			return !formField!.value.match(this.regexName) && (formField!.dirty || formField!.touched);
+		} else if (field === "email") {
+			return formField!.errors?.["email"] && (formField!.dirty || formField!.touched);
+		} else if (field === "password" || field === "passwordConfirm") {
 			if (formField?.value.length === 0) {
 				return false;
 			}
-		  	return formField!.invalid && (formField!.dirty || formField!.touched);
+			return formField!.invalid && (formField!.dirty || formField!.touched);
 		}
 		return false;
 	}
 
-
 	checkPasswords(signupForm: FormGroup) {
-		const password = signupForm.get('password')?.value;
-		const confirmPassword = signupForm.get('passwordConfirm')?.value;
+		const password = signupForm.get("password")?.value;
+		const confirmPassword = signupForm.get("passwordConfirm")?.value;
 
 		return password === confirmPassword ? true : false;
 	}
@@ -113,7 +113,10 @@ export class SignupPageComponent implements OnInit {
 	}
 
 	get passwordErrorMessage(): string {
-		if (this.signupForm.get("password")!.errors?.["pattern"] || this.signupForm.get("passwordConfirm")!.errors?.["pattern"]) {
+		if (
+			this.signupForm.get("password")!.errors?.["pattern"] ||
+			this.signupForm.get("passwordConfirm")!.errors?.["pattern"]
+		) {
 			return "Password must have 7 characters and 1 special character.";
 		}
 		return "";
@@ -122,7 +125,7 @@ export class SignupPageComponent implements OnInit {
 	get overallErrorMessage(): string {
 		const password = this.signupForm.get("password");
 		const passwordConfirm = this.signupForm.get("passwordConfirm");
-		
+
 		if (this.signupFailed && password?.value !== passwordConfirm?.value) {
 			return "Your passwords must be equals. Please try again.";
 		}

@@ -9,13 +9,13 @@ import { SignupPageComponent } from "./core/components/pages/signup-page/signup-
 import { SelectProjectPageComponent } from "./core/components/pages/select-project-page/select-project-page.component";
 
 export const routes: Routes = [
-	{ path: "", component: MainPageComponent},
-	{ path: "login", component: LoginPageComponent},
+	{ path: "", component: MainPageComponent },
+	{ path: "login", component: LoginPageComponent },
 	{ path: "agile", component: AgileProcessComponent },
-	{ path: "kanban", component: KanbanPageComponent},
-	{ path: "epics", component: EpicsPageComponent},
-	{ path: "backlog", component: BacklogPageComponent},
-	{ path: "signup", component: SignupPageComponent},
-	{ path: "select-project", component: SelectProjectPageComponent},
-	{ path: "**", redirectTo: "/"},
+	{ path: "kanban", component: KanbanPageComponent },
+	{ path: "epics", component: EpicsPageComponent },
+	{ path: "backlog", component: BacklogPageComponent },
+	{ path: "signup", component: SignupPageComponent },
+	{ path: "select-project", component: SelectProjectPageComponent },
+	{ path: "**", redirectTo: "/" },
 ];

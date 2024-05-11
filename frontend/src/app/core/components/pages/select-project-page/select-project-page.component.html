@@ -1,38 +1,36 @@
 <div class="select-project-container">
 	<div class="select-project-component">
 		<div class="title">
-            <div class="left-side">
-                <h1>Please select your project</h1>
-                <p>To have access to the management process, choose one project</p>
-            </div>
+			<div class="left-side">
+				<h1>Please select your project</h1>
+				<p>To have access to the management process, choose one project</p>
+			</div>
 
-            <div class="right-side">
-                <button id="join">Join</button>
-                <button mat-icon-button>
-                    <mat-icon>more_vert</mat-icon>
-                </button>
-            </div>
+			<div class="right-side">
+				<button id="join">Join</button>
+				<button mat-icon-button>
+					<mat-icon>more_vert</mat-icon>
+				</button>
+			</div>
 		</div>
 
-
 		<div class="projects">
-            <div class="header">
-                <span>Projects</span>
-                <span>Total: {{ dataSource.length }}</span>
-            </div>
+			<div class="header">
+				<span>Projects</span>
+				<span>Total: {{ dataSource.length }}</span>
+			</div>
 
-            <div class="list">
-                <div *ngFor="let project of dataSource">
-                    <div class="project-info">
-                        <p>{{ project.name }}: </p>
-                        <span>{{ project.description }}</span>
-                    </div>
-                </div>
-            </div>
+			<div class="list">
+				<div *ngFor="let project of dataSource">
+					<div class="project-info">
+						<p>{{ project.name }}:</p>
+						<span>{{ project.description }}</span>
+					</div>
+				</div>
+			</div>
 
-            <button class="footer-next">Next</button>
-        </div>
-		
+			<button class="footer-next">Next</button>
+		</div>
 	</div>
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>
