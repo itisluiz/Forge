@@ -1,0 +1,51 @@
+<div class="signup-container">
+	<div class="signup-component">
+		<svg width="167" height="114" viewBox="0 0 167 114" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path
+				d="M16.8502 93.3224C-38.9196 22.1777 63.5217 3.08293 121.714 2.42861L89.6729 28.7848C2.43402 29.8173 4.77491 72.2401 16.8502 93.3224Z"
+				fill="black"
+			/>
+			<circle cx="39.9999" cy="71" r="18" fill="black" />
+			<path
+				d="M73.9345 60.0366C75.0484 58.2212 76.4925 56.7978 78.2666 55.7663C80.082 54.7349 82.1449 54.2191 84.4554 54.2191V63.3166H82.1655C79.4425 63.3166 77.3795 63.9561 75.9767 65.2351C74.6152 66.5142 73.9345 68.7421 73.9345 71.919V89H65.2702V54.7142H73.9345V60.0366ZM103.721 54.1573C106.279 54.1573 108.527 54.673 110.467 55.7044C112.406 56.6947 113.932 57.9943 115.046 59.6034V54.7142H123.772V89.2476C123.772 92.4244 123.133 95.2507 121.854 97.7262C120.575 100.243 118.656 102.223 116.098 103.667C113.54 105.153 110.446 105.895 106.815 105.895C101.947 105.895 97.9446 104.761 94.809 102.492C91.7146 100.222 89.9611 97.1279 89.5485 93.2084H98.1509C98.6047 94.7762 99.5743 96.0139 101.06 96.9216C102.586 97.8706 104.422 98.345 106.568 98.345C109.084 98.345 111.127 97.5818 112.694 96.0552C114.262 94.5699 115.046 92.3007 115.046 89.2476V83.9252C113.932 85.5343 112.385 86.8752 110.405 87.9479C108.466 89.0206 106.238 89.557 103.721 89.557C100.833 89.557 98.1922 88.8143 95.7992 87.329C93.4062 85.8437 91.5083 83.7602 90.1055 81.0784C88.744 78.3553 88.0632 75.2403 88.0632 71.7333C88.0632 68.2676 88.744 65.1939 90.1055 62.5121C91.5083 59.8303 93.3855 57.7674 95.7373 56.3233C98.1303 54.8793 100.791 54.1573 103.721 54.1573ZM115.046 71.8571C115.046 69.7529 114.634 67.9582 113.808 66.4729C112.983 64.9463 111.869 63.7911 110.467 63.0072C109.064 62.182 107.558 61.7694 105.949 61.7694C104.34 61.7694 102.854 62.1614 101.493 62.9453C100.131 63.7292 99.0173 64.8844 98.1509 66.411C97.3257 67.8963 96.9131 69.6704 96.9131 71.7333C96.9131 73.7963 97.3257 75.6116 98.1509 77.1795C99.0173 78.706 100.131 79.8819 101.493 80.7071C102.896 81.5322 104.381 81.9448 105.949 81.9448C107.558 81.9448 109.064 81.5529 110.467 80.7689C111.869 79.9438 112.983 78.7885 113.808 77.3032C114.634 75.7767 115.046 73.9613 115.046 71.8571ZM164.107 71.1145C164.107 72.3522 164.024 73.4662 163.859 74.4564H138.795C139.001 76.9319 139.867 78.8711 141.394 80.2738C142.92 81.6766 144.798 82.378 147.026 82.378C150.244 82.378 152.534 80.9959 153.895 78.2315H163.24C162.25 81.5322 160.352 84.2553 157.547 86.4007C154.741 88.5049 151.296 89.557 147.211 89.557C143.911 89.557 140.94 88.835 138.3 87.3909C135.7 85.9056 133.658 83.8221 132.173 81.1403C130.729 78.4585 130.007 75.3641 130.007 71.8571C130.007 68.3089 130.729 65.1939 132.173 62.5121C133.617 59.8303 135.638 57.7674 138.238 56.3233C140.837 54.8793 143.828 54.1573 147.211 54.1573C150.471 54.1573 153.379 54.8586 155.938 56.2614C158.537 57.6642 160.538 59.6653 161.941 62.2645C163.385 64.8226 164.107 67.7725 164.107 71.1145ZM155.133 68.639C155.092 66.411 154.287 64.6369 152.719 63.3166C151.152 61.9551 149.233 61.2743 146.964 61.2743C144.818 61.2743 143.003 61.9345 141.518 63.2547C140.074 64.5338 139.187 66.3285 138.857 68.639H155.133Z"
+				fill="black"
+			/>
+		</svg>
+		<h1>Sign up</h1>
+		<p>Welcome! After you register, log in to access your project dashboard and manage tasks efficiently.</p>
+		<form [formGroup]="signupForm" class="signup-form" (ngSubmit)="signup()">
+			<div class="name-input">
+				<p class="left">
+					<label for="name">Nome</label>
+					<input type="text" formControlName="name" placeholder="Ex: Peter" />
+					<span *ngIf="isFieldInvalid('name')"> <mat-icon>error</mat-icon> {{ nameErrorMessage }} </span>
+				</p>
+				<p class="right">
+					<label for="lastName">Sobrenome</label>
+					<input type="text" formControlName="lastName" placeholder="Ex: Goldberg" />
+					<span *ngIf="isFieldInvalid('lastName')"> <mat-icon>error</mat-icon> {{ lastNameErrorMessage }} </span>
+				</p>
+			</div>
+			<p class="email-input">
+				<label for="email">Email</label>
+				<input type="email" formControlName="email" placeholder="ex: youremail@domain.com" />
+				<span *ngIf="isFieldInvalid('email')"> <mat-icon>error</mat-icon> {{ emailErrorMessage }} </span>
+			</p>
+			<p class="password-input">
+				<label for="password">Senha</label>
+				<input type="password" formControlName="password" placeholder="Password" />
+				<span *ngIf="isFieldInvalid('password')"> <mat-icon>error</mat-icon> {{ passwordErrorMessage }} </span>
+			</p>
+			<p class="password-confirm-input">
+				<label for="passwordConfirm">Confirmar senha</label>
+				<input type="password" formControlName="passwordConfirm" placeholder="Password" />
+				<span *ngIf="isFieldInvalid('passwordConfirm')"> <mat-icon>error</mat-icon> {{ passwordErrorMessage }} </span>
+			</p>
+			<p class="form-failed" *ngIf="signupFailed">
+				<mat-icon>error</mat-icon> {{ overallErrorMessage }}
+			</p>
+			<button type="submit" [disabled]="signupForm.invalid">Next</button>
+		</form>
+	</div>
+	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
+</div>

@@ -1,0 +1,272 @@
+<app-navbar></app-navbar>
+<div class="backlog-page-content">
+	<div class="grid-container">
+        <div class="header-grid">
+            <ul class="breadcrumber">
+                <li><a href="">Squad BES</a></li>
+                <div class="spacer">></div>
+                <li><a href="">TCC 1</a></li>
+                <div class="spacer">></div>
+                <li><a href="/backlog">Backlog</a></li>
+            </ul>
+            <h1>Backlog</h1>
+            <p>This board will manage your features that are available to start development.</p>
+        </div>
+
+        <div class="backlog-grid sprint">
+            <div class="title">
+                <div class="left">
+                    <div class="left-content">
+                        <h2>Sprint 1</h2>
+                        <div class="items">
+                            <span>3</span>
+                            <span>items</span>
+                        </div>
+                    </div>
+                    <p class="desc">Breve descrição do que será feito na task</p>
+                </div>
+
+                <div class="right">
+                    <button mat-icon-button>
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <p class="sprint-date">Inicio da Sprint: 28/02/2024 • 08:30 </p>
+                </div>
+                
+            </div>
+            
+            
+            <mat-accordion multi>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Key
+                        </mat-panel-title>
+                        <mat-panel-title>
+                            This is the expansion title
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            This is a summary of the content
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 history-table">
+
+                        <ng-container matColumnDef="type">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+                        <td #itemCell mat-cell *matCellDef="let element">{{element.type}}</td>
+                        </ng-container>   
+
+                        <ng-container matColumnDef="key">
+                        <th mat-header-cell *matHeaderCellDef>Key</th>
+                        <td mat-cell *matCellDef="let element">{{element.key}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="subject">
+                        <th mat-header-cell *matHeaderCellDef>Subject</th>
+                        <td mat-cell *matCellDef="let element">{{element.subject}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef>Status</th>
+                        <td mat-cell *matCellDef="let element">
+                            <div #statusContainer class="status-container">
+                                {{element.status}}
+                            </div>         
+                        </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="assignee">
+                            <th mat-header-cell *matHeaderCellDef>Assigned by</th>
+                            <td mat-cell *matCellDef="let element">
+                                <div class="assignee-container">
+                                    <img src="../../../../../assets/image-fake.svg">
+                                    <p>{{element.assignee}}</p>
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="priority">
+                            <th mat-header-cell *matHeaderCellDef>Priority</th>
+                            <td mat-cell *matCellDef="let element">
+                                <img [src]="priorityParser(element.priority)">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="created">
+                            <th mat-header-cell *matHeaderCellDef>Created</th>
+                            <td mat-cell *matCellDef="let element">{{element.created}}</td>
+                        </ng-container>
+                    
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </mat-expansion-panel>
+    
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Key
+                    </mat-panel-title>
+                    <mat-panel-title>
+                      Self aware panel
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      Currently I am 
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <p>I'm visible because I am open</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <div class="backlog-grid">
+            <div class="title">
+                <div class="left">
+                    <div class="left-content">
+                        <h2>Backlog</h2>
+                        <div class="items">
+                            <span>7</span>
+                            <span>items</span>
+                        </div>
+                    </div>
+                    <p class="desc">Breve descrição do que será feito na task</p>
+                </div>
+
+                <div class="right">
+                    <button mat-icon-button>
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                </div>
+                
+            </div>
+            
+            
+            <mat-accordion multi>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Key
+                        </mat-panel-title>
+                        <mat-panel-title>
+                            This is the expansion title
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            This is a summary of the content
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                      
+                    <!-- table -->
+                      
+                </mat-expansion-panel>
+    
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Key
+                    </mat-panel-title>
+                    <mat-panel-title>
+                      Self aware panel
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      Currently I am 
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <p>I'm visible because I am open</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+</div>
+
+@if(popUpActive) {
+
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<div class="history-pop-up">
+        <img class="close" src="../../../../../assets/double-arrow.svg" (click)="closePopUp()">
+		<div class="history-pop-up-header">
+            <h2>{{ clickedItemDetails.subject }}</h2>
+            <p class="history-desc">Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.</p>
+		</div>
+        <div class="pop-up-content">
+            <div class="info key">
+                <p>Key:</p>
+                <span>{{ clickedItemDetails.key }}</span>
+            </div>
+            <div class="info status">
+                <p>Status:</p>
+                <div class="status-wrapper">
+                    <div id="container-status-pop" #statusPopUp>
+                        <span>
+                            {{ clickedItemDetails.status }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="info priority">
+                <p>Priority:</p>
+                <div class="content">
+                    <img [src]="priorityParser(clickedItemDetails.priority)">
+                    <span>{{ clickedItemDetails.priority }}</span>
+                </div>
+            </div>
+
+            <div class="info type">
+                <p>Type:</p>
+                <span>{{ clickedItemDetails.type }}</span>
+            </div>
+
+            <div class="info assignee">
+                <p>Assignee:</p>
+                <div class="content">
+                    <img src="../../../../../assets/image-fake.svg">
+                    <span>{{ clickedItemDetails.assignee }}</span>
+                </div>
+            </div>
+
+            <div class="info created">
+                <p>Created:</p>
+                <span>{{ clickedItemDetails.created }}</span>
+            </div>
+
+            <div class="info user-stories-link">
+                <p>User stories:</p>
+                <span>Forge - especification-fea001</span>
+            </div>
+
+            <div class="info epic-link">
+                <p>Epic link:</p>
+                <span>Forge - especification-fea001</span>
+            </div>
+        </div>
+        <div class="pop-up-footer">
+            <div class="hr"></div>
+            <div class="comments-container">
+                <div class="comment">
+                    <div class="user">
+                        <div class="id">
+                            <img src="../../../../../assets/image-fake.svg">
+                            <p>Leonardo Alves</p>
+                            <span>1 hour ago</span>
+                        </div>
+                        <div class="actions">
+                            <button mat-icon-button>
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="message">
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa omnis fugit eligendi.
+                    </div>
+                </div>
+            </div>
+            <div class="input-comment">
+                <img src="../../../../../assets/image-fake.svg">
+                <input type="text" placeholder="Add a comment..">
+            </div>
+            <div class="hr"></div>
+        </div>
+	</div>
+
+}
