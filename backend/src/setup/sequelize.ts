@@ -13,7 +13,7 @@ export async function setupSequelize(sequelize: Sequelize) {
 
 	for (const name in models) {
 		const model = models[name];
-		model.associate(sequelize);
+		model.associate(name, sequelize);
 	}
 
 	await sequelize.sync();
