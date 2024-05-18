@@ -37,5 +37,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	thisModel.belongsTo(models["epic"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["epriority"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["sprint"], { foreignKey: { allowNull: true } });
+	thisModel.hasMany(models["acceptancecriteria"], { foreignKey: { allowNull: false } });
 	thisModel.hasMany(models["task"], { foreignKey: { allowNull: false } });
 }
