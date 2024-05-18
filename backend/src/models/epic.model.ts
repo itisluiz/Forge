@@ -7,10 +7,6 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		code: {
-			type: DataTypes.CHAR(3),
-			allowNull: false,
-		},
 		title: {
 			type: DataTypes.STRING(64),
 			allowNull: false,
@@ -26,7 +22,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsToMany(models["user"], { through: models["projectmembership"] });
-	thisModel.hasMany(models["epic"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["sprint"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false } });
+	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: false } });
 }

@@ -7,16 +7,12 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		code: {
-			type: DataTypes.CHAR(3),
-			allowNull: false,
-		},
 		title: {
-			type: DataTypes.STRING(64),
+			type: DataTypes.STRING(32),
 			allowNull: false,
 		},
 		description: {
-			type: DataTypes.STRING(256),
+			type: DataTypes.STRING(128),
 			allowNull: false,
 		},
 	});
@@ -26,7 +22,5 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsToMany(models["user"], { through: models["projectmembership"] });
-	thisModel.hasMany(models["epic"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["sprint"], { foreignKey: { allowNull: false } });
+	thisModel.hasMany(models["task"], { foreignKey: { allowNull: false } });
 }
