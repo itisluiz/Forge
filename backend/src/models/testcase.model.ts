@@ -7,20 +7,7 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		email: {
-			type: DataTypes.STRING(128),
-			allowNull: false,
-			unique: true,
-		},
-		password: {
-			type: DataTypes.CHAR(64),
-			allowNull: false,
-		},
-		name: {
-			type: DataTypes.STRING(64),
-			allowNull: false,
-		},
-		surname: {
+		title: {
 			type: DataTypes.STRING(64),
 			allowNull: false,
 		},
@@ -31,6 +18,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsToMany(models["project"], { through: models["projectmembership"] });
-	thisModel.hasMany(models["projectmembership"], { foreignKey: { allowNull: true, name: "assignedTo" } });
+	thisModel.belongsTo(models["acceptancecriteria"], { foreignKey: { allowNull: false } });
+	thisModel.hasMany(models["testcasestep"], { foreignKey: { allowNull: false } });
 }
