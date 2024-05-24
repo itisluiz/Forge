@@ -7,6 +7,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { ApiService } from "../../../services/api.service";
 
 export interface History {
 	key: string;
@@ -74,7 +75,10 @@ export class UserStoryPageComponent implements OnInit {
 
 	popUpActive: boolean = false;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private formBuilder: FormBuilder,
+		private api: ApiService,
+	) {}
 
 	ngOnInit(): void {
 		this.createTestCaseForm = this.formBuilder.group({
@@ -98,25 +102,10 @@ export class UserStoryPageComponent implements OnInit {
 		this.editModeEnabled = false;
 	}
 
-	onGenerateWithAI(): void {
+	async onGenerateWithAI() {
 		let acceptanceCriteria = this.getAcceptanceCriteria();
-		this.populateFromObject({
-			description: "Description of the test case",
-			precondition: "Precondition of the test case",
-			steps: [
-				{
-					action: "action1",
-					expected: "expected1",
-				},
-				{
-					action: "action2",
-					expected: "expected2",
-				},
-				{
-					action: "action3",
-					expected: "action3",
-				},
-			],
+		this.api.call("post", "testcaseai", undefined, { acceptanceCriteria }).subscribe((obj) => {
+			this.populateFromObject(obj as testCase);
 		});
 	}
 
