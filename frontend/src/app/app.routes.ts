@@ -7,6 +7,7 @@ import { EpicsPageComponent } from "./core/components/pages/epic-page/epics-page
 import { BacklogPageComponent } from "./core/components/pages/backlog-page/backlog-page.component";
 import { SignupPageComponent } from "./core/components/pages/signup-page/signup-page.component";
 import { SelectProjectPageComponent } from "./core/components/pages/select-project-page/select-project-page.component";
+import { UserStoryPageComponent } from "./core/components/pages/user-story-page/user-story-page.component";
 
 export const routes: Routes = [
 	{ path: "", component: MainPageComponent },
@@ -17,5 +18,6 @@ export const routes: Routes = [
 	{ path: "backlog", component: BacklogPageComponent },
 	{ path: "signup", component: SignupPageComponent },
 	{ path: "select-project", component: SelectProjectPageComponent },
+	{ path: "user-story", component: UserStoryPageComponent },
 	{ path: "**", redirectTo: "/" },
 ];
