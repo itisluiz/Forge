@@ -8,9 +8,11 @@
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
+		"body-parser": "^1.20.2",
 		"chalk": "^5.3.0",
 		"express": "^4.19.1",
 		"mariadb": "^3.3.0",
+		"openai": "^4.47.1",
 		"sequelize": "^6.37.3"
 	},
 	"devDependencies": {
