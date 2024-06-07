@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -81,12 +81,6 @@ export class UserStoryPageComponent implements OnInit {
 			acceptanceCriteria: ["", [Validators.required, Validators.minLength(3)]],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			preCondition: ["", [Validators.required, Validators.minLength(3)]],
-			action1: ["", [Validators.required, Validators.minLength(3)]],
-			behavior1: ["", [Validators.required, Validators.minLength(3)]],
-			action2: ["", [Validators.required, Validators.minLength(3)]],
-			behavior2: ["", [Validators.required, Validators.minLength(3)]],
-			action3: ["", [Validators.required, Validators.minLength(3)]],
-			behavior3: ["", [Validators.required, Validators.minLength(3)]],
 		});
 	}
 
@@ -96,44 +90,6 @@ export class UserStoryPageComponent implements OnInit {
 
 	disableEditMode() {
 		this.editModeEnabled = false;
-	}
-
-	onGenerateWithAI(): void {
-		let acceptanceCriteria = this.getAcceptanceCriteria();
-		this.populateFromObject({
-			description: "Description of the test case",
-			precondition: "Precondition of the test case",
-			steps: [
-				{
-					action: "action1",
-					expected: "expected1",
-				},
-				{
-					action: "action2",
-					expected: "expected2",
-				},
-				{
-					action: "action3",
-					expected: "action3",
-				},
-			],
-		});
-	}
-
-	getAcceptanceCriteria(): string {
-		return this.createTestCaseForm.get("acceptanceCriteria")!.value;
-	}
-
-	populateFromObject(data: testCase): void {
-		console.log(data);
-		this.createTestCaseForm.get("description")!.setValue(data["description"]);
-		this.createTestCaseForm.get("preCondition")!.setValue(data["precondition"]);
-		this.createTestCaseForm.get("action1")!.setValue(data.steps[0].action);
-		this.createTestCaseForm.get("behavior1")!.setValue(data.steps[0].expected);
-		this.createTestCaseForm.get("action2")!.setValue(data.steps[1].action);
-		this.createTestCaseForm.get("behavior2")!.setValue(data.steps[1].expected);
-		this.createTestCaseForm.get("action3")!.setValue(data.steps[2].action);
-		this.createTestCaseForm.get("behavior3")!.setValue(data.steps[2].expected);
 	}
 
 	createTestCase() {
@@ -190,10 +146,5 @@ export class UserStoryPageComponent implements OnInit {
 		this.createTestCaseForm.reset();
 		this.popUpActive = false;
 		document.body.style.overflow = "auto";
-	}
-
-	createTestCaseIA() {
-		// TODO: Implement IA logic to create test cases
-		console.log("Creating test cases with IA");
 	}
 }

@@ -129,7 +129,7 @@
 							<button id="button-create-test-manually" class="grey-button" (click)="createTestCaseManually()">
 								Create manually
 							</button>
-							<button id="button-create-test-ai" class="grey-button ai-button" (click)="createTestCaseIA()">
+							<button id="button-create-test-ai" class="grey-button ai-button">
 								<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
 								Generate test cases with AI
 							</button>
@@ -148,7 +148,7 @@
 		<div class="test-case-pop-up-header">
 			<h2>Create a new test case</h2>
 			<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
-			<button id="button-create-test-ai" class="grey-button ai-button" (click)="onGenerateWithAI()">
+			<button id="button-create-test-ai" class="grey-button ai-button">
 				<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
 				Generate test cases with AI
 			</button>
@@ -187,80 +187,6 @@
 							placeholder="User is on the home page."
 						></textarea>
 						<span *ngIf="isTextInvalid('preCondition')"> {{ descriptionErrorMessage }} </span>
-					</div>
-				</div>
-
-				<div class="form-content-right">
-					<div class="test-case-step">
-						<h3>Step 1</h3>
-						<div class="input-wrapper">
-							<label for="action">Action</label>
-							<textarea
-								id="action"
-								name="action"
-								formControlName="action1"
-								placeholder="Your action description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('action1')"> {{ descriptionErrorMessage }} </span>
-						</div>
-						<div class="input-wrapper">
-							<label for="behavior">Expected Behavior</label>
-							<textarea
-								id="behavior"
-								name="behavior"
-								formControlName="behavior1"
-								placeholder="Your expected description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('behavior1')"> {{ descriptionErrorMessage }} </span>
-						</div>
-					</div>
-
-					<div class="test-case-step">
-						<h3>Step 2</h3>
-						<div class="input-wrapper">
-							<label for="action">Action</label>
-							<textarea
-								id="action"
-								name="action"
-								formControlName="action2"
-								placeholder="Your action description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('action2')"> {{ descriptionErrorMessage }} </span>
-						</div>
-						<div class="input-wrapper">
-							<label for="behavior">Expected Behavior</label>
-							<textarea
-								id="behavior"
-								name="behavior"
-								formControlName="behavior2"
-								placeholder="Your expected description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('behavior2')"> {{ descriptionErrorMessage }} </span>
-						</div>
-					</div>
-
-					<div class="test-case-step">
-						<h3>Step 3</h3>
-						<div class="input-wrapper">
-							<label for="action">Action</label>
-							<textarea
-								id="action"
-								name="action"
-								formControlName="action3"
-								placeholder="Your action description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('action3')"> {{ descriptionErrorMessage }} </span>
-						</div>
-						<div class="input-wrapper">
-							<label for="behavior">Expected Behavior</label>
-							<textarea
-								id="behavior"
-								name="behavior"
-								formControlName="behavior3"
-								placeholder="Your expected description here"
-							></textarea>
-							<span *ngIf="isTextInvalid('behavior3')"> {{ descriptionErrorMessage }} </span>
-						</div>
 					</div>
 				</div>
 			</div>
