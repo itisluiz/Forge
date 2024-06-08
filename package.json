@@ -3,6 +3,7 @@
 	"version": "0.0.0",
 	"scripts": {
 		"normalize": "prettier . --write",
+		"assertnormalized": "prettier . --check",
 		"postinstall": "husky"
 	},
 	"devDependencies": {

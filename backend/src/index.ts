@@ -6,8 +6,11 @@ import { setupSwagger } from "./setup/swagger.js";
 import { setupApis } from "./setup/apis.js";
 import { setupFrontend } from "./setup/frontend.js";
 import { getSequelize } from "./util/sequelize.js";
+import { setupMiddleware } from "./setup/middleware.js";
 
 const app = express();
+
+setupMiddleware(app);
 
 await setupApis(app);
 

@@ -4,13 +4,15 @@
 	"type": "module",
 	"scripts": {
 		"start": "tsc && node --env-file=.env --env-file=.secrets.env dist/index.js",
-		"development": "tsc && concurrently \"tsc --watch\" \"node --watch --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
+		"development": "tsc-watch --onSuccess \"node --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
+		"body-parser": "^1.20.2",
 		"chalk": "^5.3.0",
 		"express": "^4.19.1",
 		"mariadb": "^3.3.0",
+		"openai": "^4.47.1",
 		"sequelize": "^6.37.3"
 	},
 	"devDependencies": {
@@ -18,9 +20,9 @@
 		"@types/node": "^20.11.30",
 		"@types/swagger-jsdoc": "^6.0.4",
 		"@types/swagger-ui-express": "^4.1.6",
-		"concurrently": "^8.2.2",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.0",
+		"tsc-watch": "^6.2.0",
 		"typescript": "^5.4.3"
 	}
 }

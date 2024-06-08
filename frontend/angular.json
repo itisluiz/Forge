@@ -53,7 +53,8 @@
 							"buildTarget": "forge-frontend:build:production"
 						},
 						"development": {
-							"buildTarget": "forge-frontend:build:development"
+							"buildTarget": "forge-frontend:build:development",
+							"proxyConfig": "proxy.development.json"
 						}
 					},
 					"defaultConfiguration": "development"
