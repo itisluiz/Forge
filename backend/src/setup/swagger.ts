@@ -17,7 +17,7 @@ const swaggerOptions: swaggerJSDoc.Options = {
 			},
 		],
 	},
-	apis: ["./node_modules/forge-shared/**/*.*.ts", "./src/apis/**/*.route.ts"],
+	apis: ["./node_modules/forge-shared/**/*.*.ts", "./src/controllers/**/*.controller.ts"],
 };
 
 export function setupSwagger(app: Express) {
