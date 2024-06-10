@@ -1,18 +1,20 @@
 import "./util/environment.js";
+import { getSequelize } from "./util/sequelize.js";
+import { setupControllers } from "./setup/controllers.js";
+import { setupFrontend } from "./setup/frontend.js";
+import { setupHandlers } from "./setup/handlers.js";
+import { setupMiddleware } from "./setup/middleware.js";
+import { setupSwagger } from "./setup/swagger.js";
+import chalk from "chalk";
 import express from "express";
 import logging from "./util/logging.js";
-import chalk from "chalk";
-import { setupSwagger } from "./setup/swagger.js";
-import { setupControllers } from "./setup/apis.js";
-import { setupFrontend } from "./setup/frontend.js";
-import { getSequelize } from "./util/sequelize.js";
-import { setupMiddleware } from "./setup/middleware.js";
 
 const app = express();
 
 setupMiddleware(app);
 
 await setupControllers(app);
+await setupHandlers();
 
 if (process.env["NODE_ENV"] === "production") {
 	logging.logInfo("startup", "Server is running on the", chalk.red("production"), "environment");

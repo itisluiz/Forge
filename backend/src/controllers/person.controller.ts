@@ -1,6 +1,5 @@
+import { handle } from "../util/handle.js";
 import { Router } from "express";
-import { Person } from "forge-shared/dto/person.dto";
-import { Priority } from "forge-shared/enum/priority.enum";
 
 const router = Router();
 
@@ -17,14 +16,8 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Person'
  */
-router.get("/api/person", (req, res) => {
-	const sample: Person = {
-		name: "John Doe",
-		age: 42,
-		priority: Priority.HIGH,
-	};
-
-	res.json(sample);
+router.get("/api/person", async (req, res) => {
+	await handle("person", "sample", res);
 });
 
 export default router;
