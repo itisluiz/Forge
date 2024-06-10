@@ -17,7 +17,7 @@ const router = Router();
  *               $ref: '#/components/schemas/Person'
  */
 router.get("/api/person", async (req, res) => {
-	await handle("person", "sample", res);
+	await handle("person", "sample", req, res);
 });
 
 export default router;
