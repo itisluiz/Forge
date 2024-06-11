@@ -1,7 +1,7 @@
 import { buildPromptForAIType } from "../aitype/aitype.js";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Person } from "forge-shared/dto/person.dto";
-import { promptAIObject } from "../../util/ai.js";
+import { promptAIObject } from "../../../util/ai/ai.js";
 import personAIType from "../aitype/person.aitype.js";
 
 async function fromCountry(country: string): Promise<Person | undefined> {

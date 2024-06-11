@@ -1,4 +1,4 @@
-import { directoryImport } from "../util/importing.js";
+import { directoryImport } from "../importing.js";
 import { Express } from "express";
 
 export async function setupControllers(app: Express) {

@@ -1,5 +1,5 @@
 import { ChatCompletionMessageParam } from "openai/resources";
-import logging from "./logging.js";
+import logging from "../logging.js";
 import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] as string });

@@ -1,5 +1,5 @@
-import { directoryNestedImport } from "../util/importing.js";
-import { registerHandler } from "../util/handle.js";
+import { directoryNestedImport } from "../importing.js";
+import { registerHandler } from "../handle.js";
 
 export async function setupHandlers() {
 	const handlers = await directoryNestedImport("dist/handlers", ".handler.js");

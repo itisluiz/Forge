@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
-import { directoryImport } from "../util/importing.js";
-import logging from "../util/logging.js";
+import { directoryImport } from "../importing.js";
+import logging from "../logging.js";
 
 export async function setupSequelize(sequelize: Sequelize) {
 	const models = await directoryImport("dist/models", ".model.js");
