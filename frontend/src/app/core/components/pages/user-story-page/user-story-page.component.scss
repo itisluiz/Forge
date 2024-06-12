@@ -1,0 +1,365 @@
+@use "../../../../../../src/assets/variables.scss" as v;
+@use "../../../../../assets/expansion-panel.scss";
+
+app-navbar {
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	z-index: 10;
+}
+
+.user-story-page-content {
+	margin-top: 87px;
+}
+
+.ai-button {
+	background: linear-gradient(90deg, #289e0b 0%, #187600 37%, #72c800 100%);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	&:hover {
+		filter: brightness(1.15);
+	}
+}
+
+.grey-button {
+	padding: 10px 14px 10px 14px;
+	background-color: v.$epics-light-grey-color;
+	border: none;
+	border-radius: 4px;
+	margin-right: 12px;
+}
+
+.grid-container {
+	background-color: v.$white-color;
+	display: flex;
+	flex-direction: column;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto;
+	gap: 12px;
+	margin: 1em 1em 0 1em;
+	border-radius: 12px 12px 0 0;
+
+	& > .header-grid {
+		grid-column: auto;
+		grid-row: 1;
+		z-index: 0;
+		padding: 2em 2.5em;
+
+		.breadcrump-story-wrapper {
+			display: grid;
+			grid-template-columns: auto auto;
+			grid-template-rows: auto auto;
+			grid-template-areas:
+				"top right"
+				"bottom right";
+
+			.breadcrumber {
+				grid-area: top;
+				display: flex;
+				align-items: center;
+				text-decoration: none;
+
+				.spacer {
+					font-size: 11px;
+				}
+
+				li + div {
+					margin: 0 5px;
+				}
+
+				li {
+					font-size: v.$observation-font;
+					font-weight: 400;
+					cursor: pointer;
+					list-style: none;
+
+					&:nth-last-child(1) {
+						font-weight: 500;
+					}
+
+					a {
+						text-decoration: none;
+						color: v.$dark-green-color;
+					}
+				}
+			}
+
+			h1 {
+				grid-area: bottom;
+				font-size: v.$title-font;
+				font-weight: 500;
+				margin-bottom: 19px;
+			}
+
+			.buttons-header {
+				grid-area: right;
+				align-self: center;
+				justify-self: end;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				.mat-icon-button {
+					display: flex;
+					align-items: center;
+					background-color: transparent;
+					border: none;
+				}
+			}
+		}
+
+		p {
+			font-size: v.$sub-title-font;
+			color: v.$grey-color;
+			max-width: 550px;
+		}
+
+		hr {
+			margin-top: 40px;
+		}
+	}
+	.user-story-container {
+		padding: 0 2.5em;
+
+		.story-topic {
+			margin-bottom: 50px;
+
+			h4 {
+				color: v.$dark-green-color;
+				margin-bottom: 12px;
+				font-weight: 600;
+				font-size: 12px;
+			}
+
+			p {
+				max-width: 90%;
+			}
+		}
+
+		.story-description,
+		.premises > .premise {
+			span {
+				font-weight: 700;
+			}
+		}
+
+		.criteria {
+			ol {
+				padding-left: 1.4em;
+			}
+		}
+
+		.test-cases {
+			// THERE ARE TEST CASES AVAILABLE
+
+			table {
+				all: initial;
+			}
+			.test-case-table {
+				width: auto;
+				border-spacing: 0px 1.5px;
+
+				.mat-mdc-cell {
+					border: none;
+
+					&:nth-child(1) {
+						// Key
+						text-align: center;
+						color: v.$dark-green-color;
+						font-weight: 500;
+						font-size: 10px;
+					}
+
+					&:nth-child(2) {
+						// Description
+						font-weight: 500;
+						min-width: 100px;
+						max-width: 100%;
+					}
+
+					&:nth-child(3) {
+						// Link
+						font-weight: 500;
+						width: 10px;
+						text-align: center;
+					}
+				}
+
+				.mat-mdc-row {
+					height: 40px;
+					background-color: v.$white-color;
+
+					.item-cell {
+						border-left: 4px solid v.$epics-dark-green-color;
+					}
+
+					&:hover {
+						cursor: pointer;
+						filter: brightness(0.9);
+					}
+
+					&:nth-child(odd) {
+						background-color: v.$background-grey;
+					}
+				}
+			}
+
+			// NO TEST CASES AVAILABLE
+
+			.no-test-cases-available {
+				margin-top: 20px;
+				margin-bottom: 120px;
+
+				.test-case-buttons {
+					margin-top: 10px;
+					display: flex;
+				}
+			}
+		}
+	}
+}
+
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.test-case-pop-up {
+	background-color: v.$white-color;
+	border-radius: 2px;
+	padding: 2em 0;
+	width: 80vw;
+	z-index: 100;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 55px 77px;
+
+	.test-case-pop-up-header {
+		margin-bottom: 50px;
+
+		h2 {
+			font-size: v.$h2-font;
+			font-weight: 500;
+			font-size: 28px;
+			margin-bottom: 1.2rem;
+		}
+
+		p {
+			margin-bottom: 1rem;
+		}
+	}
+
+	form {
+		.pop-up-form-content {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			.form-content-left {
+				grid-area: left;
+				width: 310px;
+			}
+
+			.input-wrapper {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 1.5em;
+
+				select,
+				input,
+				textarea {
+					height: 40px;
+					background-color: #f2f2f2;
+					border: none;
+					padding-left: 20px;
+					border-radius: 2px;
+
+					&:focus {
+						outline: none;
+						border: 1px solid v.$green-color;
+					}
+				}
+
+				textarea {
+					height: 104px;
+					resize: none;
+					padding: 15px 20px;
+				}
+
+				input {
+					height: 20px;
+					padding: 10px 10px;
+				}
+
+				span {
+					display: flex;
+					align-items: center;
+					color: v.$error-color;
+					font-size: v.$observation-font;
+
+					mat-icon {
+						height: fit-content;
+						width: fit-content;
+						margin-right: 5px;
+						font-size: v.$paragraph-font;
+					}
+				}
+			}
+
+			.form-content-right {
+				width: 65%;
+				display: flex;
+				justify-content: space-between;
+
+				.input-wrapper {
+					width: 100%;
+
+					textarea {
+						height: 40px;
+						width: 100%;
+					}
+				}
+			}
+		}
+
+		.pop-up-footer {
+			display: flex;
+			justify-content: end;
+			align-items: center;
+			span {
+				margin-right: 1em;
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			button[type="submit"] {
+				color: white;
+				background-color: v.$green-color;
+				border-radius: 2px;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 1500px) {
+	.user-story-page-content {
+		margin: 87px 3em 0 3em;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	.user-story-page-content {
+		margin: 87px 5em 0 5em;
+	}
+}
