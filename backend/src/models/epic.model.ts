@@ -23,5 +23,5 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const thisModel = models[modelName];
 
 	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: false } });
+	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: true } });
 }

@@ -23,7 +23,7 @@ export async function promptAI(messages: ChatCompletionMessageParam[], requestJS
 			model: "gpt-3.5-turbo",
 			response_format: { type: requestJSON ? "json_object" : "text" },
 			stream: false,
-			temperature: 0.3,
+			temperature: 0.8,
 			messages,
 		});
 	} catch (error) {

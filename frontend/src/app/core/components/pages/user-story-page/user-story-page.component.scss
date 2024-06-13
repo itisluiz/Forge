@@ -18,6 +18,8 @@ app-navbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	margin-top: -1em;
+	margin-bottom: 1em;
 	&:hover {
 		filter: brightness(1.15);
 	}
@@ -29,6 +31,27 @@ app-navbar {
 	border: none;
 	border-radius: 4px;
 	margin-right: 12px;
+}
+
+.green-button {
+	@extend .grey-button;
+	background-color: v.$green-color;
+	color: white;
+}
+
+.red-button {
+	@extend .grey-button;
+	background-color: v.$error-color;
+	color: white;
+}
+
+.criteria-item {
+	display: flex;
+	align-items: center;
+
+	& > p {
+		margin-right: 0.4em;
+	}
 }
 
 .grid-container {
@@ -175,7 +198,7 @@ app-navbar {
 					&:nth-child(2) {
 						// Description
 						font-weight: 500;
-						min-width: 100px;
+						min-width: 60em;
 						max-width: 100%;
 					}
 
@@ -234,6 +257,20 @@ app-navbar {
 	align-items: center;
 }
 
+* > .case-step-adder {
+	width: 100%;
+	display: flex;
+	& > input {
+		width: 100%;
+	}
+	& > button {
+		width: 5em;
+	}
+	& > p {
+		margin-top: 0.25em;
+	}
+}
+
 .test-case-pop-up {
 	background-color: v.$white-color;
 	border-radius: 2px;
@@ -261,14 +298,14 @@ app-navbar {
 		}
 	}
 
-	form {
+	.old-form {
 		.pop-up-form-content {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
 			.form-content-left {
 				grid-area: left;
-				width: 310px;
+				width: 100%;
 			}
 
 			.input-wrapper {

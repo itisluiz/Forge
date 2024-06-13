@@ -5,43 +5,19 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTable, MatTableModule } from "@angular/material/table";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-
-export interface History {
-	key: string;
-	description: string;
-	link: string;
-}
+import { RouterModule } from "@angular/router";
+import { ApiService } from "../../../services/api.service";
+import { UserStory } from "forge-shared/dto/userstory.dto";
+import { NewTestCase } from "forge-shared/dto/newtestcase.dto";
+import { AITestCase } from "forge-shared/dto/aitestcase.dto";
 
 export interface testCase {
 	description: string;
 	precondition: string;
 	steps: Array<{ action: string; expected: string }>;
 }
-
-const TEST_CASES_DATA: History[] = [
-	{
-		key: "FEA-001",
-		description: "Guest user can create an account from the homepage",
-		link: "Low",
-	},
-	{
-		key: "FEA-002",
-		description: "Guest user can create an account from the homepage",
-		link: "Medium",
-	},
-	{
-		key: "FEA-003",
-		description: "Guest user can create an account from the homepage",
-		link: "Medium",
-	},
-	{
-		key: "FEA-004",
-		description: "Guest user can create an account from the homepage",
-		link: "High",
-	},
-];
 
 @Component({
 	selector: "app-user-story-page",
@@ -56,25 +32,38 @@ const TEST_CASES_DATA: History[] = [
 		MatFormFieldModule,
 		ReactiveFormsModule,
 		CommonModule,
+		RouterModule,
+		FormsModule,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
 })
 export class UserStoryPageComponent implements OnInit {
-	displayedColumns: string[] = ["key", "description", "link"];
+	displayedColumns: string[] = ["key", "title"];
 
+	public story = { title: "", description: "", actor: "", objective: "", justification: "" };
+
+	public testCreationForm = { acceptanceCriteria: "", title: "", newStep: "", steps: [] as string[] };
+
+	public acceptanceCriteria: { id: number; given: string; when: string; then: string }[] = [];
 	//testCases = [...TEST_CASES_DATA];
-	testCases: History[] = [];
+	testCases: any[] = [];
 
 	createTestCaseForm!: FormGroup;
 	creationFailed: boolean = false;
 	formSubmitted: boolean = false;
 
-	editModeEnabled: boolean = false;
-
 	popUpActive: boolean = false;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private formBuilder: FormBuilder,
+		private apiService: ApiService,
+	) {}
+
+	public addTestStep() {
+		this.testCreationForm.steps.push(this.testCreationForm.newStep);
+		this.testCreationForm.newStep = "";
+	}
 
 	ngOnInit(): void {
 		this.createTestCaseForm = this.formBuilder.group({
@@ -82,33 +71,70 @@ export class UserStoryPageComponent implements OnInit {
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			preCondition: ["", [Validators.required, Validators.minLength(3)]],
 		});
+
+		this.apiService.call<UserStory>("GET", "userstory").subscribe((response) => {
+			this.story.title = response.title;
+			this.story.description = response.description;
+			this.story.actor = response.actor;
+			this.story.objective = response.objective;
+			this.story.justification = response.justification;
+
+			this.acceptanceCriteria = response.acceptanceCriteria.map((ac) => ({
+				id: ac.id,
+				given: ac.given,
+				when: ac.when,
+				then: ac.then,
+			}));
+
+			this.testCases = response.acceptanceCriteria.flatMap((ac) =>
+				ac.tests.map((tc) => ({
+					acceptanceCriteria: ac.id.toString(),
+					title: tc.title,
+					steps: tc.steps,
+				})),
+			);
+
+			console.log(this.testCases);
+
+			this.testCreationForm.acceptanceCriteria = this.acceptanceCriteria[0].id.toString();
+		});
 	}
 
-	enableEditMode() {
-		this.editModeEnabled = true;
-	}
+	public generateAITestCase() {
+		this.testCreationForm = {
+			acceptanceCriteria: this.testCreationForm.acceptanceCriteria,
+			title: "",
+			newStep: "",
+			steps: [] as string[],
+		};
 
-	disableEditMode() {
-		this.editModeEnabled = false;
+		this.apiService
+			.call<AITestCase>("GET", "aitestcase", { acID: this.testCreationForm.acceptanceCriteria })
+			.subscribe((res) => {
+				this.testCreationForm.title = res.title;
+				this.testCreationForm.steps = res.steps;
+			});
 	}
 
 	createTestCase() {
-		const acceptanceCriteria = this.createTestCaseForm.get("acceptanceCriteria");
-		const description = this.createTestCaseForm.get("description");
-		const preCondition = this.createTestCaseForm.get("preCondition");
-
-		this.formSubmitted = true;
-		if (this.createTestCaseForm.invalid && (acceptanceCriteria?.value.length === 0 || description?.value.length === 0)) {
-			console.log("Invalid form");
+		if (
+			this.testCreationForm.steps.length === 0 ||
+			!this.testCreationForm.title ||
+			!this.testCreationForm.acceptanceCriteria
+		) {
+			alert("Fill all the fields");
 			return;
 		}
-		if (this.createTestCaseForm.valid) {
-			// Lógica para criação do test case aqui
-			// Se a criação falhar, defina creationFailed como verdadeiro
-			console.log("Test case created");
+
+		let newTestCase = {} as NewTestCase;
+		newTestCase.acceptanceCriteriaId = parseInt(this.testCreationForm.acceptanceCriteria);
+		newTestCase.title = this.testCreationForm.title;
+		newTestCase.steps = this.testCreationForm.steps;
+
+		this.apiService.call("POST", "addtestcase", undefined, newTestCase).subscribe((res) => {
+			alert("Test case created");
 			this.closePopUp();
-			this.creationFailed = true;
-		}
+		});
 	}
 
 	isTextInvalid(field: string): boolean {
@@ -143,6 +169,14 @@ export class UserStoryPageComponent implements OnInit {
 	}
 
 	closePopUp() {
+		this.testCreationForm = {
+			acceptanceCriteria: this.acceptanceCriteria.length > 0 ? this.acceptanceCriteria[0].id.toString() : "",
+			title: "",
+			newStep: "",
+			steps: [] as string[],
+		};
+
+		this.ngOnInit();
 		this.createTestCaseForm.reset();
 		this.popUpActive = false;
 		document.body.style.overflow = "auto";
