@@ -3,10 +3,8 @@
 	"version": "0.0.0",
 	"scripts": {
 		"start": "ng serve",
-		"build": "npm run clean && ng build",
-		"normalize": "prettier . --write",
-		"setup": "npm install && npm link ../shared",
-		"clean": "rimraf dist"
+		"build": "ng build",
+		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
 		"@angular/animations": "^17.0.0",
@@ -19,7 +17,6 @@
 		"@angular/platform-browser": "^17.0.0",
 		"@angular/platform-browser-dynamic": "^17.0.0",
 		"@angular/router": "^17.0.0",
-		"ng-gallery": "^11.0.0",
 		"rxjs": "~7.8.0",
 		"tslib": "^2.3.0",
 		"zone.js": "~0.14.2"
@@ -29,8 +26,6 @@
 		"@angular-eslint/schematics": "^17.3.0",
 		"@angular/cli": "^17.0.7",
 		"@angular/compiler-cli": "^17.0.0",
-		"prettier": "3.2.5",
-		"rimraf": "^5.0.5",
 		"typescript": "~5.2.2"
 	}
 }

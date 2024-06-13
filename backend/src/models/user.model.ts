@@ -1,9 +1,9 @@
 import { DataTypes, Sequelize } from "sequelize";
 
 export function define(modelName: string, sequelize: Sequelize) {
-	return sequelize.define(modelName, {
+	sequelize.define(modelName, {
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 		},
@@ -16,18 +16,21 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.CHAR(64),
 			allowNull: false,
 		},
-		firstName: {
+		name: {
 			type: DataTypes.STRING(64),
 			allowNull: false,
 		},
-		lastName: {
+		surname: {
 			type: DataTypes.STRING(64),
 			allowNull: false,
 		},
 	});
 }
 
-export function associate(sequelize: Sequelize) {
+export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
-	// No associations
+	const thisModel = models[modelName];
+
+	thisModel.belongsToMany(models["project"], { through: models["projectmembership"] });
+	thisModel.hasMany(models["projectmembership"], { foreignKey: { allowNull: true, name: "assignedTo" } });
 }

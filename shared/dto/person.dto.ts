@@ -1,3 +1,5 @@
+import { Priority } from "../enum/priority.enum";
+
 /**
  * @swagger
  * components:
@@ -9,8 +11,11 @@
  *           type: string
  *         age:
  *           type: number
+ *         priority:
+ *           $ref: '#/components/schemas/Priority'
  */
-export default interface Person {
+export interface Person {
 	name: string;
 	age: number;
+	priority: Priority;
 }

@@ -1,0 +1,46 @@
+<button [routerLink]="['/user-story']">Go back</button>
+<div id="motherdiv">
+	<h1>Setup userstory</h1>
+	<input type="text" placeholder="Title" [(ngModel)]="story.title" />
+	<input type="text" placeholder="Description" [(ngModel)]="story.description" />
+
+	<div class="story-component">
+		<p>As a</p>
+		<input type="text" placeholder="Actor" [(ngModel)]="story.actor" />
+	</div>
+	<div class="story-component">
+		<p>I want</p>
+		<input type="text" placeholder="Objective" [(ngModel)]="story.objective" />
+	</div>
+	<div class="story-component">
+		<p>So that</p>
+		<input type="text" placeholder="Justification" [(ngModel)]="story.justification" />
+	</div>
+
+	<h2>Acceptance criteria</h2>
+	<table>
+		<tr>
+			<th>Given</th>
+			<th>When</th>
+			<th>Then</th>
+		</tr>
+
+		@for (ac of acceptanceCriteria; track ac) {
+			<tr>
+				<td>{{ ac.given }}</td>
+				<td>{{ ac.when }}</td>
+				<td>{{ ac.then }}</td>
+			</tr>
+		}
+
+		<tr>
+			<td><input type="text" placeholder="Given" [(ngModel)]="newAcceptanceCriteria.given" /></td>
+			<td><input type="text" placeholder="When" [(ngModel)]="newAcceptanceCriteria.when" /></td>
+			<td><input type="text" placeholder="Then" [(ngModel)]="newAcceptanceCriteria.then" /></td>
+			<td><button (click)="addAcceptanceCriteria()">+</button></td>
+			<td><button (click)="removeAcceptanceCriteria()">-</button></td>
+		</tr>
+	</table>
+
+	<button (click)="saveUserStory()">Save userstory</button>
+</div>

@@ -47,6 +47,7 @@ app-navbar {
 					p {
 						font-size: v.$sub-title-font;
 						color: v.$grey-color;
+						max-width: 600px;
 					}
 				}
 
@@ -121,12 +122,16 @@ app-navbar {
 		}
 
 		img {
-			scale: 0.95;
+			width: 100%;
+			scale: 0.9;
 		}
 	}
 }
 
-@media only screen and (max-width: 1400px) {
+@media only screen and (max-width: 1500px) {
+	.main-page-content {
+		margin: 67px 3em 0 3em;
+	}
 	.grid-container {
 		& > .agile-process-grid {
 			grid-column: span 5;
@@ -140,12 +145,28 @@ app-navbar {
 
 		& > .activity-grid {
 			grid-column: span 2;
-			grid-row: 2;
+			grid-row: span 2;
 		}
 
 		& > .gantt-grid {
-			grid-column: span 5;
+			grid-column: span 3;
 			grid-row: 3;
 		}
+	}
+}
+
+@media only screen and (min-width: 1400px) {
+	.main-page-content {
+		.grid-container {
+			.agile-process-grid {
+				padding: 1em 2em 2em 2em;
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	.main-page-content {
+		margin: 67px 5em 0 5em;
 	}
 }

@@ -1,0 +1,4 @@
+module.exports = {
+	config: "database/database.js",
+	"seeders-path": "database/seeders",
+};

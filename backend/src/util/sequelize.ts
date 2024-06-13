@@ -1,6 +1,6 @@
 import logging from "../util/logging.js";
 import { Sequelize } from "sequelize";
-import { setupSequelize } from "../setup/sequelize.js";
+import { setupSequelize } from "../util/setup/sequelize.js";
 
 let sequelize: Sequelize | null = null;
 
