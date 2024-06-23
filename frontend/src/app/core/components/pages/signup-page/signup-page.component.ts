@@ -15,7 +15,7 @@ export class SignupPageComponent implements OnInit {
 	signupFailed: boolean = false;
 	formSubmitted: boolean = false;
 	regexName: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
-	regexPassword: RegExp = /^(?=.*[!@#$%^&*]).{7,}$/;
+	regexPassword: RegExp = /^(?=.*[^A-Za-z0-9]).{7,}$/;
 
 	constructor(private formBuilder: FormBuilder) {}
 

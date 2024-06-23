@@ -55,8 +55,7 @@
 							<div cdkDropList [cdkDropListData]="toDo" class="kanban-list" (cdkDropListDropped)="drop($event)">
 								@for (item of toDo; track item) {
 									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
+										<div class="content" cdkDragPlaceholder>
 											<div [class]="item.type"></div>
 											<h3>{{ item.name }}</h3>
 											<p class="desc">{{ item.description }}</p>
@@ -87,8 +86,7 @@
 							<div cdkDropList [cdkDropListData]="inProgress" class="kanban-list" (cdkDropListDropped)="drop($event)">
 								@for (item of inProgress; track item) {
 									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
+										<div class="content" cdkDragPlaceholder>
 											<div [class]="item.type"></div>
 											<h3>{{ item.name }}</h3>
 											<p class="desc">{{ item.description }}</p>
@@ -119,8 +117,7 @@
 							<div cdkDropList [cdkDropListData]="availableReview" class="kanban-list" (cdkDropListDropped)="drop($event)">
 								@for (item of availableReview; track item) {
 									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
+										<div class="content" cdkDragPlaceholder>
 											<div [class]="item.type"></div>
 											<h3>{{ item.name }}</h3>
 											<p class="desc">{{ item.description }}</p>
@@ -151,8 +148,7 @@
 							<div cdkDropList [cdkDropListData]="reviewing" class="kanban-list" (cdkDropListDropped)="drop($event)">
 								@for (item of reviewing; track item) {
 									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
+										<div class="content" cdkDragPlaceholder>
 											<div [class]="item.type"></div>
 											<h3>{{ item.name }}</h3>
 											<p class="desc">{{ item.description }}</p>
@@ -175,7 +171,7 @@
 							<div class="title">
 								<h2>Done</h2>
 								<div class="count">
-									<span>{{ toDo.length }}</span>
+									<span>{{ done.length }}</span>
 									<span>left</span>
 								</div>
 							</div>
@@ -183,8 +179,7 @@
 							<div cdkDropList [cdkDropListData]="done" class="kanban-list" (cdkDropListDropped)="drop($event)">
 								@for (item of done; track item) {
 									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
+										<div class="content" cdkDragPlaceholder>
 											<div [class]="item.type"></div>
 											<h3>{{ item.name }}</h3>
 											<p class="desc">{{ item.description }}</p>
