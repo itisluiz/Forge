@@ -1,4 +1,3 @@
-import { ExternalHandlingError } from "../error/externalhandling.error.js";
 import { MissingHandlerError } from "../error/internalhandling.error.js";
 import { Request, Response } from "express";
 
@@ -17,8 +16,6 @@ export async function handle(controller: string, identifier: string, req: Reques
 
 		await handlers[controller][identifier](req, res);
 	} catch (error) {
-		const external = error instanceof ExternalHandlingError;
-		const origin = `${controller}::${identifier}`;
-		await handlers["error"][external ? "externalhandling" : "internalhandling"](res, origin, error);
+		await handlers["failure"]["error"](error, req, res);
 	}
 }

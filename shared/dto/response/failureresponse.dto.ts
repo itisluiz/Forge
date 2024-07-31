@@ -1,10 +1,10 @@
-import { FailureType } from "../enum/failuretype.enum";
+import { FailureType } from "../../enum/failuretype.enum";
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Failure:
+ *     FailureResponse:
  *       type: object
  *       properties:
  *         message:
@@ -12,7 +12,7 @@ import { FailureType } from "../enum/failuretype.enum";
  *         type:
  *           $ref: '#/components/schemas/FailureType'
  */
-export interface Failure {
+export interface FailureResponse {
 	message: string;
-	failuretype: FailureType;
+	failureType: FailureType;
 }
