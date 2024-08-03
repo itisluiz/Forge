@@ -16,6 +16,15 @@ const swaggerOptions: swaggerJSDoc.Options = {
 				description: "Forge API",
 			},
 		],
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				},
+			},
+		},
 	},
 	apis: ["./node_modules/forge-shared/**/*.*.ts", "./src/controllers/**/*.controller.ts"],
 };
