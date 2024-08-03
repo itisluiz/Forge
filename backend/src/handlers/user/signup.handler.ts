@@ -3,5 +3,5 @@ import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dt
 
 export default async function (req: Request, res: Response) {
 	const userSignupRequest = req.body as UserSignupRequest;
-	throw Error("Not implemented");
+	throw new Error("Not implemented");
 }
