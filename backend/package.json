@@ -11,7 +11,9 @@
 		"body-parser": "^1.20.2",
 		"chalk": "^5.3.0",
 		"express": "^4.19.1",
+		"express-async-errors": "^3.1.1",
 		"jsonschema": "^1.4.1",
+		"jsonwebtoken": "^9.0.2",
 		"mariadb": "^3.3.0",
 		"openai": "^4.47.1",
 		"sequelize": "^6.37.3",
@@ -19,6 +21,7 @@
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6",
 		"@types/node": "^20.11.30",
 		"@types/swagger-jsdoc": "^6.0.4",
 		"@types/swagger-ui-express": "^4.1.6",
