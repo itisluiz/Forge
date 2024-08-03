@@ -134,10 +134,12 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 
 	openPopUp() {
 		this.popUpActive = true;
+		document.body.style.overflow = "hidden";
 	}
 
 	closePopUp() {
 		this.popUpActive = false;
+		document.body.style.overflow = "auto";
 	}
 
 	createEpic() {

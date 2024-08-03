@@ -1,0 +1,200 @@
+<app-navbar></app-navbar>
+<div class="user-story-page-content">
+	<div class="grid-container">
+		<div class="header-grid">
+			<div class="breadcrump-story-wrapper">
+				<ul class="breadcrumber">
+					<li><a href="">Squad BES</a></li>
+					<div class="spacer">></div>
+					<li><a href="">TCC 1</a></li>
+					<div class="spacer">></div>
+					<li><a href="/user-story">User Story</a></li>
+				</ul>
+				<h1 id="user-story-title">[FEA001] New Task Registration Menu</h1>
+				<div class="buttons-header">
+					<button id="button-edit-page" class="grey-button" (click)="enableEditMode()">Edit page</button>
+					<button mat-icon-button class="mat-icon-button">
+						<mat-icon>more_vert</mat-icon>
+					</button>
+				</div>
+			</div>
+
+			<p>This board will manage your features that are available to start development</p>
+			<hr />
+		</div>
+
+		<div class="user-story-container">
+			<div class="story-description story-topic">
+				<h4>USER STORY</h4>
+				<p><span>As</span> a user,</p>
+				<p><span>I want</span> a new task registration menu</p>
+				<p><span>So that</span> I can improve efficiency</p>
+			</div>
+			<div class="business-narrative story-topic">
+				<h4>BUSINESS NARRATIVE</h4>
+				<p>
+					Our project management platform aims to enhance user satisfaction and productivity by introducing a new task
+					registration menu. This menu will streamline the process of adding tasks to projects, driven by user feedback and
+					market research insights.
+				</p>
+			</div>
+
+			<div class="premises story-topic">
+				<h4>PREMISES</h4>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Efficiency Enhancement:</span> The new menu will simplify and expedite the task
+						registration process, reducing user effort and time required.
+					</p>
+				</div>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Intuitive Design:</span> The menu will feature a user-friendly interface for easy
+						navigation and input of task information.
+					</p>
+				</div>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Feature Inclusion:</span> Essential features such as task title, description,
+						deadline, priority, assignment fields, and attachment options will be incorporated.
+					</p>
+				</div>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Compatibility:</span> The menu will be compatible with various devices and screen
+						sizes, ensuring a seamless user experience.
+					</p>
+				</div>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Usability Testing:</span> Rigorous testing will be conducted to validate the menu's
+						usability and effectiveness before deployment.
+					</p>
+				</div>
+				<div class="premise">
+					<p>
+						<span class="premise-title">Continuous Improvement:</span> Feedback mechanisms will be implemented post-launch
+						for iterative improvements based on user input and preferences.
+					</p>
+				</div>
+			</div>
+
+			<div class="criteria story-topic">
+				<h4>ACCEPTANCE CRITERIA</h4>
+				<ol>
+					<li>Guest users can click the profile icon in the home page and create an account.</li>
+					<li>Guest users can proceed to the cart page and create an account.</li>
+					<li>
+						Guest users can click the wishlist icon against the product to display the wishlist overlay and create an
+						account.
+					</li>
+					<li>An error message will display if the user enters an existing or invalid email address and other details.</li>
+					<li>All fields cannot be blank. An error message will display if the user registers with a blank field.</li>
+				</ol>
+			</div>
+
+			<div class="test-cases story-topic">
+				<h4>TEST CASES</h4>
+				@if (testCases.length > 0) {
+					<table mat-table [dataSource]="testCases" matSort class="mat-elevation-z8 test-case-table">
+						<ng-container matColumnDef="key">
+							<th mat-header-cell *matHeaderCellDef>Key</th>
+							<td class="item-cell" mat-cell *matCellDef="let element">{{ element.key }}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="description">
+							<th mat-header-cell *matHeaderCellDef>Subject</th>
+							<td mat-cell *matCellDef="let element">{{ element.description }}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="link">
+							<th mat-header-cell *matHeaderCellDef>Link</th>
+							<td mat-cell *matCellDef="let element">
+								<a href="/user-story">
+									<img src="../../../../../assets/link-icon.svg" />
+								</a>
+							</td>
+						</ng-container>
+
+						<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+					</table>
+				} @else {
+					<div class="no-test-cases-available">
+						<p>
+							It seems that you have not created any test cases. To generate them manually or automatically, click on one of
+							the buttons bellow.
+						</p>
+
+						<div class="test-case-buttons">
+							<button id="button-create-test-manually" class="grey-button" (click)="createTestCaseManually()">
+								Create manually
+							</button>
+							<button id="button-create-test-ai" class="grey-button ai-button">
+								<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
+								Generate test cases with AI
+							</button>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (popUpActive) {
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<div class="test-case-pop-up">
+		<div class="test-case-pop-up-header">
+			<h2>Create a new test case</h2>
+			<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
+			<button id="button-create-test-ai" class="grey-button ai-button">
+				<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
+				Generate test cases with AI
+			</button>
+		</div>
+
+		<form [formGroup]="createTestCaseForm" class="pop-up-form" (ngSubmit)="createTestCase()">
+			<div class="pop-up-form-content">
+				<div class="form-content-left">
+					<div class="input-wrapper">
+						<label for="acceptance-criteria">Insert your acceptance criteria</label>
+						<input
+							type="text"
+							id="acceptance-criteria"
+							name="acceptance-criteria"
+							formControlName="acceptanceCriteria"
+							placeholder="Guest users can click the profile icon in the home page and create an account."
+						/>
+						<span *ngIf="isTextInvalid('acceptanceCriteria')"> {{ nameErrorMessage }} </span>
+					</div>
+					<div class="input-wrapper">
+						<label for="case-description">Description</label>
+						<textarea
+							id="case-description"
+							name="case-description"
+							formControlName="description"
+							placeholder="User create his account successfully on the plataform."
+						></textarea>
+						<span *ngIf="isTextInvalid('description')"> {{ descriptionErrorMessage }} </span>
+					</div>
+					<div class="input-wrapper">
+						<label for="case-precondition">Precondition</label>
+						<textarea
+							id="case-precondition"
+							name="case-precondition"
+							formControlName="preCondition"
+							placeholder="User is on the home page."
+						></textarea>
+						<span *ngIf="isTextInvalid('preCondition')"> {{ descriptionErrorMessage }} </span>
+					</div>
+				</div>
+			</div>
+
+			<div class="pop-up-footer">
+				<span (click)="closePopUp()">Cancel</span>
+				<button type="submit" class="grey-button">Create test case</button>
+			</div>
+		</form>
+	</div>
+}
