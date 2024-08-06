@@ -4,7 +4,10 @@
 	"scripts": {
 		"normalize": "prettier . --write",
 		"assertnormalized": "prettier . --check",
-		"postinstall": "husky"
+		"postinstall": "husky || true",
+		"deploy:frontend": "cd frontend && npm install --ignore-scripts && npm link ../shared && npm run build",
+		"deploy:backend": "cd backend && npm install --ignore-scripts && npm link ../shared && npm run build",
+		"deploy": "npm run deploy:frontend && npm run deploy:backend"
 	},
 	"devDependencies": {
 		"husky": "^9.0.11",
