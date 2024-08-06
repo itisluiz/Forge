@@ -2,7 +2,8 @@
 	"name": "forge-frontend",
 	"version": "0.0.0",
 	"scripts": {
-		"start": "ng serve",
+		"start:local": "ng serve",
+		"start:remote": "ng serve --configuration=developmentremote",
 		"build": "ng build",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
