@@ -13,7 +13,11 @@ const swaggerOptions: swaggerJSDoc.Options = {
 		servers: [
 			{
 				url: "http://localhost:5201",
-				description: "Forge API",
+				description: "Local API",
+			},
+			{
+				url: "https://forgedev.itisluiz.com",
+				description: "Remote API",
 			},
 		],
 		components: {
