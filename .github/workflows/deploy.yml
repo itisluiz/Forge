@@ -28,7 +28,7 @@ jobs:
           else
             exit 1
           fi
-          ssh -p $ssh_port $ssh_user@itisluiz.com <<EOF
+          ssh -p ${{ secrets.ssh_port }} ${{ secrets.ssh_user }}@itisluiz.com <<EOF
             cd $REMOTE_DIR
             git pull
             npm run deploy
