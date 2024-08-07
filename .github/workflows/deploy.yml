@@ -20,9 +20,6 @@ jobs:
           ssh-private-key: ${{ secrets.ssh_key }}
 
       - name: Deploy to server
-        env:
-          SSH_PORT: ${{ env.ssh_port }}
-          SSH_USER: ${{ env.ssh_user }}
         run: |
           if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
             REMOTE_DIR="~/service/dev"
@@ -31,7 +28,7 @@ jobs:
           else
             exit 1
           fi
-          ssh -p $SSH_PORT $SSH_USER@itisluiz.com <<EOF
+          ssh -p $ssh_port $ssh_user@itisluiz.com <<EOF
             cd $REMOTE_DIR
             git pull
             npm run deploy
