@@ -29,6 +29,7 @@ jobs:
             exit 1
           fi
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.ssh_port }} ${{ secrets.ssh_user }}@itisluiz.com <<EOF
+            source ~/.bashrc
             cd $REMOTE_DIR
             git pull
             npm run deploy
