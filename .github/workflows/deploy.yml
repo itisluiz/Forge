@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.ssh_key }}
+
+      - name: Deploy to server
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            REMOTE_DIR="~/service/dev"
+            SERVICE_NAME="forgedev"
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            REMOTE_DIR="~/service/main"
+            SERVICE_NAME="forge"
+          else
+            exit 1
+          fi
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.ssh_port }} ${{ secrets.ssh_user }}@itisluiz.com <<EOF
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            cd $REMOTE_DIR
+            sudo systemctl stop $SERVICE_NAME
+            git pull
+            npm run deploy
+            sudo systemctl start $SERVICE_NAME
+          EOF

@@ -54,7 +54,11 @@
 						},
 						"development": {
 							"buildTarget": "forge-frontend:build:development",
-							"proxyConfig": "proxy.development.json"
+							"proxyConfig": "proxy.local.json"
+						},
+						"developmentremote": {
+							"buildTarget": "forge-frontend:build:development",
+							"proxyConfig": "proxy.remote.json"
 						}
 					},
 					"defaultConfiguration": "development"

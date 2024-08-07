@@ -1,0 +1,7 @@
+{
+	"/api": {
+		"target": "https://forgedev.itisluiz.com",
+		"secure": true,
+		"changeOrigin": true
+	}
+}

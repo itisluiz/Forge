@@ -3,8 +3,10 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"start": "tsc && node --env-file=.env --env-file=.secrets.env dist/index.js",
+		"start:prod": "node --env-file=.env --env-file=.secrets.env dist/index.js",
+		"start:dev": "node --env-file=.development.env --env-file=.secrets.development.env dist/index.js",
 		"development": "tsc-watch --onSuccess \"node --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
+		"build": "tsc",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
