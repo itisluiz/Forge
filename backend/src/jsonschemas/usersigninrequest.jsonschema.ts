@@ -1,6 +1,6 @@
-export const userSignupRequestJsonSchema = {
+export const userSigninRequestJsonSchema = {
 	$schema: "http://json-schema.org/draft-07/schema#",
-	title: "UserSignupRequest",
+	title: "UserSigninRequest",
 	type: "object",
 	properties: {
 		email: {
@@ -12,19 +12,9 @@ export const userSignupRequestJsonSchema = {
 		password: {
 			type: "string",
 			maxLength: 256,
-			minLength: 8,
-		},
-		name: {
-			type: "string",
-			maxLength: 64,
-			minLength: 1,
-		},
-		surname: {
-			type: "string",
-			maxLength: 64,
 			minLength: 1,
 		},
 	},
-	required: ["email", "password", "name", "surname"],
+	required: ["email", "password"],
 	additionalProperties: false,
 };

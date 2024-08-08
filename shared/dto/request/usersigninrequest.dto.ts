@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     UserSignupRequest:
+ *     UserSigninRequest:
  *       type: object
  *       properties:
  *         email:
@@ -10,14 +10,8 @@
  *           format: email
  *         password:
  *           type: string
- *         name:
- *           type: string
- *         surname:
- *           type: string
  */
-export interface UserSignupRequest {
+export interface UserSigninRequest {
 	email: string;
 	password: string;
-	name: string;
-	surname: string;
 }

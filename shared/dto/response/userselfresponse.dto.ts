@@ -2,22 +2,23 @@
  * @swagger
  * components:
  *   schemas:
- *     UserSignupRequest:
+ *     UserSelfResponse:
  *       type: object
  *       properties:
  *         email:
  *           type: string
  *           format: email
- *         password:
- *           type: string
  *         name:
  *           type: string
  *         surname:
  *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
  */
-export interface UserSignupRequest {
+export interface UserSelfResponse {
 	email: string;
-	password: string;
 	name: string;
 	surname: string;
+	createdAt: string;
 }
