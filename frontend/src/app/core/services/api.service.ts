@@ -10,25 +10,26 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 })
 export class ApiService {
 	constructor(
-		private http: HttpClient,
-		private token: TokenService,
+		private httpClient: HttpClient,
+		private tokenService: TokenService,
 	) {}
 
 	private catchErrorHandler<T>(error: HttpErrorResponse, caught: Observable<T>): ObservableInput<any> {
+		// TODO: Toaster com erro
 		throw error;
 	}
 
 	public call<T, Q = unknown>(verb: HttpMethod, endpoint: string, params?: HttpParams, body?: Q): Observable<T> {
 		const url = `/api/${endpoint}`;
 
-		const token = this.token.get();
+		const token = this.tokenService.get();
 		const headers = {
 			"Content-Type": "application/json",
 			Accept: "application/json",
 			...(token && { Authorization: `Bearer ${token}` }),
 		};
 
-		return this.http
+		return this.httpClient
 			.request<T>(verb, url, { params, body, headers, responseType: "json" })
 			.pipe(catchError(this.catchErrorHandler.bind(this)));
 	}
