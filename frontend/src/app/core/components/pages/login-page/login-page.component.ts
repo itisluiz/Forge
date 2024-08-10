@@ -1,11 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { HttpErrorResponse } from "@angular/common/http";
 import { MatIconModule } from "@angular/material/icon";
-import { TokenService } from "../../../services/token.service";
 import { UserApiService } from "../../../services/user-api.service";
 import { UserSigninRequest } from "forge-shared/dto/request/usersigninrequest.dto";
+import { ApiErrorResponse } from "../../../services/api.service";
 
 @Component({
 	selector: "app-login-page",
@@ -21,7 +20,6 @@ export class LoginPageComponent implements OnInit {
 
 	constructor(
 		private userApiService: UserApiService,
-		private tokenService: TokenService,
 		private formBuilder: FormBuilder,
 	) {}
 
@@ -70,7 +68,7 @@ export class LoginPageComponent implements OnInit {
 
 			this.userApiService.signin(request).subscribe({
 				next: (result) => {},
-				error: (error: HttpErrorResponse) => {},
+				error: (error: ApiErrorResponse) => {},
 			});
 
 			// TODO: Entender por que isso existe
