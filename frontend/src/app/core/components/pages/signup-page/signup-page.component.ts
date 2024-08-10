@@ -1,7 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { HttpErrorResponse } from "@angular/common/http";
 import { MatIconModule } from "@angular/material/icon";
+import { TokenService } from "../../../services/token.service";
+import { UserApiService } from "../../../services/user-api.service";
+import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dto";
 
 @Component({
 	selector: "app-signup-page",
@@ -17,7 +21,11 @@ export class SignupPageComponent implements OnInit {
 	regexName: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
 	regexPassword: RegExp = /^(?=.*[!@#$%^&*]).{7,}$/;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private userApiService: UserApiService,
+		private tokenService: TokenService,
+		private formBuilder: FormBuilder,
+	) {}
 
 	ngOnInit(): void {
 		this.signupForm = this.formBuilder.group(
@@ -85,9 +93,20 @@ export class SignupPageComponent implements OnInit {
 			return;
 		}
 		if (this.signupForm.valid) {
-			// Lógica para autenticação aqui
-			// Se a autenticação falhar, defina signupFailed como verdadeiro
-			this.signupFailed = true;
+			const request: UserSignupRequest = {
+				email: this.signupForm.get("email")!.value,
+				password: this.signupForm.get("password")!.value,
+				name: this.signupForm.get("name")!.value,
+				surname: this.signupForm.get("lastName")!.value,
+			};
+
+			this.userApiService.signup(request).subscribe({
+				next: (result) => {},
+				error: (error: HttpErrorResponse) => {},
+			});
+
+			// TODO: Entender por que isso existe e mexer lógica confirmar senha
+			// this.signupFailed = true;
 		}
 	}
 
