@@ -3,6 +3,7 @@ import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTable, MatTableModule } from "@angular/material/table";
+import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -50,6 +51,8 @@ const TEST_CASES_DATA: History[] = [
 		NavbarComponent,
 		MatIcon,
 		MatExpansionModule,
+		MatTab,
+		MatTabGroup,
 		MatTable,
 		MatTableModule,
 		MatSelectModule,
