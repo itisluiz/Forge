@@ -1,7 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { HttpErrorResponse } from "@angular/common/http";
 import { MatIconModule } from "@angular/material/icon";
+import { TokenService } from "../../../services/token.service";
+import { UserApiService } from "../../../services/user-api.service";
+import { UserSigninRequest } from "forge-shared/dto/request/usersigninrequest.dto";
 
 @Component({
 	selector: "app-login-page",
@@ -15,7 +19,11 @@ export class LoginPageComponent implements OnInit {
 	loginFailed: boolean = false;
 	formSubmitted: boolean = false;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private userApiService: UserApiService,
+		private tokenService: TokenService,
+		private formBuilder: FormBuilder,
+	) {}
 
 	ngOnInit(): void {
 		this.loginForm = this.formBuilder.group({
@@ -55,9 +63,18 @@ export class LoginPageComponent implements OnInit {
 			return;
 		}
 		if (this.loginForm.valid) {
-			// Lógica para autenticação aqui
-			// Se a autenticação falhar, defina loginFailed como verdadeiro
-			this.loginFailed = true;
+			const request: UserSigninRequest = {
+				email: this.loginForm.get("email")!.value,
+				password: this.loginForm.get("password")!.value,
+			};
+
+			this.userApiService.signin(request).subscribe({
+				next: (result) => {},
+				error: (error: HttpErrorResponse) => {},
+			});
+
+			// TODO: Entender por que isso existe
+			// this.loginFailed = true;
 		}
 	}
 

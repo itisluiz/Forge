@@ -25,3 +25,19 @@ export function decryptPK(table: string, value: string): number {
 	const result = parseInt(value, 16);
 	return skip32.decrypt(result, getOrCreateTableKey(table));
 }
+
+export function hashPassword(password: string): string {
+	const hash = crypto.pbkdf2Sync(password, encryptionKey, 4096, 48, "sha256");
+	return hash.toString("base64");
+}
+
+export function validatePassword(password: string, hash: string): boolean {
+	const passwordBuffer = Buffer.from(hashPassword(password));
+	const hashBuffer = Buffer.from(hash);
+
+	if (passwordBuffer.length !== hashBuffer.length) {
+		return false;
+	}
+
+	return crypto.timingSafeEqual(Buffer.from(hashPassword(password)), Buffer.from(hash));
+}
