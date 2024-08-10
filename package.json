@@ -3,7 +3,6 @@
 	"version": "0.0.0",
 	"scripts": {
 		"normalize": "prettier . --write",
-		"assertnormalized": "prettier . --check",
 		"postinstall": "husky",
 		"deploy:frontend": "cd frontend && npm install --ignore-scripts && npm link ../shared && npm run build",
 		"deploy:backend": "cd backend && npm install --ignore-scripts && npm link ../shared && npm run build",
@@ -11,6 +10,7 @@
 	},
 	"devDependencies": {
 		"husky": "^9.0.11",
+		"lint-staged": "^15.2.8",
 		"prettier": "^3.2.5"
 	}
 }

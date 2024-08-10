@@ -1,9 +1,14 @@
+import { FailureResponse } from "forge-shared/dto/response/failureresponse.dto";
 import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, ObservableInput, catchError } from "rxjs";
 import { TokenService } from "./token.service";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+export interface ApiErrorResponse extends HttpErrorResponse {
+	error: FailureResponse | null;
+}
 
 @Injectable({
 	providedIn: "root",
@@ -14,7 +19,7 @@ export class ApiService {
 		private tokenService: TokenService,
 	) {}
 
-	private catchErrorHandler<T>(error: HttpErrorResponse, caught: Observable<T>): ObservableInput<any> {
+	private catchErrorHandler<T>(error: ApiErrorResponse, caught: Observable<T>): ObservableInput<any> {
 		// TODO: Toaster com erro
 		throw error;
 	}
