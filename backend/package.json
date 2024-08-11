@@ -7,6 +7,9 @@
 		"start:dev": "node --env-file=.development.env --env-file=.secrets.development.env dist/index.js",
 		"development": "tsc-watch --onSuccess \"node --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
 		"build": "tsc",
+		"reseed:dev": "sequelize db:seed:undo:all --env development && sequelize db:seed:all --env development",
+		"reseed:prod": "sequelize db:seed:undo:all --env production && sequelize db:seed:all --env production",
+		"reseed": "npm run reseed:dev || npm run reseed:prod",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
