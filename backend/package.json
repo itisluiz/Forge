@@ -7,11 +7,15 @@
 		"start:dev": "node --env-file=.development.env --env-file=.secrets.development.env dist/index.js",
 		"development": "tsc-watch --onSuccess \"node --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
 		"build": "tsc",
+		"reseed:dev": "sequelize db:seed:undo:all --env development && sequelize db:seed:all --env development",
+		"reseed:prod": "sequelize db:seed:undo:all --env production && sequelize db:seed:all --env production",
+		"reseed": "npm run reseed:dev || npm run reseed:prod",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.2",
 		"chalk": "^5.3.0",
+		"dotenv": "^16.4.5",
 		"express": "^4.19.1",
 		"express-async-errors": "^3.1.1",
 		"jsonschema": "^1.4.1",
@@ -27,6 +31,7 @@
 		"@types/node": "^20.11.30",
 		"@types/swagger-jsdoc": "^6.0.4",
 		"@types/swagger-ui-express": "^4.1.6",
+		"sequelize-cli": "^6.6.2",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.0",
 		"tsc-watch": "^6.2.0",

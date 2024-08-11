@@ -5,17 +5,17 @@
  *     Priority:
  *       type: integer
  *       enum:
- *         - 0
  *         - 1
  *         - 2
+ *         - 3
  *       description: |
  *         Represents the priority level:
- *         - 0: Low
- *         - 1: Medium
- *         - 2: High
+ *         - 1: Low
+ *         - 2: Medium
+ *         - 3: High
  */
 export const enum Priority {
-	LOW,
+	LOW = 1,
 	MEDIUM,
 	HIGH,
 }

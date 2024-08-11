@@ -1,11 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { HttpErrorResponse } from "@angular/common/http";
 import { MatIconModule } from "@angular/material/icon";
-import { TokenService } from "../../../services/token.service";
 import { UserApiService } from "../../../services/user-api.service";
 import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dto";
+import { ApiErrorResponse } from "../../../services/api.service";
 
 @Component({
 	selector: "app-signup-page",
@@ -23,7 +22,6 @@ export class SignupPageComponent implements OnInit {
 
 	constructor(
 		private userApiService: UserApiService,
-		private tokenService: TokenService,
 		private formBuilder: FormBuilder,
 	) {}
 
@@ -102,7 +100,7 @@ export class SignupPageComponent implements OnInit {
 
 			this.userApiService.signup(request).subscribe({
 				next: (result) => {},
-				error: (error: HttpErrorResponse) => {},
+				error: (error: ApiErrorResponse) => {},
 			});
 
 			// TODO: Entender por que isso existe e mexer lógica confirmar senha

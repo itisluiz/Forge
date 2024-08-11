@@ -1,1 +1,1 @@
-npm run assertnormalized
+npx lint-staged

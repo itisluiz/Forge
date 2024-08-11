@@ -5,21 +5,21 @@
  *     FailureType:
  *       type: integer
  *       enum:
- *         - 0
  *         - 1
  *         - 2
  *         - 3
  *         - 4
+ *         - 5
  *       description: |
- *         Represents the error type:
- *         - 0: Other
- *         - 1: Internal
- *         - 2: Not Found
- *         - 3: Bad Request
- *         - 4: Unauthorized
+ *         Represents the failure type:
+ *         - 1: Other
+ *         - 2: Internal
+ *         - 3: Not Found
+ *         - 4: Bad Request
+ *         - 5: Unauthorized
  */
 export const enum FailureType {
-	OTHER,
+	OTHER = 1,
 	INTERNAL,
 	NOTFOUND,
 	BADREQUEST,
