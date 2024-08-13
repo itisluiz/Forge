@@ -206,6 +206,11 @@ app-navbar {
 				}
 			}
 
+			.test-case-buttons {
+				margin-top: 12px;
+				display: flex;
+			}
+
 			// NO TEST CASES AVAILABLE
 
 			.no-test-cases-available {
@@ -214,7 +219,6 @@ app-navbar {
 
 				.test-case-buttons {
 					margin-top: 10px;
-					display: flex;
 				}
 			}
 		}
@@ -232,124 +236,6 @@ app-navbar {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-.test-case-pop-up {
-	background-color: v.$white-color;
-	border-radius: 2px;
-	padding: 2em 0;
-	width: 80vw;
-	z-index: 100;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	padding: 55px 77px;
-
-	.test-case-pop-up-header {
-		margin-bottom: 50px;
-
-		h2 {
-			font-size: v.$h2-font;
-			font-weight: 500;
-			font-size: 28px;
-			margin-bottom: 1.2rem;
-		}
-
-		p {
-			margin-bottom: 1rem;
-		}
-	}
-
-	form {
-		.pop-up-form-content {
-			display: flex;
-			justify-content: space-between;
-			width: 100%;
-			.form-content-left {
-				grid-area: left;
-				width: 310px;
-			}
-
-			.input-wrapper {
-				display: flex;
-				flex-direction: column;
-				margin-bottom: 1.5em;
-
-				select,
-				input,
-				textarea {
-					height: 40px;
-					background-color: #f2f2f2;
-					border: none;
-					padding-left: 20px;
-					border-radius: 2px;
-
-					&:focus {
-						outline: none;
-						border: 1px solid v.$green-color;
-					}
-				}
-
-				textarea {
-					height: 104px;
-					resize: none;
-					padding: 15px 20px;
-				}
-
-				input {
-					height: 20px;
-					padding: 10px 10px;
-				}
-
-				span {
-					display: flex;
-					align-items: center;
-					color: v.$error-color;
-					font-size: v.$observation-font;
-
-					mat-icon {
-						height: fit-content;
-						width: fit-content;
-						margin-right: 5px;
-						font-size: v.$paragraph-font;
-					}
-				}
-			}
-
-			.form-content-right {
-				width: 65%;
-				display: flex;
-				justify-content: space-between;
-
-				.input-wrapper {
-					width: 100%;
-
-					textarea {
-						height: 40px;
-						width: 100%;
-					}
-				}
-			}
-		}
-
-		.pop-up-footer {
-			display: flex;
-			justify-content: end;
-			align-items: center;
-			span {
-				margin-right: 1em;
-				&:hover {
-					cursor: pointer;
-				}
-			}
-			button[type="submit"] {
-				color: white;
-				background-color: v.$green-color;
-				border-radius: 2px;
-			}
-		}
-	}
 }
 
 @media only screen and (max-width: 1500px) {
