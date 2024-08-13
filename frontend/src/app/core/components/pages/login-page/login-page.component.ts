@@ -5,6 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { UserApiService } from "../../../services/user-api.service";
 import { UserSigninRequest } from "forge-shared/dto/request/usersigninrequest.dto";
 import { ApiErrorResponse } from "../../../services/api.service";
+import { Router } from "@angular/router";
 
 @Component({
 	selector: "app-login-page",
@@ -21,6 +22,7 @@ export class LoginPageComponent implements OnInit {
 	constructor(
 		private userApiService: UserApiService,
 		private formBuilder: FormBuilder,
+		private router: Router,
 	) {}
 
 	ngOnInit(): void {
@@ -28,30 +30,6 @@ export class LoginPageComponent implements OnInit {
 			email: ["", [Validators.required, Validators.email]],
 			password: ["", [Validators.required, Validators.minLength(7), Validators.pattern(/^(?=.*[!@#$%^&*]).{7,}$/)]],
 		});
-
-		this.loginForm.get("email")!.valueChanges.subscribe(() => {
-			this.loginFailed = false;
-		});
-
-		this.loginForm.get("password")!.valueChanges.subscribe(() => {
-			this.loginFailed = false;
-		});
-	}
-
-	isEmailInvalid(): boolean {
-		const email = this.loginForm.get("email");
-		if (!email!.errors?.["email"]) {
-			return false;
-		}
-		return email!.invalid && (email!.dirty || email!.touched);
-	}
-
-	isPasswordInvalid(): boolean {
-		const password = this.loginForm.get("password");
-		if (password?.value.length === 0) {
-			return false;
-		}
-		return password!.invalid && (password!.dirty || password!.touched);
 	}
 
 	login() {
@@ -67,26 +45,20 @@ export class LoginPageComponent implements OnInit {
 			};
 
 			this.userApiService.signin(request).subscribe({
-				next: (result) => {},
-				error: (error: ApiErrorResponse) => {},
+				next: (result) => {
+					this.router.navigate(["/"]);
+				},
+				error: (error: ApiErrorResponse) => {
+					this.loginFailed = true;
+				},
 			});
-
-			// TODO: Entender por que isso existe
-			// this.loginFailed = true;
 		}
 	}
 
-	get emailErrorMessage(): string {
-		if (this.loginForm.get("email")!.errors?.["email"]) {
-			return "Please enter a valid email address.";
+	get genericErrorMessage(): string {
+		if (this.loginFailed === true) {
+			return "Invalid email or password. Please try again.";
 		}
 		return "";
-	}
-
-	get passwordErrorMessage(): string {
-		if (this.loginForm.get("password")!.errors?.["pattern"]) {
-			return "Password must have 7 characters and 1 special character.";
-		}
-		return "Invalid email or password. Please try again.";
 	}
 }
