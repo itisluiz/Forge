@@ -118,21 +118,18 @@
 
 						<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 					</table>
+					<div class="test-case-buttons">
+						<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
+					</div>
 				} @else {
 					<div class="no-test-cases-available">
 						<p>
-							It seems that you have not created any test cases. To generate them manually or automatically, click on one of
-							the buttons bellow.
+							It seems that you have not created any test cases. To generate them manually or automatically, click the button
+							below.
 						</p>
 
 						<div class="test-case-buttons">
-							<button id="button-create-test-manually" class="grey-button" (click)="createTestCaseManually()">
-								Create manually
-							</button>
-							<button id="button-create-test-ai" class="grey-button ai-button">
-								<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
-								Generate test cases with AI
-							</button>
+							<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
 						</div>
 					</div>
 				}
@@ -144,63 +141,5 @@
 @if (popUpActive) {
 	<div class="pop-up-background" (click)="closePopUp()"></div>
 
-	<div class="test-case-pop-up">
-		<div class="test-case-pop-up-header">
-			<h2>Create a new test case</h2>
-			<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
-			<button id="button-create-test-ai" class="grey-button ai-button">
-				<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
-				Generate test cases with AI
-			</button>
-		</div>
-
-		<form [formGroup]="createTestCaseForm" class="pop-up-form" (ngSubmit)="createTestCase()">
-			<div class="pop-up-form-content">
-				<div class="form-content-left">
-					<div class="input-wrapper">
-						<label for="acceptance-criteria">Insert your acceptance criteria</label>
-						<input
-							type="text"
-							id="acceptance-criteria"
-							name="acceptance-criteria"
-							formControlName="acceptanceCriteria"
-							placeholder="Guest users can click the profile icon in the home page and create an account."
-						/>
-						<span *ngIf="isTextInvalid('acceptanceCriteria')"> {{ nameErrorMessage }} </span>
-					</div>
-					<div class="input-wrapper">
-						<label for="case-description">Description</label>
-						<textarea
-							id="case-description"
-							name="case-description"
-							formControlName="description"
-							placeholder="User create his account successfully on the plataform."
-						></textarea>
-						<span *ngIf="isTextInvalid('description')"> {{ descriptionErrorMessage }} </span>
-					</div>
-					<div class="input-wrapper">
-						<label for="case-precondition">Precondition</label>
-						<textarea
-							id="case-precondition"
-							name="case-precondition"
-							formControlName="preCondition"
-							placeholder="User is on the home page."
-						></textarea>
-						<span *ngIf="isTextInvalid('preCondition')"> {{ descriptionErrorMessage }} </span>
-					</div>
-				</div>
-			</div>
-
-			<mat-tab-group>
-				<mat-tab label="First"> Content 1 </mat-tab>
-				<mat-tab label="Second"> Content 2 </mat-tab>
-				<mat-tab label="Third"> Content 3 </mat-tab>
-			</mat-tab-group>
-
-			<div class="pop-up-footer">
-				<span (click)="closePopUp()">Cancel</span>
-				<button type="submit" class="grey-button">Create test case</button>
-			</div>
-		</form>
-	</div>
+	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUp()"> </app-test-case-popup>
 }

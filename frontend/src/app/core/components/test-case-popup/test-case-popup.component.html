@@ -1,0 +1,98 @@
+<div class="test-case-pop-up-header">
+	<h2>Create a new test case</h2>
+	<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
+	<button id="button-create-test-ai" class="grey-button ai-button" (click)="generateWithAI()">
+		<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
+		Generate test cases with AI
+	</button>
+</div>
+
+<form [formGroup]="testCaseForm" class="pop-up-form" (ngSubmit)="createTestCase()">
+	<div class="pop-up-form-content">
+		<!-- LEFT SIDE OF THE POP-UP -->
+		<div class="form-content-left">
+			<div class="input-wrapper">
+				<label for="acceptance-criteria">Select your acceptance criteria</label>
+				<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria">
+					<option value="">-- Select a criteria --</option>
+					<!-- Opção vazia -->
+
+					@for (criteria of acceptanceCriteria; track criteria) {
+						<option>
+							{{ criteria }}
+						</option>
+					}
+				</select>
+				<span *ngIf="isControlInvalid('acceptanceCriteria')"> {{ criteriaErrorMessage }} </span>
+			</div>
+
+			<div class="input-wrapper">
+				<label for="case-description">Description</label>
+				<textarea
+					id="case-description"
+					name="case-description"
+					formControlName="description"
+					placeholder="User create his account successfully on the plataform."
+				></textarea>
+				<span *ngIf="isControlInvalid('description')"> {{ descriptionErrorMessage }} </span>
+			</div>
+
+			<div class="input-wrapper">
+				<label for="case-precondition">Precondition</label>
+				<textarea
+					id="case-precondition"
+					name="case-precondition"
+					formControlName="preCondition"
+					placeholder="User is on the home page."
+				></textarea>
+				<span *ngIf="isControlInvalid('preCondition')"> {{ descriptionErrorMessage }} </span>
+			</div>
+		</div>
+
+		<!-- RIGHT SIDE OF THE POP-UP -->
+		<div class="form-content-right">
+			<mat-tab-group
+				[selectedIndex]="selected.value"
+				(selectedIndexChange)="selected.setValue($event)"
+				formArrayName="steps"
+			>
+				@for (step of steps.controls; track step; let index = $index) {
+					<mat-tab [label]="testCaseSteps[index] ? testCaseSteps[index].title : ''">
+						<div [formGroupName]="index" class="tab-content-wrapper">
+							<div class="input-wrapper">
+								<label for="action">Action</label>
+								<textarea
+									id="action"
+									name="action"
+									placeholder="Your action description here"
+									formControlName="action"
+								></textarea>
+								<span *ngIf="isControlInvalid('action', index)"> {{ actionErrorMessage }} </span>
+							</div>
+							<div class="input-wrapper">
+								<label for="action">Expected Behavior</label>
+								<textarea
+									id="expected-behavior"
+									name="expected-behavior"
+									placeholder="Your expected description here"
+									formControlName="expectedBehavior"
+								></textarea>
+								<span *ngIf="isControlInvalid('expected-behavior', index)"> {{ expectedErrorMessage }} </span>
+							</div>
+						</div>
+					</mat-tab>
+				}
+			</mat-tab-group>
+
+			<div class="icons-wrapper">
+				<mat-icon class="add_box" (click)="addTab()">add_box</mat-icon>
+				<mat-icon class="delete" (click)="deleteTab()">delete</mat-icon>
+			</div>
+		</div>
+	</div>
+
+	<div class="pop-up-footer">
+		<span (click)="closePopUp()">Cancel</span>
+		<button type="submit" class="grey-button" [disabled]="testCaseForm.invalid">Create test case</button>
+	</div>
+</form>
