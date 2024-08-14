@@ -28,7 +28,7 @@ export class LoginPageComponent implements OnInit {
 	ngOnInit(): void {
 		this.loginForm = this.formBuilder.group({
 			email: ["", [Validators.required, Validators.email]],
-			password: ["", [Validators.required, Validators.minLength(7), Validators.pattern(/^(?=.*[!@#$%^&*]).{7,}$/)]],
+			password: ["", [Validators.required, Validators.minLength(1)]],
 		});
 	}
 
@@ -46,7 +46,7 @@ export class LoginPageComponent implements OnInit {
 
 			this.userApiService.signin(request).subscribe({
 				next: (result) => {
-					this.router.navigate(["/"]);
+					this.router.navigate(["/select-project"]);
 				},
 				error: (error: ApiErrorResponse) => {
 					this.loginFailed = true;

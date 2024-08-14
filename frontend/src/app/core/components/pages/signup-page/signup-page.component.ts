@@ -102,7 +102,7 @@ export class SignupPageComponent implements OnInit {
 
 			this.userApiService.signup(request).subscribe({
 				next: (result) => {
-					this.router.navigate(["/"]);
+					this.router.navigate(["/select-project"]);
 				},
 				error: (error: ApiErrorResponse) => {
 					this.signupFailed = true;
