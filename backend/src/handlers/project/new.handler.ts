@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { getUserData } from "../../util/requestmeta.js";
-import { mapProject } from "../../mappers/project.mapper.js";
+import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
 
 export default async function (req: Request, res: Response) {
 	const projectNewRequest = req.body as ProjectNewRequest;
@@ -35,6 +35,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapProject(project);
+	const response = mapProjectResponse(project);
 	res.status(200).send(response);
 }

@@ -1,7 +1,7 @@
 import { AuthToken } from "forge-shared/dto/authtoken.dto";
 import { Model } from "sequelize";
-import { Request } from "express";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
+import { Request } from "express";
 
 //#region setters
 export function setUserData(req: Request, user: Model<any, any>, authToken: AuthToken) {
@@ -19,7 +19,7 @@ export function setProjectData(req: Request, projectmembership: Model<any, any>,
 //#region getters
 export function getUserData(req: Request) {
 	return {
-		user: (req as any).__reqinjection_user as Model<any, any>,
+		user: (req as any).__reqinjection_user as any,
 		authToken: (req as any).__reqinjection_authtoken as AuthToken,
 	};
 }

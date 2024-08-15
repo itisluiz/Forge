@@ -10,6 +10,33 @@ const router = Router();
 
 /**
  * @swagger
+ * /api/project/self:
+ *   get:
+ *     summary: Gets all the project the requesting user is a member of.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectSelfResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/project/self", authorize(), async (req, res) => {
+	await handle("project", "self", req, res);
+});
+
+/**
+ * @swagger
  * /api/project/new:
  *   post:
  *     summary: Create a new project.

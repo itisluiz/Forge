@@ -1,8 +1,8 @@
+import { encryptPK } from "../../util/encryption.js";
 import { Model } from "sequelize";
 import { UserSelfResponse } from "forge-shared/dto/response/userselfresponse.dto";
-import { encryptPK } from "../util/encryption.js";
 
-export function mapUserSelf(user: Model<any, any>): UserSelfResponse {
+export function mapUserSelfResponse(user: Model<any, any>): UserSelfResponse {
 	return {
 		eid: encryptPK("user", user.dataValues.id),
 		email: user.dataValues.email,

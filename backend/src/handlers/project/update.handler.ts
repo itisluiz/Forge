@@ -2,7 +2,7 @@ import { getSequelize } from "../../util/sequelize.js";
 import { Request, Response } from "express";
 import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { getProjectData } from "../../util/requestmeta.js";
-import { mapProject } from "../../mappers/project.mapper.js";
+import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
 
 export default async function (req: Request, res: Response) {
 	const projectUpdateRequest = req.body as ProjectUpdateRequest;
@@ -33,6 +33,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapProject(project);
+	const response = mapProjectResponse(project);
 	res.status(200).send(response);
 }
