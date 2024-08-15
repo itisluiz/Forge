@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { getUserData } from "../../util/requestmeta.js";
-import { mapProject } from "../../mappers/project.mapper.js";
+import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
 
 export default async function (req: Request, res: Response) {
 	const projectNewRequest = req.body as ProjectNewRequest;
@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 				title: projectNewRequest.title,
 				description: projectNewRequest.description,
 			},
-			{ transaction },
+			{ transaction, include: [sequelize.models["user"]] },
 		);
 
 		await project.addUser(authUser.user, {
@@ -29,25 +29,12 @@ export default async function (req: Request, res: Response) {
 		});
 
 		await transaction.commit();
+		await project.reload();
 	} catch (error) {
 		await transaction.rollback();
 		throw error;
 	}
 
-	project.dataValues.users = await project.getUsers({
-		include: [
-			{
-				model: sequelize.models["projectmembership"],
-				as: "projectmembership",
-				include: [
-					{
-						model: sequelize.models["eprojectrole"],
-					},
-				],
-			},
-		],
-	});
-
-	const response = mapProject(project);
+	const response = mapProjectResponse(project);
 	res.status(200).send(response);
 }

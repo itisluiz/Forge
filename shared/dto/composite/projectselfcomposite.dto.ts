@@ -1,34 +1,31 @@
 import { ProjectRole } from "../../enum/projectrole.enum";
+
 /**
  * @swagger
  * components:
  *   schemas:
- *     ProjectMemberComposite:
+ *     ProjectSelfComposite:
  *       type: object
  *       properties:
  *         eid:
+ *           type: string
+ *         code:
+ *           type: string
+ *         title:
  *           type: string
  *         admin:
  *           type: boolean
  *         role:
  *           $ref: '#/components/schemas/ProjectRole'
- *         email:
- *           type: string
- *           format: email
- *         name:
- *           type: string
- *         surname:
- *           type: string
  *         joinedAt:
  *           type: string
  *           format: date-time
  */
-export interface ProjectMemberComposite {
+export interface ProjectSelfComposite {
 	eid: string;
+	code: string;
+	title: string;
 	admin: boolean;
 	role: ProjectRole;
-	email: string;
-	name: string;
-	surname: string;
 	joinedAt: string;
 }
