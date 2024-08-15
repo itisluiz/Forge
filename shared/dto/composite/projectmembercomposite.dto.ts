@@ -1,12 +1,18 @@
+import { ProjectRoleComposite } from "./projectrolecomposite.dto";
+
 /**
  * @swagger
  * components:
  *   schemas:
- *     UserSelfResponse:
+ *     ProjectMemberComposite:
  *       type: object
  *       properties:
  *         eid:
  *           type: string
+ *         admin:
+ *           type: boolean
+ *         role:
+ *           $ref: '#/components/schemas/ProjectRoleComposite'
  *         email:
  *           type: string
  *           format: email
@@ -14,14 +20,16 @@
  *           type: string
  *         surname:
  *           type: string
- *         createdAt:
+ *         joinedAt:
  *           type: string
  *           format: date-time
  */
-export interface UserSelfResponse {
+export interface ProjectMemberComposite {
 	eid: string;
+	admin: boolean;
+	role: ProjectRoleComposite;
 	email: string;
 	name: string;
 	surname: string;
-	createdAt: string;
+	joinedAt: string;
 }

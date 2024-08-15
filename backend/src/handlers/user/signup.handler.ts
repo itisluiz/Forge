@@ -7,7 +7,6 @@ import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dt
 export default async function (req: Request, res: Response) {
 	const userSignupRequest = req.body as UserSignupRequest;
 	const sequelize = await getSequelize();
-
 	const transaction = await sequelize.transaction();
 
 	try {
