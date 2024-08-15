@@ -27,6 +27,7 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const thisModel = models[modelName];
 
 	thisModel.belongsToMany(models["user"], { through: models["projectmembership"] });
+	thisModel.hasMany(models["projectmembership"], { foreignKey: { allowNull: false } });
 	thisModel.hasMany(models["epic"], { foreignKey: { allowNull: false } });
 	thisModel.hasMany(models["sprint"], { foreignKey: { allowNull: false } });
 }

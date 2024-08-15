@@ -1,5 +1,4 @@
-import { ProjectRoleComposite } from "./projectrolecomposite.dto";
-
+import { ProjectRole } from "../../enum/projectrole.enum";
 /**
  * @swagger
  * components:
@@ -12,7 +11,7 @@ import { ProjectRoleComposite } from "./projectrolecomposite.dto";
  *         admin:
  *           type: boolean
  *         role:
- *           $ref: '#/components/schemas/ProjectRoleComposite'
+ *           $ref: '#/components/schemas/ProjectRole'
  *         email:
  *           type: string
  *           format: email
@@ -27,7 +26,7 @@ import { ProjectRoleComposite } from "./projectrolecomposite.dto";
 export interface ProjectMemberComposite {
 	eid: string;
 	admin: boolean;
-	role: ProjectRoleComposite;
+	role: ProjectRole;
 	email: string;
 	name: string;
 	surname: string;
