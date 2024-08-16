@@ -10,7 +10,10 @@ export function authorizeProject(admin = false) {
 		const sequelize = await getSequelize();
 		const authUser = getUserData(req);
 
-		const project = await sequelize.models["project"].findByPk(projectId, { include: sequelize.models["user"] });
+		const project = await sequelize.models["project"].findByPk(projectId, {
+			include: [{ model: sequelize.models["user"], attributes: ["id"] }],
+			attributes: [],
+		});
 
 		if (project) {
 			const projectMember = project.dataValues.users.find((user: any) => user.id === authUser.user.dataValues.id);

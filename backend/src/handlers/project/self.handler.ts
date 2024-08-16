@@ -11,7 +11,7 @@ export default async function (req: Request, res: Response) {
 	let projects: any;
 
 	try {
-		projects = await authUser.user.getProjects();
+		projects = await authUser.user.getProjects({ transaction, attributes: ["id", "code", "title"] });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
