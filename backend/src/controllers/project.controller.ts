@@ -1,10 +1,11 @@
+import { authorize } from "../middleware/auth.middleware.js";
+import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
-import { Router } from "express";
-import { authorize } from "../middleware/auth.middleware.js";
+import { projectMakeInvitationRequestJsonSchema } from "../jsonschemas/projectmakeinvitationrequest.jsonschema.js";
 import { projectNewRequestJsonSchema } from "../jsonschemas/projectnewrequest.jsonschema.js";
-import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { projectUpdateRequestJsonSchema } from "../jsonschemas/projectupdaterequest.jsonschema.js";
+import { Router } from "express";
 
 const router = Router();
 
@@ -43,12 +44,59 @@ router.post("/api/project/new", authorize(), jsonBody(), jsonBodySchema(projectN
 
 /**
  * @swagger
- * /api/project/{eid}/update:
+ * /api/project/{projectEid}/makeinvitation:
+ *   post:
+ *     summary: Create a new invitation code for the project.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProjectMakeInvitationRequest'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectMakeInvitationResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.post(
+	"/api/project/:projectEid/makeinvitation",
+	authorize(),
+	authorizeProject(true),
+	jsonBody(),
+	jsonBodySchema(projectMakeInvitationRequestJsonSchema),
+	async (req, res) => {
+		await handle("project", "makeinvitation", req, res);
+	},
+);
+
+/**
+ * @swagger
+ * /api/project/{projectEid}/update:
  *   patch:
  *     summary: Update an existing project's information.
  *     parameters:
  *       - in: path
- *         name: eid
+ *         name: projectEid
  *         schema:
  *           type: string
  *         required: true
@@ -78,7 +126,7 @@ router.post("/api/project/new", authorize(), jsonBody(), jsonBodySchema(projectN
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.patch(
-	"/api/project/:eid/update",
+	"/api/project/:projectEid/update",
 	authorize(),
 	authorizeProject(true),
 	jsonBody(),
@@ -117,12 +165,12 @@ router.get("/api/project/self", authorize(), async (req, res) => {
 
 /**
  * @swagger
- * /api/project/{eid}/get:
+ * /api/project/{projectEid}/get:
  *   get:
  *     summary: Get information about a specific project the requesting user is a member of.
  *     parameters:
  *       - in: path
- *         name: eid
+ *         name: projectEid
  *         schema:
  *           type: string
  *         required: true
@@ -145,7 +193,7 @@ router.get("/api/project/self", authorize(), async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/project/:eid/get", authorize(), authorizeProject(), async (req, res) => {
+router.get("/api/project/:projectEid/get", authorize(), authorizeProject(), async (req, res) => {
 	await handle("project", "get", req, res);
 });
 
