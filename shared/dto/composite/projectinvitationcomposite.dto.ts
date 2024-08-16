@@ -11,10 +11,12 @@ import { ProjectRole } from "../../enum/projectrole.enum";
  *           type: string
  *         role:
  *           $ref: '#/components/schemas/ProjectRole'
- *         uses:
+ *         remainingUses:
  *           type: integer
  *         durationHours:
  *           type: number
+ *         expired:
+ *           type: boolean
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -26,8 +28,9 @@ import { ProjectRole } from "../../enum/projectrole.enum";
 export interface ProjectInvitationComposite {
 	code: string;
 	role: ProjectRole;
-	uses: number;
+	remainingUses: number;
 	durationHours: number;
+	expired: boolean;
 	createdAt: string;
 	expiredAt?: string;
 }

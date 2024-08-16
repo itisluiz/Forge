@@ -32,3 +32,10 @@ export class NotFoundError extends ExternalHandlingError {
 		this.name = "NotFoundError";
 	}
 }
+
+export class ForbiddenError extends ExternalHandlingError {
+	constructor(message: string) {
+		super(message, 403, FailureType.FORBIDDEN);
+		this.name = "ForbiddenError";
+	}
+}

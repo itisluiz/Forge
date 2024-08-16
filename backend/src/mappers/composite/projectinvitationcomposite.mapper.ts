@@ -4,8 +4,9 @@ export function mapProjectInvitationComposite(invitation: any): ProjectInvitatio
 	return {
 		code: invitation.dataValues.code,
 		role: invitation.dataValues.eprojectroleId,
-		uses: invitation.dataValues.uses,
+		remainingUses: invitation.dataValues.remainingUses,
 		durationHours: invitation.dataValues.durationHours,
+		expired: invitation.isExpired(),
 		createdAt: invitation.dataValues.createdAt,
 		expiredAt: invitation.isExpired() ? invitation.expirationDate() : undefined,
 	};
