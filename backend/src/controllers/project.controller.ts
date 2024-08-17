@@ -4,6 +4,7 @@ import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { projectMakeInvitationRequestJsonSchema } from "../jsonschemas/projectmakeinvitationrequest.jsonschema.js";
 import { projectNewRequestJsonSchema } from "../jsonschemas/projectnewrequest.jsonschema.js";
+import { projectUpdateMemberRequestJsonSchema } from "../jsonschemas/projectupdatememberrequest.jsonschema.js";
 import { projectUpdateRequestJsonSchema } from "../jsonschemas/projectupdaterequest.jsonschema.js";
 import { projectUseInvitationJsonSchema } from "../jsonschemas/projectuseinvitation.jsonschema.js";
 import { Router } from "express";
@@ -81,6 +82,36 @@ router.post(
 		await handle("project", "useinvitation", req, res);
 	},
 );
+
+/**
+ * @swagger
+ * /api/project/{projectEid}/leave:
+ *   post:
+ *     summary: Removes the requesting user from the specified group.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.post("/api/project/:projectEid/leave", authorize(), authorizeProject(), async (req, res) => {
+	await handle("project", "leave", req, res);
+});
 
 /**
  * @swagger
@@ -173,6 +204,53 @@ router.patch(
 	jsonBodySchema(projectUpdateRequestJsonSchema),
 	async (req, res) => {
 		await handle("project", "update", req, res);
+	},
+);
+
+/**
+ * @swagger
+ * /api/project/{projectEid}/updatemember:
+ *   patch:
+ *     summary: Update an existing project member's membership parameters.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProjectUpdateMemberRequest'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.patch(
+	"/api/project/:projectEid/updatemember",
+	authorize(),
+	authorizeProject(true),
+	jsonBody(),
+	jsonBodySchema(projectUpdateMemberRequestJsonSchema),
+	async (req, res) => {
+		await handle("project", "updatemember", req, res);
 	},
 );
 
