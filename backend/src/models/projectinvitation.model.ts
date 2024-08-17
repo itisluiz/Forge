@@ -24,3 +24,11 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["eprojectrole"], { foreignKey: { allowNull: false } });
 }
+
+export function expirationDate(this: any) {
+	return new Date(this.dataValues.createdAt.getTime() + this.dataValues.durationHours * 60 * 60 * 1000);
+}
+
+export function isExpired(this: any) {
+	return this.expirationDate() < new Date();
+}

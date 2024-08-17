@@ -1,16 +1,19 @@
 import { decryptPK } from "../util/encryption.js";
 import { getSequelize } from "../util/sequelize.js";
-import { NextFunction, Request, Response } from "express";
 import { getUserData, setProjectData } from "../util/requestmeta.js";
+import { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "../error/externalhandling.error.js";
 
 export function authorizeProject(admin = false) {
 	return async (req: Request, res: Response, next: NextFunction) => {
-		const projectId = decryptPK("project", req.params["eid"]);
+		const projectId = decryptPK("project", req.params["projectEid"]);
 		const sequelize = await getSequelize();
 		const authUser = getUserData(req);
 
-		const project = await sequelize.models["project"].findByPk(projectId, { include: sequelize.models["user"] });
+		const project = await sequelize.models["project"].findByPk(projectId, {
+			include: [{ model: sequelize.models["user"], attributes: ["id"] }],
+			attributes: [],
+		});
 
 		if (project) {
 			const projectMember = project.dataValues.users.find((user: any) => user.id === authUser.user.dataValues.id);

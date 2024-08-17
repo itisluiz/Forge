@@ -1,8 +1,7 @@
-import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
-import { Model } from "sequelize";
 import { encryptPK } from "../../util/encryption.js";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 
-export function mapProjectMemberComposite(user: Model<any, any>): ProjectMemberComposite {
+export function mapProjectMemberComposite(user: any): ProjectMemberComposite {
 	return {
 		eid: encryptPK("user", user.dataValues.id),
 		admin: user.dataValues.projectmembership.isAdmin,
