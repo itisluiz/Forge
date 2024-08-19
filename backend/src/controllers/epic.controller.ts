@@ -54,4 +54,38 @@ router.post(
 	},
 );
 
+/**
+ * @swagger
+ * /api/epic/{projectEid}/self:
+ *   get:
+ *     summary: Get all Epics for the given project.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Epic's project identifier.
+ *     tags:
+ *       - epic
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EpicSelfResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/epic/:projectEid/self", authorize(), authorizeProject(), async (req, res) => {
+	await handle("epic", "self", req, res);
+});
+
 export default router;
