@@ -182,4 +182,44 @@ router.patch(
 	},
 );
 
+/**
+ * @swagger
+ * /api/epic/{projectEid}/{epicId}/delete:
+ *   delete:
+ *     summary: Delete an existing epic.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Epic's project identifier.
+ *       - in: path
+ *         name: epicId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Epic's identifier.
+ *     tags:
+ *       - epic
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EpicResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.delete("/api/epic/:projectEid/:epicId/delete", authorize(), authorizeProject(), async (req, res) => {
+	await handle("epic", "delete", req, res);
+});
+
 export default router;
