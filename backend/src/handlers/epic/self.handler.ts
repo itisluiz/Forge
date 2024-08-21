@@ -5,6 +5,7 @@ import { mapEpicSelfResponse } from "../../mappers/response/epicselfresponse.map
 
 export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
+	const transaction = await sequelize.transaction();
 
 	let epics: any;
 
@@ -14,8 +15,12 @@ export default async function (req: Request, res: Response) {
 			where: {
 				projectId: projectId,
 			},
+			transaction,
 		});
+
+		await transaction.commit();
 	} catch (error) {
+		await transaction.rollback();
 		throw error;
 	}
 
