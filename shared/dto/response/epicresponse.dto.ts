@@ -4,7 +4,7 @@
  *   schemas:
  *     EpicResponse:
  *       type: object
- *       properties
+ *       properties:
  *         id:
  *           type: integer
  *         title:
