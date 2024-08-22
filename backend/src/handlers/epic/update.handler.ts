@@ -40,6 +40,7 @@ export default async function (req: Request, res: Response) {
 
 	const response: EpicResponse = {
 		id: epic.id,
+		code: epic.code,
 		title: epic.title,
 		description: epic.description,
 		projectId: epic.projectId,

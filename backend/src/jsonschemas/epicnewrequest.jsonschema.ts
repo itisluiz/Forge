@@ -3,6 +3,11 @@ export const epicNewRequestJsonSchema = {
 	title: "EpicNewRequest",
 	type: "object",
 	properties: {
+		code: {
+			type: "string",
+			maxLength: 15,
+			minLength: 1,
+		},
 		title: {
 			type: "string",
 			maxLength: 128,
@@ -14,6 +19,6 @@ export const epicNewRequestJsonSchema = {
 			minLength: 1,
 		},
 	},
-	required: ["title", "description"],
+	required: ["code", "title", "description"],
 	additionalProperties: false,
 };

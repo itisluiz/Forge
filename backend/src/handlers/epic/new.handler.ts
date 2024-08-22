@@ -15,6 +15,7 @@ export default async function (req: Request, res: Response) {
 		const projectId = decryptPK("project", req.params["projectEid"]);
 		epic = await sequelize.models["epic"].create(
 			{
+				code: epicNewRequest.code,
 				title: epicNewRequest.title,
 				description: epicNewRequest.description,
 				projectId: projectId,
@@ -31,6 +32,7 @@ export default async function (req: Request, res: Response) {
 
 	const epicResponse: EpicResponse = {
 		id: epic.id,
+		code: epic.code,
 		title: epic.title,
 		description: epic.description,
 		projectId: epic.projectId,
