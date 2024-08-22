@@ -10,7 +10,7 @@ export default async function (req: Request, res: Response) {
 	const projectId = decryptPK("project", req.params["projectEid"]);
 	const epicId = req.params["epicId"];
 
-	let epic: any;
+	let response: EpicResponse = {} as EpicResponse;
 
 	try {
 		const epicToDelete = await sequelize.models["epic"].findOne({
@@ -24,6 +24,14 @@ export default async function (req: Request, res: Response) {
 		if (!epicToDelete) {
 			throw new Error("Epic not found");
 		}
+
+		response = {
+			id: epicToDelete.dataValues.id,
+			code: epicToDelete.dataValues.code,
+			title: epicToDelete.dataValues.title,
+			description: epicToDelete.dataValues.description,
+			projectId: epicToDelete.dataValues.projectId,
+		};
 
 		await sequelize.models["userstory"].destroy({
 			where: {
@@ -44,13 +52,6 @@ export default async function (req: Request, res: Response) {
 		await transaction.rollback();
 		throw error;
 	}
-
-	const response: EpicResponse = {
-		id: epic.id,
-		title: epic.title,
-		description: epic.description,
-		projectId: epic.projectId,
-	};
 
 	res.status(200).send(response);
 }

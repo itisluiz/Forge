@@ -5,6 +5,8 @@
  *     EpicSelfComposite:
  *       type: object
  *       properties:
+ *         code:
+ *           type: string
  *         id:
  *           type: string
  *         title:
@@ -20,6 +22,7 @@
  */
 export interface EpicSelfComposite {
 	id: string;
+	code: string;
 	title: string;
 	description: boolean;
 	createdAt: string;
