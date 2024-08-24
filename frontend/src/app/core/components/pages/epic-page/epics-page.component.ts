@@ -7,6 +7,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
 
 export interface History {
 	key: string;
@@ -65,6 +66,7 @@ const HISTORIES_DATA: History[] = [
 		MatFormFieldModule,
 		ReactiveFormsModule,
 		CommonModule,
+		UserStoryPopupComponent,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
@@ -78,6 +80,7 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	statusContainer!: QueryList<ElementRef>;
 
 	popUpActive: boolean = false;
+	popUpIssue: boolean = false;
 
 	createEpicForm!: FormGroup;
 	creationFailed: boolean = false;
@@ -137,8 +140,18 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "hidden";
 	}
 
+	openPopUpIssue() {
+		this.popUpIssue = true;
+		document.body.style.overflow = "hidden";
+	}
+
 	closePopUp() {
 		this.popUpActive = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpIssue() {
+		this.popUpIssue = false;
 		document.body.style.overflow = "auto";
 	}
 

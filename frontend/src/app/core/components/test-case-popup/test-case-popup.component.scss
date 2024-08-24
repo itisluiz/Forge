@@ -138,6 +138,9 @@
 			align-items: center;
 			span {
 				margin-right: 1em;
+				font-size: v.$major-observation-font;
+				padding: 10px 30px;
+
 				&:hover {
 					cursor: pointer;
 				}
