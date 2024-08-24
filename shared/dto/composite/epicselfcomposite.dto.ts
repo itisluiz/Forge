@@ -5,26 +5,15 @@
  *     EpicSelfComposite:
  *       type: object
  *       properties:
- *         code:
+ *         eid:
  *           type: string
- *         id:
+ *         code:
  *           type: string
  *         title:
  *           type: string
- *         description:
- *           type: boolean
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
  */
 export interface EpicSelfComposite {
-	id: string;
+	eid: string;
 	code: string;
 	title: string;
-	description: boolean;
-	createdAt: string;
-	updatedAt: string;
 }

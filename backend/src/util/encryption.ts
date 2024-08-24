@@ -17,11 +17,19 @@ function getOrCreateTableKey(table: string): Buffer {
 }
 
 export function encryptPK(table: string, value: number): string {
+	if (!value && value !== 0) {
+		return null as any;
+	}
+
 	const result = skip32.encrypt(value, getOrCreateTableKey(table));
 	return result.toString(16).padStart(8, "0");
 }
 
 export function decryptPK(table: string, value: string): number {
+	if (!value) {
+		return null as any;
+	}
+
 	const result = parseInt(value, 16);
 	return skip32.decrypt(result, getOrCreateTableKey(table));
 }

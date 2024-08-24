@@ -1,27 +1,29 @@
-import { Request, Response } from "express";
-import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
-import { getSequelize } from "../../util/sequelize.js";
+import { BadRequestError } from "../../error/externalhandling.error.js";
 import { decryptPK } from "../../util/encryption.js";
+import { getProjectData } from "../../util/requestmeta.js";
+import { getSequelize } from "../../util/sequelize.js";
+import { mapEpicResponse } from "../../mappers/response/epicresponse.mapper.js";
+import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
-	const epicId = req.params["epicId"];
+	const authProject = getProjectData(req);
+	const epicId = decryptPK("epic", req.params["epicEid"]);
 
 	let epic: any;
-	try {
-		const projectId = decryptPK("project", req.params["projectEid"]);
 
+	try {
 		epic = await sequelize.models["epic"].findOne({
 			where: {
 				id: epicId,
-				projectId: projectId,
+				projectId: authProject.projectId,
 			},
 			transaction,
 		});
 
 		if (!epic) {
-			throw new Error("Epic not found");
+			throw new BadRequestError("Epic not found in the project");
 		}
 
 		await transaction.commit();
@@ -30,13 +32,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response: EpicResponse = {
-		id: epic.id,
-		code: epic.code,
-		title: epic.title,
-		description: epic.description,
-		projectId: epic.projectId,
-	};
-
+	const response = mapEpicResponse(epic);
 	res.status(200).send(response);
 }
