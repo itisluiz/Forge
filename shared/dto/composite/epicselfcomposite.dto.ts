@@ -11,9 +11,12 @@
  *           type: string
  *         title:
  *           type: string
+ *         description:
+ *           type: string
  */
 export interface EpicSelfComposite {
 	eid: string;
 	code: string;
 	title: string;
+	description: string;
 }

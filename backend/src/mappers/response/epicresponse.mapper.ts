@@ -8,5 +8,6 @@ export function mapEpicResponse(epic: any): EpicResponse {
 		title: epic.dataValues.title,
 		description: epic.dataValues.description,
 		createdAt: epic.dataValues.createdAt,
+		updatedAt: epic.dataValues.updatedAt,
 	};
 }

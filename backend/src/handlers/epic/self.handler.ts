@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 			where: {
 				projectId: authProject.projectId,
 			},
-			attributes: ["id", "code", "title"],
+			attributes: ["id", "code", "title", "description"],
 			transaction,
 		});
 
