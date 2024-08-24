@@ -5,6 +5,7 @@ export function mapEpicSelfComposite(epic: any): EpicSelfComposite {
 	return {
 		eid: encryptPK("epic", epic.dataValues.id),
 		code: epic.dataValues.code,
-		title: epic.dataValues.name,
+		title: epic.dataValues.title,
+		description: epic.dataValues.description,
 	};
 }

@@ -16,6 +16,9 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  */
 export interface EpicResponse {
 	eid: string;
@@ -23,4 +26,5 @@ export interface EpicResponse {
 	title: string;
 	description: string;
 	createdAt: string;
+	updatedAt: string;
 }
