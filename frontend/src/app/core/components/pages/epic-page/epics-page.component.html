@@ -35,7 +35,7 @@
 			<p class="desc-title">A brief description of what will be done in the task.</p>
 
 			<mat-accordion multi>
-				<mat-expansion-panel hideToggle>
+				<mat-expansion-panel>
 					<mat-expansion-panel-header>
 						<mat-panel-title> EPC-1 </mat-panel-title>
 						<mat-panel-title> This is the expansion title </mat-panel-title>
@@ -87,9 +87,10 @@
 						<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 						<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 					</table>
+					<div class="add-issue" (click)="openPopUpIssue()">+ Add another issue</div>
 				</mat-expansion-panel>
 
-				<mat-expansion-panel hideToggle>
+				<mat-expansion-panel>
 					<mat-expansion-panel-header>
 						<mat-panel-title> EPC-2 </mat-panel-title>
 						<mat-panel-title> Self aware panel </mat-panel-title>
@@ -101,6 +102,12 @@
 		</div>
 	</div>
 </div>
+
+@if (popUpIssue) {
+	<div class="pop-up-background" (click)="closePopUpIssue()"></div>
+
+	<app-user-story-popup (closePopUpEmitter)="closePopUpIssue()"></app-user-story-popup>
+}
 
 @if (popUpActive) {
 	<div class="pop-up-background" (click)="closePopUp()"></div>

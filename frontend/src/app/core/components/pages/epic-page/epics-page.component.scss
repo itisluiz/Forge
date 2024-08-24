@@ -76,6 +76,13 @@ app-navbar {
 				color: v.$purple-color;
 			}
 		}
+		.add-issue {
+			color: v.$label-background-grey;
+			font-size: v.$paragraph-font;
+			font-weight: 500;
+			cursor: pointer;
+			margin: 16px 0 0 22px;
+		}
 		.epics-table {
 			width: 100%;
 			border-spacing: 0px 1.5px;
@@ -221,6 +228,19 @@ app-navbar {
 			max-width: 550px;
 		}
 	}
+}
+
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .pop-up-background {
