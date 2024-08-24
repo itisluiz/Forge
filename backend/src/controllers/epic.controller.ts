@@ -1,10 +1,10 @@
+import { authorize } from "../middleware/auth.middleware.js";
+import { authorizeProject } from "../middleware/authproject.middleware.js";
+import { epicNewRequestJsonSchema } from "../jsonschemas/epicnewrequest.jsonschema.js";
+import { epicUpdateRequestJsonSchema } from "../jsonschemas/epicupdaterequest.jsonschema.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { Router } from "express";
-import { epicNewRequestJsonSchema } from "../jsonschemas/epicnewrequest.jsonschema.js";
-import { authorize } from "../middleware/auth.middleware.js";
-import { authorizeProject } from "../middleware/authproject.middleware.js";
-import { epicUpdateRequestJsonSchema } from "../jsonschemas/epicupdaterequest.jsonschema.js";
 
 const router = Router();
 
@@ -91,7 +91,7 @@ router.get("/api/epic/:projectEid/self", authorize(), authorizeProject(), async 
 
 /**
  * @swagger
- * /api/epic/{projectEid}/{epicId}/get:
+ * /api/epic/{projectEid}/{epicEid}/get:
  *   get:
  *     summary: Get information about a specific epic in a project.
  *     parameters:
@@ -102,7 +102,7 @@ router.get("/api/epic/:projectEid/self", authorize(), authorizeProject(), async 
  *         required: true
  *         description: Epic's project identifier.
  *       - in: path
- *         name: epicId
+ *         name: epicEid
  *         schema:
  *           type: string
  *         required: true
@@ -125,13 +125,13 @@ router.get("/api/epic/:projectEid/self", authorize(), authorizeProject(), async 
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/epic/:projectEid/:epicId/get", authorize(), authorizeProject(), async (req, res) => {
+router.get("/api/epic/:projectEid/:epicEid/get", authorize(), authorizeProject(), async (req, res) => {
 	await handle("epic", "get", req, res);
 });
 
 /**
  * @swagger
- * /api/epic/{projectEid}/{epicId}/update:
+ * /api/epic/{projectEid}/{epicEid}/update:
  *   patch:
  *     summary: Update an existing epic.
  *     parameters:
@@ -142,7 +142,7 @@ router.get("/api/epic/:projectEid/:epicId/get", authorize(), authorizeProject(),
  *         required: true
  *         description: Epic's project identifier.
  *       - in: path
- *         name: epicId
+ *         name: epicEid
  *         schema:
  *           type: string
  *         required: true
@@ -172,7 +172,7 @@ router.get("/api/epic/:projectEid/:epicId/get", authorize(), authorizeProject(),
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.patch(
-	"/api/epic/:projectEid/:epicId/update",
+	"/api/epic/:projectEid/:epicEid/update",
 	authorize(),
 	authorizeProject(),
 	jsonBody(),
@@ -184,7 +184,7 @@ router.patch(
 
 /**
  * @swagger
- * /api/epic/{projectEid}/{epicId}/delete:
+ * /api/epic/{projectEid}/{epicEid}/delete:
  *   delete:
  *     summary: Delete an existing epic.
  *     parameters:
@@ -195,7 +195,7 @@ router.patch(
  *         required: true
  *         description: Epic's project identifier.
  *       - in: path
- *         name: epicId
+ *         name: epicEid
  *         schema:
  *           type: string
  *         required: true
@@ -218,7 +218,7 @@ router.patch(
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.delete("/api/epic/:projectEid/:epicId/delete", authorize(), authorizeProject(), async (req, res) => {
+router.delete("/api/epic/:projectEid/:epicEid/delete", authorize(), authorizeProject(), async (req, res) => {
 	await handle("epic", "delete", req, res);
 });
 

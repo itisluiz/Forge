@@ -5,21 +5,22 @@
  *     EpicResponse:
  *       type: object
  *       properties:
+ *         eid:
+ *           type: string
  *         code:
  *           type: string
- *         id:
- *           type: integer
  *         title:
  *           type: string
  *         description:
  *           type: string
- *         projectId:
+ *         createdAt:
  *           type: string
+ *           format: date-time
  */
 export interface EpicResponse {
-	id: number;
+	eid: string;
 	code: string;
 	title: string;
 	description: string;
-	projectId: string;
+	createdAt: string;
 }
