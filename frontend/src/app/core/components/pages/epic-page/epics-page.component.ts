@@ -7,6 +7,12 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { ActivatedRoute } from "@angular/router";
+import { EpicApiService } from "../../../services/epic-api.service";
+import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
+import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
+import { Observable } from "rxjs";
+import { map } from "rxjs";
 
 export interface History {
 	key: string;
@@ -71,8 +77,15 @@ const HISTORIES_DATA: History[] = [
 })
 export class EpicsPageComponent implements AfterViewInit, OnInit {
 	displayedColumns: string[] = ["key", "name", "description", "status", "priority", "time_created"];
-
 	histories = [...HISTORIES_DATA];
+
+	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
+
+	epics$: Observable<EpicSelfComposite[]> = this.epicApiService.getEpics(this.projectEid).pipe(
+		map((response: EpicSelfResponse) => {
+			return response.epics;
+		}),
+	);
 
 	@ViewChildren("statusContainer")
 	statusContainer!: QueryList<ElementRef>;
@@ -80,17 +93,14 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	popUpActive: boolean = false;
 
 	createEpicForm!: FormGroup;
-	creationFailed: boolean = false;
-	formSubmitted: boolean = false;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private formBuilder: FormBuilder,
+		private route: ActivatedRoute,
+		private epicApiService: EpicApiService,
+	) {}
 
-	ngOnInit(): void {
-		this.createEpicForm = this.formBuilder.group({
-			name: ["", [Validators.required, Validators.minLength(3)]],
-			description: ["", [Validators.required, Validators.minLength(3)]],
-		});
-	}
+	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
 		this.statusContainer.forEach((cell) => {
@@ -135,6 +145,11 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	openPopUp() {
 		this.popUpActive = true;
 		document.body.style.overflow = "hidden";
+		this.createEpicForm = this.formBuilder.group({
+			code: ["", [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
+			name: ["", [Validators.required, Validators.minLength(3)]],
+			description: ["", [Validators.required, Validators.minLength(3)]],
+		});
 	}
 
 	closePopUp() {
@@ -142,52 +157,51 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "auto";
 	}
 
-	createEpic() {
+	submitForm() {
+		const code = this.createEpicForm.get("code");
 		const name = this.createEpicForm.get("name");
 		const description = this.createEpicForm.get("description");
-		console.log(name?.value);
-		console.log(description?.value);
 
-		this.formSubmitted = true;
-		if (this.createEpicForm.invalid && (name?.value.length === 0 || description?.value.length === 0)) {
-			console.log("Invalid form");
-			return;
-		}
 		if (this.createEpicForm.valid) {
-			// Lógica para criação do epic aqui
-			// Se a criação falhar, defina creationFailed como verdadeiro
-			console.log("Epic created");
-			this.creationFailed = true;
+			let epicNewRequest = {
+				code: code?.value,
+				title: name?.value,
+				description: description?.value,
+			};
+			this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
+				next: (result) => {
+					console.log(result);
+					this.epics$ = this.epicApiService.getEpics(this.route.snapshot.paramMap.get("projectEid")!).pipe(
+						map((response: EpicSelfResponse) => {
+							return response.epics;
+						}),
+					);
+					// TODO: Toaster success
+				},
+				error: (error) => {
+					// TODO: Toaster error
+					console.log(error.error.message);
+				},
+			});
 		}
+
 		this.closePopUp();
 	}
 
-	isNameInvalid(): boolean {
-		const name = this.createEpicForm.get("name");
-		if (!name!.errors?.["name"]) {
+	isFieldInvalid(fieldName: string): boolean {
+		const field = this.createEpicForm.get(fieldName);
+		if (!field) {
 			return false;
 		}
-		return name!.invalid && (name!.dirty || name!.touched);
-	}
-
-	isDescriptionInvalid(): boolean {
-		const description = this.createEpicForm.get("description");
-		if (description?.value.length === 0) {
+		if (fieldName === "description" && field.value.length === 0) {
 			return false;
 		}
-		return description!.invalid && (description!.dirty || description!.touched);
+		return field.invalid && (field.dirty || field.touched);
 	}
 
-	get nameErrorMessage(): string {
-		if (this.createEpicForm.get("name")!.errors) {
-			return "Name must have at least 3 characters.";
-		}
-		return "";
-	}
-
-	get descriptionErrorMessage(): string {
-		if (this.createEpicForm.get("description")!.errors) {
-			return "Description must have at least 3 characters.";
+	getFieldErrorMessage(fieldName: string): string {
+		if (this.createEpicForm.get(fieldName)!.errors) {
+			return `${fieldName} must have at least 3 characters.`;
 		}
 		return "";
 	}

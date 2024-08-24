@@ -4,7 +4,7 @@ export function mapEpicSelfComposite(epic: any): EpicSelfComposite {
 	return {
 		id: epic.dataValues.id,
 		code: epic.dataValues.code,
-		title: epic.dataValues.name,
+		title: epic.dataValues.title,
 		description: epic.dataValues.description,
 		createdAt: epic.dataValues.createdAt,
 		updatedAt: epic.dataValues.updatedAt,
