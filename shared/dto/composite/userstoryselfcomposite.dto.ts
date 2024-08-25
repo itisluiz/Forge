@@ -4,7 +4,7 @@ import { Priority } from "../../enum/priority.enum";
  * @swagger
  * components:
  *   schemas:
- *     UserstoryResponse:
+ *     UserstorySelfComposite:
  *       type: object
  *       properties:
  *         eid:
@@ -20,29 +20,12 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         priority:
  *           $ref: '#/components/schemas/Priority'
- *         storyActor:
- *           type: string
- *         storyObjective:
- *           type: string
- *         storyJustification:
- *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
  */
-export interface UserstoryResponse {
+export interface UserstorySelfComposite {
 	eid: string;
 	epicEid: string;
 	sprintEid?: string;
 	title: string;
 	description: string;
 	priority: Priority;
-	storyActor: string;
-	storyObjective: string;
-	storyJustification: string;
-	createdAt: string;
-	updatedAt: string;
 }

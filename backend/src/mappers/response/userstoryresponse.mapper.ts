@@ -8,9 +8,11 @@ export function mapUserstoryResponse(userstory: any): UserstoryResponse {
 		sprintEid: encryptPK("sprint", userstory.dataValues.sprintId),
 		title: userstory.dataValues.title,
 		description: userstory.dataValues.description,
+		priority: userstory.dataValues.epriorityId,
 		storyActor: userstory.dataValues.storyActor,
 		storyObjective: userstory.dataValues.storyObjective,
 		storyJustification: userstory.dataValues.storyJustification,
 		createdAt: userstory.dataValues.createdAt,
+		updatedAt: userstory.dataValues.updatedAt,
 	};
 }
