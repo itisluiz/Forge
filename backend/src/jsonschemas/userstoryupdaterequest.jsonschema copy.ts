@@ -1,13 +1,8 @@
-export const userstoryNewRequestJsonSchema = {
+export const userstoryUpdateRequestJsonSchema = {
 	$schema: "http://json-schema.org/draft-07/schema#",
-	title: "UserstoryNewRequest",
+	title: "UserstoryUpdateRequest",
 	type: "object",
 	properties: {
-		epicEid: {
-			type: "string",
-			minLength: 8,
-			maxLength: 8,
-		},
 		sprintEid: {
 			type: ["string", "null"],
 			minLength: 8,
@@ -43,6 +38,6 @@ export const userstoryNewRequestJsonSchema = {
 			minimum: 1,
 		},
 	},
-	required: ["epicEid", "title", "description", "storyActor", "storyObjective", "storyJustification", "priority"],
+	required: [],
 	additionalProperties: false,
 };
