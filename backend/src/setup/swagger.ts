@@ -36,7 +36,9 @@ const swaggerOptions: swaggerJSDoc.Options = {
 export function setupSwagger(app: Express) {
 	const swaggerSpec = swaggerJSDoc(swaggerOptions);
 	app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+	/*
 	app.use("*", (req, res) => {
 		res.redirect("/swagger");
 	});
+	*/
 }

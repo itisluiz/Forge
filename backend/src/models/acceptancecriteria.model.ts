@@ -26,6 +26,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsTo(models["userstory"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["testcase"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["userstory"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["testcase"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 }

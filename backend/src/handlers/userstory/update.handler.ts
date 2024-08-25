@@ -5,13 +5,14 @@ import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
 import { mapUserstoryResponse } from "../../mappers/response/userstoryresponse.mapper.js";
 import { Request, Response } from "express";
-import { UserstoryNewRequest } from "forge-shared/dto/request/userstorynewrequest.dto.js";
+import { UserstoryUpdateRequest } from "forge-shared/dto/request/userstoryupdaterequest.dto";
 
 export default async function (req: Request, res: Response) {
-	const userstoryNewRequest = req.body as UserstoryNewRequest;
+	const userstoryNewRequest = req.body as UserstoryUpdateRequest;
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
+	const userstoryId = decryptPK("userstory", req.params["userstoryEid"]);
 
 	let userstory: any;
 
@@ -29,29 +30,39 @@ export default async function (req: Request, res: Response) {
 			}
 		}
 
-		const epicId = decryptPK("epic", userstoryNewRequest.epicEid);
-		const epic = await sequelize.models["epic"].findOne({
-			where: { id: epicId, projectId: authProject.projectId },
+		userstory = await sequelize.models["userstory"].findOne({
+			where: {
+				id: userstoryId,
+			},
+			include: {
+				model: sequelize.models["epic"],
+				where: {
+					projectId: authProject.projectId,
+				},
+				attributes: ["projectId"],
+			},
 			transaction,
 		});
-		if (!epic) {
-			throw new BadRequestError("The epic you specified does not exist in the project");
+
+		if (!userstory) {
+			throw new BadRequestError("User story not found in the project");
 		}
 
-		userstory = await sequelize.models["userstory"].create(
+		userstory.set(
 			{
-				epicId: epicId,
-				sprintId: sprintId,
-				title: userstoryNewRequest.title,
-				description: userstoryNewRequest.description,
-				storyActor: userstoryNewRequest.storyActor,
-				storyObjective: userstoryNewRequest.storyObjective,
-				storyJustification: userstoryNewRequest.storyJustification,
-				epriorityId: userstoryNewRequest.priority,
+				...(userstoryNewRequest.sprintEid !== undefined && { sprintId: sprintId }),
+				...(userstoryNewRequest.title && { title: userstoryNewRequest.title }),
+				...(userstoryNewRequest.description && { description: userstoryNewRequest.description }),
+				...(userstoryNewRequest.storyActor && { storyActor: userstoryNewRequest.storyActor }),
+				...(userstoryNewRequest.storyObjective && { storyObjective: userstoryNewRequest.storyObjective }),
+				...(userstoryNewRequest.storyJustification && { storyJustification: userstoryNewRequest.storyJustification }),
+				...(userstoryNewRequest.description && { description: userstoryNewRequest.description }),
+				...(userstoryNewRequest.priority && { epriorityId: userstoryNewRequest.priority }),
 			},
 			{ transaction },
 		);
 
+		await userstory.save({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();

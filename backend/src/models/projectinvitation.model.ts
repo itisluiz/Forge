@@ -21,7 +21,7 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 	thisModel.belongsTo(models["eprojectrole"], { foreignKey: { allowNull: false } });
 }
 
