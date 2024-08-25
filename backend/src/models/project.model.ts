@@ -26,8 +26,9 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsToMany(models["user"], { through: models["projectmembership"] });
-	thisModel.hasMany(models["projectmembership"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["epic"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["sprint"], { foreignKey: { allowNull: false } });
+	thisModel.belongsToMany(models["user"], { through: models["projectmembership"], onDelete: "CASCADE" });
+	thisModel.hasMany(models["projectinvitation"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["projectmembership"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["epic"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["sprint"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 }

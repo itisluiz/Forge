@@ -24,6 +24,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 
 	thisModel.belongsTo(models["etaskstatus"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["etasktype"], { foreignKey: { allowNull: false } });
-	thisModel.belongsTo(models["user"], { foreignKey: { allowNull: true, name: "assignedTo" } });
-	thisModel.belongsTo(models["userstory"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["user"], { foreignKey: { allowNull: true, name: "assignedTo" }, onDelete: "SET NULL" });
+	thisModel.belongsTo(models["userstory"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 }
