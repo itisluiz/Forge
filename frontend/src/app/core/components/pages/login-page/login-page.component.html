@@ -21,12 +21,11 @@
 				<p class="email-input">
 					<label for="email">Email</label>
 					<input type="email" formControlName="email" placeholder="ex: youremail@domain.com" />
-					<span *ngIf="isEmailInvalid()"> <mat-icon>error</mat-icon> {{ emailErrorMessage }} </span>
 				</p>
 				<p class="password-input">
 					<label for="password">Password</label>
 					<input type="password" formControlName="password" placeholder="Password" />
-					<span *ngIf="isPasswordInvalid()"> <mat-icon>error</mat-icon> {{ passwordErrorMessage }} </span>
+					<span *ngIf="loginFailed"> <mat-icon>error</mat-icon> {{ genericErrorMessage }} </span>
 				</p>
 				<p class="form-failed" *ngIf="loginFailed">
 					<mat-icon>error</mat-icon> Invalid email or password. Please try again.

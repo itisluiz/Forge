@@ -8,16 +8,18 @@ import { BacklogPageComponent } from "./core/components/pages/backlog-page/backl
 import { SignupPageComponent } from "./core/components/pages/signup-page/signup-page.component";
 import { SelectProjectPageComponent } from "./core/components/pages/select-project-page/select-project-page.component";
 import { UserStoryPageComponent } from "./core/components/pages/user-story-page/user-story-page.component";
+import { UserStoryPopupComponent } from "./core/components/user-story-popup/user-story-popup.component";
 
 export const routes: Routes = [
 	{ path: "", component: MainPageComponent },
 	{ path: "login", component: LoginPageComponent },
 	{ path: "agile", component: AgileProcessComponent },
 	{ path: "kanban", component: KanbanPageComponent },
-	{ path: "epics", component: EpicsPageComponent },
+	{ path: ":projectEid/epics", component: EpicsPageComponent },
 	{ path: "backlog", component: BacklogPageComponent },
 	{ path: "signup", component: SignupPageComponent },
 	{ path: "select-project", component: SelectProjectPageComponent },
 	{ path: "user-story", component: UserStoryPageComponent },
+	{ path: "user-story-popup", component: UserStoryPopupComponent },
 	{ path: "**", redirectTo: "/" },
 ];

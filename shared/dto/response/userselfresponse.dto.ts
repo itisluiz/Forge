@@ -5,6 +5,8 @@
  *     UserSelfResponse:
  *       type: object
  *       properties:
+ *         eid:
+ *           type: string
  *         email:
  *           type: string
  *           format: email
@@ -17,6 +19,7 @@
  *           format: date-time
  */
 export interface UserSelfResponse {
+	eid: string;
 	email: string;
 	name: string;
 	surname: string;

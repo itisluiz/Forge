@@ -9,7 +9,6 @@ import { validatePassword } from "../../util/encryption.js";
 export default async function (req: Request, res: Response) {
 	const userSigninRequest = req.body as UserSigninRequest;
 	const sequelize = await getSequelize();
-
 	const transaction = await sequelize.transaction();
 
 	let token: string;

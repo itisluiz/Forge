@@ -30,7 +30,7 @@ jobs:
           else
             exit 1
           fi
-          ssh -o StrictHostKeyChecking=no -p ${{ secrets.ssh_port }} ${{ secrets.ssh_user }}@itisluiz.com <<EOF
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.ssh_port }} ${{ secrets.ssh_user }}@ip.itisluiz.com <<EOF
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             cd $REMOTE_DIR

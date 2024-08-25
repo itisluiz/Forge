@@ -1,0 +1,105 @@
+<div class="test-case-pop-up-header">
+	<h2>Create a new user story</h2>
+	<p>To create a new user story, fill the fields below.</p>
+</div>
+
+<mat-stepper #stepper>
+	<mat-step [stepControl]="firstFormGroup">
+		<form [formGroup]="firstFormGroup" class="first-form">
+			<ng-template matStepLabel>FIll out the feature</ng-template>
+
+			<div class="left-grid">
+				<div class="input-wrapper">
+					<label for="summary">Summary</label>
+					<textarea
+						id="summary"
+						name="summary"
+						formControlName="summary"
+						placeholder="User story summary."
+						class="shorter"
+					></textarea>
+				</div>
+
+				<div class="input-wrapper">
+					<label for="description">Description</label>
+					<textarea
+						id="description"
+						name="description"
+						formControlName="description"
+						placeholder="User story description."
+					></textarea>
+				</div>
+
+				<div class="input-wrapper">
+					<label for="gherkin">User Stories</label>
+					<div class="input-wrapper--user-stories">
+						<label for="as-a">As a</label>
+						<input id="as-a" name="as-a" formControlName="asA" placeholder="User" required />
+					</div>
+
+					<div class="input-wrapper--user-stories">
+						<label for="i-want">I want to</label>
+						<input id="i-want" name="i-want" formControlName="iWant" placeholder="do eat protein" required />
+					</div>
+
+					<div class="input-wrapper--user-stories">
+						<label for="so-that">So that</label>
+						<input id="so-that" name="so-that" formControlName="soThat" placeholder="I can build muscle" required />
+					</div>
+				</div>
+			</div>
+
+			<div class="right-grid">
+				<div class="input-wrapper">
+					<label for="business-narrative">Business narrative</label>
+					<textarea
+						id="business-narrative"
+						name="business-narrative"
+						formControlName="businessNarrative"
+						placeholder="Write the business narrative of your..."
+					></textarea>
+				</div>
+
+				<div class="input-wrapper">
+					<label for="premisses">Premisses</label>
+					<textarea
+						id="premisses"
+						name="premisses"
+						formControlName="premisses"
+						placeholder="Write the premisses here..."
+					></textarea>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<span (click)="closePopUp()">Cancel</span>
+				<button type="submit" class="grey-button" matStepperNext>Next step</button>
+				<!-- [disabled]="userStoryForm.invalid" -->
+			</div>
+		</form>
+	</mat-step>
+	<mat-step [stepControl]="secondFormGroup" errorMessage="Address is required.">
+		<form [formGroup]="secondFormGroup" class="second-form">
+			<button class="green-button" (click)="addCriteria()">Add a criteria</button>
+			<ng-template matStepLabel>Acceptance criteria</ng-template>
+			<div class="column-grid">
+				<div class="input-wrapper">
+					<label for="acceptanceCriteria">Acceptance criteria</label>
+
+					<div formArrayName="acceptanceCriteria">
+						<div *ngFor="let criterion of criteriaInputs.controls; let i = index" [formGroupName]="i">
+							<div class="input-wrapper--criteria">
+								<input formControlName="criterion" placeholder="Criterion description here" />
+								<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="pop-up-footer-second-form">
+				<button class="span-style" matStepperPrevious>Back</button>
+				<button class="grey-button" mat-button matStepperNext>Create issue</button>
+			</div>
+		</form>
+	</mat-step>
+</mat-stepper>

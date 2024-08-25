@@ -76,10 +76,16 @@ app-navbar {
 				color: v.$purple-color;
 			}
 		}
+		.add-issue {
+			color: v.$label-background-grey;
+			font-size: v.$paragraph-font;
+			font-weight: 500;
+			cursor: pointer;
+			margin: 16px 0 0 22px;
+		}
 		.epics-table {
 			width: 100%;
 			border-spacing: 0px 1.5px;
-			//background-color: red;
 			.mat-mdc-header-cell {
 				border: none;
 
@@ -119,7 +125,6 @@ app-navbar {
 					justify-content: center;
 					padding: 10px;
 					.status-container {
-						background-color: red;
 						border-radius: 2px;
 						font-weight: 500;
 						width: 110px;
@@ -236,6 +241,19 @@ app-navbar {
 	align-items: center;
 }
 
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .epic-pop-up {
 	background-color: v.$white-color;
 	border-radius: 12px;
@@ -271,6 +289,7 @@ app-navbar {
 		width: 300px;
 
 		.input-wrapper {
+			position: relative;
 			display: flex;
 			flex-direction: column;
 			margin-bottom: 1.5em;
@@ -302,7 +321,7 @@ app-navbar {
 				color: v.$error-color;
 				font-size: v.$observation-font;
 				position: absolute;
-				bottom: 105px;
+				bottom: -20px;
 
 				mat-icon {
 					height: fit-content;
@@ -330,6 +349,11 @@ app-navbar {
 				border: none;
 				border-radius: 2px;
 				cursor: pointer;
+				&:disabled {
+					background-color: v.$disabled-background-color;
+					color: v.$disabled-color;
+					cursor: not-allowed;
+				}
 			}
 			button.cancel-epic {
 				background-color: v.$grey-color;

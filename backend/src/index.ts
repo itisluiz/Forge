@@ -26,6 +26,7 @@ if (process.env["NODE_ENV"] === "production") {
 } else {
 	logging.logInfo("startup", "Server is running on the", chalk.cyanBright("development"), "environment");
 	setupSwagger(app);
+	setupFrontend(app);
 }
 
 // Pre-cache the database connection

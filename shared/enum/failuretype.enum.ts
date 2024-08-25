@@ -10,6 +10,7 @@
  *         - 3
  *         - 4
  *         - 5
+ *         - 6
  *       description: |
  *         Represents the failure type:
  *         - 1: Other
@@ -17,6 +18,7 @@
  *         - 3: Not Found
  *         - 4: Bad Request
  *         - 5: Unauthorized
+ *         - 6: Forbidden
  */
 export const enum FailureType {
 	OTHER = 1,
@@ -24,4 +26,5 @@ export const enum FailureType {
 	NOTFOUND,
 	BADREQUEST,
 	UNAUTHORIZED,
+	FORBIDDEN,
 }

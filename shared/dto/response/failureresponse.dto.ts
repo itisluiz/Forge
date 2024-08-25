@@ -9,7 +9,7 @@ import { FailureType } from "../../enum/failuretype.enum";
  *       properties:
  *         message:
  *           type: string
- *         type:
+ *         failureType:
  *           $ref: '#/components/schemas/FailureType'
  */
 export interface FailureResponse {

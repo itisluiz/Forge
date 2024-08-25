@@ -5,6 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { UserApiService } from "../../../services/user-api.service";
 import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dto";
 import { ApiErrorResponse } from "../../../services/api.service";
+import { Router } from "@angular/router";
 
 @Component({
 	selector: "app-signup-page",
@@ -23,6 +24,7 @@ export class SignupPageComponent implements OnInit {
 	constructor(
 		private userApiService: UserApiService,
 		private formBuilder: FormBuilder,
+		private router: Router,
 	) {}
 
 	ngOnInit(): void {
@@ -99,12 +101,13 @@ export class SignupPageComponent implements OnInit {
 			};
 
 			this.userApiService.signup(request).subscribe({
-				next: (result) => {},
-				error: (error: ApiErrorResponse) => {},
+				next: (result) => {
+					this.router.navigate(["/select-project"]);
+				},
+				error: (error: ApiErrorResponse) => {
+					this.signupFailed = true;
+				},
 			});
-
-			// TODO: Entender por que isso existe e mexer lógica confirmar senha
-			// this.signupFailed = true;
 		}
 	}
 

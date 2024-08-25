@@ -72,8 +72,9 @@ mat-accordion {
 				gap: 2px;
 				background-color: v.$background-dark-grey;
 				color: v.$label-background-dark-grey;
-				padding: 1px 3px;
+				padding: 0 6px;
 				border-radius: 3px;
+				height: 20px;
 			}
 		}
 

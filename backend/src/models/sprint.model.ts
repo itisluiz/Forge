@@ -23,6 +23,6 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const thisModel = models[modelName];
 
 	thisModel.belongsTo(models["esprintstatus"], { foreignKey: { allowNull: false } });
-	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: true } });
+	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: true }, onDelete: "SET NULL" });
 }

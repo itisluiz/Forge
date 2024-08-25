@@ -34,9 +34,9 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	const models = sequelize.models;
 	const thisModel = models[modelName];
 
-	thisModel.belongsTo(models["epic"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["epic"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 	thisModel.belongsTo(models["epriority"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["sprint"], { foreignKey: { allowNull: true } });
-	thisModel.hasMany(models["acceptancecriteria"], { foreignKey: { allowNull: false } });
-	thisModel.hasMany(models["task"], { foreignKey: { allowNull: false } });
+	thisModel.hasMany(models["acceptancecriteria"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
+	thisModel.hasMany(models["task"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 }
