@@ -188,4 +188,40 @@ router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authoriz
 	await handle("userstory", "get", req, res);
 });
 
+/**
+ * @swagger
+ * /api/userstory/{projectEid}/{userstoryEid}/delete:
+ *   delete:
+ *     summary: Delete an user story by its identifier.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: userstoryEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user story's identifier.
+ *     tags:
+ *       - userstory
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.delete("/api/userstory/:projectEid/:userstoryEid/delete", authorize(), authorizeProject(), async (req, res) => {
+	await handle("userstory", "delete", req, res);
+});
+
 export default router;
