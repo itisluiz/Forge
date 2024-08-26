@@ -14,7 +14,10 @@ export default async function (req: Request, res: Response) {
 	let token: string;
 
 	try {
-		const user = await sequelize.models["user"].findOne({ where: { email: userSigninRequest.email }, transaction });
+		const user = await sequelize.models["user"].findOne({
+			where: { email: userSigninRequest.email.toLowerCase() },
+			transaction,
+		});
 		if (!user || !validatePassword(userSigninRequest.password, user.dataValues.password)) {
 			throw new BadRequestError("Invalid email or password");
 		}
