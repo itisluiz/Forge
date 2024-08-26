@@ -53,6 +53,8 @@ export default async function (req: Request, res: Response) {
 				...(userstoryUpdateRequest.sprintEid !== undefined && { sprintId: sprintId }),
 				...(userstoryUpdateRequest.title && { title: userstoryUpdateRequest.title }),
 				...(userstoryUpdateRequest.description && { description: userstoryUpdateRequest.description }),
+				...(userstoryUpdateRequest.narrative && { narrative: userstoryUpdateRequest.narrative }),
+				...(userstoryUpdateRequest.premisse && { premisse: userstoryUpdateRequest.premisse }),
 				...(userstoryUpdateRequest.storyActor && { storyActor: userstoryUpdateRequest.storyActor }),
 				...(userstoryUpdateRequest.storyObjective && { storyObjective: userstoryUpdateRequest.storyObjective }),
 				...(userstoryUpdateRequest.storyJustification && { storyJustification: userstoryUpdateRequest.storyJustification }),

@@ -16,6 +16,10 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         description:
  *           type: string
+ *         narrative:
+ *           type: string
+ *         premisse:
+ *           type: string
  *         storyActor:
  *           type: string
  *         storyObjective:
@@ -30,6 +34,8 @@ export interface UserstoryNewRequest {
 	sprintEid?: string;
 	title: string;
 	description: string;
+	narrative: string;
+	premisse: string;
 	storyActor: string;
 	storyObjective: string;
 	storyJustification: string;

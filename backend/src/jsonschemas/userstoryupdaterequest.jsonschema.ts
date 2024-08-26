@@ -18,6 +18,16 @@ export const userstoryUpdateRequestJsonSchema = {
 			maxLength: 256,
 			minLength: 1,
 		},
+		narrative: {
+			type: "string",
+			maxLength: 256,
+			minLength: 1,
+		},
+		premisse: {
+			type: "string",
+			maxLength: 256,
+			minLength: 1,
+		},
 		storyActor: {
 			type: "string",
 			maxLength: 128,
