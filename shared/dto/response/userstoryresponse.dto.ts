@@ -18,6 +18,10 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         description:
  *           type: string
+ *         narrative:
+ *           type: string
+ *         premisse:
+ *           type: string
  *         priority:
  *           $ref: '#/components/schemas/Priority'
  *         storyActor:
@@ -39,6 +43,8 @@ export interface UserstoryResponse {
 	sprintEid?: string;
 	title: string;
 	description: string;
+	narrative: string;
+	premisse: string;
 	priority: Priority;
 	storyActor: string;
 	storyObjective: string;

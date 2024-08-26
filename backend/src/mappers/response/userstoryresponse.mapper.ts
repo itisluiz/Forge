@@ -8,6 +8,8 @@ export function mapUserstoryResponse(userstory: any): UserstoryResponse {
 		sprintEid: encryptPK("sprint", userstory.dataValues.sprintId),
 		title: userstory.dataValues.title,
 		description: userstory.dataValues.description,
+		narrative: userstory.dataValues.narrative,
+		premisse: userstory.dataValues.premisse,
 		priority: userstory.dataValues.epriorityId,
 		storyActor: userstory.dataValues.storyActor,
 		storyObjective: userstory.dataValues.storyObjective,

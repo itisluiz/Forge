@@ -16,6 +16,12 @@ import { Priority } from "../../enum/priority.enum";
  *         description:
  *           type: string
  *           nullable: true
+ *         narrative:
+ *           type: string
+ *           nullable: true
+ *         premisse:
+ *           type: string
+ *           nullable: true
  *         storyActor:
  *           type: string
  *           nullable: true
@@ -33,6 +39,8 @@ export interface UserstoryUpdateRequest {
 	sprintEid?: string;
 	title?: string;
 	description?: string;
+	narrative?: string;
+	premisse?: string;
 	storyActor?: string;
 	storyObjective?: string;
 	storyJustification?: string;
