@@ -3,16 +3,16 @@ import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { Router } from "express";
-import { userstoryNewRequestJsonSchema } from "../jsonschemas/userstorynewrequest.jsonschema.js";
-import { userstoryUpdateRequestJsonSchema } from "../jsonschemas/userstoryupdaterequest.jsonschema.js";
+import { taskNewRequestJsonSchema } from "../jsonschemas/tasknewrequest.jsonschema.js";
+import { taskUpdateRequestJsonSchema } from "../jsonschemas/taskupdaterequest.jsonschema.js";
 
 const router = Router();
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/new:
+ * /api/task/{projectEid}/new:
  *   post:
- *     summary: Create a new user story.
+ *     summary: Create a new task.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -21,7 +21,7 @@ const router = Router();
  *         required: true
  *         description: The project's identifier.
  *     tags:
- *       - userstory
+ *       - task
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -29,14 +29,14 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserstoryNewRequest'
+ *             $ref: '#/components/schemas/TaskNewRequest'
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/TaskResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -45,21 +45,21 @@ const router = Router();
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.post(
-	"/api/userstory/:projectEid/new",
+	"/api/task/:projectEid/new",
 	authorize(),
 	authorizeProject(),
 	jsonBody(),
-	jsonBodySchema(userstoryNewRequestJsonSchema),
+	jsonBodySchema(taskNewRequestJsonSchema),
 	async (req, res) => {
-		await handle("userstory", "new", req, res);
+		await handle("task", "new", req, res);
 	},
 );
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/update:
+ * /api/task/{projectEid}/{taskEid}/update:
  *   patch:
- *     summary: Updates an existing user story.
+ *     summary: Updates an existing task.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -68,13 +68,13 @@ router.post(
  *         required: true
  *         description: The project's identifier.
  *       - in: path
- *         name: userstoryEid
+ *         name: taskEid
  *         schema:
  *           type: string
  *         required: true
- *         description: The user story's identifier.
+ *         description: The task's identifier.
  *     tags:
- *       - userstory
+ *       - task
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -82,14 +82,14 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserstoryUpdateRequest'
+ *             $ref: '#/components/schemas/TaskUpdateRequest'
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/TaskResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -98,61 +98,21 @@ router.post(
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.patch(
-	"/api/userstory/:projectEid/:userstoryEid/update",
+	"/api/task/:projectEid/:taskEid/update",
 	authorize(),
 	authorizeProject(),
 	jsonBody(),
-	jsonBodySchema(userstoryUpdateRequestJsonSchema),
+	jsonBodySchema(taskUpdateRequestJsonSchema),
 	async (req, res) => {
-		await handle("userstory", "update", req, res);
+		await handle("task", "update", req, res);
 	},
 );
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{epicEid}/self:
+ * /api/task/{projectEid}/{userstoryEid}/self:
  *   get:
- *     summary: Get all user stories for the given epic.
- *     parameters:
- *       - in: path
- *         name: projectEid
- *         schema:
- *           type: string
- *         required: true
- *         description: The project's identifier.
- *       - in: path
- *         name: epicEid
- *         schema:
- *           type: string
- *         required: true
- *         description: The epic's identifier.
- *     tags:
- *       - userstory
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserstorySelfResponse'
- *       Others:
- *         description: Failure
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FailureResponse'
- */
-router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "self", req, res);
-});
-
-/**
- * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/get:
- *   get:
- *     summary: Get an user story by its identifier.
+ *     summary: Get all tasks for the given user story.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -167,7 +127,7 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *         required: true
  *         description: The user story's identifier.
  *     tags:
- *       - userstory
+ *       - task
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -176,7 +136,7 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/TaskSelfResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -184,15 +144,55 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "get", req, res);
+router.get("/api/task/:projectEid/:userstoryEid/self", authorize(), authorizeProject(), async (req, res) => {
+	await handle("task", "self", req, res);
 });
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/delete:
+ * /api/task/{projectEid}/{taskEid}/get:
+ *   get:
+ *     summary: Get an task by its identifier.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: taskEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task's identifier.
+ *     tags:
+ *       - task
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TaskResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/task/:projectEid/:taskEid/get", authorize(), authorizeProject(), async (req, res) => {
+	await handle("task", "get", req, res);
+});
+
+/**
+ * @swagger
+ * /api/task/{projectEid}/{taskEid}/delete:
  *   delete:
- *     summary: Delete an user story by its identifier.
+ *     summary: Delete an task by its identifier.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -201,13 +201,13 @@ router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authoriz
  *         required: true
  *         description: The project's identifier.
  *       - in: path
- *         name: userstoryEid
+ *         name: taskEid
  *         schema:
  *           type: string
  *         required: true
- *         description: The user story's identifier.
+ *         description: The task's identifier.
  *     tags:
- *       - userstory
+ *       - task
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -220,8 +220,8 @@ router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authoriz
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.delete("/api/userstory/:projectEid/:userstoryEid/delete", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "delete", req, res);
+router.delete("/api/task/:projectEid/:taskEid/delete", authorize(), authorizeProject(), async (req, res) => {
+	await handle("task", "delete", req, res);
 });
 
 export default router;

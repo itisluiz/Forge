@@ -11,6 +11,7 @@ import express from "express";
 import logging from "./util/logging.js";
 
 const app = express();
+const isProduction = process.env["NODE_ENV"] === "production";
 
 setupErrorTransformers();
 setupEarlyMiddleware(app);
@@ -20,7 +21,7 @@ await setupControllers(app);
 
 setupLateMiddleware(app);
 
-if (process.env["NODE_ENV"] === "production") {
+if (isProduction) {
 	logging.logInfo("startup", "Server is running on the", chalk.red("production"), "environment");
 	setupFrontend(app);
 } else {
@@ -33,5 +34,12 @@ if (process.env["NODE_ENV"] === "production") {
 await getSequelize();
 
 app.listen(process.env["PORT"], () => {
-	logging.logSuccess("startup", `Server started on http://localhost:${process.env["PORT"]}`);
+	logging.logSuccess("startup", "Server started on", chalk.cyanBright(`http://localhost:${process.env["PORT"]}`));
+	if (!isProduction) {
+		logging.logSuccess(
+			"startup",
+			"Swagger documentation available at",
+			chalk.cyanBright(`http://localhost:${process.env["PORT"]}/swagger`),
+		);
+	}
 });

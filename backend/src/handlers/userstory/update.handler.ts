@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 import { UserstoryUpdateRequest } from "forge-shared/dto/request/userstoryupdaterequest.dto";
 
 export default async function (req: Request, res: Response) {
-	const userstoryNewRequest = req.body as UserstoryUpdateRequest;
+	const userstoryUpdateRequest = req.body as UserstoryUpdateRequest;
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
@@ -18,8 +18,8 @@ export default async function (req: Request, res: Response) {
 
 	try {
 		let sprintId: number | null = null;
-		if (userstoryNewRequest.sprintEid) {
-			sprintId = decryptPK("sprint", userstoryNewRequest.sprintEid);
+		if (userstoryUpdateRequest.sprintEid) {
+			sprintId = decryptPK("sprint", userstoryUpdateRequest.sprintEid);
 			const sprint = await sequelize.models["sprint"].findOne({
 				where: { id: sprintId, projectId: authProject.projectId },
 				attributes: ["id"],
@@ -50,14 +50,14 @@ export default async function (req: Request, res: Response) {
 
 		userstory.set(
 			{
-				...(userstoryNewRequest.sprintEid !== undefined && { sprintId: sprintId }),
-				...(userstoryNewRequest.title && { title: userstoryNewRequest.title }),
-				...(userstoryNewRequest.description && { description: userstoryNewRequest.description }),
-				...(userstoryNewRequest.storyActor && { storyActor: userstoryNewRequest.storyActor }),
-				...(userstoryNewRequest.storyObjective && { storyObjective: userstoryNewRequest.storyObjective }),
-				...(userstoryNewRequest.storyJustification && { storyJustification: userstoryNewRequest.storyJustification }),
-				...(userstoryNewRequest.description && { description: userstoryNewRequest.description }),
-				...(userstoryNewRequest.priority && { epriorityId: userstoryNewRequest.priority }),
+				...(userstoryUpdateRequest.sprintEid !== undefined && { sprintId: sprintId }),
+				...(userstoryUpdateRequest.title && { title: userstoryUpdateRequest.title }),
+				...(userstoryUpdateRequest.description && { description: userstoryUpdateRequest.description }),
+				...(userstoryUpdateRequest.storyActor && { storyActor: userstoryUpdateRequest.storyActor }),
+				...(userstoryUpdateRequest.storyObjective && { storyObjective: userstoryUpdateRequest.storyObjective }),
+				...(userstoryUpdateRequest.storyJustification && { storyJustification: userstoryUpdateRequest.storyJustification }),
+				...(userstoryUpdateRequest.description && { description: userstoryUpdateRequest.description }),
+				...(userstoryUpdateRequest.priority && { epriorityId: userstoryUpdateRequest.priority }),
 			},
 			{ transaction },
 		);
