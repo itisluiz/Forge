@@ -32,15 +32,18 @@
 					</div>
 				</div>
 			</div>
-			<p class="desc-title">A brief description of what will be done in the task.</p>
+			<p class="desc-title">Find below the list of epics in your project.</p>
 
 			<mat-accordion multi>
 				@for (epic of epics$ | async; track $index) {
-					<mat-expansion-panel hideToggle>
+					<mat-expansion-panel hideToggle [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
 							<mat-panel-title> {{ epic.code }} </mat-panel-title>
 							<mat-panel-title> {{ epic.title }} </mat-panel-title>
 							<mat-panel-description> {{ epic.description }} </mat-panel-description>
+							<mat-panel-description class="delete-panel-desc">
+								<mat-icon (click)="openPopUpDeleteEpic(epic.eid)">delete</mat-icon>
+							</mat-panel-description>
 						</mat-expansion-panel-header>
 						<table mat-table [dataSource]="histories" class="epics-table">
 							<!-- Key Column -->
@@ -108,6 +111,7 @@
 	<div class="epic-pop-up">
 		<div class="epic-pop-up-header">
 			<h2>Create a new Epic</h2>
+			<p>Fill the needed information to be able to create your epic.</p>
 		</div>
 		<form [formGroup]="createEpicForm" class="pop-up-form" (ngSubmit)="submitForm()">
 			<div class="pop-up-form-content">
@@ -141,9 +145,21 @@
 				</div>
 			</div>
 			<div class="pop-up-footer">
-				<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
 				<button type="submit" [disabled]="createEpicForm.invalid">Create</button>
+				<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
 			</div>
 		</form>
 	</div>
+}
+
+@if (popUpDeleteEpic) {
+	<div class="pop-up-background" (click)="closePopUpDeleteEpic()"></div>
+
+	<app-delete-popup
+		[itemEid]="eidEpicToDelete"
+		[title]="'Delete Epic'"
+		[description]="'Are you sure you want to delete this epic? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUpDeleteEpic()"
+		(confirmDeleteEmmiter)="onDeleteEpic($event)"
+	></app-delete-popup>
 }

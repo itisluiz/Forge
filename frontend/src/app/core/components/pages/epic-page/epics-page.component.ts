@@ -14,6 +14,7 @@ import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
 import { Observable } from "rxjs";
 import { map } from "rxjs";
+import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 
 export interface History {
 	key: string;
@@ -73,6 +74,7 @@ const HISTORIES_DATA: History[] = [
 		ReactiveFormsModule,
 		CommonModule,
 		UserStoryPopupComponent,
+		DeletePopupComponent,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
@@ -94,8 +96,12 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 
 	popUpActive: boolean = false;
 	popUpIssue: boolean = false;
+	popUpDeleteEpic: boolean = false;
 
 	createEpicForm!: FormGroup;
+
+	isPanelDisabled: boolean = false;
+	eidEpicToDelete: string = "";
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -145,6 +151,10 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		return pre + priority.toLowerCase() + pos;
 	}
 
+	toggleExpansionPanel() {
+		this.isPanelDisabled = !this.isPanelDisabled;
+	}
+
 	openPopUp() {
 		this.popUpActive = true;
 		document.body.style.overflow = "hidden";
@@ -160,6 +170,13 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "hidden";
 	}
 
+	openPopUpDeleteEpic(epicEid: string) {
+		this.eidEpicToDelete = epicEid;
+		this.toggleExpansionPanel();
+		this.popUpDeleteEpic = true;
+		document.body.style.overflow = "hidden";
+	}
+
 	closePopUp() {
 		this.popUpActive = false;
 		document.body.style.overflow = "auto";
@@ -167,6 +184,12 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 
 	closePopUpIssue() {
 		this.popUpIssue = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpDeleteEpic() {
+		this.popUpDeleteEpic = false;
+		this.toggleExpansionPanel();
 		document.body.style.overflow = "auto";
 	}
 
@@ -183,12 +206,7 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 			};
 			this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
 				next: (result) => {
-					console.log(result);
-					this.epics$ = this.epicApiService.getEpics(this.route.snapshot.paramMap.get("projectEid")!).pipe(
-						map((response: EpicSelfResponse) => {
-							return response.epics;
-						}),
-					);
+					this.setUpdatedEpics();
 					// TODO: Toaster success
 				},
 				error: (error) => {
@@ -199,6 +217,32 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		}
 
 		this.closePopUp();
+	}
+
+	deleteEpic(epicEid: string) {
+		this.epicApiService.deleteEpic(epicEid, this.projectEid).subscribe({
+			next: (result) => {
+				this.setUpdatedEpics();
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	onDeleteEpic(epicEid: string) {
+		this.deleteEpic(epicEid);
+		this.closePopUpDeleteEpic();
+	}
+
+	setUpdatedEpics() {
+		this.epics$ = this.epicApiService.getEpics(this.projectEid).pipe(
+			map((response: EpicSelfResponse) => {
+				return response.epics;
+			}),
+		);
 	}
 
 	isFieldInvalid(fieldName: string): boolean {
