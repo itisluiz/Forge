@@ -76,6 +76,16 @@ app-navbar {
 				color: v.$purple-color;
 			}
 		}
+
+		.mat-expansion-panel-header-description {
+			&:nth-last-of-type(1) {
+				flex-grow: 0.2;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+
 		.add-issue {
 			color: v.$label-background-grey;
 			font-size: v.$paragraph-font;
@@ -241,24 +251,9 @@ app-navbar {
 	align-items: center;
 }
 
-.pop-up-background {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	background-color: v.$pop-up-background-color;
-	z-index: 50;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
 .epic-pop-up {
 	background-color: v.$white-color;
-	border-radius: 12px;
-	padding: 2em 0;
-	width: 500px;
+	width: max-content;
 	z-index: 100;
 	position: fixed;
 	top: 50%;
@@ -268,16 +263,16 @@ app-navbar {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+	padding: 55px 77px;
 
 	.epic-pop-up-header {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: 380px;
+		margin-bottom: 25px;
 
 		h2 {
-			font-size: v.$h2-font;
+			font-size: 28px;
 			font-weight: 500;
+			margin-bottom: 10px;
 		}
 	}
 
@@ -285,8 +280,7 @@ app-navbar {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		padding: 40px 5px 30px 5px;
-		width: 300px;
+		width: 380px;
 
 		.input-wrapper {
 			position: relative;
@@ -301,6 +295,7 @@ app-navbar {
 				border: none;
 				padding-left: 20px;
 				border-radius: 2px;
+				border: 1px solid transparent;
 
 				&:focus {
 					outline: none;
@@ -309,7 +304,7 @@ app-navbar {
 			}
 
 			textarea {
-				max-width: 280px;
+				max-width: 380px;
 				max-height: 35px;
 				padding: 15px 20px;
 				resize: none;
@@ -333,13 +328,13 @@ app-navbar {
 		}
 
 		.pop-up-footer {
+			margin-top: 16px;
 			display: flex;
+			flex-direction: column;
 			justify-content: space-between;
-			align-items: flex-start;
 			height: fit-content;
 
 			button {
-				width: 33%;
 				height: 40px;
 				text-align: center;
 				color: #fff;
@@ -356,7 +351,10 @@ app-navbar {
 				}
 			}
 			button.cancel-epic {
-				background-color: v.$grey-color;
+				margin-top: 8px;
+				background: none;
+				color: #494949;
+				font-weight: 400;
 			}
 		}
 	}

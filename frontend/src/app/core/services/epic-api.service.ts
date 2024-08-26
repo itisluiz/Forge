@@ -18,4 +18,8 @@ export class EpicApiService {
 	public newEpic(epicNewRequest: EpicNewRequest, projectEid: string): Observable<EpicResponse> {
 		return this.apiService.call<EpicResponse, EpicNewRequest>("POST", `epic/${projectEid}/new`, undefined, epicNewRequest);
 	}
+
+	public deleteEpic(epicEid: string, projectEid: string): Observable<EpicResponse> {
+		return this.apiService.call<EpicResponse>("DELETE", `epic/${projectEid}/${epicEid}/delete`);
+	}
 }
