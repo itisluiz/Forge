@@ -41,7 +41,7 @@
 			.right-side {
 				display: flex;
 				align-items: center;
-				height: 31px;
+				height: 40px;
 
 				button {
 					display: flex;
@@ -77,6 +77,12 @@
 						transition: 0.1s;
 						cursor: pointer;
 						filter: brightness(0.8);
+
+						.project-info {
+							button {
+								display: block;
+							}
+						}
 					}
 
 					.project-info {
@@ -87,9 +93,42 @@
 						margin-bottom: 4px;
 						align-items: center;
 						justify-content: center;
+						position: relative;
 
 						p {
 							margin-right: 5px;
+						}
+
+						.mat-mdc-menu-trigger {
+							opacity: 0.4;
+							position: absolute;
+							right: 20px;
+							top: 14px;
+
+							&:hover {
+								opacity: 1;
+							}
+
+							&:focus {
+								opacity: 1;
+							}
+
+							&:active {
+								opacity: 1;
+							}
+						}
+
+						.cdk-focused,
+						.cdk-mouse-focused {
+							opacity: 1;
+						}
+
+						.material-icons {
+							transform: translateY(-1.5px);
+						}
+
+						.button-icon {
+							transform: translateY(-2px);
 						}
 					}
 				}
