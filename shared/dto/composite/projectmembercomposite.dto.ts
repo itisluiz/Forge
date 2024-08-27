@@ -1,4 +1,5 @@
 import { ProjectRole } from "../../enum/projectrole.enum";
+
 /**
  * @swagger
  * components:
@@ -19,6 +20,9 @@ import { ProjectRole } from "../../enum/projectrole.enum";
  *           type: string
  *         surname:
  *           type: string
+ *         gravatar:
+ *           type: string
+ *           format: uri
  *         joinedAt:
  *           type: string
  *           format: date-time
@@ -30,5 +34,6 @@ export interface ProjectMemberComposite {
 	email: string;
 	name: string;
 	surname: string;
+	gravatar: string;
 	joinedAt: string;
 }

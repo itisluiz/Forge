@@ -22,13 +22,17 @@ export default async function (req: Request, res: Response) {
 				endsAt: sprintNewRequest.endsAt,
 				esprintstatusId: sprintNewRequest.status,
 			},
-			{ transaction },
+			{
+				transaction,
+				include: { model: sequelize.models["userstory"], attributes: ["id"], include: [sequelize.models["task"]] },
+			},
 		);
 
 		if (!sprint.validInterval()) {
 			throw new BadRequestError("The sprint interval is invalid");
 		}
 
+		await sprint.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();

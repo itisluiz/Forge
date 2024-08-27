@@ -1,4 +1,5 @@
 import { encryptPK } from "../../util/encryption.js";
+import { mapTaskSelfComposite } from "../composite/taskselfcomposite.mapper.js";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 
 export function mapUserstoryResponse(userstory: any): UserstoryResponse {
@@ -14,6 +15,7 @@ export function mapUserstoryResponse(userstory: any): UserstoryResponse {
 		storyActor: userstory.dataValues.storyActor,
 		storyObjective: userstory.dataValues.storyObjective,
 		storyJustification: userstory.dataValues.storyJustification,
+		tasks: userstory.dataValues.tasks.map(mapTaskSelfComposite),
 		createdAt: userstory.dataValues.createdAt,
 		updatedAt: userstory.dataValues.updatedAt,
 	};

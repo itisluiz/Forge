@@ -18,13 +18,16 @@ export default async function (req: Request, res: Response) {
 			where: {
 				id: userstoryId,
 			},
-			include: {
-				model: sequelize.models["epic"],
-				where: {
-					projectId: authProject.projectId,
+			include: [
+				{
+					model: sequelize.models["epic"],
+					where: {
+						projectId: authProject.projectId,
+					},
+					attributes: ["projectId"],
 				},
-				attributes: ["projectId"],
-			},
+				sequelize.models["task"],
+			],
 			transaction,
 		});
 

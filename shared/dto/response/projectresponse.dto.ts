@@ -1,3 +1,4 @@
+import { EpicSelfComposite } from "../composite/epicselfcomposite.dto";
 import { ProjectMemberComposite } from "../composite/projectmembercomposite.dto";
 
 /**
@@ -19,6 +20,16 @@ import { ProjectMemberComposite } from "../composite/projectmembercomposite.dto"
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/ProjectMemberComposite'
+ *         epics:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/EpicSelfComposite'
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  */
 export interface ProjectResponse {
 	eid: string;
@@ -26,4 +37,7 @@ export interface ProjectResponse {
 	title: string;
 	description: string;
 	members: ProjectMemberComposite[];
+	epics: EpicSelfComposite[];
+	createdAt: string;
+	updatedAt: string;
 }

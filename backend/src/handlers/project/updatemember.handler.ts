@@ -60,7 +60,7 @@ export default async function (req: Request, res: Response) {
 
 		await membership.save({ transaction });
 		await transaction.commit();
-		project = await membership.getProject({ include: [sequelize.models["user"]] });
+		project = await membership.getProject({ include: [sequelize.models["user"], sequelize.models["epic"]] });
 	} catch (error) {
 		await transaction.rollback();
 

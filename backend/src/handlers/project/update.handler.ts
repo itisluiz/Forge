@@ -1,8 +1,8 @@
-import { getSequelize } from "../../util/sequelize.js";
-import { Request, Response } from "express";
-import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { getProjectData } from "../../util/requestmeta.js";
+import { getSequelize } from "../../util/sequelize.js";
 import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
+import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
+import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
 	const projectUpdateRequest = req.body as ProjectUpdateRequest;
@@ -15,7 +15,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		project = await sequelize.models["project"].findByPk(authProject.projectId, {
 			transaction,
-			include: [sequelize.models["user"]],
+			include: [sequelize.models["user"], sequelize.models["epic"]],
 		});
 		project.set(
 			{

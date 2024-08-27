@@ -1,9 +1,9 @@
 import { getSequelize } from "../../util/sequelize.js";
-import { Request, Response } from "express";
-import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
-import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { getUserData } from "../../util/requestmeta.js";
 import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
+import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
+import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
 	const projectNewRequest = req.body as ProjectNewRequest;
@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 				title: projectNewRequest.title,
 				description: projectNewRequest.description,
 			},
-			{ transaction, include: [sequelize.models["user"]] },
+			{ transaction, include: [sequelize.models["user"], sequelize.models["epic"]] },
 		);
 
 		await project.addUser(authUser.user, {

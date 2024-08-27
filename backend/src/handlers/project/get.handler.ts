@@ -1,7 +1,7 @@
-import { getSequelize } from "../../util/sequelize.js";
-import { Request, Response } from "express";
 import { getProjectData } from "../../util/requestmeta.js";
+import { getSequelize } from "../../util/sequelize.js";
 import { mapProjectResponse } from "../../mappers/response/projectresponse.mapper.js";
+import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
@@ -13,7 +13,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		project = await sequelize.models["project"].findByPk(authProject.projectId, {
 			transaction,
-			include: [sequelize.models["user"]],
+			include: [sequelize.models["user"], sequelize.models["epic"]],
 		});
 		await transaction.commit();
 	} catch (error) {

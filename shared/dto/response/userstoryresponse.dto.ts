@@ -1,4 +1,5 @@
 import { Priority } from "../../enum/priority.enum";
+import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
 
 /**
  * @swagger
@@ -30,6 +31,10 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         storyJustification:
  *           type: string
+ *         tasks:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/TaskSelfComposite'
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -49,6 +54,7 @@ export interface UserstoryResponse {
 	storyActor: string;
 	storyObjective: string;
 	storyJustification: string;
+	tasks: TaskSelfComposite[];
 	createdAt: string;
 	updatedAt: string;
 }
