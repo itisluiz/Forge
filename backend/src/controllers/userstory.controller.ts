@@ -150,6 +150,46 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
 
 /**
  * @swagger
+ * /api/userstory/{projectEid}/{sprintEid}/selfbysprint:
+ *   get:
+ *     summary: Get all user stories for the given sprint.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: sprintEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The sprint's identifier.
+ *     tags:
+ *       - userstory
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserstorySelfResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/userstory/:projectEid/:sprintEid/selfbysprint", authorize(), authorizeProject(), async (req, res) => {
+	await handle("userstory", "selfbysprint", req, res);
+});
+
+/**
+ * @swagger
  * /api/userstory/{projectEid}/{userstoryEid}/get:
  *   get:
  *     summary: Get an user story by its identifier.

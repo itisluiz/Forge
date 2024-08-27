@@ -19,9 +19,10 @@ export default async function (req: Request, res: Response) {
 				description: epicNewRequest.description,
 				projectId: authProject.projectId,
 			},
-			{ transaction },
+			{ transaction, include: [sequelize.models["userstory"]] },
 		);
 
+		await epic.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();

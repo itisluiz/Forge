@@ -22,6 +22,7 @@ export default async function (req: Request, res: Response) {
 				id: sprintId,
 				projectId: authProject.projectId,
 			},
+			include: { model: sequelize.models["userstory"], attributes: ["id"], include: [sequelize.models["task"]] },
 			transaction,
 		});
 

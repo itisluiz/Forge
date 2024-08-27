@@ -1,4 +1,5 @@
 import { encryptPK } from "../../util/encryption.js";
+import { getGravatarUrl } from "../../util/gravatar.js";
 import { UserSelfResponse } from "forge-shared/dto/response/userselfresponse.dto";
 
 export function mapUserSelfResponse(user: any): UserSelfResponse {
@@ -7,6 +8,8 @@ export function mapUserSelfResponse(user: any): UserSelfResponse {
 		email: user.dataValues.email,
 		name: user.dataValues.name,
 		surname: user.dataValues.surname,
+		gravatar: getGravatarUrl(user.dataValues.email),
 		createdAt: user.dataValues.createdAt,
+		updatedAt: user.dataValues.updatedAt,
 	};
 }

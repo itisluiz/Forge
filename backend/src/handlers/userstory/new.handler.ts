@@ -51,9 +51,10 @@ export default async function (req: Request, res: Response) {
 				storyJustification: userstoryNewRequest.storyJustification,
 				epriorityId: userstoryNewRequest.priority,
 			},
-			{ transaction },
+			{ transaction, include: [sequelize.models["task"]] },
 		);
 
+		await userstory.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();

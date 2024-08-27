@@ -12,7 +12,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		await sequelize.models["user"].create(
 			{
-				email: userSignupRequest.email.toLowerCase(),
+				email: userSignupRequest.email.trim().toLowerCase(),
 				password: hashPassword(userSignupRequest.password),
 				name: userSignupRequest.name,
 				surname: userSignupRequest.surname,

@@ -8,6 +8,7 @@ import { projectUpdateMemberRequestJsonSchema } from "../jsonschemas/projectupda
 import { projectUpdateRequestJsonSchema } from "../jsonschemas/projectupdaterequest.jsonschema.js";
 import { projectUseInvitationJsonSchema } from "../jsonschemas/projectuseinvitation.jsonschema.js";
 import { Router } from "express";
+import { projectKickRequestJsonSchema } from "../jsonschemas/projectkickrequest.jsonschema.js";
 
 const router = Router();
 
@@ -157,6 +158,53 @@ router.post(
 	jsonBodySchema(projectMakeInvitationRequestJsonSchema),
 	async (req, res) => {
 		await handle("project", "makeinvitation", req, res);
+	},
+);
+
+/**
+ * @swagger
+ * /api/project/{projectEid}/kick:
+ *   post:
+ *     summary: Kick a user from the project.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProjectKickRequest'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.post(
+	"/api/project/:projectEid/kick",
+	authorize(),
+	authorizeProject(true),
+	jsonBody(),
+	jsonBodySchema(projectKickRequestJsonSchema),
+	async (req, res) => {
+		await handle("project", "kick", req, res);
 	},
 );
 
@@ -347,6 +395,36 @@ router.get("/api/project/:projectEid/get", authorize(), authorizeProject(), asyn
  */
 router.get("/api/project/:projectEid/invitations", authorize(), authorizeProject(true), async (req, res) => {
 	await handle("project", "invitations", req, res);
+});
+
+/**
+ * @swagger
+ * /api/project/{projectEid}:
+ *   delete:
+ *     summary: Delete the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - project
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.delete("/api/project/:projectEid", authorize(), authorizeProject(true), async (req, res) => {
+	await handle("project", "delete", req, res);
 });
 
 export default router;

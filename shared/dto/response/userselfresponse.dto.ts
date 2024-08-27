@@ -14,7 +14,13 @@
  *           type: string
  *         surname:
  *           type: string
+ *         gravatar:
+ *           type: string
+ *           format: uri
  *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
  *           type: string
  *           format: date-time
  */
@@ -23,5 +29,7 @@ export interface UserSelfResponse {
 	email: string;
 	name: string;
 	surname: string;
+	gravatar: string;
 	createdAt: string;
+	updatedAt: string;
 }

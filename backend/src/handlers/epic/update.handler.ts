@@ -22,6 +22,7 @@ export default async function (req: Request, res: Response) {
 				projectId: authProject.projectId,
 			},
 			transaction,
+			include: [sequelize.models["userstory"]],
 		});
 
 		if (!epic) {
