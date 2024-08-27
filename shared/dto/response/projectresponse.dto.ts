@@ -1,5 +1,6 @@
 import { EpicSelfComposite } from "../composite/epicselfcomposite.dto";
 import { ProjectMemberComposite } from "../composite/projectmembercomposite.dto";
+import { ProjectRole } from "../../enum/projectrole.enum";
 
 /**
  * @swagger
@@ -16,6 +17,10 @@ import { ProjectMemberComposite } from "../composite/projectmembercomposite.dto"
  *           type: string
  *         description:
  *           type: string
+ *         admin:
+ *           type: boolean
+ *         role:
+ *           $ref: '#/components/schemas/ProjectRole'
  *         members:
  *           type: array
  *           items:
@@ -36,6 +41,8 @@ export interface ProjectResponse {
 	code: string;
 	title: string;
 	description: string;
+	admin: boolean;
+	role: ProjectRole;
 	members: ProjectMemberComposite[];
 	epics: EpicSelfComposite[];
 	createdAt: string;

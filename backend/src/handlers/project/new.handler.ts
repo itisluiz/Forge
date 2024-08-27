@@ -35,6 +35,7 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapProjectResponse(project);
+	const self = project.dataValues.users.find((user: any) => user.dataValues.id === authUser.user.dataValues.id);
+	const response = mapProjectResponse(project, self);
 	res.status(200).send(response);
 }
