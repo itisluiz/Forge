@@ -7,7 +7,7 @@ import { UserstorySelfComposite } from "../composite/userstoryselfcomposite.dto"
  *     UserstorySelfResponse:
  *       type: object
  *       properties:
- *         projects:
+ *         userstories:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/UserstorySelfComposite'
