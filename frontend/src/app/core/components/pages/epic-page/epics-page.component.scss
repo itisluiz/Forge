@@ -78,8 +78,9 @@ app-navbar {
 		}
 
 		.mat-expansion-panel-header-description {
+			&:nth-last-of-type(2),
 			&:nth-last-of-type(1) {
-				flex-grow: 0.2;
+				flex-grow: 0.1;
 				display: flex;
 				align-items: center;
 				justify-content: center;
