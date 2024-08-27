@@ -15,6 +15,14 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.STRING(256),
 			allowNull: false,
 		},
+		narrative: {
+			type: DataTypes.STRING(256),
+			allowNull: false,
+		},
+		premisse: {
+			type: DataTypes.STRING(256),
+			allowNull: false,
+		},
 		storyActor: {
 			type: DataTypes.STRING(128),
 			allowNull: false,

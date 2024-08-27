@@ -3,16 +3,16 @@ import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { Router } from "express";
-import { userstoryNewRequestJsonSchema } from "../jsonschemas/userstorynewrequest.jsonschema.js";
-import { userstoryUpdateRequestJsonSchema } from "../jsonschemas/userstoryupdaterequest.jsonschema.js";
+import { sprintNewRequestJsonSchema } from "../jsonschemas/sprintnewrequest.jsonschema.js";
+import { sprintUpdateRequestJsonSchema } from "../jsonschemas/sprintupdaterequest.jsonschema.js";
 
 const router = Router();
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/new:
+ * /api/sprint/{projectEid}/new:
  *   post:
- *     summary: Create a new user story.
+ *     summary: Create a new sprint.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -21,7 +21,7 @@ const router = Router();
  *         required: true
  *         description: The project's identifier.
  *     tags:
- *       - userstory
+ *       - sprint
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -29,14 +29,14 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserstoryNewRequest'
+ *             $ref: '#/components/schemas/SprintNewRequest'
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/SprintResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -45,21 +45,21 @@ const router = Router();
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.post(
-	"/api/userstory/:projectEid/new",
+	"/api/sprint/:projectEid/new",
 	authorize(),
 	authorizeProject(),
 	jsonBody(),
-	jsonBodySchema(userstoryNewRequestJsonSchema),
+	jsonBodySchema(sprintNewRequestJsonSchema),
 	async (req, res) => {
-		await handle("userstory", "new", req, res);
+		await handle("sprint", "new", req, res);
 	},
 );
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/update:
+ * /api/sprint/{projectEid}/{sprintEid}/update:
  *   patch:
- *     summary: Updates an existing user story.
+ *     summary: Updates an existing sprint.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -68,13 +68,13 @@ router.post(
  *         required: true
  *         description: The project's identifier.
  *       - in: path
- *         name: userstoryEid
+ *         name: sprintEid
  *         schema:
  *           type: string
  *         required: true
- *         description: The user story's identifier.
+ *         description: The sprint's identifier.
  *     tags:
- *       - userstory
+ *       - sprint
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -82,14 +82,14 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserstoryUpdateRequest'
+ *             $ref: '#/components/schemas/SprintUpdateRequest'
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/SprintResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -98,21 +98,21 @@ router.post(
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.patch(
-	"/api/userstory/:projectEid/:userstoryEid/update",
+	"/api/sprint/:projectEid/:sprintEid/update",
 	authorize(),
 	authorizeProject(),
 	jsonBody(),
-	jsonBodySchema(userstoryUpdateRequestJsonSchema),
+	jsonBodySchema(sprintUpdateRequestJsonSchema),
 	async (req, res) => {
-		await handle("userstory", "update", req, res);
+		await handle("sprint", "update", req, res);
 	},
 );
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{epicEid}/self:
+ * /api/sprint/{projectEid}/self:
  *   get:
- *     summary: Get all user stories for the given epic.
+ *     summary: Get all sprints for the given project.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -120,14 +120,8 @@ router.patch(
  *           type: string
  *         required: true
  *         description: The project's identifier.
- *       - in: path
- *         name: epicEid
- *         schema:
- *           type: string
- *         required: true
- *         description: The epic's identifier.
  *     tags:
- *       - userstory
+ *       - sprint
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -136,7 +130,7 @@ router.patch(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstorySelfResponse'
+ *               $ref: '#/components/schemas/SprintResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -144,15 +138,15 @@ router.patch(
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "self", req, res);
+router.get("/api/sprint/:projectEid/self", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "self", req, res);
 });
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/get:
+ * /api/sprint/{projectEid}/{sprintEid}/get:
  *   get:
- *     summary: Get an user story by its identifier.
+ *     summary: Get a sprint by its identifier.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -161,13 +155,13 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *         required: true
  *         description: The project's identifier.
  *       - in: path
- *         name: userstoryEid
+ *         name: sprintEid
  *         schema:
  *           type: string
  *         required: true
- *         description: The user story's identifier.
+ *         description: The sprint's identifier.
  *     tags:
- *       - userstory
+ *       - sprint
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -176,7 +170,7 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserstoryResponse'
+ *               $ref: '#/components/schemas/SprintResponse'
  *       Others:
  *         description: Failure
  *         content:
@@ -184,15 +178,15 @@ router.get("/api/userstory/:projectEid/:epicEid/self", authorize(), authorizePro
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "get", req, res);
+router.get("/api/sprint/:projectEid/:sprintEid/get", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "get", req, res);
 });
 
 /**
  * @swagger
- * /api/userstory/{projectEid}/{userstoryEid}/delete:
+ * /api/sprint/{projectEid}/{sprintEid}/delete:
  *   delete:
- *     summary: Delete an user story by its identifier.
+ *     summary: Delete a sprint by its identifier.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -201,13 +195,13 @@ router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authoriz
  *         required: true
  *         description: The project's identifier.
  *       - in: path
- *         name: userstoryEid
+ *         name: sprintEid
  *         schema:
  *           type: string
  *         required: true
- *         description: The user story's identifier.
+ *         description: The sprint's identifier.
  *     tags:
- *       - userstory
+ *       - sprint
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -220,8 +214,8 @@ router.get("/api/userstory/:projectEid/:userstoryEid/get", authorize(), authoriz
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.delete("/api/userstory/:projectEid/:userstoryEid/delete", authorize(), authorizeProject(), async (req, res) => {
-	await handle("userstory", "delete", req, res);
+router.delete("/api/sprint/:projectEid/:sprintEid/delete", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "delete", req, res);
 });
 
 export default router;

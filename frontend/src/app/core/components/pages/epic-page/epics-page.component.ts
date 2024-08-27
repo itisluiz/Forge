@@ -14,6 +14,9 @@ import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
 import { Observable } from "rxjs";
 import { map } from "rxjs";
+import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
+import { EpicNewRequest } from "forge-shared/dto/request/epicnewrequest.dto";
+import { EpicUpdateRequest } from "forge-shared/dto/request/epicupdaterequest.dto";
 
 export interface History {
 	key: string;
@@ -73,6 +76,7 @@ const HISTORIES_DATA: History[] = [
 		ReactiveFormsModule,
 		CommonModule,
 		UserStoryPopupComponent,
+		DeletePopupComponent,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
@@ -92,10 +96,16 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	@ViewChildren("statusContainer")
 	statusContainer!: QueryList<ElementRef>;
 
-	popUpActive: boolean = false;
+	popUpCreateEpic: boolean = false;
 	popUpIssue: boolean = false;
+	popUpDeleteEpic: boolean = false;
+	popUpEditEpic: boolean = false;
 
 	createEpicForm!: FormGroup;
+	editEpicForm!: FormGroup;
+
+	isPanelDisabled: boolean = false;
+	eidSelectedEpic: string = "";
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -145,9 +155,17 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		return pre + priority.toLowerCase() + pos;
 	}
 
-	openPopUp() {
-		this.popUpActive = true;
+	toggleExpansionPanel() {
+		this.isPanelDisabled = !this.isPanelDisabled;
+	}
+
+	openPopUpCreateEpic() {
+		this.popUpCreateEpic = true;
 		document.body.style.overflow = "hidden";
+		this.buildCreateEpicForm();
+	}
+
+	buildCreateEpicForm() {
 		this.createEpicForm = this.formBuilder.group({
 			code: ["", [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
 			name: ["", [Validators.required, Validators.minLength(3)]],
@@ -160,13 +178,55 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "hidden";
 	}
 
-	closePopUp() {
-		this.popUpActive = false;
+	openPopUpEditEpic(epicEid: string) {
+		this.eidSelectedEpic = epicEid;
+		this.toggleExpansionPanel();
+		document.body.style.overflow = "hidden";
+		this.buildEditEpicForm();
+	}
+
+	buildEditEpicForm() {
+		this.epicApiService.getEpic(this.projectEid, this.eidSelectedEpic).subscribe({
+			next: (epic) => {
+				this.editEpicForm = this.formBuilder.group({
+					code: [epic.code, [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
+					name: [epic.title, [Validators.required, Validators.minLength(3)]],
+					description: [epic.description, [Validators.required, Validators.minLength(3)]],
+				});
+				this.popUpEditEpic = true;
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	openPopUpDeleteEpic(epicEid: string) {
+		this.eidSelectedEpic = epicEid;
+		this.toggleExpansionPanel();
+		this.popUpDeleteEpic = true;
+		document.body.style.overflow = "hidden";
+	}
+
+	closePopUpCreateEpic() {
+		this.popUpCreateEpic = false;
 		document.body.style.overflow = "auto";
 	}
 
 	closePopUpIssue() {
 		this.popUpIssue = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpEditEpic() {
+		this.popUpEditEpic = false;
+		this.toggleExpansionPanel();
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpDeleteEpic() {
+		this.popUpDeleteEpic = false;
+		this.toggleExpansionPanel();
 		document.body.style.overflow = "auto";
 	}
 
@@ -180,29 +240,90 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 				code: code?.value,
 				title: name?.value,
 				description: description?.value,
-			};
-			this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
-				next: (result) => {
-					console.log(result);
-					this.epics$ = this.epicApiService.getEpics(this.route.snapshot.paramMap.get("projectEid")!).pipe(
-						map((response: EpicSelfResponse) => {
-							return response.epics;
-						}),
-					);
-					// TODO: Toaster success
-				},
-				error: (error) => {
-					// TODO: Toaster error
-					console.log(error.error.message);
-				},
-			});
+			} as EpicNewRequest;
+			this.createEpic(epicNewRequest);
 		}
 
-		this.closePopUp();
+		this.closePopUpCreateEpic();
+	}
+
+	createEpic(epicNewRequest: EpicNewRequest) {
+		this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
+			next: (result) => {
+				this.setUpdatedEpics();
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	submitEditEpicForm() {
+		const code = this.editEpicForm.get("code");
+		const name = this.editEpicForm.get("name");
+		const description = this.editEpicForm.get("description");
+
+		if (this.editEpicForm.valid) {
+			let epicUpdateRequest = {
+				code: code?.value,
+				title: name?.value,
+				description: description?.value,
+			} as EpicUpdateRequest;
+			this.editEpic(epicUpdateRequest);
+		}
+
+		this.closePopUpEditEpic();
+	}
+
+	editEpic(epicUpdateRequest: EpicUpdateRequest) {
+		this.epicApiService.updateEpic(epicUpdateRequest, this.projectEid, this.eidSelectedEpic).subscribe({
+			next: (result) => {
+				this.setUpdatedEpics();
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	deleteEpic(epicEid: string) {
+		this.epicApiService.deleteEpic(epicEid, this.projectEid).subscribe({
+			next: (result) => {
+				this.setUpdatedEpics();
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	onDeleteEpic() {
+		this.deleteEpic(this.eidSelectedEpic);
+		this.closePopUpDeleteEpic();
+	}
+
+	setUpdatedEpics() {
+		this.epics$ = this.epicApiService.getEpics(this.projectEid).pipe(
+			map((response: EpicSelfResponse) => {
+				return response.epics;
+			}),
+		);
 	}
 
 	isFieldInvalid(fieldName: string): boolean {
-		const field = this.createEpicForm.get(fieldName);
+		let currentForm = null;
+		if (this.popUpCreateEpic) {
+			currentForm = this.createEpicForm;
+		} else {
+			currentForm = this.editEpicForm;
+		}
+		const field = currentForm?.get(fieldName);
 		if (!field) {
 			return false;
 		}
@@ -213,7 +334,13 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	}
 
 	getFieldErrorMessage(fieldName: string): string {
-		if (this.createEpicForm.get(fieldName)!.errors) {
+		let currentForm = null;
+		if (this.popUpCreateEpic) {
+			currentForm = this.createEpicForm;
+		} else {
+			currentForm = this.editEpicForm;
+		}
+		if (currentForm.get(fieldName)!.errors) {
 			return `${fieldName} must have at least 3 characters.`;
 		}
 		return "";

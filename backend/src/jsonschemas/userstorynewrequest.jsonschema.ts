@@ -23,6 +23,16 @@ export const userstoryNewRequestJsonSchema = {
 			maxLength: 256,
 			minLength: 1,
 		},
+		narrative: {
+			type: "string",
+			maxLength: 256,
+			minLength: 1,
+		},
+		premisse: {
+			type: "string",
+			maxLength: 256,
+			minLength: 1,
+		},
 		storyActor: {
 			type: "string",
 			maxLength: 128,
@@ -43,6 +53,16 @@ export const userstoryNewRequestJsonSchema = {
 			minimum: 1,
 		},
 	},
-	required: ["epicEid", "title", "description", "storyActor", "storyObjective", "storyJustification", "priority"],
+	required: [
+		"epicEid",
+		"title",
+		"description",
+		"narrative",
+		"premisse",
+		"storyActor",
+		"storyObjective",
+		"storyJustification",
+		"priority",
+	],
 	additionalProperties: false,
 };

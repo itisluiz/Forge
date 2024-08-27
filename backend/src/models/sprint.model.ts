@@ -26,3 +26,7 @@ export function associate(modelName: string, sequelize: Sequelize) {
 	thisModel.belongsTo(models["project"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 	thisModel.hasMany(models["userstory"], { foreignKey: { allowNull: true }, onDelete: "SET NULL" });
 }
+
+export function validInterval(this: any) {
+	return this.dataValues.startsAt < this.dataValues.endsAt;
+}

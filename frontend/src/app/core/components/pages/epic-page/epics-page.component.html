@@ -12,7 +12,7 @@
 				</ul>
 				<h1>Epics</h1>
 				<div class="buttons-header">
-					<button id="button-create-epic" (click)="openPopUp()">Create an Epic</button>
+					<button id="button-create-epic" (click)="openPopUpCreateEpic()">Create an Epic</button>
 					<button mat-icon-button class="mat-icon-button">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -32,15 +32,21 @@
 					</div>
 				</div>
 			</div>
-			<p class="desc-title">A brief description of what will be done in the task.</p>
+			<p class="desc-title">Find below the list of epics in your project.</p>
 
 			<mat-accordion multi>
 				@for (epic of epics$ | async; track $index) {
-					<mat-expansion-panel hideToggle>
+					<mat-expansion-panel hideToggle [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
 							<mat-panel-title> {{ epic.code }} </mat-panel-title>
 							<mat-panel-title> {{ epic.title }} </mat-panel-title>
 							<mat-panel-description> {{ epic.description }} </mat-panel-description>
+							<mat-panel-description>
+								<mat-icon (click)="openPopUpEditEpic(epic.eid)">edit</mat-icon>
+							</mat-panel-description>
+							<mat-panel-description>
+								<mat-icon (click)="openPopUpDeleteEpic(epic.eid)">delete</mat-icon>
+							</mat-panel-description>
 						</mat-expansion-panel-header>
 						<table mat-table [dataSource]="histories" class="epics-table">
 							<!-- Key Column -->
@@ -102,12 +108,13 @@
 	<app-user-story-popup (closePopUpEmitter)="closePopUpIssue()"></app-user-story-popup>
 }
 
-@if (popUpActive) {
-	<div class="pop-up-background" (click)="closePopUp()"></div>
+@if (popUpCreateEpic) {
+	<div class="pop-up-background" (click)="closePopUpCreateEpic()"></div>
 
 	<div class="epic-pop-up">
 		<div class="epic-pop-up-header">
 			<h2>Create a new Epic</h2>
+			<p>Fill the needed information to be able to create your epic.</p>
 		</div>
 		<form [formGroup]="createEpicForm" class="pop-up-form" (ngSubmit)="submitForm()">
 			<div class="pop-up-form-content">
@@ -141,9 +148,66 @@
 				</div>
 			</div>
 			<div class="pop-up-footer">
-				<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
 				<button type="submit" [disabled]="createEpicForm.invalid">Create</button>
+				<button class="cancel-epic" (click)="closePopUpCreateEpic()">Cancel</button>
 			</div>
 		</form>
 	</div>
+}
+
+@if (popUpEditEpic) {
+	<div class="pop-up-background" (click)="closePopUpDeleteEpic()"></div>
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Edit an Epic</h2>
+			<p>Update the necessary information to edit your epic.</p>
+		</div>
+		<form [formGroup]="editEpicForm" class="pop-up-form" (ngSubmit)="submitEditEpicForm()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="epic-code">Epic's Code</label>
+					<input type="text" id="epic-code" name="epic-code" formControlName="code" placeholder="EPC-1" />
+					<span *ngIf="isFieldInvalid('code')"><mat-icon>error</mat-icon> {{ getFieldErrorMessage("code") }} </span>
+				</div>
+				<div class="input-wrapper">
+					<label for="epic-name">Epic's Name</label>
+					<input
+						type="text"
+						id="epic-name"
+						name="epic-name"
+						formControlName="name"
+						placeholder="Insert the name of the epic"
+					/>
+					<span *ngIf="isFieldInvalid('name')"><mat-icon>error</mat-icon> {{ getFieldErrorMessage("name") }} </span>
+				</div>
+				<div class="input-wrapper">
+					<label for="epic-description">Description</label>
+					<textarea
+						id="epic-description"
+						name="epic-description"
+						formControlName="description"
+						placeholder="Insert a description"
+					></textarea>
+					<span *ngIf="isFieldInvalid('description')"
+						><mat-icon>error</mat-icon> {{ getFieldErrorMessage("description") }}
+					</span>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button type="submit" [disabled]="editEpicForm.invalid">Submit</button>
+				<button class="cancel-epic" (click)="closePopUpEditEpic()">Cancel</button>
+			</div>
+		</form>
+	</div>
+}
+
+@if (popUpDeleteEpic) {
+	<div class="pop-up-background" (click)="closePopUpDeleteEpic()"></div>
+
+	<app-delete-popup
+		[title]="'Delete Epic'"
+		[description]="'Are you sure you want to delete this epic? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUpDeleteEpic()"
+		(confirmDeleteEmmiter)="onDeleteEpic()"
+	></app-delete-popup>
 }

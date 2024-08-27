@@ -44,6 +44,8 @@ export default async function (req: Request, res: Response) {
 				sprintId: sprintId,
 				title: userstoryNewRequest.title,
 				description: userstoryNewRequest.description,
+				narrative: userstoryNewRequest.narrative,
+				premisse: userstoryNewRequest.premisse,
 				storyActor: userstoryNewRequest.storyActor,
 				storyObjective: userstoryNewRequest.storyObjective,
 				storyJustification: userstoryNewRequest.storyJustification,
