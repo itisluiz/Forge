@@ -103,37 +103,18 @@ app-navbar {
 				&:nth-child(4) {
 					text-align: center;
 				}
-
-				&:nth-child(5) {
-					text-align: center;
-				}
-
-				&:nth-child(6) {
-					text-align: center;
-				}
 			}
 
 			.mat-mdc-cell {
 				border: none;
-
-				&:nth-child(6) {
-					text-align: center;
-				}
 
 				&:nth-child(1) {
 					color: v.$epics-dark-green-color;
 					font-weight: 500;
 				}
 
-				&:nth-child(5) {
-					text-align: center;
-				}
-
 				&:nth-child(4) {
 					text-align: center;
-					display: flex;
-					align-items: center;
-					justify-content: center;
 					padding: 10px;
 					.status-container {
 						border-radius: 2px;
