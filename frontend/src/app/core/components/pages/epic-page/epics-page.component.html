@@ -74,7 +74,7 @@
 							<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 							<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 						</table>
-						<div class="add-issue" (click)="openPopUpIssue()">+ Add another issue</div>
+						<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
 					</mat-expansion-panel>
 				}
 			</mat-accordion>
@@ -85,7 +85,13 @@
 @if (popUpIssue) {
 	<div class="pop-up-background" (click)="closePopUpIssue()"></div>
 
-	<app-user-story-popup (closePopUpEmitter)="closePopUpIssue()"></app-user-story-popup>
+	<app-user-story-popup
+		(closePopUpEmitter)="closePopUpIssue()"
+		(handleUserStoryAndClosePopupEmitter)="addNewUserStoryInDataSource($event)"
+		[projectEid]="projectEid"
+		[epicEid]="eidSelectedEpic"
+	>
+	</app-user-story-popup>
 }
 
 @if (popUpCreateEpic) {

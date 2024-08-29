@@ -20,6 +20,7 @@ import { EpicUpdateRequest } from "forge-shared/dto/request/epicupdaterequest.dt
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
 import { Priority } from "forge-shared/enum/priority.enum";
+import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 
 @Component({
 	selector: "app-kanban-page",
@@ -141,7 +142,8 @@ export class EpicsPageComponent implements OnInit {
 		});
 	}
 
-	openPopUpIssue() {
+	openPopUpIssue(epicEid: string) {
+		this.eidSelectedEpic = epicEid;
 		this.popUpIssue = true;
 		document.body.style.overflow = "hidden";
 	}
@@ -286,6 +288,13 @@ export class EpicsPageComponent implements OnInit {
 				return response.epics;
 			}),
 		);
+	}
+
+	addNewUserStoryInDataSource(userStory: UserstoryResponse) {
+		const dataSource = this.getUserStoriesDataSource(userStory.epicEid);
+		dataSource.data = [...dataSource.data, userStory];
+		this.userStoriesDataSources[userStory.epicEid] = dataSource;
+		this.closePopUpIssue();
 	}
 
 	isFieldInvalid(fieldName: string): boolean {
