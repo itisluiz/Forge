@@ -10,6 +10,11 @@
 
 			<div class="left-grid">
 				<div class="input-wrapper">
+					<label for="code">Code</label>
+					<textarea id="code" name="code" formControlName="code" placeholder="FEA-1" class="shorter"></textarea>
+				</div>
+
+				<div class="input-wrapper">
 					<label for="summary">Summary</label>
 					<textarea
 						id="summary"
@@ -69,6 +74,14 @@
 						placeholder="Write the premisses here..."
 					></textarea>
 				</div>
+				<div class="input-wrapper">
+					<label for="priority">Priority</label>
+					<select id="priority" name="priority" formControlName="priority">
+						<option value="1">Low</option>
+						<option value="2">Medium</option>
+						<option value="3">High</option>
+					</select>
+				</div>
 			</div>
 			<div class="pop-up-footer">
 				<span (click)="closePopUp()">Cancel</span>
@@ -78,7 +91,7 @@
 		</form>
 	</mat-step>
 	<mat-step [stepControl]="secondFormGroup" errorMessage="Address is required.">
-		<form [formGroup]="secondFormGroup" class="second-form">
+		<form [formGroup]="secondFormGroup" class="second-form" (ngSubmit)="submitSecondForm()">
 			<button class="green-button" (click)="addCriteria()">Add a criteria</button>
 			<ng-template matStepLabel>Acceptance criteria</ng-template>
 			<div class="column-grid">
