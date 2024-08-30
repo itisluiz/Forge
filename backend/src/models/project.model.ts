@@ -19,6 +19,21 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.STRING(256),
 			allowNull: false,
 		},
+		epicIndex: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			defaultValue: 1,
+			allowNull: false,
+		},
+		userstoryIndex: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			defaultValue: 1,
+			allowNull: false,
+		},
+		taskIndex: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			defaultValue: 1,
+			allowNull: false,
+		},
 	});
 }
 

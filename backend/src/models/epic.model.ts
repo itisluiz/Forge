@@ -7,8 +7,8 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		code: {
-			type: DataTypes.STRING(15),
+		index: {
+			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 		},
 		title: {

@@ -1,5 +1,5 @@
 import { BadRequestError } from "../../error/externalhandling.error.js";
-import { ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, Op } from "sequelize";
 import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
 import { mapSprintResponse } from "../../mappers/response/sprintresponse.mapper.js";
@@ -15,9 +15,28 @@ export default async function (req: Request, res: Response) {
 	let sprint: any;
 
 	try {
+		const overlappingSprint = await sequelize.models["sprint"].findOne({
+			where: {
+				projectId: authProject.project.dataValues.id,
+				[Op.and]: {
+					startsAt: {
+						[Op.lt]: sprintNewRequest.endsAt,
+					},
+					endsAt: {
+						[Op.gt]: sprintNewRequest.startsAt,
+					},
+				},
+			},
+			transaction,
+		});
+
+		if (overlappingSprint) {
+			throw new BadRequestError("The sprint interval overlaps with an existing sprint");
+		}
+
 		sprint = await sequelize.models["sprint"].create(
 			{
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				startsAt: sprintNewRequest.startsAt,
 				endsAt: sprintNewRequest.endsAt,
 				esprintstatusId: sprintNewRequest.status,
@@ -44,6 +63,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapSprintResponse(sprint);
+	const response = mapSprintResponse(sprint, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

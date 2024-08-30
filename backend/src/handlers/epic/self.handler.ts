@@ -12,9 +12,9 @@ export default async function (req: Request, res: Response) {
 	try {
 		epics = await sequelize.models["epic"].findAll({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
-			attributes: ["id", "code", "title", "description"],
+			attributes: ["id", "index", "title", "description"],
 			transaction,
 		});
 
@@ -24,6 +24,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapEpicSelfResponse(epics);
+	const response = mapEpicSelfResponse(epics, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

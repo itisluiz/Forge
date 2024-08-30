@@ -5,11 +5,11 @@
 	"scripts": {
 		"start:prod": "node --env-file=.env --env-file=.secrets.env dist/index.js",
 		"start:dev": "node --env-file=.development.env --env-file=.secrets.development.env dist/index.js",
+		"migrate:prod": "node --env-file=.env --env-file=.secrets.env dist/migrate.js",
+		"migrate:dev": "node --env-file=.development.env --env-file=.secrets.development.env dist/migrate.js",
+		"migrate": "npm run migrate:prod || npm run migrate:dev",
 		"development": "tsc-watch --onSuccess \"node --env-file=.development.env --env-file=.secrets.development.env dist/index.js\"",
 		"build": "tsc",
-		"reseed:dev": "sequelize db:seed:undo:all --env development && sequelize db:seed:all --env development",
-		"reseed:prod": "sequelize db:seed:undo:all --env production && sequelize db:seed:all --env production",
-		"reseed": "npm run reseed:dev || npm run reseed:prod",
 		"preinstall": "npm link ../shared && cd .. && npm install"
 	},
 	"dependencies": {

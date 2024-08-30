@@ -6,6 +6,7 @@ import { getSequelize } from "../../util/sequelize.js";
 import { mapTaskResponse } from "../../mappers/response/taskresponse.mapper.js";
 import { Request, Response } from "express";
 import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
+import { TaskStatus } from "forge-shared/enum/taskstatus.enum.js";
 
 export default async function (req: Request, res: Response) {
 	const taskUpdateRequest = req.body as TaskUpdateRequest;
@@ -22,7 +23,7 @@ export default async function (req: Request, res: Response) {
 			responsibleId = decryptPK("user", taskUpdateRequest.responsibleEid);
 
 			const membership = await sequelize.models["projectmembership"].findOne({
-				where: { userId: responsibleId, projectId: authProject.projectId },
+				where: { userId: responsibleId, projectId: authProject.project.dataValues.id },
 				attributes: ["userId"],
 				transaction,
 			});
@@ -41,7 +42,7 @@ export default async function (req: Request, res: Response) {
 					include: [
 						{
 							model: sequelize.models["epic"],
-							where: { projectId: authProject.projectId },
+							where: { projectId: authProject.project.dataValues.id },
 							attributes: ["projectId"],
 						},
 					],
@@ -55,6 +56,31 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("Task not found in the project");
 		}
 
+		let startedAt: Date | null | undefined = undefined;
+		let completedAt: Date | null | undefined = undefined;
+
+		switch (taskUpdateRequest.status) {
+			case TaskStatus.TODO:
+				startedAt = null;
+				completedAt = null;
+				break;
+			case TaskStatus.INPROGRESS:
+				completedAt = null;
+				if (!task.dataValues.startedAt) {
+					startedAt = new Date();
+				}
+				break;
+			case TaskStatus.DONE:
+			case TaskStatus.CANCELLED:
+				if (!task.dataValues.completedAt) {
+					completedAt = new Date();
+				}
+				if (!task.dataValues.startedAt) {
+					startedAt = completedAt;
+				}
+				break;
+		}
+
 		task.set(
 			{
 				...(taskUpdateRequest.responsibleEid !== undefined && { assignedTo: responsibleId }),
@@ -62,6 +88,8 @@ export default async function (req: Request, res: Response) {
 				...(taskUpdateRequest.description && { description: taskUpdateRequest.description }),
 				...(taskUpdateRequest.status && { etaskstatusId: taskUpdateRequest.status }),
 				...(taskUpdateRequest.type && { etasktypeId: taskUpdateRequest.type }),
+				...(startedAt !== undefined && { startedAt: startedAt }),
+				...(completedAt !== undefined && { completedAt: completedAt }),
 			},
 			{ transaction },
 		);
@@ -82,6 +110,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapTaskResponse(task);
+	const response = mapTaskResponse(task, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

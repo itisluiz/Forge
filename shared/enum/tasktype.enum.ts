@@ -7,12 +7,15 @@
  *       enum:
  *         - 1
  *         - 2
+ *         - 3
  *       description: |
  *         Represents the task type:
- *         - 1: To-do
- *         - 2: In Progress
+ *         - 1: Task
+ *         - 2: Bug
+ *         - 3: Test
  */
 export const enum TaskType {
 	TASK = 1,
 	BUG,
+	TEST,
 }

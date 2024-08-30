@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 			include: {
 				model: sequelize.models["epic"],
 				where: {
-					projectId: authProject.projectId,
+					projectId: authProject.project.dataValues.id,
 				},
 				attributes: ["projectId"],
 			},
@@ -33,6 +33,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapUserstorySelfResponse(userstories);
+	const response = mapUserstorySelfResponse(userstories, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

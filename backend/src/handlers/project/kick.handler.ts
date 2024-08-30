@@ -23,7 +23,7 @@ export default async function (req: Request, res: Response) {
 
 		const membership: any = await sequelize.models["projectmembership"].findOne({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				userId: userId,
 			},
 			attributes: ["projectId", "userId", "isAdmin"],

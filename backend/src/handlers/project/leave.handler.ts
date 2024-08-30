@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 		if (authProject.projectAdmin) {
 			const anotherAdminMembership: any = await sequelize.models["projectmembership"].findOne({
 				where: {
-					projectId: authProject.projectId,
+					projectId: authProject.project.dataValues.id,
 					userId: { [Op.ne]: authUser.user.dataValues.id },
 					isAdmin: true,
 				},
@@ -29,7 +29,7 @@ export default async function (req: Request, res: Response) {
 
 		await sequelize.models["projectmembership"].destroy({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				userId: authUser.user.dataValues.id,
 			},
 			transaction,

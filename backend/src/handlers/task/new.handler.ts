@@ -6,6 +6,7 @@ import { getSequelize } from "../../util/sequelize.js";
 import { mapTaskResponse } from "../../mappers/response/taskresponse.mapper.js";
 import { Request, Response } from "express";
 import { TaskNewRequest } from "forge-shared/dto/request/tasknewrequest.dto";
+import { TaskStatus } from "forge-shared/enum/taskstatus.enum.js";
 
 export default async function (req: Request, res: Response) {
 	const taskNewRequest = req.body as TaskNewRequest;
@@ -20,7 +21,7 @@ export default async function (req: Request, res: Response) {
 		if (taskNewRequest.responsibleEid) {
 			responsibleId = decryptPK("user", taskNewRequest.responsibleEid);
 			const membership = await sequelize.models["projectmembership"].findOne({
-				where: { userId: responsibleId, projectId: authProject.projectId },
+				where: { userId: responsibleId, projectId: authProject.project.dataValues.id },
 				attributes: ["userId"],
 				transaction,
 			});
@@ -35,7 +36,7 @@ export default async function (req: Request, res: Response) {
 			include: {
 				model: sequelize.models["epic"],
 				attributes: ["projectId"],
-				where: { projectId: authProject.projectId },
+				where: { projectId: authProject.project.dataValues.id },
 			},
 			transaction,
 		});
@@ -43,18 +44,36 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("The user story you specified does not exist in the project");
 		}
 
+		let startedAt: Date | null = null;
+		let completedAt: Date | null = null;
+
+		switch (taskNewRequest.status) {
+			case TaskStatus.INPROGRESS:
+				startedAt = new Date();
+				break;
+			case TaskStatus.DONE:
+			case TaskStatus.CANCELLED:
+				completedAt = new Date();
+				startedAt = completedAt;
+				break;
+		}
+
 		task = await sequelize.models["task"].create(
 			{
 				userstoryId: userstoryId,
 				assignedTo: responsibleId,
+				index: authProject.project.dataValues.taskIndex,
 				title: taskNewRequest.title,
 				description: taskNewRequest.description,
 				etaskstatusId: taskNewRequest.status,
 				etasktypeId: taskNewRequest.type,
+				startedAt: startedAt,
+				completedAt: completedAt,
 			},
 			{ transaction },
 		);
 
+		await authProject.project.increment("taskIndex", { transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
@@ -70,6 +89,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapTaskResponse(task);
+	const response = mapTaskResponse(task, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

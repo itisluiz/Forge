@@ -16,7 +16,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		project = await sequelize.models["project"].create(
 			{
-				code: projectNewRequest.code,
+				code: projectNewRequest.code.toUpperCase(),
 				title: projectNewRequest.title,
 				description: projectNewRequest.description,
 			},

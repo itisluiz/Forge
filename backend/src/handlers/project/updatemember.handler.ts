@@ -19,7 +19,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		const membership: any = await sequelize.models["projectmembership"].findOne({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				userId: decryptPK("user", projectUpdateMemberRequest.eid),
 			},
 			attributes: ["projectId", "userId"],
@@ -37,7 +37,7 @@ export default async function (req: Request, res: Response) {
 
 			const anotherAdminMembership: any = await sequelize.models["projectmembership"].findOne({
 				where: {
-					projectId: authProject.projectId,
+					projectId: authProject.project.dataValues.id,
 					userId: { [Op.ne]: authUser.user.dataValues.id },
 					isAdmin: true,
 				},
