@@ -44,6 +44,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapSprintResponse(sprint);
+	const response = mapSprintResponse(sprint, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

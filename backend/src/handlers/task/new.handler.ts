@@ -47,6 +47,7 @@ export default async function (req: Request, res: Response) {
 			{
 				userstoryId: userstoryId,
 				assignedTo: responsibleId,
+				index: authProject.project.dataValues.taskIndex,
 				title: taskNewRequest.title,
 				description: taskNewRequest.description,
 				etaskstatusId: taskNewRequest.status,
@@ -55,6 +56,7 @@ export default async function (req: Request, res: Response) {
 			{ transaction },
 		);
 
+		await authProject.project.increment("taskIndex", { transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
@@ -70,6 +72,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapTaskResponse(task);
+	const response = mapTaskResponse(task, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

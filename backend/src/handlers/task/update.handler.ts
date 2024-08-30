@@ -82,6 +82,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapTaskResponse(task);
+	const response = mapTaskResponse(task, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

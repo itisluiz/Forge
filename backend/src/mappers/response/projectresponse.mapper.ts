@@ -12,7 +12,7 @@ export function mapProjectResponse(project: any, self: any): ProjectResponse {
 		admin: self.dataValues.projectmembership.isAdmin,
 		role: self.dataValues.projectmembership.dataValues.eprojectroleId,
 		members: project.dataValues.users.map(mapProjectMemberComposite),
-		epics: project.dataValues.epics.map(mapEpicSelfComposite),
+		epics: project.dataValues.epics.map((epic: any) => mapEpicSelfComposite(epic, project.dataValues.code)),
 		createdAt: project.dataValues.createdAt,
 		updatedAt: project.dataValues.updatedAt,
 	};

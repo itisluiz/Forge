@@ -16,12 +16,14 @@ export default async function (req: Request, res: Response) {
 		epic = await sequelize.models["epic"].create(
 			{
 				title: epicNewRequest.title,
+				index: authProject.project.dataValues.epicIndex,
 				description: epicNewRequest.description,
 				projectId: authProject.project.dataValues.id,
 			},
 			{ transaction, include: [sequelize.models["userstory"]] },
 		);
 
+		await authProject.project.increment("epicIndex", { transaction });
 		await epic.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
@@ -29,6 +31,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapEpicResponse(epic);
+	const response = mapEpicResponse(epic, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

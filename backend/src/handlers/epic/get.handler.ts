@@ -33,6 +33,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapEpicResponse(epic);
+	const response = mapEpicResponse(epic, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

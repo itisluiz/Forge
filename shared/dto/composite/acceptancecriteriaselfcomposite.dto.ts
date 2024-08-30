@@ -7,6 +7,8 @@
  *       properties:
  *         eid:
  *           type: string
+ *         index:
+ *           type: number
  *         given:
  *           type: string
  *         when:
@@ -16,6 +18,7 @@
  */
 export interface AcceptanceCriteriaSelfComposite {
 	eid: string;
+	index: number;
 	given: string;
 	when: string;
 	then: string;

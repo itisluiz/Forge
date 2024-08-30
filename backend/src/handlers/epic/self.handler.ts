@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 			where: {
 				projectId: authProject.project.dataValues.id,
 			},
-			attributes: ["id", "title", "description"],
+			attributes: ["id", "index", "title", "description"],
 			transaction,
 		});
 
@@ -24,6 +24,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapEpicSelfResponse(epics);
+	const response = mapEpicSelfResponse(epics, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

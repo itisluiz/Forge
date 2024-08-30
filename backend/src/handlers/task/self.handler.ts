@@ -40,6 +40,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapTaskSelfResponse(tasks);
+	const response = mapTaskSelfResponse(tasks, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

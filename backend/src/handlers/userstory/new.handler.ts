@@ -42,6 +42,7 @@ export default async function (req: Request, res: Response) {
 			{
 				epicId: epicId,
 				sprintId: sprintId,
+				index: authProject.project.dataValues.userstoryIndex,
 				title: userstoryNewRequest.title,
 				description: userstoryNewRequest.description,
 				narrative: userstoryNewRequest.narrative,
@@ -54,6 +55,7 @@ export default async function (req: Request, res: Response) {
 			{ transaction, include: [sequelize.models["task"]] },
 		);
 
+		await authProject.project.increment("userstoryIndex", { transaction });
 		await userstory.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
@@ -66,6 +68,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapUserstoryResponse(userstory);
+	const response = mapUserstoryResponse(userstory, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }
