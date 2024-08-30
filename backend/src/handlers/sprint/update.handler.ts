@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 		sprint = await sequelize.models["sprint"].findOne({
 			where: {
 				id: sprintId,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			include: { model: sequelize.models["userstory"], attributes: ["id"], include: [sequelize.models["task"]] },
 			transaction,

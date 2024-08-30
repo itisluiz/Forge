@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 		const destroyedCount = await sequelize.models["sprint"].destroy({
 			where: {
 				id: sprintId,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			transaction,
 		});

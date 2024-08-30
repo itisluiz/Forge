@@ -9,10 +9,10 @@ export function setUserData(req: Request, user: Model<any, any>, authToken: Auth
 	(req as any).__reqinjection_authtoken = authToken;
 }
 
-export function setProjectData(req: Request, projectmembership: Model<any, any>, projectId: number) {
+export function setProjectData(req: Request, project: Model<any, any>, projectmembership: Model<any, any>) {
+	(req as any).__reqinjection_project = project;
 	(req as any).__reqinjection_projectadmin = projectmembership.dataValues.isAdmin;
 	(req as any).__reqinjection_projectrole = projectmembership.dataValues.eprojectroleId;
-	(req as any).__reqinjection_projectid = projectId;
 }
 //#endregion
 
@@ -26,9 +26,9 @@ export function getUserData(req: Request) {
 
 export function getProjectData(req: Request) {
 	return {
+		project: (req as any).__reqinjection_project as any,
 		projectAdmin: (req as any).__reqinjection_projectadmin as boolean,
 		projectRole: (req as any).__reqinjection_projectrole as ProjectRole,
-		projectId: (req as any).__reqinjection_projectid as number,
 	};
 }
 //#endregion

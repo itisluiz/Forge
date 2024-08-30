@@ -12,7 +12,7 @@ export default async function (req: Request, res: Response) {
 
 	try {
 		invitations = await sequelize.models["projectinvitation"].findAll({
-			where: { projectId: authProject.projectId },
+			where: { projectId: authProject.project.dataValues.id },
 			transaction,
 		});
 

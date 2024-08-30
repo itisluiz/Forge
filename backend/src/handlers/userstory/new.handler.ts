@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 		if (userstoryNewRequest.sprintEid) {
 			sprintId = decryptPK("sprint", userstoryNewRequest.sprintEid);
 			const sprint = await sequelize.models["sprint"].findOne({
-				where: { id: sprintId, projectId: authProject.projectId },
+				where: { id: sprintId, projectId: authProject.project.dataValues.id },
 				attributes: ["id"],
 				transaction,
 			});
@@ -31,7 +31,7 @@ export default async function (req: Request, res: Response) {
 
 		const epicId = decryptPK("epic", userstoryNewRequest.epicEid);
 		const epic = await sequelize.models["epic"].findOne({
-			where: { id: epicId, projectId: authProject.projectId },
+			where: { id: epicId, projectId: authProject.project.dataValues.id },
 			transaction,
 		});
 		if (!epic) {

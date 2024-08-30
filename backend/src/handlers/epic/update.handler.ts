@@ -19,7 +19,7 @@ export default async function (req: Request, res: Response) {
 		epic = await sequelize.models["epic"].findOne({
 			where: {
 				id: epicId,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			transaction,
 			include: [sequelize.models["userstory"]],

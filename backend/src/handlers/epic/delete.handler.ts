@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 		const destroyedCount = await sequelize.models["epic"].destroy({
 			where: {
 				id: epicId,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			transaction,
 		});

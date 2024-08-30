@@ -9,6 +9,7 @@ export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
+
 	let epic: any;
 
 	try {
@@ -16,7 +17,7 @@ export default async function (req: Request, res: Response) {
 			{
 				title: epicNewRequest.title,
 				description: epicNewRequest.description,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			{ transaction, include: [sequelize.models["userstory"]] },
 		);

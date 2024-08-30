@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response) {
 	let project: any;
 
 	try {
-		project = await sequelize.models["project"].findByPk(authProject.projectId, {
+		project = await sequelize.models["project"].findByPk(authProject.project.dataValues.id, {
 			transaction,
 			include: [sequelize.models["user"], sequelize.models["epic"]],
 		});

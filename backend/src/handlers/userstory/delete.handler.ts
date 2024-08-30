@@ -18,7 +18,7 @@ export default async function (req: Request, res: Response) {
 			include: {
 				model: sequelize.models["epic"],
 				where: {
-					projectId: authProject.projectId,
+					projectId: authProject.project.dataValues.id,
 				},
 				attributes: ["projectId"],
 			},

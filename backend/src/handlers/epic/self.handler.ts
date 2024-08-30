@@ -12,7 +12,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		epics = await sequelize.models["epic"].findAll({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			attributes: ["id", "title", "description"],
 			transaction,

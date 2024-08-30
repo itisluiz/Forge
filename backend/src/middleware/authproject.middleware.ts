@@ -11,8 +11,8 @@ export function authorizeProject(admin = false) {
 		const authUser = getUserData(req);
 
 		const project = await sequelize.models["project"].findByPk(projectId, {
-			include: [{ model: sequelize.models["user"], attributes: ["id"] }],
-			attributes: [],
+			include: [{ model: sequelize.models["user"], attributes: ["id"], where: { id: authUser.user.dataValues.id } }],
+			attributes: ["id", "code", "epicIndex", "userstoryIndex", "taskIndex"],
 		});
 
 		if (project) {
@@ -25,7 +25,7 @@ export function authorizeProject(admin = false) {
 				throw new UnauthorizedError("You must be a project admin to perform this action");
 			}
 
-			setProjectData(req, projectMember.dataValues.projectmembership, projectId);
+			setProjectData(req, project, projectMember.dataValues.projectmembership);
 		} else {
 			throw new UnauthorizedError("This project doen't exist or you don't have access to it");
 		}

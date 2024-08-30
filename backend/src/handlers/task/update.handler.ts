@@ -22,7 +22,7 @@ export default async function (req: Request, res: Response) {
 			responsibleId = decryptPK("user", taskUpdateRequest.responsibleEid);
 
 			const membership = await sequelize.models["projectmembership"].findOne({
-				where: { userId: responsibleId, projectId: authProject.projectId },
+				where: { userId: responsibleId, projectId: authProject.project.dataValues.id },
 				attributes: ["userId"],
 				transaction,
 			});
@@ -41,7 +41,7 @@ export default async function (req: Request, res: Response) {
 					include: [
 						{
 							model: sequelize.models["epic"],
-							where: { projectId: authProject.projectId },
+							where: { projectId: authProject.project.dataValues.id },
 							attributes: ["projectId"],
 						},
 					],

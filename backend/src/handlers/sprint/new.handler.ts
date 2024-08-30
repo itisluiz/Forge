@@ -17,7 +17,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		sprint = await sequelize.models["sprint"].create(
 			{
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				startsAt: sprintNewRequest.startsAt,
 				endsAt: sprintNewRequest.endsAt,
 				esprintstatusId: sprintNewRequest.status,

@@ -21,7 +21,7 @@ export default async function (req: Request, res: Response) {
 				code: randomBytes(12).toString("hex"),
 				remainingUses: projectMakeInvitationRequest.uses,
 				durationHours: projectMakeInvitationRequest.durationHours,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				eprojectroleId: projectMakeInvitationRequest.role,
 			},
 			{
