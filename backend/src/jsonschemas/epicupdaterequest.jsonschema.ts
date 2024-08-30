@@ -3,11 +3,6 @@ export const epicUpdateRequestJsonSchema = {
 	title: "EpicUpdateRequest",
 	type: "object",
 	properties: {
-		code: {
-			type: "string",
-			maxLength: 15,
-			minLength: 1,
-		},
 		title: {
 			type: "string",
 			maxLength: 128,

@@ -6,6 +6,7 @@ export function mapTaskSelfComposite(task: any): TaskSelfComposite {
 		eid: encryptPK("task", task.dataValues.id),
 		userstoryEid: encryptPK("userstory", task.dataValues.userstoryId),
 		responsibleEid: encryptPK("user", task.dataValues.assignedTo),
+		code: "<code>",
 		title: task.dataValues.title,
 		status: task.dataValues.etaskstatusId,
 		type: task.dataValues.etasktypeId,

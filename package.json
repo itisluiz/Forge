@@ -5,7 +5,7 @@
 		"normalize": "prettier . --write",
 		"postinstall": "husky",
 		"deploy:frontend": "cd frontend && npm install --ignore-scripts && npm link ../shared && npm run build",
-		"deploy:backend": "cd backend && npm install --ignore-scripts && npm link ../shared && npm run build && npm run reseed",
+		"deploy:backend": "cd backend && npm install --ignore-scripts && npm link ../shared && npm run build && npm run migrate",
 		"deploy": "npm run deploy:frontend && npm run deploy:backend"
 	},
 	"devDependencies": {

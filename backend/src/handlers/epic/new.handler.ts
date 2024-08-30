@@ -14,7 +14,6 @@ export default async function (req: Request, res: Response) {
 	try {
 		epic = await sequelize.models["epic"].create(
 			{
-				code: epicNewRequest.code,
 				title: epicNewRequest.title,
 				description: epicNewRequest.description,
 				projectId: authProject.projectId,

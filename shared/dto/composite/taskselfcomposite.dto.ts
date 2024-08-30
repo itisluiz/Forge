@@ -15,6 +15,8 @@ import { TaskType } from "../../enum/tasktype.enum";
  *         responsibleEid:
  *           type: string
  *           nullable: true
+ *         code:
+ *           type: string
  *         title:
  *           type: string
  *         status:
@@ -26,6 +28,7 @@ export interface TaskSelfComposite {
 	eid: string;
 	userstoryEid: string;
 	responsibleEid?: string;
+	code: string;
 	title: string;
 	status: TaskStatus;
 	type: TaskType;

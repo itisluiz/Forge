@@ -5,7 +5,7 @@ import { mapUserstorySelfComposite } from "../composite/userstoryselfcomposite.m
 export function mapEpicResponse(epic: any): EpicResponse {
 	return {
 		eid: encryptPK("epic", epic.dataValues.id),
-		code: epic.dataValues.code,
+		code: "<code>",
 		title: epic.dataValues.title,
 		description: epic.dataValues.description,
 		userstories: epic.dataValues.userstories.map(mapUserstorySelfComposite),

@@ -7,6 +7,7 @@ export function mapUserstoryResponse(userstory: any): UserstoryResponse {
 		eid: encryptPK("userstory", userstory.dataValues.id),
 		epicEid: encryptPK("epic", userstory.dataValues.epicId),
 		sprintEid: encryptPK("sprint", userstory.dataValues.sprintId),
+		code: "<code>",
 		title: userstory.dataValues.title,
 		description: userstory.dataValues.description,
 		narrative: userstory.dataValues.narrative,

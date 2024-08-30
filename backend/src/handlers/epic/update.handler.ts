@@ -31,7 +31,6 @@ export default async function (req: Request, res: Response) {
 
 		epic.set(
 			{
-				...(epicUpdateRequest.code && { code: epicUpdateRequest.code }),
 				...(epicUpdateRequest.title && { title: epicUpdateRequest.title }),
 				...(epicUpdateRequest.description && { description: epicUpdateRequest.description }),
 			},

@@ -4,7 +4,7 @@ import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.
 export function mapEpicSelfComposite(epic: any): EpicSelfComposite {
 	return {
 		eid: encryptPK("epic", epic.dataValues.id),
-		code: epic.dataValues.code,
+		code: "<code>",
 		title: epic.dataValues.title,
 		description: epic.dataValues.description,
 	};

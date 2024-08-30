@@ -15,6 +15,8 @@ import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
  *         sprintEid:
  *           type: string
  *           nullable: true
+ *         code:
+ *           type: string
  *         title:
  *           type: string
  *         description:
@@ -46,6 +48,7 @@ export interface UserstoryResponse {
 	eid: string;
 	epicEid: string;
 	sprintEid?: string;
+	code: string;
 	title: string;
 	description: string;
 	narrative: string;
