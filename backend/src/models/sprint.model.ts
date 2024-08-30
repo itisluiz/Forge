@@ -1,3 +1,4 @@
+import { SprintPeriodStatus } from "forge-shared/enum/sprintperiodstatus.enum";
 import { DataTypes, Sequelize } from "sequelize";
 
 export function define(modelName: string, sequelize: Sequelize) {
@@ -29,4 +30,18 @@ export function associate(modelName: string, sequelize: Sequelize) {
 
 export function validInterval(this: any) {
 	return this.dataValues.startsAt < this.dataValues.endsAt;
+}
+
+export function getPeriodStatus(this: any) {
+	const now = new Date();
+
+	if (this.dataValues.startsAt > now) {
+		return SprintPeriodStatus.FUTURE;
+	}
+
+	if (this.dataValues.endsAt < now) {
+		return SprintPeriodStatus.PAST;
+	}
+
+	return SprintPeriodStatus.ONGOING;
 }
