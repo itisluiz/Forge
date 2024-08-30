@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
 import { PopupComponent } from "../../popup-component/popup-component";
 import { InputComponent } from "../../input-component/input-component";
@@ -11,11 +11,15 @@ import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dt
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectSelfResponse } from "forge-shared/dto/response/projectselfresponse.dto";
 import { ProjectSelfComposite } from "forge-shared/dto/composite/projectselfcomposite.dto";
+import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectmakeinvitationrequest.dto";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
+import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @Component({
 	selector: "app-select-project-page",
 	standalone: true,
-	imports: [MatIconModule, CommonModule, MatButtonModule, MatMenuModule, PopupComponent, InputComponent],
+	imports: [MatIconModule, CommonModule, MatButtonModule, MatMenuModule, PopupComponent, InputComponent, MatTabsModule],
 	templateUrl: "./select-project-page.component.html",
 	styleUrl: "./select-project-page.component.scss",
 })
@@ -26,16 +30,25 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("projectDescriptionCreate") projectDescriptionCreate!: InputComponent;
 	@ViewChild("projectCodeCreate") projectCodeCreate!: InputComponent;
 
+	@ViewChild("projectInviteUses") projectInviteUses!: InputComponent;
+	@ViewChild("projectInviteDuration") projectInviteDuration!: InputComponent;
+	@ViewChild("projectInviteRole") projectInviteRole!: InputComponent;
+
 	public dataSource!: ProjectSelfComposite[];
 
-	popUpJoin: boolean = false;
-	popUpCreateProject: boolean = false;
-	popUpInvite: boolean = false;
+	public popUpJoin: boolean = false;
+	public popUpCreateProject: boolean = false;
+	public popUpInvite: boolean = false;
 
-	projectName = "{{projectName}}";
+	public editMode: boolean = false;
 
-	projectCodeError: string = "";
-	projectCreateError: string = "";
+	public projectName = "{{projectName}}";
+	public projectId = "";
+	public projectInfo!: ProjectResponse;
+
+	public projectCodeError: string = "";
+	public projectCreateError: string = "";
+	public projectInvitationError: string = "";
 
 	constructor(
 		private projectApiService: ProjectApiService,
@@ -44,13 +57,14 @@ export class SelectProjectPageComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getProjects();
-		console.log(this.dataSource);
 	}
 
 	createProject(projectNewRequest: ProjectNewRequest) {
 		this.projectApiService.newProject(projectNewRequest).subscribe({
 			next: (result) => {
 				console.log(result);
+				this.getProjects();
+				this.popUpCreateProject = false;
 			},
 			error: (error) => {
 				console.error(error);
@@ -58,15 +72,83 @@ export class SelectProjectPageComponent implements OnInit {
 		});
 	}
 
-	getProjects(): void {
-		this.projectApiService.getProject().subscribe({
-			next: (response) => {
-				this.dataSource = response.projects;
+	leaveProject(projectId: string) {
+		this.projectApiService.leaveProject(projectId).subscribe({
+			next: (result) => {
+				console.log(result);
+				this.getProjects();
 			},
 			error: (error) => {
 				console.error(error);
 			},
 		});
+	}
+
+	deleteProject(projectId: string) {
+		this.projectApiService.deleteProject(projectId).subscribe({
+			next: (result) => {
+				console.log("deletado", result);
+				this.getProjects();
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	joinProject(projectCode: string) {
+		const request: ProjectUseInvitationRequest = {
+			code: projectCode,
+		};
+
+		this.projectApiService.joinProject(request).subscribe({
+			next: (result) => {
+				console.log(result);
+				this.getProjects();
+				this.popUpJoin = false;
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	editProject(projectId: string) {
+		this.projectApiService.getEspecificProject(projectId).subscribe({
+			next: (response) => {
+				this.projectInfo = response;
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+		this.editMode = !this.editMode;
+	}
+
+	getProjects(): void {
+		this.projectApiService.getProjects().subscribe({
+			next: (response) => {
+				this.updateProjectList(response.projects);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	inviteProject(projectId: string, projectMakeInvitationRequest: ProjectMakeInvitationRequest) {
+		this.projectApiService.newInvitation(projectId, projectMakeInvitationRequest).subscribe({
+			next: (result) => {
+				console.log(result.invitation.code);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	updateProjectList(newList: ProjectSelfComposite[]) {
+		this.dataSource = newList;
 	}
 
 	handleButtonClick(buttonAction: string) {
@@ -79,7 +161,27 @@ export class SelectProjectPageComponent implements OnInit {
 			return;
 		}
 		if (buttonAction === "invite") {
+			this.handleInviteProject();
 			return;
+		}
+	}
+
+	handleInviteProject() {
+		const usesValue = Number(this.projectInviteUses.value);
+		const durationValue = Number(this.projectInviteDuration.value);
+		const roleValue: ProjectRole = Number(this.projectInviteRole.value) as ProjectRole;
+
+		if (usesValue && durationValue && roleValue) {
+			const request: ProjectMakeInvitationRequest = {
+				uses: usesValue,
+				durationHours: durationValue,
+				role: roleValue,
+			};
+
+			this.inviteProject(this.projectId, request);
+			this.projectInvitationError = "";
+		} else {
+			this.projectInvitationError = "Invalid input. Please, check your invitation details and try again.";
 		}
 	}
 
@@ -88,11 +190,7 @@ export class SelectProjectPageComponent implements OnInit {
 		const descriptionValue = this.projectDescriptionCreate.value;
 		const codeValue = this.projectCodeCreate.value;
 
-		const isCodeValid = this.isValidProjectCode(codeValue);
-		const isTitleValid = this.isValidProjectTitle(titleValue);
-		const isDescriptionValid = this.isValidProjectDescription(descriptionValue);
-
-		if (isCodeValid && isTitleValid && isDescriptionValid) {
+		if (titleValue && descriptionValue && codeValue) {
 			const request: ProjectNewRequest = {
 				title: titleValue,
 				description: descriptionValue,
@@ -112,7 +210,7 @@ export class SelectProjectPageComponent implements OnInit {
 		const inputValue = this.projectJoin.value;
 
 		if (this.isValidProjectCode(inputValue)) {
-			// Lógica para quando o input é válido
+			this.joinProject(inputValue);
 			this.projectCodeError = "";
 		} else {
 			this.projectCodeError = "Invalid project code. Please, try again.";
@@ -120,7 +218,7 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 	}
 
-	openPopUp(popUp: string) {
+	openPopUp(popUp: string, projectTitle?: string, projectId?: string) {
 		if (popUp === "join") {
 			this.popUpJoin = true;
 			return;
@@ -131,6 +229,8 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 		if (popUp === "invite") {
 			this.popUpInvite = true;
+			this.projectName = projectTitle || "";
+			this.projectId = projectId || "";
 			return;
 		}
 	}

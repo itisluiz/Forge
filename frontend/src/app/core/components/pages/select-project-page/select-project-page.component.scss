@@ -20,6 +20,50 @@
 		flex-direction: column;
 		width: 1100px;
 
+		.tabs {
+			margin: 40px 55px 0 55px;
+
+			.input-container {
+				margin-top: 40px;
+			}
+
+			.action-buttons {
+				display: flex;
+				flex-direction: row-reverse;
+				gap: 8px;
+				width: 100%;
+				margin-top: 100px;
+				margin-bottom: 3em;
+
+				&_button {
+					height: 40px;
+					cursor: pointer;
+					font-weight: 500;
+					border: none;
+					border-radius: 2px;
+					width: 180px;
+
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
+				}
+
+				&_action {
+					color: v.$white-color;
+					font-size: v.$button-font;
+					background-color: v.$green-color;
+				}
+
+				&_cancel {
+					font-size: v.$button-font;
+					background-color: v.$white-color;
+					color: v.$black-color;
+				}
+			}
+		}
+
 		.title {
 			display: flex;
 			justify-content: space-between;

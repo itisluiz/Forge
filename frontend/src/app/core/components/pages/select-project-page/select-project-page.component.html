@@ -1,59 +1,120 @@
 <div class="select-project-container">
-	<div class="select-project-component">
-		<div class="title">
-			<div class="left-side">
-				<h1>Please select your project</h1>
-				<p>To have access to the management process, choose one project</p>
+	@if (editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>{{ projectInfo.title }} information</h1>
+				</div>
 			</div>
+			<mat-tab-group class="tabs">
+				<mat-tab label="Informations">
+					<div class="input-container">
+						<app-input for="code" label="Code" name="code" type="text" [placeholder]="projectInfo.code"></app-input>
 
-			<div class="right-side">
-				<button id="join" (click)="openPopUp('join')">Join</button>
-				<button mat-icon-button [matMenuTriggerFor]="menu">
-					<mat-icon>more_vert</mat-icon>
-				</button>
-				<mat-menu #menu="matMenu">
-					<button mat-menu-item>
-						<span (click)="openPopUp('create')">Create a project</span>
-					</button>
-				</mat-menu>
-			</div>
-		</div>
+						<app-input
+							for="projectName"
+							label="Project`s name"
+							name="projectName"
+							type="text"
+							[placeholder]="projectInfo.title"
+						></app-input>
 
-		<div class="projects">
-			<div class="header">
-				<span>Projects</span>
-				<span>Total: {{ dataSource.length }}</span>
-			</div>
-
-			<div class="list">
-				<div *ngFor="let project of dataSource">
-					<div class="project-info">
-						<p>{{ project.title }}:</p>
-						<span>{{ project.code }}</span>
-						<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
-							<mat-icon>more_vert</mat-icon>
-						</button>
-						<mat-menu #project_menu="matMenu">
-							<button mat-menu-item>
-								<span>Edit information</span>
-							</button>
-							<button mat-menu-item>
-								<span (click)="openPopUp('invite')">Invite a person</span>
-							</button>
-							<button mat-menu-item>
-								<span>Leave project</span>
-							</button>
-							<button mat-menu-item>
-								<span>Delete project</span>
-							</button>
-						</mat-menu>
+						<app-input
+							for="description"
+							label="Description"
+							name="description"
+							type="text"
+							[placeholder]="projectInfo.description"
+						></app-input>
 					</div>
+
+					<div class="action-buttons">
+						<button class="action-buttons_action action-buttons_button">Save changes</button>
+						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+					</div>
+				</mat-tab>
+				<mat-tab label="Members">
+					@for (member of projectInfo.members; track member) {
+						<div class="member">
+							<p>{{ member.name }}</p>
+							<p>{{ member.surname }}</p>
+							<p>{{ member.email }}</p>
+							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+								<mat-icon>more_vert</mat-icon>
+							</button>
+							<mat-menu #member_menu="matMenu">
+								<button mat-menu-item>Edit permissions</button>
+								<button mat-menu-item>Remove member</button>
+							</mat-menu>
+						</div>
+					}
+
+					<div class="action-buttons">
+						<button class="action-buttons_action action-buttons_button">Save changes</button>
+						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+	}
+
+	@if (!editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>Please select your project</h1>
+					<p>To have access to the management process, choose one project</p>
+				</div>
+
+				<div class="right-side">
+					<button id="join" (click)="openPopUp('join')">Join</button>
+					<button mat-icon-button [matMenuTriggerFor]="menu">
+						<mat-icon>more_vert</mat-icon>
+					</button>
+					<mat-menu #menu="matMenu">
+						<button mat-menu-item>
+							<span (click)="openPopUp('create')">Create a project</span>
+						</button>
+					</mat-menu>
 				</div>
 			</div>
 
-			<button class="footer-next">Next</button>
+			<div class="projects">
+				<div class="header">
+					<span>Projects</span>
+					<span>Total: {{ dataSource.length }}</span>
+				</div>
+
+				<div class="list">
+					<div *ngFor="let project of dataSource">
+						<div class="project-info">
+							<p>{{ project.title }}:</p>
+							<span>{{ project.eid }}</span>
+							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
+								<mat-icon>more_vert</mat-icon>
+							</button>
+							<mat-menu #project_menu="matMenu">
+								<button mat-menu-item>
+									<span (click)="editProject(project.eid)">Edit information</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="openPopUp('invite', project.title, project.eid)">Invite a person</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="leaveProject(project.eid)">Leave project</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="deleteProject(project.eid)">Delete project</span>
+								</button>
+							</mat-menu>
+						</div>
+					</div>
+				</div>
+
+				<button class="footer-next">Next</button>
+			</div>
 		</div>
-	</div>
+	}
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>
 
@@ -123,7 +184,7 @@
 		(onButtonClick)="handleButtonClick('invite')"
 	>
 		<app-input
-			[errorMessage]="projectCodeError"
+			#projectInviteUses
 			for="quantity"
 			label="Uses quantity"
 			name="quantity"
@@ -132,7 +193,7 @@
 		></app-input>
 
 		<app-input
-			[errorMessage]="projectCodeError"
+			#projectInviteDuration
 			for="duration"
 			label="Duration"
 			name="duration"
@@ -141,7 +202,8 @@
 		></app-input>
 
 		<app-input
-			[errorMessage]="projectCodeError"
+			#projectInviteRole
+			[errorMessage]="projectInvitationError"
 			for="role"
 			label="Role"
 			name="role"
