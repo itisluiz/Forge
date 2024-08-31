@@ -9,9 +9,17 @@
 			<mat-tab-group class="tabs">
 				<mat-tab label="Informations">
 					<div class="input-container">
-						<app-input for="code" label="Code" name="code" type="text" [placeholder]="projectInfo.code"></app-input>
+						<app-input 
+							#updateProjectCode
+							for="code" 
+							label="Code" 
+							name="code" 
+							type="text" 
+							[placeholder]="projectInfo.code"
+						></app-input>
 
 						<app-input
+							#updateProjectName
 							for="projectName"
 							label="Project`s name"
 							name="projectName"
@@ -20,6 +28,7 @@
 						></app-input>
 
 						<app-input
+							#updateProjectDescription
 							for="description"
 							label="Description"
 							name="description"
@@ -29,7 +38,7 @@
 					</div>
 
 					<div class="action-buttons">
-						<button class="action-buttons_action action-buttons_button">Save changes</button>
+						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">Save changes</button>
 						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
 					</div>
 				</mat-tab>

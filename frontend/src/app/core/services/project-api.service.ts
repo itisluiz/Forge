@@ -9,6 +9,7 @@ import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dt
 import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectmakeinvitationrequest.dto";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
 import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectUpdateMemberRequest.dto";
+import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { FailureResponse } from "forge-shared/dto/response/failureresponse.dto";
 
 @Injectable({
@@ -16,6 +17,10 @@ import { FailureResponse } from "forge-shared/dto/response/failureresponse.dto";
 })
 export class ProjectApiService {
 	constructor(private apiService: ApiService) {}
+
+	public self(): Observable<ProjectSelfResponse> {
+		return this.apiService.call<ProjectSelfResponse>("GET", "project/self");
+	}
 
 	public getProjects(): Observable<ProjectSelfResponse> {
 		return this.apiService.call<ProjectSelfResponse>("GET", `project/self`);
@@ -27,6 +32,10 @@ export class ProjectApiService {
 
 	public newProject(projectNewRequest: ProjectNewRequest): Observable<ProjectResponse> {
 		return this.apiService.call<ProjectResponse, ProjectNewRequest>("POST", `project/new`, undefined, projectNewRequest);
+	}
+
+	public updateProject(projectId: string, projectUpdateRequest: ProjectUpdateRequest): Observable<ProjectResponse> {
+		return this.apiService.call<ProjectResponse, ProjectUpdateRequest>("PATCH", `project/${projectId}/update`, undefined, projectUpdateRequest);
 	}
 
 	public newInvitation(

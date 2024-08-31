@@ -16,6 +16,8 @@ import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupdatememberrequest.dto";
+import { UserApiService } from "../../../services/user-api.service";
+import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 
 @Component({
 	selector: "app-select-project-page",
@@ -35,6 +37,10 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("projectInviteDuration") projectInviteDuration!: InputComponent;
 	@ViewChild("projectInviteRole") projectInviteRole!: InputComponent;
 
+	@ViewChild("updateProjectCode") updateProjectCode!: InputComponent;
+	@ViewChild("projectInviteDuration") updateProjectName!: InputComponent;
+	@ViewChild("updateProjectDescription") updateProjectDescription!: InputComponent;
+
 	@ViewChild("memberEid") memberEid!: InputComponent;
 	@ViewChild("memberRole") memberRole!: InputComponent;
 	@ViewChild("isMemberAdmin") isMemberAdmin!: InputComponent;
@@ -47,6 +53,8 @@ export class SelectProjectPageComponent implements OnInit {
 	public popUpEditMember: boolean = false;
 
 	public editMode: boolean = false;
+
+	public buttonEditProject: boolean = false;
 
 	public projectName = "";
 	public projectId = "";
@@ -133,6 +141,31 @@ export class SelectProjectPageComponent implements OnInit {
 		this.editMode = !this.editMode;
 	}
 
+	updateProject(projectId: string) {
+		const projectCode = this.updateProjectCode.value;
+		const projectName = this.updateProjectName.value;
+		const projectDescription = this.updateProjectDescription.value;
+
+		const request: ProjectUpdateRequest = {
+			code: projectCode,
+			title: projectName,
+			description: projectDescription,
+		};
+
+		console.log(request);
+
+		this.projectApiService.updateProject(projectId, request).subscribe({
+			next: (result) => {
+				console.log("updateProject(): ", result);
+				this.getProjects();
+				this.editMode = false;
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
 	getProjects(): void {
 		this.projectApiService.getProjects().subscribe({
 			next: (response) => {
@@ -144,10 +177,22 @@ export class SelectProjectPageComponent implements OnInit {
 		});
 	}
 
+	selfProject(): void {
+		this.projectApiService.self().subscribe({
+			next: (response) => {
+				console.log(response);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
 	getEspeficProject(projectId: string): void {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				console.log(response);
+
 			},
 			error: (error) => {
 				console.error(error);
