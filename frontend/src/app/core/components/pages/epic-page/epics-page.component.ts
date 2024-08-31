@@ -136,7 +136,6 @@ export class EpicsPageComponent implements OnInit {
 
 	buildCreateEpicForm() {
 		this.createEpicForm = this.formBuilder.group({
-			code: ["", [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
 			name: ["", [Validators.required, Validators.minLength(3)]],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 		});
@@ -159,7 +158,6 @@ export class EpicsPageComponent implements OnInit {
 		this.epicApiService.getEpic(this.projectEid, this.eidSelectedEpic).subscribe({
 			next: (epic) => {
 				this.editEpicForm = this.formBuilder.group({
-					code: [epic.code, [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
 					name: [epic.title, [Validators.required, Validators.minLength(3)]],
 					description: [epic.description, [Validators.required, Validators.minLength(3)]],
 				});
@@ -201,13 +199,11 @@ export class EpicsPageComponent implements OnInit {
 	}
 
 	submitForm() {
-		const code = this.createEpicForm.get("code");
 		const name = this.createEpicForm.get("name");
 		const description = this.createEpicForm.get("description");
 
 		if (this.createEpicForm.valid) {
 			let epicNewRequest = {
-				code: code?.value,
 				title: name?.value,
 				description: description?.value,
 			} as EpicNewRequest;
@@ -235,13 +231,11 @@ export class EpicsPageComponent implements OnInit {
 	}
 
 	submitEditEpicForm() {
-		const code = this.editEpicForm.get("code");
 		const name = this.editEpicForm.get("name");
 		const description = this.editEpicForm.get("description");
 
 		if (this.editEpicForm.valid) {
 			let epicUpdateRequest = {
-				code: code?.value,
 				title: name?.value,
 				description: description?.value,
 			} as EpicUpdateRequest;

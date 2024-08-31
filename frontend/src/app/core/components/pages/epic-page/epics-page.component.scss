@@ -71,7 +71,7 @@ app-navbar {
 			font-weight: 400;
 
 			&:nth-of-type(1) {
-				flex-grow: 0.2;
+				flex-grow: 0.5;
 				font-weight: 500;
 				color: v.$purple-color;
 			}
@@ -111,6 +111,7 @@ app-navbar {
 				&:nth-child(1) {
 					color: v.$epics-dark-green-color;
 					font-weight: 500;
+					width: 16%;
 				}
 
 				&:nth-child(4) {
