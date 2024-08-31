@@ -19,7 +19,7 @@
 					<div class="left-content">
 						<h2>Sprint 1</h2>
 						<div class="items">
-							<span>3</span>
+							<span>{{ (allUserStories$ | async)?.length }}</span>
 							<span>items</span>
 						</div>
 					</div>
@@ -126,28 +126,49 @@
 			</div>
 
 			<mat-accordion multi>
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Key </mat-panel-title>
-						<mat-panel-title> This is the expansion title </mat-panel-title>
-						<mat-panel-description> This is a summary of the content </mat-panel-description>
-					</mat-expansion-panel-header>
-
-					<!-- table -->
-				</mat-expansion-panel>
-
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Key </mat-panel-title>
-						<mat-panel-title> Self aware panel </mat-panel-title>
-						<mat-panel-description> Currently I am </mat-panel-description>
-					</mat-expansion-panel-header>
-					<p>I'm visible because I am open</p>
-				</mat-expansion-panel>
+				@for (userstory of allUserStories$ | async; track $index) {
+					<mat-expansion-panel [disabled]="isPanelDisabled">
+						<mat-expansion-panel-header>
+							<mat-panel-title> {{ userstory.eid }} </mat-panel-title>
+							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
+							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+							<mat-panel-description>
+								<button class="green-button" (click)="openPopUpAddToSprint()">Add to a sprint</button>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+					</mat-expansion-panel>
+				}
 			</mat-accordion>
 		</div>
 	</div>
 </div>
+
+@if (popUpAddToSprint) {
+	<div class="pop-up-background" (click)="closePopUpAddToSprint()"></div>
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Add User Story to Sprint</h2>
+			<p>Select an active or future sprint from the list.</p>
+		</div>
+		<form [formGroup]="addToSprintForm" class="pop-up-form" (ngSubmit)="submitAddToSprintForm()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="sprint">Sprint</label>
+					<select name="sprint" id="sprint" formControlName="sprint">
+						<option value="">-- Select a sprint --</option>
+						<option value="1">Sprint 1</option>
+						<option value="2">Sprint 2</option>
+						<option value="3">Sprint 3</option>
+					</select>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button type="submit" [disabled]="addToSprintForm.invalid">Submit</button>
+				<button class="cancel-epic" (click)="closePopUpAddToSprint()">Cancel</button>
+			</div>
+		</form>
+	</div>
+}
 
 @if (popUpActive) {
 	<div class="pop-up-background" (click)="closePopUp()"></div>

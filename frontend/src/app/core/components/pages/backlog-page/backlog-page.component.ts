@@ -1,8 +1,18 @@
-import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, Renderer2 } from "@angular/core";
+import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, Renderer2, OnInit } from "@angular/core";
 import { MatIcon } from "@angular/material/icon";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTable, MatTableModule } from "@angular/material/table";
+import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
+import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
+import { Observable, forkJoin } from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
+import { ActivatedRoute } from "@angular/router";
+import { EpicApiService } from "../../../services/epic-api.service";
+import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
+import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 
 export interface History {
 	type: string;
@@ -81,11 +91,37 @@ const historiesData: History[] = [
 @Component({
 	selector: "app-backlog-page",
 	standalone: true,
-	imports: [NavbarComponent, MatIcon, MatExpansionModule, MatTableModule],
+	imports: [NavbarComponent, MatIcon, MatExpansionModule, MatTableModule, CommonModule, ReactiveFormsModule],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
 })
 export class BacklogPageComponent implements AfterViewInit {
+	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
+
+	epics$: Observable<EpicSelfComposite[]> = this.epicApiService.getEpics(this.projectEid).pipe(
+		map((response: EpicSelfResponse) => {
+			return response.epics;
+		}),
+	);
+
+	allUserStories$: Observable<UserstorySelfComposite[]> = this.epics$.pipe(
+		mergeMap((epics: EpicSelfComposite[]) => {
+			const userStoriesObservables = epics.map((epic) => this.getUserStories(epic.eid));
+
+			return forkJoin(userStoriesObservables).pipe(
+				map((userStoriesArray: UserstorySelfComposite[][]) => userStoriesArray.flat()),
+			);
+		}),
+	);
+
+	getUserStories(epicEid: string): Observable<UserstorySelfComposite[]> {
+		return this.epicApiService.getEpic(this.projectEid, epicEid).pipe(
+			map((epicResponse: EpicResponse) => {
+				return epicResponse.userstories;
+			}),
+		);
+	}
+
 	@ViewChildren("itemCell")
 	itemCell!: QueryList<ElementRef>;
 
@@ -98,12 +134,18 @@ export class BacklogPageComponent implements AfterViewInit {
 	@ViewChild(MatTable)
 	table!: MatTable<History>;
 
-	constructor(private renderer: Renderer2) {}
+	constructor(
+		private renderer: Renderer2,
+		private route: ActivatedRoute,
+		private epicApiService: EpicApiService,
+		private formBuilder: FormBuilder,
+	) {}
 
 	displayedColumns: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
 	dataSource = [...historiesData];
 
 	popUpActive: boolean = false;
+	popUpAddToSprint: boolean = false;
 	clickedItemDetails: History = {
 		type: "",
 		key: "",
@@ -114,6 +156,13 @@ export class BacklogPageComponent implements AfterViewInit {
 		priority: "",
 		created: "",
 	};
+
+	addToSprintForm!: FormGroup;
+	isPanelDisabled: boolean = false;
+
+	toggleExpansionPanel() {
+		this.isPanelDisabled = !this.isPanelDisabled;
+	}
 
 	ngAfterViewInit(): void {
 		this.setTypeColor();
@@ -171,6 +220,19 @@ export class BacklogPageComponent implements AfterViewInit {
 		this.popUpActive = true;
 	}
 
+	openPopUpAddToSprint() {
+		this.popUpAddToSprint = true;
+		this.toggleExpansionPanel();
+		document.body.style.overflow = "hidden";
+		this.buildAddToSprintForm();
+	}
+
+	buildAddToSprintForm() {
+		this.addToSprintForm = this.formBuilder.group({
+			sprint: ["", Validators.required],
+		});
+	}
+
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
 		if (backgroundPopUp) {
@@ -184,6 +246,15 @@ export class BacklogPageComponent implements AfterViewInit {
 		setTimeout(() => {
 			this.popUpActive = false;
 		}, 200);
+	}
+
+	closePopUpAddToSprint() {
+		this.popUpAddToSprint = false;
+		this.toggleExpansionPanel();
+	}
+
+	submitAddToSprintForm() {
+		this.closePopUpAddToSprint();
 	}
 
 	setTypeColor() {

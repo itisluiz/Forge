@@ -1,5 +1,6 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 @use "../../../../../assets/expansion-panel.scss";
+@use "../../pages/epic-page/epics-page.component.scss";
 
 app-navbar {
 	width: 100vw;
@@ -158,6 +159,34 @@ app-navbar {
 
 				&:nth-child(odd) {
 					background-color: v.$background-grey;
+				}
+			}
+		}
+
+		&:nth-child(3) {
+			.mat-expansion-panel-header-description {
+				&:nth-last-of-type(1) {
+					flex-grow: 0.5;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-right: 16px;
+
+					.green-button {
+						color: white;
+						background-color: v.$green-color;
+						border-radius: 2px;
+						margin: unset;
+						border: none;
+						width: 114px;
+						height: 30px;
+
+						&:disabled {
+							background-color: v.$disabled-background-color;
+							color: v.$disabled-color;
+							cursor: not-allowed;
+						}
+					}
 				}
 			}
 		}
@@ -413,6 +442,26 @@ app-navbar {
 			width: 100%;
 			background-color: v.$black-color;
 			opacity: 0.2;
+		}
+	}
+}
+
+.epic-pop-up {
+	.pop-up-form-content {
+		.input-wrapper {
+			select {
+				height: 40px;
+				background-color: #f2f2f2;
+				border: none;
+				padding-left: 20px;
+				border-radius: 2px;
+				padding: 0px 14px;
+
+				&:focus {
+					outline: none;
+					border: 1px solid v.$green-color;
+				}
+			}
 		}
 	}
 }
