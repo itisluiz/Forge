@@ -1,5 +1,28 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 
+.fake-input{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 20px;
+	padding: 10px 10px 10px 20px;
+	background-color: #f2f2f2;
+	border: none;
+	border-radius: 2px;
+	margin-bottom: 16px;
+
+	p{
+		font-size: v.$paragraph-font;
+		color: v.$black-color;
+	}
+
+	button{
+		scale: .7;
+		height: 45px;
+		width: 45px;
+	}
+}
+
 .select-project-container {
 	display: flex;
 	flex-direction: column;
@@ -7,6 +30,7 @@
 	align-items: center;
 	min-height: calc(100svh - 65px);
 	width: 100vw;
+
 
 	.select-project-component > div {
 		margin: 3em 55px 0 55px;
@@ -19,6 +43,7 @@
 		flex-direction: column;
 		width: 1100px;
 		height: 591px;
+		position: relative;
 
 		.tabs {
 			margin: 40px 55px 0 55px;
@@ -138,6 +163,7 @@
 		}
 
 		.projects {
+
 			.header {
 				width: 100%;
 				display: flex;
@@ -146,6 +172,9 @@
 			}
 
 			.list {
+				max-height: 200px;
+				overflow: auto;
+
 				& > div {
 					cursor: pointer;
 
@@ -159,6 +188,10 @@
 								display: block;
 							}
 						}
+					}
+
+					.project-info.active {
+						background-color: #a5a5a5;
 					}
 
 					.project-info {
@@ -210,28 +243,31 @@
 				}
 			}
 
-			.footer-next {
-				display: flex;
-				margin: 0 auto;
-				width: 320px;
-				height: 40px;
-				align-items: center;
-				justify-content: center;
-				color: v.$white-color;
-				font-weight: 500;
-				font-size: v.$button-font;
-				background-color: v.$green-color;
-				border: none;
-				border-radius: 2px;
-				margin-top: 120px;
-				margin-bottom: 64px;
-				cursor: pointer;
+		}
 
-				&:disabled {
-					background-color: v.$disabled-background-color;
-					color: v.$disabled-color;
-					cursor: not-allowed;
-				}
+		.footer-next {
+			display: flex;
+			margin: 0 auto;
+			width: 320px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			color: v.$white-color;
+			font-weight: 500;
+			font-size: v.$button-font;
+			background-color: v.$green-color;
+			border: none;
+			border-radius: 2px;
+			cursor: pointer;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 64px;
+
+			&:disabled {
+				background-color: v.$disabled-background-color;
+				color: v.$disabled-color;
+				cursor: not-allowed;
 			}
 		}
 	}

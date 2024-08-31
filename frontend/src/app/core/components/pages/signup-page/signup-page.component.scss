@@ -14,7 +14,7 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		padding: 0 4em 3em 4em;
+		padding: 0 4em 1em 4em;
 		max-width: 478px;
 		margin-top: 2em;
 
@@ -157,6 +157,22 @@
 					background-color: v.$disabled-background-color;
 					color: v.$disabled-color;
 					cursor: not-allowed;
+				}
+			}
+		}
+
+		.forgot-label {
+			font-size: v.$observation-font;
+			margin-top: 1em;
+
+			span {
+				color: v.$dark-green-color;
+				cursor: pointer;
+				font-weight: 500;
+				transition: v.$fast-transition;
+
+				&:hover {
+					filter: brightness(0.8);
 				}
 			}
 		}

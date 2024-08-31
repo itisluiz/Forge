@@ -55,6 +55,10 @@ export class LoginPageComponent implements OnInit {
 		}
 	}
 
+	navigateTo(route: string) {
+		this.router.navigate([route]);
+	}
+
 	get genericErrorMessage(): string {
 		if (this.loginFailed === true) {
 			return "Invalid email or password. Please try again.";

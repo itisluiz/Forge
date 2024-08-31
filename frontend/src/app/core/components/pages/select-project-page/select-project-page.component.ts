@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
@@ -18,6 +18,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupdatememberrequest.dto";
 import { UserApiService } from "../../../services/user-api.service";
 import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
+import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.dto";
 
 @Component({
 	selector: "app-select-project-page",
@@ -38,7 +39,7 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("projectInviteRole") projectInviteRole!: InputComponent;
 
 	@ViewChild("updateProjectCode") updateProjectCode!: InputComponent;
-	@ViewChild("projectInviteDuration") updateProjectName!: InputComponent;
+	@ViewChild("updateProjectName") updateProjectName!: InputComponent;
 	@ViewChild("updateProjectDescription") updateProjectDescription!: InputComponent;
 
 	@ViewChild("memberEid") memberEid!: InputComponent;
@@ -51,15 +52,18 @@ export class SelectProjectPageComponent implements OnInit {
 	public popUpCreateProject: boolean = false;
 	public popUpInvite: boolean = false;
 	public popUpEditMember: boolean = false;
+	public popUpInviteResult: boolean = false;
 
 	public editMode: boolean = false;
 
 	public buttonEditProject: boolean = false;
 
+	public selectedProjectId: string | null = null;
 	public projectName = "";
 	public projectId = "";
 	public projectInfo!: ProjectResponse;
 	public currentMemberId = "";
+	public invitationResult = "";
 
 	public projectCodeError: string = "";
 	public projectCreateError: string = "";
@@ -72,6 +76,10 @@ export class SelectProjectPageComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getProjects();
+	}
+
+	selectProject(projectId: string) {
+		this.selectedProjectId = projectId;
 	}
 
 	createProject(projectNewRequest: ProjectNewRequest) {
@@ -135,6 +143,7 @@ export class SelectProjectPageComponent implements OnInit {
 				console.log('editProject: ',response);
 			},
 			error: (error) => {
+				console.log('editProject deu ruim');
 				console.error(error);
 			},
 		});
@@ -142,17 +151,11 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	updateProject(projectId: string) {
-		const projectCode = this.updateProjectCode.value;
-		const projectName = this.updateProjectName.value;
-		const projectDescription = this.updateProjectDescription.value;
-
 		const request: ProjectUpdateRequest = {
-			code: projectCode,
-			title: projectName,
-			description: projectDescription,
+			code: this.updateProjectCode.value,
+			title: this.updateProjectName.value,
+			description: this.updateProjectDescription.value,
 		};
-
-		console.log(request);
 
 		this.projectApiService.updateProject(projectId, request).subscribe({
 			next: (result) => {
@@ -191,7 +194,7 @@ export class SelectProjectPageComponent implements OnInit {
 	getEspeficProject(projectId: string): void {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
-				console.log(response);
+				this.projectInfo = response;
 
 			},
 			error: (error) => {
@@ -203,7 +206,9 @@ export class SelectProjectPageComponent implements OnInit {
 	inviteProject(projectId: string, projectMakeInvitationRequest: ProjectMakeInvitationRequest) {
 		this.projectApiService.newInvitation(projectId, projectMakeInvitationRequest).subscribe({
 			next: (result) => {
-				console.log(result.invitation.code);
+				this.invitationResult = result.invitation.code;
+				this.popUpInviteResult = true;
+				this.popUpInvite = false;
 			},
 			error: (error) => {
 				console.error(error);
@@ -219,6 +224,22 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.updateMember(projectId, projectUpdateMemberRequest).subscribe({
 			next: (result) => {
 				console.log(result);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	removeMember(projectId: string, memberEid: string) {
+		const memberResquest: ProjectKickRequest = {
+			eid: memberEid,
+		};
+
+		this.projectApiService.removeMember(projectId, memberResquest).subscribe({
+			next: (result) => {
+				console.log(result);
+				this.getEspeficProject(projectId);
 			},
 			error: (error) => {
 				console.error(error);
@@ -320,45 +341,53 @@ export class SelectProjectPageComponent implements OnInit {
 	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string) {
 		if (popUp === "join") {
 			this.popUpJoin = true;
+			console.log("Opening join pop-up, popUpJoin:", this.popUpJoin);
 			return;
 		}
 		if (popUp === "create") {
 			this.popUpCreateProject = true;
+			console.log("Opening create project pop-up, popUpCreateProject:", this.popUpCreateProject);
 			return;
 		}
 		if (popUp === "invite") {
 			this.popUpInvite = true;
 			this.projectName = projectTitle || "";
 			this.projectId = projectId || "";
+			console.log("Opening invite pop-up, popUpInvite:", this.popUpInvite, "projectName:", this.projectName, "projectId:", this.projectId);
 			return;
 		}
 		if (popUp === "editMember") {
 			this.popUpEditMember = true;
 			this.currentMemberId = memberEid || "";
+			console.log("Opening edit member pop-up, popUpEditMember:", this.popUpEditMember, "currentMemberId:", this.currentMemberId);
 			return;
 		}
-	}
+	  }
 
 	closePopUp(popUp: string) {
 		if (popUp === "join") {
 			this.popUpJoin = false;
-			this.projectCodeError = "";
+			console.log("Closing join pop-up, popUpJoin:", this.popUpJoin);
 			return;
 		}
-
 		if (popUp === "create") {
 			this.popUpCreateProject = false;
-			this.projectCreateError = "";
+			console.log("Closing create project pop-up, popUpCreateProject:", this.popUpCreateProject);
 			return;
 		}
-
 		if (popUp === "invite") {
 			this.popUpInvite = false;
+			console.log("Closing invite pop-up, popUpInvite:", this.popUpInvite);
 			return;
 		}
-
 		if (popUp === "editMember") {
 			this.popUpEditMember = false;
+			console.log("Closing edit member pop-up, popUpEditMember:", this.popUpEditMember);
+			return;
+		}
+		if (popUp === "inviteResult") {
+			this.popUpInviteResult = false;
+			console.log("Closing invite result pop-up, popUpInviteResult:", this.popUpInviteResult);
 			return;
 		}
 	}
@@ -373,5 +402,24 @@ export class SelectProjectPageComponent implements OnInit {
 
 	isValidProjectCode(code: string): boolean {
 		return code.length > 1;
+	}
+
+	navigateTo(route: string) {
+		this.router.navigate([route]);
+	}
+
+	copyToClipboard(value: string) {
+		navigator.clipboard.writeText(value).then(() => {
+		  console.log('Copied to clipboard:', value);
+		}).catch(err => {
+		  console.error('Failed to copy:', err);
+		});
+	}
+
+	get enableNextButton(): boolean {
+		if (this.selectedProjectId === null) {
+			return true;
+		}
+		return false;
 	}
 }
