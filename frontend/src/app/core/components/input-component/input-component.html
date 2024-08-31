@@ -1,0 +1,11 @@
+<label for="{{for}}">{{label}}</label>
+<input name="{{name}}" type="{{type}}" placeholder="{{placeholder}}" #inputRef />
+
+@if (errorMessage) {
+
+<div class="error-message">
+	<mat-icon>error</mat-icon>
+	{{errorMessage}}
+</div>
+
+}

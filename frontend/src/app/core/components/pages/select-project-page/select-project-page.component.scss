@@ -7,7 +7,6 @@
 	align-items: center;
 	min-height: calc(100svh - 65px);
 	width: 100vw;
-	margin-top: 2em;
 
 	.select-project-component > div {
 		margin: 3em 55px 0 55px;
@@ -19,6 +18,83 @@
 		display: flex;
 		flex-direction: column;
 		width: 1100px;
+		height: 591px;
+
+		.tabs {
+			margin: 40px 55px 0 55px;
+
+			.input-container {
+				margin-top: 40px;
+			}
+
+			.header-members{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-top: 40px;
+
+				p{
+					flex: auto;
+					text-align: left;
+					max-width: 200px;
+					color: v.$label-background-dark-grey;
+					font-size: v.$sub-title-minor-font;
+				}
+			}
+
+			.body-members{
+				height: 220px;
+			}
+
+			.member{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+
+				p{
+					flex: auto;
+					text-align: left;
+					max-width: 200px;
+					font-size: v.$sub-title-minor-font;
+				}
+			}
+
+			.action-buttons {
+				display: flex;
+				flex-direction: row-reverse;
+				gap: 8px;
+				width: 100%;
+				margin-top: 30px;
+				margin-bottom: 3em;
+
+				&_button {
+					height: 40px;
+					cursor: pointer;
+					font-weight: 500;
+					border: none;
+					border-radius: 2px;
+					width: 180px;
+
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
+				}
+
+				&_action {
+					color: v.$white-color;
+					font-size: v.$button-font;
+					background-color: v.$green-color;
+				}
+
+				&_cancel {
+					font-size: v.$button-font;
+					background-color: v.$white-color;
+					color: v.$black-color;
+				}
+			}
+		}
 
 		.title {
 			display: flex;
@@ -41,7 +117,7 @@
 			.right-side {
 				display: flex;
 				align-items: center;
-				height: 31px;
+				height: 40px;
 
 				button {
 					display: flex;
@@ -77,6 +153,12 @@
 						transition: 0.1s;
 						cursor: pointer;
 						filter: brightness(0.8);
+
+						.project-info {
+							button {
+								display: block;
+							}
+						}
 					}
 
 					.project-info {
@@ -87,9 +169,42 @@
 						margin-bottom: 4px;
 						align-items: center;
 						justify-content: center;
+						position: relative;
 
 						p {
 							margin-right: 5px;
+						}
+
+						.mat-mdc-menu-trigger {
+							opacity: 0.4;
+							position: absolute;
+							right: 20px;
+							top: 14px;
+
+							&:hover {
+								opacity: 1;
+							}
+
+							&:focus {
+								opacity: 1;
+							}
+
+							&:active {
+								opacity: 1;
+							}
+						}
+
+						.cdk-focused,
+						.cdk-mouse-focused {
+							opacity: 1;
+						}
+
+						.material-icons {
+							transform: translateY(-1.5px);
+						}
+
+						.button-icon {
+							transform: translateY(-2px);
 						}
 					}
 				}

@@ -1,36 +1,268 @@
 <div class="select-project-container">
-	<div class="select-project-component">
-		<div class="title">
-			<div class="left-side">
-				<h1>Please select your project</h1>
-				<p>To have access to the management process, choose one project</p>
+	@if (editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>{{ projectInfo.title }} information</h1>
+				</div>
 			</div>
+			<mat-tab-group class="tabs">
+				<mat-tab label="Informations">
+					<div class="input-container">
+						<app-input 
+							#updateProjectCode
+							for="code" 
+							label="Code" 
+							name="code" 
+							type="text" 
+							[placeholder]="projectInfo.code"
+						></app-input>
 
-			<div class="right-side">
-				<button id="join">Join</button>
-				<button mat-icon-button>
-					<mat-icon>more_vert</mat-icon>
-				</button>
-			</div>
-		</div>
+						<app-input
+							#updateProjectName
+							for="projectName"
+							label="Project`s name"
+							name="projectName"
+							type="text"
+							[placeholder]="projectInfo.title"
+						></app-input>
 
-		<div class="projects">
-			<div class="header">
-				<span>Projects</span>
-				<span>Total: {{ dataSource.length }}</span>
-			</div>
-
-			<div class="list">
-				<div *ngFor="let project of dataSource">
-					<div class="project-info">
-						<p>{{ project.name }}:</p>
-						<span>{{ project.description }}</span>
+						<app-input
+							#updateProjectDescription
+							for="description"
+							label="Description"
+							name="description"
+							type="text"
+							[placeholder]="projectInfo.description"
+						></app-input>
 					</div>
+
+					<div class="action-buttons">
+						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">Save changes</button>
+						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+					</div>
+				</mat-tab>
+				<mat-tab label="Members">
+					<div class="header-members">
+						<p>Nome</p>
+						<p>Sobrenome</p>
+						<p>Email</p>
+						<p>Actions</p>
+					</div>
+					<div class="body-members">
+						@for (member of projectInfo.members; track member) {
+							<div class="member">
+								<p>{{ member.name }}</p>
+								<p>{{ member.surname }}</p>
+								<p>{{ member.email }}</p>
+								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+								<mat-menu #member_menu="matMenu">
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">Edit permissions</button>
+									<button mat-menu-item>Remove member</button>
+								</mat-menu>
+							</div>
+						}
+					</div>
+
+					<div class="action-buttons">
+						<button class="action-buttons_action action-buttons_button">Save changes</button>
+						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+	}
+
+	@if (!editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>Please select your project</h1>
+					<p>To have access to the management process, choose one project</p>
+				</div>
+
+				<div class="right-side">
+					<button id="join" (click)="openPopUp('join')">Join</button>
+					<button mat-icon-button [matMenuTriggerFor]="menu">
+						<mat-icon>more_vert</mat-icon>
+					</button>
+					<mat-menu #menu="matMenu">
+						<button mat-menu-item>
+							<span (click)="openPopUp('create')">Create a project</span>
+						</button>
+					</mat-menu>
 				</div>
 			</div>
 
-			<button class="footer-next">Next</button>
+			<div class="projects">
+				<div class="header">
+					<span>Projects</span>
+					<span>Total: {{ dataSource.length }}</span>
+				</div>
+
+				<div class="list">
+					<div *ngFor="let project of dataSource">
+						<div class="project-info">
+							<p>{{ project.title }}:</p>
+							<span>{{ project.eid }}</span>
+							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
+								<mat-icon>more_vert</mat-icon>
+							</button>
+							<mat-menu #project_menu="matMenu">
+								<button mat-menu-item>
+									<span (click)="editProject(project.eid)">Edit information</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="openPopUp('invite', project.title, project.eid)">Invite a person</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="leaveProject(project.eid)">Leave project</span>
+								</button>
+								<button mat-menu-item>
+									<span (click)="deleteProject(project.eid)">Delete project</span>
+								</button>
+							</mat-menu>
+						</div>
+					</div>
+				</div>
+
+				<button class="footer-next">Next</button>
+			</div>
 		</div>
-	</div>
+	}
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>
+
+@if (popUpJoin) {
+	<app-popup-component
+		title="Join in a project"
+		description="Enter your project's code to get access to the project."
+		buttonName="Join"
+		(closePopUpEmitter)="closePopUp('join')"
+		(onButtonClick)="handleButtonClick('join')"
+	>
+		<app-input
+			#projectJoin
+			[errorMessage]="projectCodeError"
+			for="code"
+			label="Code"
+			name="code"
+			type="text"
+			placeholder="Enter your code"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpCreateProject) {
+	<app-popup-component
+		title="Create a new project"
+		description="Enter the information of your project."
+		buttonName="Create"
+		(closePopUpEmitter)="closePopUp('create')"
+		(onButtonClick)="handleButtonClick('create')"
+	>
+		<app-input
+			#projectTitleCreate
+			for="title"
+			label="Title"
+			name="title"
+			type="text"
+			placeholder="Title of your project"
+		></app-input>
+
+		<app-input
+			#projectDescriptionCreate
+			for="description"
+			label="Description"
+			name="description"
+			type="text"
+			placeholder="Description of your project"
+		></app-input>
+
+		<app-input
+			#projectCodeCreate
+			[errorMessage]="projectCreateError"
+			for="code"
+			label="Code"
+			name="code"
+			type="text"
+			placeholder="Enter your project code"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpInvite) {
+	<app-popup-component
+		[title]="'Invite a person to ' + projectName"
+		buttonName="Make an invitation"
+		(closePopUpEmitter)="closePopUp('invite')"
+		(onButtonClick)="handleButtonClick('invite')"
+	>
+		<app-input
+			#projectInviteUses
+			for="quantity"
+			label="Uses quantity"
+			name="quantity"
+			type="number"
+			placeholder="Number of uses"
+		></app-input>
+
+		<app-input
+			#projectInviteDuration
+			for="duration"
+			label="Duration"
+			name="duration"
+			type="number"
+			placeholder="Number of hours"
+		></app-input>
+
+		<app-input
+			#projectInviteRole
+			[errorMessage]="projectInvitationError"
+			for="role"
+			label="Role"
+			name="role"
+			type="text"
+			placeholder="Role of invite (e.g. Developer)"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpEditMember) {
+	<app-popup-component
+		title="Edit member permissions"
+		buttonName="Save changes"
+		(closePopUpEmitter)="closePopUp('editMember')"
+		(onButtonClick)="handleButtonClick('editMember')"
+	>
+		<app-input
+			#memberEid
+			for="memberEid"
+			label="Member's eid"
+			name="memberEid"
+			type="text"
+			placeholder="Member eid"
+			[innerHTML]="currentMemberId"
+		></app-input>
+
+		<app-input
+			#memberRole
+			for="memberRole"
+			label="Role"
+			name="memberRole"
+			type="number"
+			placeholder="Role of invite (e.g. Developer)"
+		></app-input>
+
+		<app-input
+			#isMemberAdmin
+			for="isMemberAdmin"
+			label="Admin"
+			name="isMemberAdmin"
+			type="boolean"
+			placeholder="true or false"
+		></app-input>
+	</app-popup-component>
+}
