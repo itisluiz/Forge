@@ -10,11 +10,6 @@
 
 			<div class="left-grid">
 				<div class="input-wrapper">
-					<label for="code">Code</label>
-					<textarea id="code" name="code" formControlName="code" placeholder="FEA-1" class="shorter"></textarea>
-				</div>
-
-				<div class="input-wrapper">
 					<label for="summary">Summary</label>
 					<textarea
 						id="summary"
@@ -86,7 +81,6 @@
 			<div class="pop-up-footer">
 				<span (click)="closePopUp()">Cancel</span>
 				<button type="submit" class="grey-button" matStepperNext>Next step</button>
-				<!-- [disabled]="userStoryForm.invalid" -->
 			</div>
 		</form>
 	</mat-step>
@@ -101,7 +95,9 @@
 					<div formArrayName="acceptanceCriteria">
 						<div *ngFor="let criterion of criteriaInputs.controls; let i = index" [formGroupName]="i">
 							<div class="input-wrapper--criteria">
-								<input formControlName="criterion" placeholder="Criterion description here" />
+								<input formControlName="given" placeholder="Given" />
+								<input formControlName="when" placeholder="When" />
+								<input formControlName="then" placeholder="Then" />
 								<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
 							</div>
 						</div>
@@ -111,7 +107,9 @@
 
 			<div class="pop-up-footer-second-form">
 				<button class="span-style" matStepperPrevious>Back</button>
-				<button class="grey-button" mat-button matStepperNext>Create issue</button>
+				<button class="grey-button" mat-button matStepperNext [disabled]="firstFormGroup.invalid || secondFormGroup.invalid">
+					Create user story
+				</button>
 			</div>
 		</form>
 	</mat-step>

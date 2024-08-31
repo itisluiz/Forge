@@ -111,7 +111,7 @@
 					<div class="left-content">
 						<h2>Backlog</h2>
 						<div class="items">
-							<span>7</span>
+							<span>{{ (allUserStories$ | async)?.length }}</span>
 							<span>items</span>
 						</div>
 					</div>
@@ -129,7 +129,7 @@
 				@for (userstory of allUserStories$ | async; track $index) {
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
-							<mat-panel-title> {{ userstory.eid }} </mat-panel-title>
+							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							<mat-panel-description>
