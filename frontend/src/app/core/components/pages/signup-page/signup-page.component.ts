@@ -111,6 +111,10 @@ export class SignupPageComponent implements OnInit {
 		}
 	}
 
+	navigateTo(route: string) {
+		this.router.navigate([route]);
+	}
+
 	get nameErrorMessage(): string {
 		if (!this.signupForm.get("name")!.value.match(this.regexName)) {
 			return "Please enter a valid name.";

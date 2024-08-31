@@ -10,7 +10,9 @@
 
 	<div class="popup-footer">
 		<button class="popup-footer_action popup-footer_button" (click)="buttonClicked()">{{buttonName}}</button>
-		<button class="popup-footer_cancel popup-footer_button" (click)="closePopUp()">Cancel</button>
+		@if(cancelButton){
+			<button class="popup-footer_cancel popup-footer_button" (click)="closePopUp()">{{buttonCancelName}}</button>
+		}
 	</div>
 </div>
 

@@ -44,6 +44,7 @@
 			<p class="form-failed" *ngIf="signupFailed"><mat-icon>error</mat-icon> {{ overallErrorMessage }}</p>
 			<button type="submit" [disabled]="signupForm.invalid">Next</button>
 		</form>
+		<p class="forgot-label">Already have an account? <span (click)="navigateTo('/login')">Sign in</span></p>
 	</div>
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>

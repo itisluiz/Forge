@@ -39,7 +39,7 @@
 
 					<div class="action-buttons">
 						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">Save changes</button>
-						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
 				<mat-tab label="Members">
@@ -60,7 +60,7 @@
 								</button>
 								<mat-menu #member_menu="matMenu">
 									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">Edit permissions</button>
-									<button mat-menu-item>Remove member</button>
+									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
 						}
@@ -68,7 +68,7 @@
 
 					<div class="action-buttons">
 						<button class="action-buttons_action action-buttons_button">Save changes</button>
-						<button class="action-buttons_cancel action-buttons_button">Cancel</button>
+						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
 			</mat-tab-group>
@@ -103,8 +103,8 @@
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of dataSource">
-						<div class="project-info">
+					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)" >
+						<div class="project-info" [ngClass]="{'active': selectedProjectId === project.eid}">
 							<p>{{ project.title }}:</p>
 							<span>{{ project.eid }}</span>
 							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
@@ -128,8 +128,8 @@
 					</div>
 				</div>
 
-				<button class="footer-next">Next</button>
 			</div>
+			<button class="footer-next" disabled="true" [disabled]="enableNextButton" (click)="navigateTo('/')">Next</button>
 		</div>
 	}
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
@@ -140,6 +140,8 @@
 		title="Join in a project"
 		description="Enter your project's code to get access to the project."
 		buttonName="Join"
+		buttonCancelName="Cancel"
+		[cancelButton]=true
 		(closePopUpEmitter)="closePopUp('join')"
 		(onButtonClick)="handleButtonClick('join')"
 	>
@@ -160,6 +162,8 @@
 		title="Create a new project"
 		description="Enter the information of your project."
 		buttonName="Create"
+		buttonCancelName="Cancel"
+		[cancelButton]=true
 		(closePopUpEmitter)="closePopUp('create')"
 		(onButtonClick)="handleButtonClick('create')"
 	>
@@ -197,6 +201,8 @@
 	<app-popup-component
 		[title]="'Invite a person to ' + projectName"
 		buttonName="Make an invitation"
+		buttonCancelName="Cancel"
+		[cancelButton]=true
 		(closePopUpEmitter)="closePopUp('invite')"
 		(onButtonClick)="handleButtonClick('invite')"
 	>
@@ -234,6 +240,8 @@
 	<app-popup-component
 		title="Edit member permissions"
 		buttonName="Save changes"
+		buttonCancelName="Cancel"
+		[cancelButton]=true
 		(closePopUpEmitter)="closePopUp('editMember')"
 		(onButtonClick)="handleButtonClick('editMember')"
 	>
@@ -264,5 +272,25 @@
 			type="boolean"
 			placeholder="true or false"
 		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpInviteResult) {
+	<app-popup-component
+		title="Copy the invitation link"
+		buttonName="Copy code"
+		buttonCancelName="Close"
+		[cancelButton]=true
+		(closePopUpEmitter)="closePopUp('inviteResult')"
+		(onButtonClick)="copyToClipboard(invitationResult)"
+	>
+		<div class="fake-input">
+			<p>{{ invitationResult }}</p>
+
+			<button class="button-icon" mat-icon-button (click)="copyToClipboard(invitationResult)">
+				<mat-icon>content_copy</mat-icon>
+			</button>
+		</div>
+
 	</app-popup-component>
 }
