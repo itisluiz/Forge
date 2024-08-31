@@ -8,6 +8,7 @@ import { ProjectMakeInvitationResponse } from "forge-shared/dto/response/project
 import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
 import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectmakeinvitationrequest.dto";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
+import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectUpdateMemberRequest.dto";
 import { FailureResponse } from "forge-shared/dto/response/failureresponse.dto";
 
 @Injectable({
@@ -55,5 +56,9 @@ export class ProjectApiService {
 
 	public deleteProject(projectId: string): Observable<void> {
 		return this.apiService.call<void>("DELETE", `project/${projectId}`);
+	}
+
+	public updateMember(projectId: string, request: ProjectUpdateMemberRequest): Observable<void> {
+		return this.apiService.call<void>("PATCH", `project/${projectId}/updatemember`, undefined, request);
 	}
 }

@@ -34,20 +34,28 @@
 					</div>
 				</mat-tab>
 				<mat-tab label="Members">
-					@for (member of projectInfo.members; track member) {
-						<div class="member">
-							<p>{{ member.name }}</p>
-							<p>{{ member.surname }}</p>
-							<p>{{ member.email }}</p>
-							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
-								<mat-icon>more_vert</mat-icon>
-							</button>
-							<mat-menu #member_menu="matMenu">
-								<button mat-menu-item>Edit permissions</button>
-								<button mat-menu-item>Remove member</button>
-							</mat-menu>
-						</div>
-					}
+					<div class="header-members">
+						<p>Nome</p>
+						<p>Sobrenome</p>
+						<p>Email</p>
+						<p>Actions</p>
+					</div>
+					<div class="body-members">
+						@for (member of projectInfo.members; track member) {
+							<div class="member">
+								<p>{{ member.name }}</p>
+								<p>{{ member.surname }}</p>
+								<p>{{ member.email }}</p>
+								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+								<mat-menu #member_menu="matMenu">
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">Edit permissions</button>
+									<button mat-menu-item>Remove member</button>
+								</mat-menu>
+							</div>
+						}
+					</div>
 
 					<div class="action-buttons">
 						<button class="action-buttons_action action-buttons_button">Save changes</button>
@@ -209,6 +217,43 @@
 			name="role"
 			type="text"
 			placeholder="Role of invite (e.g. Developer)"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpEditMember) {
+	<app-popup-component
+		title="Edit member permissions"
+		buttonName="Save changes"
+		(closePopUpEmitter)="closePopUp('editMember')"
+		(onButtonClick)="handleButtonClick('editMember')"
+	>
+		<app-input
+			#memberEid
+			for="memberEid"
+			label="Member's eid"
+			name="memberEid"
+			type="text"
+			placeholder="Member eid"
+			[innerHTML]="currentMemberId"
+		></app-input>
+
+		<app-input
+			#memberRole
+			for="memberRole"
+			label="Role"
+			name="memberRole"
+			type="number"
+			placeholder="Role of invite (e.g. Developer)"
+		></app-input>
+
+		<app-input
+			#isMemberAdmin
+			for="isMemberAdmin"
+			label="Admin"
+			name="isMemberAdmin"
+			type="boolean"
+			placeholder="true or false"
 		></app-input>
 	</app-popup-component>
 }

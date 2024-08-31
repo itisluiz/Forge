@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
@@ -15,6 +15,7 @@ import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectma
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
 import { MatTabsModule } from "@angular/material/tabs";
+import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupdatememberrequest.dto";
 
 @Component({
 	selector: "app-select-project-page",
@@ -34,17 +35,23 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("projectInviteDuration") projectInviteDuration!: InputComponent;
 	@ViewChild("projectInviteRole") projectInviteRole!: InputComponent;
 
+	@ViewChild("memberEid") memberEid!: InputComponent;
+	@ViewChild("memberRole") memberRole!: InputComponent;
+	@ViewChild("isMemberAdmin") isMemberAdmin!: InputComponent;
+
 	public dataSource!: ProjectSelfComposite[];
 
 	public popUpJoin: boolean = false;
 	public popUpCreateProject: boolean = false;
 	public popUpInvite: boolean = false;
+	public popUpEditMember: boolean = false;
 
 	public editMode: boolean = false;
 
-	public projectName = "{{projectName}}";
+	public projectName = "";
 	public projectId = "";
 	public projectInfo!: ProjectResponse;
+	public currentMemberId = "";
 
 	public projectCodeError: string = "";
 	public projectCreateError: string = "";
@@ -117,6 +124,7 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
+				console.log('editProject: ',response);
 			},
 			error: (error) => {
 				console.error(error);
@@ -129,6 +137,17 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getProjects().subscribe({
 			next: (response) => {
 				this.updateProjectList(response.projects);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	getEspeficProject(projectId: string): void {
+		this.projectApiService.getEspecificProject(projectId).subscribe({
+			next: (response) => {
+				console.log(response);
 			},
 			error: (error) => {
 				console.error(error);
@@ -151,6 +170,17 @@ export class SelectProjectPageComponent implements OnInit {
 		this.dataSource = newList;
 	}
 
+	updateMember(projectId: string, projectUpdateMemberRequest: ProjectUpdateMemberRequest) {
+		this.projectApiService.updateMember(projectId, projectUpdateMemberRequest).subscribe({
+			next: (result) => {
+				console.log(result);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
 	handleButtonClick(buttonAction: string) {
 		if (buttonAction === "join") {
 			this.handleJoin();
@@ -163,6 +193,30 @@ export class SelectProjectPageComponent implements OnInit {
 		if (buttonAction === "invite") {
 			this.handleInviteProject();
 			return;
+		}
+		if (buttonAction === "editMember") {
+			this.handleEditMember();
+			return;
+		}
+	}
+
+	handleEditMember() {
+		const eidValue = this.memberEid.value;
+		const roleValue = Number(this.memberRole.value);
+		const adminValue = Boolean(this.isMemberAdmin.value);
+	
+		if (eidValue && roleValue) {
+			const request: ProjectUpdateMemberRequest = {
+				eid: eidValue,
+				role: roleValue,
+				admin: adminValue,
+			};
+	
+			
+			this.updateMember(this.projectInfo.eid, request);
+		} else {
+			// Se algum dos inputs for inválido, atualize a mensagem de erro conforme necessário
+			// Lógica adicional para quando algum input é inválido
 		}
 	}
 
@@ -218,7 +272,7 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 	}
 
-	openPopUp(popUp: string, projectTitle?: string, projectId?: string) {
+	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string) {
 		if (popUp === "join") {
 			this.popUpJoin = true;
 			return;
@@ -231,6 +285,11 @@ export class SelectProjectPageComponent implements OnInit {
 			this.popUpInvite = true;
 			this.projectName = projectTitle || "";
 			this.projectId = projectId || "";
+			return;
+		}
+		if (popUp === "editMember") {
+			this.popUpEditMember = true;
+			this.currentMemberId = memberEid || "";
 			return;
 		}
 	}
@@ -250,6 +309,11 @@ export class SelectProjectPageComponent implements OnInit {
 
 		if (popUp === "invite") {
 			this.popUpInvite = false;
+			return;
+		}
+
+		if (popUp === "editMember") {
+			this.popUpEditMember = false;
 			return;
 		}
 	}
