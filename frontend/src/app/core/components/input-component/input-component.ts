@@ -34,12 +34,25 @@ export class InputComponent implements OnInit, OnDestroy {
 	@Input() type!: string;
 	@Input() placeholder?: string;
 	@Input() errorMessage?: string;
+	@Input() innerHTML?: string;
 
 	@ViewChild("inputRef", { static: true }) inputElement!: ElementRef;
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.checkInnerHTML();
+	}
 
 	ngOnDestroy(): void {}
+
+	checkInnerHTML(): void {
+		if (this.innerHTML) {
+			this.setValue();
+		}
+	}
+
+	setValue(): void {
+		this.inputElement.nativeElement.value = this.innerHTML;
+	}
 
 	get value(): string {
 		return this.inputElement.nativeElement.value;
