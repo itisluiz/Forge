@@ -124,6 +124,8 @@ app-navbar {
 
 						& > img {
 							margin-right: 6px;
+							border-radius: 50%;
+							width: 16px;
 						}
 
 						& > p {
@@ -189,6 +191,14 @@ app-navbar {
 					}
 				}
 			}
+		}
+
+		.add-issue {
+			color: v.$label-background-grey;
+			font-size: v.$paragraph-font;
+			font-weight: 500;
+			cursor: pointer;
+			margin: 16px 0 0 22px;
 		}
 	}
 

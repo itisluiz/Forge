@@ -152,10 +152,10 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
-				console.log('editProject: ',response);
+				console.log("editProject: ", response);
 			},
 			error: (error) => {
-				console.log('editProject deu ruim');
+				console.log("editProject deu ruim");
 				console.error(error);
 			},
 		});
@@ -219,7 +219,6 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
-
 			},
 			error: (error) => {
 				console.error(error);
@@ -296,6 +295,7 @@ export class SelectProjectPageComponent implements OnInit {
 		const adminValue = this.isMemberAdmin.value.toString();
 	
 		if (eidValue && roleValue >= 1 && roleValue <= 4 && adminValue) {
+
 			const request: ProjectUpdateMemberRequest = {
 				eid: eidValue,
 				role: roleValue,
@@ -399,7 +399,14 @@ export class SelectProjectPageComponent implements OnInit {
 			this.popUpInvite = true;
 			this.projectName = projectTitle || "";
 			this.projectId = projectId || "";
-			console.log("Opening invite pop-up, popUpInvite:", this.popUpInvite, "projectName:", this.projectName, "projectId:", this.projectId);
+			console.log(
+				"Opening invite pop-up, popUpInvite:",
+				this.popUpInvite,
+				"projectName:",
+				this.projectName,
+				"projectId:",
+				this.projectId,
+			);
 			return;
 		}
 		if (popUp === "editMember") {
@@ -477,11 +484,14 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	copyToClipboard(value: string) {
-		navigator.clipboard.writeText(value).then(() => {
-		  console.log('Copied to clipboard:', value);
-		}).catch(err => {
-		  console.error('Failed to copy:', err);
-		});
+		navigator.clipboard
+			.writeText(value)
+			.then(() => {
+				console.log("Copied to clipboard:", value);
+			})
+			.catch((err) => {
+				console.error("Failed to copy:", err);
+			});
 	}
 
 	get enableNextButton(): boolean {

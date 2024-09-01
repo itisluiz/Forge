@@ -80,7 +80,7 @@
 						<ng-container matColumnDef="priority">
 							<th mat-header-cell *matHeaderCellDef>Priority</th>
 							<td mat-cell *matCellDef="let element">
-								<img [src]="priorityParser(element.priority)" />
+								<img [src]="priorityParserString(element.priority)" />
 							</td>
 						</ng-container>
 
@@ -111,7 +111,7 @@
 					<div class="left-content">
 						<h2>Backlog</h2>
 						<div class="items">
-							<span>7</span>
+							<span>{{ (allUserStories$ | async)?.length }}</span>
 							<span>items</span>
 						</div>
 					</div>
@@ -129,13 +129,70 @@
 				@for (userstory of allUserStories$ | async; track $index) {
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
-							<mat-panel-title> {{ userstory.eid }} </mat-panel-title>
+							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							<mat-panel-description>
 								<button class="green-button" (click)="openPopUpAddToSprint()">Add to a sprint</button>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
+						@if (getTasksDataSource(userstory.eid).data.length > 0) {
+							<table
+								mat-table
+								[dataSource]="getTasksDataSource(userstory.eid)"
+								matSort
+								class="mat-elevation-z8 history-table"
+							>
+								<ng-container matColumnDef="type">
+									<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+									<td #itemCell mat-cell *matCellDef="let element">{{ typeParser(element.type) }}</td>
+								</ng-container>
+
+								<ng-container matColumnDef="key">
+									<th mat-header-cell *matHeaderCellDef>Key</th>
+									<td mat-cell *matCellDef="let element">{{ element.code }}</td>
+								</ng-container>
+
+								<ng-container matColumnDef="subject">
+									<th mat-header-cell *matHeaderCellDef>Subject</th>
+									<td mat-cell *matCellDef="let element">{{ element.description }}</td>
+								</ng-container>
+
+								<ng-container matColumnDef="status">
+									<th mat-header-cell *matHeaderCellDef>Status</th>
+									<td mat-cell *matCellDef="let element">
+										<div #statusContainer class="status-container">
+											{{ statusParser(element.status) }}
+										</div>
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="assignee">
+									<th mat-header-cell *matHeaderCellDef>Responsible</th>
+									<td mat-cell *matCellDef="let element">
+										<div class="assignee-container">
+											<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+											<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+										</div>
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="priority">
+									<th mat-header-cell *matHeaderCellDef>Priority</th>
+									<td mat-cell *matCellDef="let element">
+										<img [src]="priorityParser(userstory.priority)" />
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="created">
+									<th mat-header-cell *matHeaderCellDef>Created</th>
+									<td mat-cell *matCellDef="let element">{{ element.createdAt | date }}</td>
+								</ng-container>
+								<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+							</table>
+						}
+						<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
 					</mat-expansion-panel>
 				}
 			</mat-accordion>
@@ -197,7 +254,7 @@
 			<div class="info priority">
 				<p>Priority:</p>
 				<div class="content">
-					<img [src]="priorityParser(clickedItemDetails.priority)" />
+					<img [src]="priorityParserString(clickedItemDetails.priority)" />
 					<span>{{ clickedItemDetails.priority }}</span>
 				</div>
 			</div>
@@ -255,5 +312,60 @@
 			</div>
 			<div class="hr"></div>
 		</div>
+	</div>
+}
+
+@if (popUpCreateTask) {
+	<div class="pop-up-background" (click)="closePopUpCreateTask()"></div>
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Create a Task</h2>
+			<p>Fill in the necessary information to create a task.</p>
+		</div>
+		<form [formGroup]="createTaskForm" class="pop-up-form" (ngSubmit)="submitCreateTaskForm()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="task-title">Task's Title</label>
+					<input
+						type="text"
+						id="task-title"
+						name="task-title"
+						formControlName="title"
+						placeholder="Insert the title of the task"
+					/>
+				</div>
+				<div class="input-wrapper">
+					<label for="responsible">Responsible</label>
+					<select id="responsible" name="responsible" formControlName="responsible">
+						<option value="">Select the responsible for the task</option>
+						<option *ngFor="let member of getAllProjectMembers()" [value]="member.eid">
+							{{ member.name }} {{ member.surname }}
+						</option>
+					</select>
+				</div>
+				<div class="input-wrapper">
+					<label for="task-description">Description</label>
+					<textarea
+						id="task-description"
+						name="task-description"
+						formControlName="description"
+						placeholder="Insert a description"
+					></textarea>
+				</div>
+				<div class="input-wrapper">
+					<label for="task-type">Type</label>
+					<select id="task-type" name="task-type" formControlName="type">
+						<option value="">Select a type</option>
+						<option value="1">Task</option>
+						<option value="2">Bug</option>
+						<option value="3">Test</option>
+					</select>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button type="submit" [disabled]="createTaskForm.invalid">Create</button>
+				<button class="cancel-epic" (click)="closePopUpCreateTask()">Cancel</button>
+			</div>
+		</form>
 	</div>
 }

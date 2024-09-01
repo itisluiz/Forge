@@ -1,6 +1,6 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 
-.fake-input{
+.fake-input {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -11,13 +11,13 @@
 	border-radius: 2px;
 	margin-bottom: 16px;
 
-	p{
+	p {
 		font-size: v.$paragraph-font;
 		color: v.$black-color;
 	}
 
-	button{
-		scale: .7;
+	button {
+		scale: 0.7;
 		height: 45px;
 		width: 45px;
 	}
@@ -59,7 +59,6 @@ select {
 	min-height: calc(100svh - 65px);
 	width: 100vw;
 
-
 	.select-project-component > div {
 		margin: 3em 55px 0 55px;
 	}
@@ -80,13 +79,13 @@ select {
 				margin-top: 40px;
 			}
 
-			.header-members{
+			.header-members {
 				display: flex;
 				align-items: center;
 				gap: 10px;
 				margin-top: 40px;
 
-				p{
+				p {
 					flex: auto;
 					text-align: left;
 					max-width: 200px;
@@ -95,11 +94,11 @@ select {
 				}
 			}
 
-			.body-members{
+			.body-members {
 				height: 220px;
 			}
 
-			.member{
+			.member {
 				display: flex;
 				align-items: center;
 				gap: 10px;
@@ -252,7 +251,6 @@ select {
 		}
 
 		.projects {
-
 			.header {
 				width: 100%;
 				display: flex;
@@ -331,7 +329,6 @@ select {
 					}
 				}
 			}
-
 		}
 
 		.footer-next {

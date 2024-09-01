@@ -9,12 +9,12 @@
 			<mat-tab-group class="tabs">
 				<mat-tab label="Informations">
 					<div class="input-container">
-						<app-input 
+						<app-input
 							#updateProjectCode
-							for="code" 
-							label="Code" 
-							name="code" 
-							type="text" 
+							for="code"
+							label="Code"
+							name="code"
+							type="text"
 							[placeholder]="projectInfo.code"
 							[innerHTML]="projectInfo.code"
 						></app-input>
@@ -42,7 +42,9 @@
 					</div>
 
 					<div class="action-buttons">
-						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">Save changes</button>
+						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">
+							Save changes
+						</button>
 						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
@@ -116,6 +118,7 @@
 						<div class="project-info" [ngClass]="{'active': selectedProjectId === project.eid}">
 							<p>{{ project.code }}:</p>
 							<span>{{ project.title }}</span>
+
 							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
 								<mat-icon>more_vert</mat-icon>
 							</button>
@@ -140,7 +143,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 
 			@if (!editMode && noProjects) {
@@ -168,7 +170,7 @@
 		description="Enter your project's code to get access to the project."
 		buttonName="Join"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('join')"
 		(onButtonClick)="handleButtonClick('join')"
 	>
@@ -190,7 +192,7 @@
 		description="Enter the information of your project."
 		buttonName="Create"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('create')"
 		(onButtonClick)="handleButtonClick('create')"
 	>
@@ -229,7 +231,7 @@
 		[title]="'Invite a person to ' + projectName"
 		buttonName="Make an invitation"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('invite')"
 		(onButtonClick)="handleButtonClick('invite')"
 	>
@@ -268,7 +270,7 @@
 		title="Edit member permissions"
 		buttonName="Save changes"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('editMember')"
 		(onButtonClick)="handleButtonClick('editMember')"
 	>
@@ -308,7 +310,7 @@
 		title="Copy the invitation link"
 		buttonName="Copy code"
 		buttonCancelName="Close"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('inviteResult')"
 		(onButtonClick)="copyToClipboard(invitationResult)"
 	>
@@ -319,7 +321,6 @@
 				<mat-icon>content_copy</mat-icon>
 			</button>
 		</div>
-
 	</app-popup-component>
 }
 

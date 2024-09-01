@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from "@angular/core";
 import {
+	AbstractControl,
 	FormArray,
 	FormBuilder,
 	FormControl,
@@ -18,6 +19,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { UserstoryApiService } from "../../services/userstory-api.service";
 import { UserstoryNewRequest } from "forge-shared/dto/request/userstorynewrequest.dto";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
+import { AcceptanceCriteriaNewRequest } from "forge-shared/dto/request/acceptancecriterianewrequest.dto";
+import { Observable } from "rxjs";
 
 @Component({
 	selector: "app-user-story-popup",
@@ -60,7 +63,6 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.firstFormGroup = this.formBuilder.group({
-			code: ["", Validators.required],
 			summary: ["", Validators.required],
 			description: ["", Validators.required],
 			asA: ["", Validators.required],
@@ -79,7 +81,9 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 
 	initCriteria(): FormGroup {
 		return this.formBuilder.group({
-			criterion: ["", Validators.required],
+			given: ["", Validators.required],
+			when: ["", Validators.required],
+			then: ["", Validators.required],
 		});
 	}
 
@@ -116,21 +120,45 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 				storyJustification: this.firstFormGroup.get("soThat")?.value,
 				priority: parseInt(this.firstFormGroup.get("priority")?.value),
 			} as UserstoryNewRequest;
-			// TODO: Add acceptance criteria from the second form
-			this.createUserStory(userstoryNewRequest);
+
+			this.createUserStory(userstoryNewRequest).subscribe((userStoryResponse: UserstoryResponse) => {
+				const userstoryEid = userStoryResponse.eid;
+
+				const criteriaArray = this.secondFormGroup.get("acceptanceCriteria") as FormArray;
+
+				if (criteriaArray) {
+					criteriaArray.controls.forEach((control: AbstractControl) => {
+						const criteria = control.value;
+						const acceptanceCriteriaNewRequest = {
+							userstoryEid: userstoryEid,
+							given: criteria.given,
+							when: criteria.when,
+							then: criteria.then,
+						} as AcceptanceCriteriaNewRequest;
+
+						this.createAcceptanceCriteria(acceptanceCriteriaNewRequest).subscribe({
+							next: (response) => {
+								console.log("Critério de aceitação criado com sucesso:", response);
+							},
+							error: (error) => {
+								console.error("Erro ao criar o critério de aceitação:", error);
+							},
+						});
+
+						this.handleUserStoryAndClosePopupEmitter.emit(userStoryResponse);
+					});
+				} else {
+					console.error('FormArray "acceptanceCriteria" não encontrado no secondFormGroup');
+				}
+			});
 		}
 	}
 
-	createUserStory(userstoryNewRequest: UserstoryNewRequest) {
-		this.userstoryApiService.newUserstory(userstoryNewRequest, this.projectEid).subscribe({
-			next: (response) => {
-				// TODO: Toaster success
-				this.handleUserStoryAndClosePopupEmitter.emit(response);
-			},
-			error(error) {
-				// TODO: Toaster error
-				console.log(error.error.message);
-			},
-		});
+	createUserStory(userstoryNewRequest: UserstoryNewRequest): Observable<UserstoryResponse> {
+		return this.userstoryApiService.newUserstory(userstoryNewRequest, this.projectEid);
+	}
+
+	createAcceptanceCriteria(acceptanceCriteriaNewRequest: AcceptanceCriteriaNewRequest) {
+		return this.userstoryApiService.newAcceptanceCriteria(acceptanceCriteriaNewRequest, this.projectEid);
 	}
 }
