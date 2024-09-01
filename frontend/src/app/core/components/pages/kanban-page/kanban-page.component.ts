@@ -15,6 +15,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import {
 	BehaviorSubject,
+	catchError,
 	concatMap,
 	forkJoin,
 	from,
@@ -23,6 +24,7 @@ import {
 	Observable,
 	shareReplay,
 	switchMap,
+	take,
 	toArray,
 } from "rxjs";
 import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
@@ -58,20 +60,6 @@ import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse
 })
 export class KanbanPageComponent implements OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
-	sprintEid!: string;
-
-	private currentSprintSubject = new BehaviorSubject<SprintResponse | null>(null);
-	currentSprint$ = this.currentSprintSubject.asObservable();
-
-	currentSprint!: SprintResponse;
-	userStoriesWithTasks: UserstoryResponse[] = [];
-	userStoriesWithTasks$!: Observable<UserstoryResponse[]>;
-
-	userStories$!: Observable<UserstorySelfComposite[]>;
-
-	kanbanMap$: Observable<{ [springEid: string]: SprintSelfComposite[] }> = new Observable();
-
-	tasksMap$: Observable<{ [userstoryEid: string]: TaskSelfComposite[] }> = new Observable();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -80,65 +68,44 @@ export class KanbanPageComponent implements OnInit {
 		private taskApiService: TaskApiService,
 	) {}
 
+	allSprints$: Observable<SprintSelfResponse> = this.sprintApiService.self(this.projectEid).pipe(
+		map((response) => {
+			return response;
+		}),
+	);
+
+	currentSprint$ = this.allSprints$.pipe(
+		map((response) => {
+			return response.sprints.find((s) => s.periodStatus === 2);
+		}),
+	);
+
+	userStoriesFromCurrentSprint$: Observable<UserstorySelfResponse> = this.currentSprint$.pipe(
+		switchMap((sprint) => {
+			return this.userStoryApiService.selfBySprint(this.projectEid, sprint!.eid);
+		}),
+	);
+
+	tasksMap$: Observable<{ [userstoryEid: string]: TaskSelfComposite[] }> = new Observable();
+
 	ngOnInit(): void {
-		this.loadSprint(this.projectEid, 2);
+		this.tasksMap$ = this.userStoriesFromCurrentSprint$.pipe(
+			switchMap((userStories: UserstorySelfResponse) => {
+				const tasksObservables: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }>[] = userStories.userstories.map(
+					(userStory) =>
+						this.getTasks(this.projectEid, userStory.eid).pipe(
+							map((tasks: TaskSelfComposite[]) => ({ [userStory.eid]: tasks })),
+						),
+				);
 
-		console.log(this.userStoriesWithTasks);
-	}
-
-	loadSprint(projectEid: string, periodStatus: number) {
-		this.sprintApiService.self(projectEid).subscribe({
-			next: (response: SprintSelfResponse) => {
-				const sprint = response.sprints.find((s) => s.periodStatus === periodStatus);
-
-				if (sprint) {
-					this.userStories$ = this.getUserStories(projectEid, sprint.eid);
-
-					this.currentSprint = {
-						...sprint,
-						startsAt: this.formatDate(sprint.startsAt),
-						endsAt: this.formatDate(sprint.endsAt),
-						tasks: [],
-						createdAt: "",
-						updatedAt: "",
-					};
-					this.currentSprintSubject.next(this.currentSprint);
-				} else {
-					this.currentSprint = {
-						eid: "",
-						startsAt: "",
-						endsAt: "",
-						status: 1,
-						periodStatus: 1,
-						tasks: [],
-						createdAt: "",
-						updatedAt: "",
-					};
-				}
-			},
-			error: (error) => {
-				console.error(error);
-			},
-		});
-	}
-
-	getUserStories(projectEid: string, sprintEid: string): Observable<UserstorySelfComposite[]> {
-		return this.userStoryApiService.selfBySprint(projectEid, sprintEid).pipe(
-			switchMap((response: UserstorySelfResponse) => {
-				const observables = response.userstories.map((userstory) => this.getEspecificUserStory(projectEid, userstory.eid));
-				return forkJoin(observables).pipe(
-					map((userStoriesWithTasks: UserstoryResponse[]) => {
-						this.userStoriesWithTasks = userStoriesWithTasks;
-						return this.userStoriesWithTasks;
-					}),
+				return forkJoin(tasksObservables).pipe(
+					map((tasksArray: { [userStoryEid: string]: TaskSelfComposite[] }[]) =>
+						tasksArray.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+					),
 				);
 			}),
+			shareReplay(1),
 		);
-	}
-
-	getEspecificUserStory(projectEid: string, userstoryEid: string): Observable<UserstoryResponse> {
-		console.log("chamabndio", userstoryEid);
-		return this.userStoryApiService.getUserStory(projectEid, userstoryEid);
 	}
 
 	getTasks(projectEid: string, userStoryEid: string): Observable<TaskSelfComposite[]> {
@@ -147,6 +114,10 @@ export class KanbanPageComponent implements OnInit {
 				return response.tasks;
 			}),
 		);
+	}
+
+	getTasksFromMap(userStoryEid: string): Observable<TaskSelfComposite[]> {
+		return this.tasksMap$.pipe(map((tasksMap) => tasksMap[userStoryEid]));
 	}
 
 	formatDate(dateString: string): string {
@@ -212,6 +183,19 @@ export class KanbanPageComponent implements OnInit {
 			if (event.container.id !== "cdk-drop-list-0" && event.container.data.length === 4) {
 				alert("A coluna atingiu 4 cards!");
 			}
+		}
+	}
+
+	typeParser(type: number): string {
+		switch (type) {
+			case 1:
+				return "task";
+			case 2:
+				return "bug";
+			case 3:
+				return "test";
+			default:
+				return "";
 		}
 	}
 }
