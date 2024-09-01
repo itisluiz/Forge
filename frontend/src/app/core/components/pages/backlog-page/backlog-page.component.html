@@ -14,95 +14,103 @@
 		</div>
 
 		<div class="backlog-grid sprint">
-			<div class="title">
-				<div class="left">
-					<div class="left-content">
-						<h2>Sprint 1</h2>
-						<div class="items">
-							<span>{{ (allUserStories$ | async)?.length }}</span>
-							<span>items</span>
+			<ng-container *ngIf="currentSprint$ | async as currentSprint">
+				<div class="title">
+					<div class="left">
+						<div class="left-content">
+							<h2>Sprint {{ currentSprint.index }}</h2>
+
+							<div class="items">
+								<span>{{ (userStoriesInCurrentSprint$ | async)?.length }}</span>
+								<span>items</span>
+							</div>
 						</div>
+						<p class="desc">Current Sprint</p>
 					</div>
-					<p class="desc">Breve descrição do que será feito na task</p>
+
+					<div class="right">
+						<button mat-icon-button>
+							<mat-icon>more_horiz</mat-icon>
+						</button>
+						<p class="sprint-date">Start of sprint: {{ currentSprint.startsAt | date }}</p>
+					</div>
 				</div>
 
-				<div class="right">
-					<button mat-icon-button>
-						<mat-icon>more_horiz</mat-icon>
-					</button>
-					<p class="sprint-date">Inicio da Sprint: 28/02/2024 • 08:30</p>
-				</div>
-			</div>
+				<mat-accordion multi>
+					@for (userstory of userStoriesInCurrentSprint$ | async; track $index) {
+						<mat-expansion-panel>
+							<mat-expansion-panel-header>
+								<mat-panel-title> {{ userstory.code }} </mat-panel-title>
+								<mat-panel-title> {{ userstory.title }} </mat-panel-title>
+								<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+							</mat-expansion-panel-header>
+							@if (getTasksDataSource(userstory.eid).data.length > 0) {
+								<table
+									mat-table
+									[dataSource]="getTasksDataSource(userstory.eid)"
+									matSort
+									class="mat-elevation-z8 history-table"
+								>
+									<ng-container matColumnDef="type">
+										<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+										<td #itemCell mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											{{ typeParser(element.type) }}
+										</td>
+									</ng-container>
 
-			<mat-accordion multi>
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Key </mat-panel-title>
-						<mat-panel-title> This is the expansion title </mat-panel-title>
-						<mat-panel-description> This is a summary of the content </mat-panel-description>
-					</mat-expansion-panel-header>
+									<ng-container matColumnDef="key">
+										<th mat-header-cell *matHeaderCellDef>Key</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.code }}</td>
+									</ng-container>
 
-					<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 history-table">
-						<ng-container matColumnDef="type">
-							<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-							<td #itemCell mat-cell *matCellDef="let element">{{ element.type }}</td>
-						</ng-container>
+									<ng-container matColumnDef="subject">
+										<th mat-header-cell *matHeaderCellDef>Subject</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											{{ element.description }}
+										</td>
+									</ng-container>
 
-						<ng-container matColumnDef="key">
-							<th mat-header-cell *matHeaderCellDef>Key</th>
-							<td mat-cell *matCellDef="let element">{{ element.key }}</td>
-						</ng-container>
+									<ng-container matColumnDef="status">
+										<th mat-header-cell *matHeaderCellDef>Status</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											<div #statusContainer class="status-container">
+												{{ statusParser(element.status) }}
+											</div>
+										</td>
+									</ng-container>
 
-						<ng-container matColumnDef="subject">
-							<th mat-header-cell *matHeaderCellDef>Subject</th>
-							<td mat-cell *matCellDef="let element">{{ element.subject }}</td>
-						</ng-container>
+									<ng-container matColumnDef="assignee">
+										<th mat-header-cell *matHeaderCellDef>Responsible</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											<div class="assignee-container">
+												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+											</div>
+										</td>
+									</ng-container>
 
-						<ng-container matColumnDef="status">
-							<th mat-header-cell *matHeaderCellDef>Status</th>
-							<td mat-cell *matCellDef="let element">
-								<div #statusContainer class="status-container">
-									{{ element.status }}
-								</div>
-							</td>
-						</ng-container>
+									<ng-container matColumnDef="priority">
+										<th mat-header-cell *matHeaderCellDef>Priority</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											<img [src]="priorityImageParser(element.priority)" />
+										</td>
+									</ng-container>
 
-						<ng-container matColumnDef="assignee">
-							<th mat-header-cell *matHeaderCellDef>Assigned by</th>
-							<td mat-cell *matCellDef="let element">
-								<div class="assignee-container">
-									<img src="../../../../../assets/image-fake.svg" />
-									<p>{{ element.assignee }}</p>
-								</div>
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="priority">
-							<th mat-header-cell *matHeaderCellDef>Priority</th>
-							<td mat-cell *matCellDef="let element">
-								<img [src]="priorityParserString(element.priority)" />
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="created">
-							<th mat-header-cell *matHeaderCellDef>Created</th>
-							<td mat-cell *matCellDef="let element">{{ element.created }}</td>
-						</ng-container>
-
-						<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-						<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-					</table>
-				</mat-expansion-panel>
-
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Key </mat-panel-title>
-						<mat-panel-title> Self aware panel </mat-panel-title>
-						<mat-panel-description> Currently I am </mat-panel-description>
-					</mat-expansion-panel-header>
-					<p>I'm visible because I am open</p>
-				</mat-expansion-panel>
-			</mat-accordion>
+									<ng-container matColumnDef="created">
+										<th mat-header-cell *matHeaderCellDef>Created</th>
+										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+											{{ element.createdAt | date }}
+										</td>
+									</ng-container>
+									<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+									<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+								</table>
+							}
+							<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
+						</mat-expansion-panel>
+					}
+				</mat-accordion>
+			</ng-container>
 		</div>
 
 		<div class="backlog-grid">
@@ -111,7 +119,7 @@
 					<div class="left-content">
 						<h2>Backlog</h2>
 						<div class="items">
-							<span>{{ (allUserStories$ | async)?.length }}</span>
+							<span>{{ (userStoriesInBacklog$ | async)?.length }}</span>
 							<span>items</span>
 						</div>
 					</div>
@@ -126,17 +134,17 @@
 			</div>
 
 			<mat-accordion multi>
-				@for (userstory of allUserStories$ | async; track $index) {
+				@for (userstory of userStoriesInBacklog$ | async; track $index) {
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
 							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							<mat-panel-description>
-								<button class="green-button" (click)="openPopUpAddToSprint()">Add to a sprint</button>
+								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
-						@if (getTasksDataSource(userstory.eid).data.length > 0) {
+						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 							<table
 								mat-table
 								[dataSource]="getTasksDataSource(userstory.eid)"
@@ -217,9 +225,9 @@
 					<label for="sprint">Sprint</label>
 					<select name="sprint" id="sprint" formControlName="sprint">
 						<option value="">-- Select a sprint --</option>
-						<option value="1">Sprint 1</option>
-						<option value="2">Sprint 2</option>
-						<option value="3">Sprint 3</option>
+						@for (sprint of currentAndFutureSprints$ | async; track $index) {
+							<option value="{{ sprint.eid }}">Sprint {{ sprint.index }}</option>
+						}
 					</select>
 				</div>
 			</div>

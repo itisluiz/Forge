@@ -130,7 +130,7 @@ router.patch(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/SprintResponse'
+ *               $ref: '#/components/schemas/SprintSelfResponse'
  *       Others:
  *         description: Failure
  *         content:
