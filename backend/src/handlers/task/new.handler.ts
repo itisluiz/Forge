@@ -49,6 +49,8 @@ export default async function (req: Request, res: Response) {
 
 		switch (taskNewRequest.status) {
 			case TaskStatus.INPROGRESS:
+			case TaskStatus.AVAILABLETOREVIEW:
+			case TaskStatus.REVIEWING:
 				startedAt = new Date();
 				break;
 			case TaskStatus.DONE:
