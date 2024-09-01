@@ -43,13 +43,13 @@ export class ApiService {
 		}
 
 		if (error.error?.failureType === FailureType.UNAUTHORIZED && handlingOptions.redirectOnUnauthorized) {
-			this.toastrService.warning(error.error?.message, error.statusText);
+			this.toastrService.warning(error.error?.message);
 			this.router.navigate(["/"]);
 			throw error;
 		}
 
 		if (handlingOptions.showErrorToast) {
-			this.toastrService.error(error.error?.message ?? "Unexpected error", error.statusText ?? "Error");
+			this.toastrService.error(error.error?.message ?? "Unexpected error");
 		}
 
 		throw error;
