@@ -5,6 +5,7 @@ import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
 import { SprintUpdateRequest } from "forge-shared/dto/request/sprintupdaterequest.dto";
+import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse.dto";
 
 @Injectable({
 	providedIn: "root",
@@ -34,8 +35,8 @@ export class SprintApiService {
 		);
 	}
 
-	public self(projectEid: string): Observable<{ sprints: SprintResponse[] }> {
-		return this.apiService.call<{ sprints: SprintResponse[] }>("GET", `sprint/${projectEid}/self`);
+	public self(projectEid: string): Observable<SprintSelfResponse> {
+		return this.apiService.call<SprintSelfResponse>("GET", `sprint/${projectEid}/self`);
 	}
 
 	public getSprint(projectEid: string, sprintEid: string): Observable<SprintResponse> {
