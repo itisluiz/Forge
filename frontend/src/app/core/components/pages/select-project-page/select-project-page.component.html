@@ -3,7 +3,7 @@
 		<div class="select-project-component">
 			<div class="title">
 				<div class="left-side">
-					<h1>{{ projectInfo.title }} information</h1>
+					<h1>{{ projectInfo.title }}'s information</h1>
 				</div>
 			</div>
 			<mat-tab-group class="tabs">
@@ -16,6 +16,7 @@
 							name="code" 
 							type="text" 
 							[placeholder]="projectInfo.code"
+							[innerHTML]="projectInfo.code"
 						></app-input>
 
 						<app-input
@@ -25,6 +26,7 @@
 							name="projectName"
 							type="text"
 							[placeholder]="projectInfo.title"
+							[innerHTML]="projectInfo.title"
 						></app-input>
 
 						<app-input
@@ -34,6 +36,8 @@
 							name="description"
 							type="text"
 							[placeholder]="projectInfo.description"
+							[innerHTML]="projectInfo.description"
+							[errorMessage]="projectUpdateError"
 						></app-input>
 					</div>
 
@@ -52,14 +56,19 @@
 					<div class="body-members">
 						@for (member of projectInfo.members; track member) {
 							<div class="member">
-								<p>{{ member.name }}</p>
+								@if(member.admin) {
+									<p class="adm"> <mat-icon>admin_panel_settings</mat-icon> {{ member.name }}</p>
+								} @else {
+									<p>{{ member.name }}</p>
+								}
+								
 								<p>{{ member.surname }}</p>
 								<p>{{ member.email }}</p>
 								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
 									<mat-icon>more_vert</mat-icon>
 								</button>
 								<mat-menu #member_menu="matMenu">
-									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">Edit permissions</button>
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">Edit permissions</button>
 									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
@@ -105,31 +114,49 @@
 				<div class="list">
 					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)" >
 						<div class="project-info" [ngClass]="{'active': selectedProjectId === project.eid}">
-							<p>{{ project.title }}:</p>
-							<span>{{ project.eid }}</span>
+							<p>{{ project.code }}:</p>
+							<span>{{ project.title }}</span>
 							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
 								<mat-icon>more_vert</mat-icon>
 							</button>
 							<mat-menu #project_menu="matMenu">
-								<button mat-menu-item>
-									<span (click)="editProject(project.eid)">Edit information</span>
-								</button>
+								@if (project.admin) {
+									<button mat-menu-item>
+										<span (click)="editProject(project.eid)">Edit information</span>
+									</button>
+								}
 								<button mat-menu-item>
 									<span (click)="openPopUp('invite', project.title, project.eid)">Invite a person</span>
 								</button>
 								<button mat-menu-item>
-									<span (click)="leaveProject(project.eid)">Leave project</span>
+									<span (click)="openPopUp('leaveConfirm', undefined, project.eid)">Leave project</span>
 								</button>
-								<button mat-menu-item>
-									<span (click)="deleteProject(project.eid)">Delete project</span>
-								</button>
+								@if (project.admin) {
+									<button mat-menu-item>
+										<span (click)="openPopUp('deleteConfirm', undefined, project.eid)">Delete project</span>
+									</button>
+								}
 							</mat-menu>
 						</div>
 					</div>
 				</div>
 
 			</div>
-			<button class="footer-next" disabled="true" [disabled]="enableNextButton" (click)="navigateTo('/')">Next</button>
+
+			@if (!editMode && noProjects) {
+				<div class="no-project">
+					<h2>Not part of any project?</h2>
+					<p>You can quickly create one or join an existing one by clicking the button below.</p>
+					<div class="buttons">
+						<button class="buttons_cancel buttons_button" (click)="openPopUp('join')">Join</button>
+						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create</button>
+					</div>
+				</div>
+			}
+
+			@if (!editMode && !noProjects) {
+				<button class="footer-next" disabled="true" [disabled]="enableNextButton" (click)="navigateTo('/')">Next</button>
+			}
 		</div>
 	}
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
@@ -224,15 +251,15 @@
 			placeholder="Number of hours"
 		></app-input>
 
-		<app-input
+		<app-select
 			#projectInviteRole
 			[errorMessage]="projectInvitationError"
 			for="role"
 			label="Role"
 			name="role"
 			type="text"
-			placeholder="Role of invite (e.g. Developer)"
-		></app-input>
+			[options]="[{value: 1, label: 'Product Owner'}, {value: 2, label: 'Scrum Master'}, {value: 3, label: 'Developer'}, {value: 4, label: 'Tester'}]"
+		></app-select>
 	</app-popup-component>
 }
 
@@ -255,23 +282,24 @@
 			[innerHTML]="currentMemberId"
 		></app-input>
 
-		<app-input
+		<app-select
 			#memberRole
 			for="memberRole"
 			label="Role"
 			name="memberRole"
 			type="number"
-			placeholder="Role of invite (e.g. Developer)"
-		></app-input>
+			[options]="[{value: 1, label: 'Product Owner'}, {value: 2, label: 'Scrum Master'}, {value: 3, label: 'Developer'}, {value: 4, label: 'Tester'}]"
+		></app-select>
 
-		<app-input
+		<app-select
 			#isMemberAdmin
 			for="isMemberAdmin"
 			label="Admin"
 			name="isMemberAdmin"
 			type="boolean"
-			placeholder="true or false"
-		></app-input>
+			[options]="[{value: true, label: 'Yes'}, {value: false, label: 'No'}]"
+			[errorMessage]="projectEditMemberError"
+		></app-select>
 	</app-popup-component>
 }
 
@@ -293,4 +321,26 @@
 		</div>
 
 	</app-popup-component>
+}
+
+@if (popUpDeleteProject) {
+	<div class="pop-up-background" (click)="closePopUp('deleteConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Delete Project'"
+		[description]="'Are you sure you want to delete this project? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUp('deleteConfirm')"
+		(confirmDeleteEmmiter)="deleteProject(projectId)"
+	></app-delete-popup>
+}
+
+@if (popUpLeaveProject) {
+	<div class="pop-up-background" (click)="closePopUp('leaveConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Leave Project'"
+		[description]="'Are you sure you want to leave this project? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUp('leaveConfirm')"
+		(confirmDeleteEmmiter)="leaveProject(projectId)"
+	></app-delete-popup>
 }

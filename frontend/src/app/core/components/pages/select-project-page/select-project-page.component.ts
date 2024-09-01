@@ -19,11 +19,13 @@ import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupda
 import { UserApiService } from "../../../services/user-api.service";
 import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.dto";
+import { SelectComponent } from "../../select-component/select-component";
+import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 
 @Component({
 	selector: "app-select-project-page",
 	standalone: true,
-	imports: [MatIconModule, CommonModule, MatButtonModule, MatMenuModule, PopupComponent, InputComponent, MatTabsModule],
+	imports: [MatIconModule, CommonModule, MatButtonModule, MatMenuModule, PopupComponent, InputComponent, MatTabsModule, SelectComponent, DeletePopupComponent],
 	templateUrl: "./select-project-page.component.html",
 	styleUrl: "./select-project-page.component.scss",
 })
@@ -53,8 +55,11 @@ export class SelectProjectPageComponent implements OnInit {
 	public popUpInvite: boolean = false;
 	public popUpEditMember: boolean = false;
 	public popUpInviteResult: boolean = false;
+	public popUpDeleteProject: boolean = false;
+	public popUpLeaveProject: boolean = false;
 
 	public editMode: boolean = false;
+	public noProjects: boolean = false;
 
 	public buttonEditProject: boolean = false;
 
@@ -62,12 +67,17 @@ export class SelectProjectPageComponent implements OnInit {
 	public projectName = "";
 	public projectId = "";
 	public projectInfo!: ProjectResponse;
-	public currentMemberId = "";
+
+	public currentMemberId: string = "";
+	public currentIsAdmin: boolean = false;
+
 	public invitationResult = "";
 
 	public projectCodeError: string = "";
 	public projectCreateError: string = "";
 	public projectInvitationError: string = "";
+	public projectEditMemberError: string = "";
+	public projectUpdateError: string = "";
 
 	constructor(
 		private projectApiService: ProjectApiService,
@@ -98,6 +108,7 @@ export class SelectProjectPageComponent implements OnInit {
 	leaveProject(projectId: string) {
 		this.projectApiService.leaveProject(projectId).subscribe({
 			next: (result) => {
+				this.popUpLeaveProject = false;
 				console.log(result);
 				this.getProjects();
 			},
@@ -111,6 +122,7 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.deleteProject(projectId).subscribe({
 			next: (result) => {
 				console.log("deletado", result);
+				this.popUpDeleteProject = false;
 				this.getProjects();
 			},
 			error: (error) => {
@@ -157,14 +169,21 @@ export class SelectProjectPageComponent implements OnInit {
 			description: this.updateProjectDescription.value,
 		};
 
+		if (request.code!.length !== 3 && request.title!.length && request.description!.length) {
+			this.projectUpdateError = "Invalid input. Please, check your project details and try again.";
+			return;
+		}
+
 		this.projectApiService.updateProject(projectId, request).subscribe({
 			next: (result) => {
 				console.log("updateProject(): ", result);
+				this.projectUpdateError = "";
 				this.getProjects();
 				this.editMode = false;
 			},
 			error: (error) => {
 				console.error(error);
+				this.projectUpdateError = "Invalid input. Please, check your project details and try again.";
 			},
 		});
 	}
@@ -173,6 +192,11 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getProjects().subscribe({
 			next: (response) => {
 				this.updateProjectList(response.projects);
+				if (response.projects.length === 0) {
+					this.noProjects = true;
+				} else {
+					this.noProjects = false;
+				}
 			},
 			error: (error) => {
 				console.error(error);
@@ -269,20 +293,42 @@ export class SelectProjectPageComponent implements OnInit {
 	handleEditMember() {
 		const eidValue = this.memberEid.value;
 		const roleValue = Number(this.memberRole.value);
-		const adminValue = Boolean(this.isMemberAdmin.value);
+		const adminValue = this.isMemberAdmin.value.toString();
 	
-		if (eidValue && roleValue) {
+		if (eidValue && roleValue >= 1 && roleValue <= 4 && adminValue) {
 			const request: ProjectUpdateMemberRequest = {
 				eid: eidValue,
 				role: roleValue,
-				admin: adminValue,
+				admin: adminValue === "true" ? true : undefined,
 			};
-	
-			
+
+			if (adminValue === "false") {
+				this.getEspeficProject(this.projectInfo.eid);
+				this.projectInfo.members.forEach((member) => {
+					if (member.eid === eidValue) {
+						console.log("member.admin: ", member.eid, eidValue);
+						if (member.admin) {
+							console.log("member.admin: ", member.admin);
+							this.projectEditMemberError = "You cannot remove admin from this user. Just the role was updated.";
+							return;
+						}
+					}
+				});
+			}
+
+			if (adminValue === "true") {
+				this.projectEditMemberError = "";
+			}
+
 			this.updateMember(this.projectInfo.eid, request);
+
 		} else {
-			// Se algum dos inputs for inválido, atualize a mensagem de erro conforme necessário
-			// Lógica adicional para quando algum input é inválido
+			if (adminValue === "false") {
+				this.projectEditMemberError = "Error: You cannot remove admin from this user.";
+				return;
+			}
+
+			this.projectEditMemberError = "Invalid input. Please, check your member details and try again.";
 		}
 	}
 
@@ -310,7 +356,7 @@ export class SelectProjectPageComponent implements OnInit {
 		const descriptionValue = this.projectDescriptionCreate.value;
 		const codeValue = this.projectCodeCreate.value;
 
-		if (titleValue && descriptionValue && codeValue) {
+		if (titleValue && descriptionValue && codeValue.length === 3) {
 			const request: ProjectNewRequest = {
 				title: titleValue,
 				description: descriptionValue,
@@ -338,7 +384,7 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 	}
 
-	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string) {
+	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string, isMemberAdmin?: boolean) {
 		if (popUp === "join") {
 			this.popUpJoin = true;
 			console.log("Opening join pop-up, popUpJoin:", this.popUpJoin);
@@ -359,8 +405,20 @@ export class SelectProjectPageComponent implements OnInit {
 		if (popUp === "editMember") {
 			this.popUpEditMember = true;
 			this.currentMemberId = memberEid || "";
+			this.currentIsAdmin = isMemberAdmin || false;
 			console.log("Opening edit member pop-up, popUpEditMember:", this.popUpEditMember, "currentMemberId:", this.currentMemberId);
 			return;
+		}
+		if (popUp === "deleteConfirm") {
+			this.popUpDeleteProject = true;
+			this.projectId = projectId || "";
+			console.log("Opening delete project pop-up, popUpDeleteProject:", this.popUpDeleteProject, "projectName:", this.projectName, "projectId:", this.projectId);
+			return;
+		}
+		if (popUp === "leaveConfirm") {
+			this.popUpLeaveProject = true;
+			this.projectId = projectId || "";
+			console.log("Opening leave project pop-up, popUpLeaveProject:", this.popUpLeaveProject, "projectName:", this.projectName, "projectId:", this.projectId);
 		}
 	  }
 
@@ -382,6 +440,7 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 		if (popUp === "editMember") {
 			this.popUpEditMember = false;
+			this.projectEditMemberError = "";
 			console.log("Closing edit member pop-up, popUpEditMember:", this.popUpEditMember);
 			return;
 		}
@@ -389,6 +448,15 @@ export class SelectProjectPageComponent implements OnInit {
 			this.popUpInviteResult = false;
 			console.log("Closing invite result pop-up, popUpInviteResult:", this.popUpInviteResult);
 			return;
+		}
+		if (popUp === "deleteConfirm") {
+			this.popUpDeleteProject = false;
+			console.log("Closing delete project pop-up, popUpDeleteProject:", this.popUpDeleteProject);
+			return;
+		}
+		if (popUp === "leaveConfirm") {
+			this.popUpLeaveProject = false;
+			console.log("Closing leave project pop-up, popUpLeaveProject:", this.popUpLeaveProject);
 		}
 	}
 
@@ -418,6 +486,9 @@ export class SelectProjectPageComponent implements OnInit {
 
 	get enableNextButton(): boolean {
 		if (this.selectedProjectId === null) {
+			return true;
+		}
+		if (this.dataSource.length < 1) {
 			return true;
 		}
 		return false;
