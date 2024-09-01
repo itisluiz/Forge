@@ -25,7 +25,17 @@ import { DeletePopupComponent } from "../../delete-popup/delete-popup.component"
 @Component({
 	selector: "app-select-project-page",
 	standalone: true,
-	imports: [MatIconModule, CommonModule, MatButtonModule, MatMenuModule, PopupComponent, InputComponent, MatTabsModule, SelectComponent, DeletePopupComponent],
+	imports: [
+		MatIconModule,
+		CommonModule,
+		MatButtonModule,
+		MatMenuModule,
+		PopupComponent,
+		InputComponent,
+		MatTabsModule,
+		SelectComponent,
+		DeletePopupComponent,
+	],
 	templateUrl: "./select-project-page.component.html",
 	styleUrl: "./select-project-page.component.scss",
 })
@@ -293,9 +303,8 @@ export class SelectProjectPageComponent implements OnInit {
 		const eidValue = this.memberEid.value;
 		const roleValue = Number(this.memberRole.value);
 		const adminValue = this.isMemberAdmin.value.toString();
-	
-		if (eidValue && roleValue >= 1 && roleValue <= 4 && adminValue) {
 
+		if (eidValue && roleValue >= 1 && roleValue <= 4 && adminValue) {
 			const request: ProjectUpdateMemberRequest = {
 				eid: eidValue,
 				role: roleValue,
@@ -321,7 +330,6 @@ export class SelectProjectPageComponent implements OnInit {
 			}
 
 			this.updateMember(this.projectInfo.eid, request);
-
 		} else {
 			if (adminValue === "false") {
 				this.projectEditMemberError = "Error: You cannot remove admin from this user.";
@@ -413,21 +421,40 @@ export class SelectProjectPageComponent implements OnInit {
 			this.popUpEditMember = true;
 			this.currentMemberId = memberEid || "";
 			this.currentIsAdmin = isMemberAdmin || false;
-			console.log("Opening edit member pop-up, popUpEditMember:", this.popUpEditMember, "currentMemberId:", this.currentMemberId);
+			console.log(
+				"Opening edit member pop-up, popUpEditMember:",
+				this.popUpEditMember,
+				"currentMemberId:",
+				this.currentMemberId,
+			);
 			return;
 		}
 		if (popUp === "deleteConfirm") {
 			this.popUpDeleteProject = true;
 			this.projectId = projectId || "";
-			console.log("Opening delete project pop-up, popUpDeleteProject:", this.popUpDeleteProject, "projectName:", this.projectName, "projectId:", this.projectId);
+			console.log(
+				"Opening delete project pop-up, popUpDeleteProject:",
+				this.popUpDeleteProject,
+				"projectName:",
+				this.projectName,
+				"projectId:",
+				this.projectId,
+			);
 			return;
 		}
 		if (popUp === "leaveConfirm") {
 			this.popUpLeaveProject = true;
 			this.projectId = projectId || "";
-			console.log("Opening leave project pop-up, popUpLeaveProject:", this.popUpLeaveProject, "projectName:", this.projectName, "projectId:", this.projectId);
+			console.log(
+				"Opening leave project pop-up, popUpLeaveProject:",
+				this.popUpLeaveProject,
+				"projectName:",
+				this.projectName,
+				"projectId:",
+				this.projectId,
+			);
 		}
-	  }
+	}
 
 	closePopUp(popUp: string) {
 		if (popUp === "join") {

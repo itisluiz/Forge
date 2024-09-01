@@ -57,11 +57,11 @@ export class SelectComponent implements OnInit, OnDestroy {
 
 	get value(): string {
 		let value: any;
-		if (typeof this.selectedOption === 'string') {
+		if (typeof this.selectedOption === "string") {
 			value = this.selectedOption.toString();
 			return value;
 		}
-		if (typeof this.selectedOption === 'boolean') {
+		if (typeof this.selectedOption === "boolean") {
 			value = Boolean(this.selectedOption);
 			return value;
 		}
