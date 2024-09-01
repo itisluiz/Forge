@@ -19,10 +19,15 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           type: string
  *         title:
  *           type: string
+ *         description:
+ *           type: string
  *         status:
  *           $ref: '#/components/schemas/TaskStatus'
  *         type:
  *           $ref: '#/components/schemas/TaskType'
+ *         createdAt:
+ *           type: string
+ *           format: date-time
  */
 export interface TaskSelfComposite {
 	eid: string;
@@ -30,6 +35,8 @@ export interface TaskSelfComposite {
 	responsibleEid?: string;
 	code: string;
 	title: string;
+	description: string;
 	status: TaskStatus;
 	type: TaskType;
+	createdAt: string;
 }

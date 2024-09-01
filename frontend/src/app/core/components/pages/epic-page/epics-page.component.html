@@ -47,34 +47,34 @@
 								<mat-icon (click)="openPopUpDeleteEpic(epic.eid)">delete</mat-icon>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
+						@if (getUserStoriesDataSource(epic.eid).data.length > 0) {
+							<table mat-table [dataSource]="getUserStoriesDataSource(epic.eid)" class="epics-table">
+								<ng-container matColumnDef="key">
+									<th mat-header-cell *matHeaderCellDef>Key</th>
+									<td mat-cell *matCellDef="let story">{{ story.code }}</td>
+								</ng-container>
 
-						<table mat-table [dataSource]="getUserStoriesDataSource(epic.eid)" class="epics-table">
-							<ng-container matColumnDef="key">
-								<th mat-header-cell *matHeaderCellDef>Key</th>
-								<td mat-cell *matCellDef="let story">{{ story.code }}</td>
-							</ng-container>
+								<ng-container matColumnDef="title">
+									<th mat-header-cell *matHeaderCellDef>History</th>
+									<td mat-cell *matCellDef="let story">{{ story.title }}</td>
+								</ng-container>
 
-							<ng-container matColumnDef="title">
-								<th mat-header-cell *matHeaderCellDef>History</th>
-								<td mat-cell *matCellDef="let story">{{ story.title }}</td>
-							</ng-container>
+								<ng-container matColumnDef="description">
+									<th mat-header-cell *matHeaderCellDef>Description</th>
+									<td mat-cell *matCellDef="let story">{{ story.description }}</td>
+								</ng-container>
 
-							<ng-container matColumnDef="description">
-								<th mat-header-cell *matHeaderCellDef>Description</th>
-								<td mat-cell *matCellDef="let story">{{ story.description }}</td>
-							</ng-container>
+								<ng-container matColumnDef="priority">
+									<th mat-header-cell *matHeaderCellDef>Priority</th>
+									<td mat-cell *matCellDef="let story">
+										<img src="{{ priorityParser(story.priority) }}" alt="{{ story.priority }} priority" />
+									</td>
+								</ng-container>
 
-							<ng-container matColumnDef="priority">
-								<th mat-header-cell *matHeaderCellDef>Priority</th>
-								<td mat-cell *matCellDef="let story">
-									<img src="{{ priorityParser(story.priority) }}" alt="{{ story.priority }} priority" />
-								</td>
-							</ng-container>
-
-							<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-							<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-						</table>
-						<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
+								<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+							</table>
+						}
 					</mat-expansion-panel>
 				}
 			</mat-accordion>

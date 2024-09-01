@@ -8,7 +8,9 @@ export function mapTaskSelfComposite(task: any, projectCode: string): TaskSelfCo
 		responsibleEid: encryptPK("user", task.dataValues.assignedTo),
 		code: `${projectCode}-TSK-${task.dataValues.index}`,
 		title: task.dataValues.title,
+		description: task.dataValues.description,
 		status: task.dataValues.etaskstatusId,
 		type: task.dataValues.etasktypeId,
+		createdAt: task.dataValues.createdAt,
 	};
 }
