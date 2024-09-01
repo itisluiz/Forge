@@ -240,7 +240,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		setTimeout(() => {
 			// Wait for the pop-up to be rendered
 			this.setStatusStylePopUp();
-		}, 120);
+		}, 205);
 	}
 
 	setStatusStylePopUp() {
@@ -279,6 +279,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			responsible: ["", Validators.required],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			type: ["", Validators.required],
+			priority: ["", Validators.required],
 		});
 	}
 
@@ -316,14 +317,16 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		const responsibleEid = this.createTaskForm.get("responsible");
 		const description = this.createTaskForm.get("description");
 		const type = this.createTaskForm.get("type");
+		const priority = this.createTaskForm.get("priority");
 
 		const taskNewRequest = {
 			userstoryEid: this.eidSelectedUserStory,
 			responsibleEid: responsibleEid?.value,
 			title: title?.value,
 			description: description?.value,
-			type: parseFloat(type?.value),
+			type: parseInt(type?.value),
 			status: TaskStatus.TODO,
+			priority: parseInt(priority?.value),
 		} as TaskNewRequest;
 		this.createTask(taskNewRequest);
 		this.closePopUpCreateTask();
@@ -381,7 +384,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		return pre + priority.toLowerCase() + pos;
 	}
 
-	priorityParser(priority: number) {
+	priorityImageParser(priority: number) {
 		let pre = "../../../../../assets/";
 		let pos = ".svg";
 		let priorityName: string;
@@ -400,6 +403,19 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				throw new Error("Invalid priority");
 		}
 		return pre + priorityName + pos;
+	}
+
+	priorityTextParser(priority: number) {
+		switch (priority) {
+			case Priority.LOW:
+				return "Low";
+			case Priority.MEDIUM:
+				return "Medium";
+			case Priority.HIGH:
+				return "High";
+			default:
+				throw new Error("Invalid priority");
+		}
 	}
 
 	determineStyle(status: string) {

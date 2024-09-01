@@ -182,7 +182,7 @@
 								<ng-container matColumnDef="priority">
 									<th mat-header-cell *matHeaderCellDef>Priority</th>
 									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
-										<img [src]="priorityParser(userstory.priority)" />
+										<img [src]="priorityImageParser(element.priority)" />
 									</td>
 								</ng-container>
 
@@ -260,8 +260,8 @@
 				<div class="info priority">
 					<p>Priority:</p>
 					<div class="content">
-						<img [src]="priorityParserString(clickedItemDetails.priority)" />
-						<span>{{ clickedItemDetails.priority }}</span>
+						<img [src]="priorityImageParser(selectedTask.priority)" />
+						<span>{{ priorityTextParser(selectedTask.priority) }}</span>
 					</div>
 				</div>
 
@@ -302,8 +302,11 @@
 					<div class="comment">
 						<div class="user">
 							<div class="id">
-								<img src="../../../../../assets/image-fake.svg" />
-								<p>Leonardo Alves</p>
+								<img [src]="getProjectMemberFromMap(selectedTask.responsibleEid)?.gravatar" />
+								<p>
+									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.name }}
+									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.surname }}
+								</p>
 								<span>1 hour ago</span>
 							</div>
 							<div class="actions">
@@ -369,6 +372,15 @@
 						<option value="1">Task</option>
 						<option value="2">Bug</option>
 						<option value="3">Test</option>
+					</select>
+				</div>
+				<div class="input-wrapper">
+					<label for="task-priority">Priority</label>
+					<select id="task-priority" name="task-priority" formControlName="priority">
+						<option value="">Select a priority</option>
+						<option value="1">Low</option>
+						<option value="2">Medium</option>
+						<option value="3">High</option>
 					</select>
 				</div>
 			</div>
