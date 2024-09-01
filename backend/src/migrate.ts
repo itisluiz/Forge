@@ -13,13 +13,11 @@ if (isProduction) {
 }
 
 const sequelize = await getSequelize();
-await sequelize.sync({ alter: true });
+await sequelize.sync({ force: true });
 await sequelize.close();
 
 try {
-	await promisify(exec)(
-		`npx sequelize db:seed:undo:all --env ${process.env["NODE_ENV"]} && npx sequelize db:seed:all --env ${process.env["NODE_ENV"]}`,
-	);
+	await promisify(exec)(`npx sequelize db:seed:all --env ${process.env["NODE_ENV"]}`);
 	logging.logSuccess("migrations", "Database seeded successfully");
 } catch (error) {
 	logging.logError("migrations", "Failed to seed the database:", error);
