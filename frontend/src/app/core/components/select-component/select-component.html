@@ -1,0 +1,16 @@
+<label for="{{for}}">{{label}}</label>
+<select name="{{name}}" #inputRef [(ngModel)]="selectedOption">
+	<option [ngValue]="null" disabled>--selecione um valor--</option>
+	@for(opt of options; track opt) {
+		<option value="{{opt.value}}">{{opt.label}}</option>
+	}
+</select>
+
+@if (errorMessage) {
+
+<div class="error-message">
+	<mat-icon>error</mat-icon>
+	{{errorMessage}}
+</div>
+
+}

@@ -23,6 +23,34 @@
 	}
 }
 
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+select {
+	height: 20px;
+	padding: 10px 10px 10px 20px;
+	background-color: #f2f2f2;
+	border: none;
+	border-radius: 2px;
+	margin-bottom: 16px;
+
+	&:focus {
+		outline: none;
+		padding: 9px 9px 9px 19px;
+		border: 1px solid v.$green-color;
+	}
+}
+
 .select-project-container {
 	display: flex;
 	flex-direction: column;
@@ -75,7 +103,13 @@
 				align-items: center;
 				gap: 10px;
 
-				p {
+				.adm{
+					display: flex;
+					align-items: center;
+					gap: 5px;
+				}
+
+				p{
 					flex: auto;
 					text-align: left;
 					max-width: 200px;
@@ -157,6 +191,61 @@
 					background-color: v.$epics-light-grey-color;
 					border-radius: 4px;
 					margin-right: 4px;
+				}
+			}
+		}
+
+		.no-project{
+			display: flex;
+			flex-direction: column;
+			margin: 0 auto;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			text-align: center;
+			margin-top: -80px;
+
+			h2{
+				font-size: v.$title-font;
+				margin-bottom: 10px;
+				font-weight: 500;
+			}
+
+			p{
+				width: 60%;
+			}
+
+			.buttons {
+				display: flex;
+				gap: 12px;
+				width: 100%;
+				margin-top: 29px;
+				justify-content: center;
+	
+				&_button {
+					height: 40px;
+					cursor: pointer;
+					border: none;
+					border-radius: 2px;
+					padding: 0 14px;
+	
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
+				}
+	
+				&_action {
+					color: v.$white-color;
+					font-size: v.$button-font;
+					background-color: v.$green-color;
+				}
+	
+				&_cancel {
+					font-size: v.$button-font;
+					background-color: v.$epics-light-grey-color;
+					color: v.$black-color;
 				}
 			}
 		}
