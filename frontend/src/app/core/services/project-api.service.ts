@@ -8,7 +8,7 @@ import { ProjectMakeInvitationResponse } from "forge-shared/dto/response/project
 import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
 import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectmakeinvitationrequest.dto";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
-import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectUpdateMemberRequest.dto";
+import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupdatememberrequest.dto";
 import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.dto";
 import { FailureResponse } from "forge-shared/dto/response/failureresponse.dto";
@@ -36,7 +36,12 @@ export class ProjectApiService {
 	}
 
 	public updateProject(projectId: string, projectUpdateRequest: ProjectUpdateRequest): Observable<ProjectResponse> {
-		return this.apiService.call<ProjectResponse, ProjectUpdateRequest>("PATCH", `project/${projectId}/update`, undefined, projectUpdateRequest);
+		return this.apiService.call<ProjectResponse, ProjectUpdateRequest>(
+			"PATCH",
+			`project/${projectId}/update`,
+			undefined,
+			projectUpdateRequest,
+		);
 	}
 
 	public newInvitation(
@@ -73,6 +78,11 @@ export class ProjectApiService {
 	}
 
 	public removeMember(projectId: string, memberEid: ProjectKickRequest): Observable<ProjectResponse> {
-		return this.apiService.call<ProjectResponse, ProjectKickRequest>("POST", `project/${projectId}/kick`, undefined, memberEid);
+		return this.apiService.call<ProjectResponse, ProjectKickRequest>(
+			"POST",
+			`project/${projectId}/kick`,
+			undefined,
+			memberEid,
+		);
 	}
 }

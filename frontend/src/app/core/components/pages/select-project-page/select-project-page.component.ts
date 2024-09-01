@@ -140,10 +140,10 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
-				console.log('editProject: ',response);
+				console.log("editProject: ", response);
 			},
 			error: (error) => {
-				console.log('editProject deu ruim');
+				console.log("editProject deu ruim");
 				console.error(error);
 			},
 		});
@@ -195,7 +195,6 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
-
 			},
 			error: (error) => {
 				console.error(error);
@@ -270,15 +269,14 @@ export class SelectProjectPageComponent implements OnInit {
 		const eidValue = this.memberEid.value;
 		const roleValue = Number(this.memberRole.value);
 		const adminValue = Boolean(this.isMemberAdmin.value);
-	
+
 		if (eidValue && roleValue) {
 			const request: ProjectUpdateMemberRequest = {
 				eid: eidValue,
 				role: roleValue,
 				admin: adminValue,
 			};
-	
-			
+
 			this.updateMember(this.projectInfo.eid, request);
 		} else {
 			// Se algum dos inputs for inválido, atualize a mensagem de erro conforme necessário
@@ -353,16 +351,28 @@ export class SelectProjectPageComponent implements OnInit {
 			this.popUpInvite = true;
 			this.projectName = projectTitle || "";
 			this.projectId = projectId || "";
-			console.log("Opening invite pop-up, popUpInvite:", this.popUpInvite, "projectName:", this.projectName, "projectId:", this.projectId);
+			console.log(
+				"Opening invite pop-up, popUpInvite:",
+				this.popUpInvite,
+				"projectName:",
+				this.projectName,
+				"projectId:",
+				this.projectId,
+			);
 			return;
 		}
 		if (popUp === "editMember") {
 			this.popUpEditMember = true;
 			this.currentMemberId = memberEid || "";
-			console.log("Opening edit member pop-up, popUpEditMember:", this.popUpEditMember, "currentMemberId:", this.currentMemberId);
+			console.log(
+				"Opening edit member pop-up, popUpEditMember:",
+				this.popUpEditMember,
+				"currentMemberId:",
+				this.currentMemberId,
+			);
 			return;
 		}
-	  }
+	}
 
 	closePopUp(popUp: string) {
 		if (popUp === "join") {
@@ -409,11 +419,14 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	copyToClipboard(value: string) {
-		navigator.clipboard.writeText(value).then(() => {
-		  console.log('Copied to clipboard:', value);
-		}).catch(err => {
-		  console.error('Failed to copy:', err);
-		});
+		navigator.clipboard
+			.writeText(value)
+			.then(() => {
+				console.log("Copied to clipboard:", value);
+			})
+			.catch((err) => {
+				console.error("Failed to copy:", err);
+			});
 	}
 
 	get enableNextButton(): boolean {

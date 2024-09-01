@@ -9,12 +9,12 @@
 			<mat-tab-group class="tabs">
 				<mat-tab label="Informations">
 					<div class="input-container">
-						<app-input 
+						<app-input
 							#updateProjectCode
-							for="code" 
-							label="Code" 
-							name="code" 
-							type="text" 
+							for="code"
+							label="Code"
+							name="code"
+							type="text"
 							[placeholder]="projectInfo.code"
 						></app-input>
 
@@ -38,7 +38,9 @@
 					</div>
 
 					<div class="action-buttons">
-						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">Save changes</button>
+						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">
+							Save changes
+						</button>
 						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
@@ -59,7 +61,9 @@
 									<mat-icon>more_vert</mat-icon>
 								</button>
 								<mat-menu #member_menu="matMenu">
-									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">Edit permissions</button>
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid)">
+										Edit permissions
+									</button>
 									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
@@ -103,8 +107,8 @@
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)" >
-						<div class="project-info" [ngClass]="{'active': selectedProjectId === project.eid}">
+					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
+						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
 							<p>{{ project.title }}:</p>
 							<span>{{ project.eid }}</span>
 							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
@@ -127,7 +131,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<button class="footer-next" disabled="true" [disabled]="enableNextButton" (click)="navigateTo('/')">Next</button>
 		</div>
@@ -141,7 +144,7 @@
 		description="Enter your project's code to get access to the project."
 		buttonName="Join"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('join')"
 		(onButtonClick)="handleButtonClick('join')"
 	>
@@ -163,7 +166,7 @@
 		description="Enter the information of your project."
 		buttonName="Create"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('create')"
 		(onButtonClick)="handleButtonClick('create')"
 	>
@@ -202,7 +205,7 @@
 		[title]="'Invite a person to ' + projectName"
 		buttonName="Make an invitation"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('invite')"
 		(onButtonClick)="handleButtonClick('invite')"
 	>
@@ -241,7 +244,7 @@
 		title="Edit member permissions"
 		buttonName="Save changes"
 		buttonCancelName="Cancel"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('editMember')"
 		(onButtonClick)="handleButtonClick('editMember')"
 	>
@@ -280,7 +283,7 @@
 		title="Copy the invitation link"
 		buttonName="Copy code"
 		buttonCancelName="Close"
-		[cancelButton]=true
+		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('inviteResult')"
 		(onButtonClick)="copyToClipboard(invitationResult)"
 	>
@@ -291,6 +294,5 @@
 				<mat-icon>content_copy</mat-icon>
 			</button>
 		</div>
-
 	</app-popup-component>
 }
