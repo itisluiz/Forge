@@ -26,6 +26,13 @@ export class UnauthorizedError extends ExternalHandlingError {
 	}
 }
 
+export class NotAuthenticatedError extends ExternalHandlingError {
+	constructor(message: string) {
+		super(message, 401, FailureType.NOTAUTHENTICATED);
+		this.name = "NotAuthenticatedError";
+	}
+}
+
 export class NotFoundError extends ExternalHandlingError {
 	constructor(message: string) {
 		super(message, 404, FailureType.NOTFOUND);
