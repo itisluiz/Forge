@@ -75,6 +75,7 @@
 								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 							</table>
 						}
+						<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
 					</mat-expansion-panel>
 				}
 			</mat-accordion>
