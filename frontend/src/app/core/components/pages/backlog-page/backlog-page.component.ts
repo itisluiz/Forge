@@ -22,6 +22,9 @@ import { ProjectApiService } from "../../../services/project-api.service";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { UserSelfResponse } from "forge-shared/dto/response/userselfresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
+import { TaskNewRequest } from "forge-shared/dto/request/tasknewrequest.dto";
+import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
+import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 
 export interface History {
 	type: string;
@@ -199,10 +202,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	tasksMap$: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }> = new Observable();
 	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
-	projectMembersMap: Record<string, ProjectMemberComposite> = {}; // Um mapa de membros do projeto para fácil acesso
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
 	popUpActive: boolean = false;
 	popUpAddToSprint: boolean = false;
+	popUpCreateTask: boolean = false;
 	clickedItemDetails: History = {
 		type: "",
 		key: "",
@@ -215,7 +219,9 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	};
 
 	addToSprintForm!: FormGroup;
+	createTaskForm!: FormGroup;
 	isPanelDisabled: boolean = false;
+	eidSelectedUserStory: string = "";
 
 	toggleExpansionPanel() {
 		this.isPanelDisabled = !this.isPanelDisabled;
@@ -290,6 +296,28 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
+	openPopUpCreateTask(userStoryEid: string) {
+		this.eidSelectedUserStory = userStoryEid;
+		this.popUpCreateTask = true;
+		document.body.style.overflow = "hidden";
+		this.buildCreateTaskForm();
+	}
+
+	buildCreateTaskForm() {
+		this.createTaskForm = this.formBuilder.group({
+			title: ["", [Validators.required, Validators.minLength(3)]],
+			responsible: ["", Validators.required],
+			description: ["", [Validators.required, Validators.minLength(3)]],
+			type: ["", Validators.required],
+		});
+	}
+	responsiblePersons = [
+		{ id: "1", name: "Alice" },
+		{ id: "2", name: "Bob" },
+		{ id: "3", name: "Charlie" },
+		// Adicione mais pessoas conforme necessário
+	];
+
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
 		if (backgroundPopUp) {
@@ -310,8 +338,49 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.toggleExpansionPanel();
 	}
 
+	closePopUpCreateTask() {
+		this.popUpCreateTask = false;
+		document.body.style.overflow = "auto";
+	}
+
 	submitAddToSprintForm() {
 		this.closePopUpAddToSprint();
+	}
+
+	submitCreateTaskForm() {
+		const title = this.createTaskForm.get("title");
+		const responsibleEid = this.createTaskForm.get("responsible");
+		const description = this.createTaskForm.get("description");
+		const type = this.createTaskForm.get("type");
+
+		const taskNewRequest = {
+			userstoryEid: this.eidSelectedUserStory,
+			responsibleEid: responsibleEid?.value,
+			title: title?.value,
+			description: description?.value,
+			type: parseFloat(type?.value),
+			status: TaskStatus.TODO,
+		} as TaskNewRequest;
+		this.createTask(taskNewRequest);
+		this.closePopUpCreateTask();
+	}
+
+	createTask(taskNewRequest: TaskNewRequest) {
+		this.taskApiService.newTask(taskNewRequest, this.projectEid).subscribe({
+			next: (task) => {
+				this.addNewTaskInDataSource(task);
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	addNewTaskInDataSource(task: TaskResponse) {
+		const dataSource = this.getTasksDataSource(task.userstoryEid);
+		dataSource.data = [...dataSource.data, task];
+		this.tasksDataSources[task.userstoryEid] = dataSource;
+		this.closePopUpCreateTask();
 	}
 
 	setTypeColor() {
@@ -452,5 +521,9 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	getProjectMemberFromMap(userEid: string): ProjectMemberComposite | null {
 		return this.projectMembersMap[userEid] || null;
+	}
+
+	getAllProjectMembers(): ProjectMemberComposite[] {
+		return Object.values(this.projectMembersMap);
 	}
 }
