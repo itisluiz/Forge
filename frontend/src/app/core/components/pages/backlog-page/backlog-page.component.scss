@@ -367,6 +367,25 @@ app-navbar {
 				}
 			}
 		}
+
+		.key {
+			span {
+				font-weight: 600;
+				color: v.$darkest-green-color;
+			}
+		}
+
+		.assignee {
+			.content {
+				display: flex;
+				align-items: center;
+				img {
+					width: 16px;
+					height: 16px;
+					border-radius: 50%;
+				}
+			}
+		}
 	}
 
 	.pop-up-footer {

@@ -204,7 +204,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
-	popUpActive: boolean = false;
+	popUpTask: boolean = false;
 	popUpAddToSprint: boolean = false;
 	popUpCreateTask: boolean = false;
 	clickedItemDetails: History = {
@@ -223,6 +223,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	isPanelDisabled: boolean = false;
 	eidSelectedUserStory: string = "";
 
+	selectedTask$: Observable<TaskResponse> = new Observable();
+
 	toggleExpansionPanel() {
 		this.isPanelDisabled = !this.isPanelDisabled;
 	}
@@ -230,57 +232,25 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	ngAfterViewInit(): void {
 		this.setTypeColor();
 		this.setStatusStyle();
-		this.popUpController();
 	}
 
-	popUpController() {
-		let elements = document.querySelectorAll(".mat-mdc-row");
-		const fields = ["type", "key", "subject", "status", "assignee", "priority", "created"];
+	openTaskPopUp(taskEid: string) {
+		this.selectedTask$ = this.taskApiService.getTask(this.projectEid, taskEid);
+		this.popUpTask = true;
+		setTimeout(() => {
+			// Wait for the pop-up to be rendered
+			this.setStatusStylePopUp();
+		}, 120);
+	}
 
-		elements.forEach((element) => {
-			this.renderer.listen(element, "click", (): any => {
-				const content = element.querySelectorAll(".mat-mdc-cell");
-				let array: any[] = [];
-
-				content.forEach((cell, index) => {
-					let text = cell.textContent?.trim() ?? "";
-					let svgName = "";
-
-					if (index === 5) {
-						const child = cell.firstElementChild;
-
-						if (child instanceof HTMLImageElement) {
-							const src = child.src;
-							svgName = src.substring(src.lastIndexOf("/") + 1).replace(".svg", "");
-						}
-					}
-
-					if (svgName != "") {
-						text = svgName;
-					}
-
-					array.push(text);
-
-					if (index < fields.length) {
-						if (text !== "") {
-							this.clickedItemDetails[fields[index] as keyof History] = text;
-						}
-					}
-				});
-
-				this.openPopUp();
-
-				setTimeout(() => {
-					this.setStatusStylePopUp(element);
-				}, 0);
-
-				return this.clickedItemDetails;
-			});
+	setStatusStylePopUp() {
+		this.statusPopUp.forEach((cell) => {
+			const { color, background, textDecoration, fontWeight } = this.determineStyle(cell.nativeElement.textContent.trim());
+			cell.nativeElement.style.backgroundColor = `${background}`;
+			cell.nativeElement.style.color = `${color}`;
+			cell.nativeElement.style.textDecoration = `${textDecoration}`;
+			cell.nativeElement.style.fontWeight = `${fontWeight}`;
 		});
-	}
-
-	openPopUp() {
-		this.popUpActive = true;
 	}
 
 	openPopUpAddToSprint() {
@@ -311,12 +281,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			type: ["", Validators.required],
 		});
 	}
-	responsiblePersons = [
-		{ id: "1", name: "Alice" },
-		{ id: "2", name: "Bob" },
-		{ id: "3", name: "Charlie" },
-		// Adicione mais pessoas conforme necessário
-	];
 
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
@@ -329,7 +293,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			popUp.classList.add("fade-out");
 		}
 		setTimeout(() => {
-			this.popUpActive = false;
+			this.popUpTask = false;
 		}, 200);
 	}
 
@@ -408,19 +372,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			cell.nativeElement.style.textDecoration = `${textDecoration}`;
 			cell.nativeElement.style.fontWeight = `${fontWeight}`;
 		});
-	}
-
-	setStatusStylePopUp(element: any) {
-		const status = element.querySelector(".mat-mdc-cell:nth-child(4)");
-		const { color, background, textDecoration, fontWeight } = this.determineStyle(status.textContent.trim());
-
-		const currentStatus = document.getElementById("container-status-pop");
-		if (currentStatus) {
-			currentStatus.style.backgroundColor = `${background}`;
-			currentStatus.style.color = `${color}`;
-			currentStatus.style.textDecoration = `${textDecoration}`;
-			currentStatus.style.fontWeight = `${fontWeight}`;
-		}
 	}
 
 	priorityParserString(priority: string) {
@@ -519,7 +470,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		return this.projectApiService.getEspecificProject(this.projectEid);
 	}
 
-	getProjectMemberFromMap(userEid: string): ProjectMemberComposite | null {
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
 		return this.projectMembersMap[userEid] || null;
 	}
 
