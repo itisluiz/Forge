@@ -1,3 +1,4 @@
+import { Priority } from "../../enum/priority.enum";
 import { TaskStatus } from "../../enum/taskstatus.enum";
 import { TaskType } from "../../enum/tasktype.enum";
 
@@ -25,6 +26,8 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           $ref: '#/components/schemas/TaskStatus'
  *         type:
  *           $ref: '#/components/schemas/TaskType'
+ *         priority:
+ *           $ref: '#/components/schemas/Priority'
  *         startedAt:
  *           type: string
  *           format: date-time
@@ -49,6 +52,7 @@ export interface TaskResponse {
 	description: string;
 	status: TaskStatus;
 	type: TaskType;
+	priority: Priority;
 	startedAt?: string;
 	completedAt?: string;
 	createdAt: string;

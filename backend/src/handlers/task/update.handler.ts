@@ -88,6 +88,7 @@ export default async function (req: Request, res: Response) {
 				...(taskUpdateRequest.description && { description: taskUpdateRequest.description }),
 				...(taskUpdateRequest.status && { etaskstatusId: taskUpdateRequest.status }),
 				...(taskUpdateRequest.type && { etasktypeId: taskUpdateRequest.type }),
+				...(taskUpdateRequest.priority && { epriorityId: taskUpdateRequest.priority }),
 				...(startedAt !== undefined && { startedAt: startedAt }),
 				...(completedAt !== undefined && { completedAt: completedAt }),
 			},
@@ -105,6 +106,10 @@ export default async function (req: Request, res: Response) {
 
 		if (error instanceof ForeignKeyConstraintError && error.table === "etasktypes") {
 			throw new BadRequestError("The task type you specified does not exist");
+		}
+
+		if (error instanceof ForeignKeyConstraintError && error.table === "epriorities") {
+			throw new BadRequestError("The priority you specified does not exist");
 		}
 
 		throw error;

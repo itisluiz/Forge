@@ -58,19 +58,21 @@
 					<div class="body-members">
 						@for (member of projectInfo.members; track member) {
 							<div class="member">
-								@if(member.admin) {
-									<p class="adm"> <mat-icon>admin_panel_settings</mat-icon> {{ member.name }}</p>
+								@if (member.admin) {
+									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }}</p>
 								} @else {
 									<p>{{ member.name }}</p>
 								}
-								
+
 								<p>{{ member.surname }}</p>
 								<p>{{ member.email }}</p>
 								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
 									<mat-icon>more_vert</mat-icon>
 								</button>
 								<mat-menu #member_menu="matMenu">
-									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">Edit permissions</button>
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">
+										Edit permissions
+									</button>
 									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
@@ -114,8 +116,8 @@
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)" >
-						<div class="project-info" [ngClass]="{'active': selectedProjectId === project.eid}">
+					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
+						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
 							<p>{{ project.code }}:</p>
 							<span>{{ project.title }}</span>
 
@@ -260,7 +262,12 @@
 			label="Role"
 			name="role"
 			type="text"
-			[options]="[{value: 1, label: 'Product Owner'}, {value: 2, label: 'Scrum Master'}, {value: 3, label: 'Developer'}, {value: 4, label: 'Tester'}]"
+			[options]="[
+				{ value: 1, label: 'Product Owner' },
+				{ value: 2, label: 'Scrum Master' },
+				{ value: 3, label: 'Developer' },
+				{ value: 4, label: 'Tester' }
+			]"
 		></app-select>
 	</app-popup-component>
 }
@@ -290,7 +297,12 @@
 			label="Role"
 			name="memberRole"
 			type="number"
-			[options]="[{value: 1, label: 'Product Owner'}, {value: 2, label: 'Scrum Master'}, {value: 3, label: 'Developer'}, {value: 4, label: 'Tester'}]"
+			[options]="[
+				{ value: 1, label: 'Product Owner' },
+				{ value: 2, label: 'Scrum Master' },
+				{ value: 3, label: 'Developer' },
+				{ value: 4, label: 'Tester' }
+			]"
 		></app-select>
 
 		<app-select
@@ -299,7 +311,10 @@
 			label="Admin"
 			name="isMemberAdmin"
 			type="boolean"
-			[options]="[{value: true, label: 'Yes'}, {value: false, label: 'No'}]"
+			[options]="[
+				{ value: true, label: 'Yes' },
+				{ value: false, label: 'No' }
+			]"
 			[errorMessage]="projectEditMemberError"
 		></app-select>
 	</app-popup-component>
