@@ -83,7 +83,9 @@ export class EpicsPageComponent implements OnInit {
 				);
 
 				return combineLatest(userStoriesObservables).pipe(
-					map((userStoriesArray) => userStoriesArray.reduce((acc, curr) => ({ ...acc, ...curr }), {})),
+					map((userStoriesArray) =>
+						userStoriesArray.filter((entry) => entry !== null).reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+					),
 				);
 			}),
 			shareReplay(1),
