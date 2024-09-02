@@ -52,4 +52,3 @@ export class UserstoryApiService {
 		return this.apiService.call<UserstorySelfResponse>("GET", `userstory/${projectEid}/${sprintEid}/selfbysprint`);
 	}
 }
-
