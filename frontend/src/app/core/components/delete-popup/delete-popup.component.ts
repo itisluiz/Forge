@@ -13,6 +13,7 @@ import { MatButtonModule } from "@angular/material/button";
 export class DeletePopupComponent {
 	@Input() title: string = "";
 	@Input() description: string = "";
+	@Input() confirmButtonLabel: string = "Delete";
 	@Output() confirmDeleteEmmiter = new EventEmitter<string>();
 	@Output() cancelEmitter = new EventEmitter<void>();
 

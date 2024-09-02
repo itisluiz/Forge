@@ -42,6 +42,7 @@ export class InputComponent implements OnInit, OnDestroy {
 	@Input() input?: any;
 	@Input() hidden: boolean = false;
 	@Input() disabled: boolean = false;
+	@Input() defaultValue: string = "";
 
 	@ViewChild("inputRef", { static: true }) inputElement!: ElementRef;
 

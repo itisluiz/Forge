@@ -1,7 +1,8 @@
 <label for="{{for}}">{{label}}</label>
 <select name="{{name}}" #inputRef [(ngModel)]="selectedOption">
+	@if (dontChangeOption) {
 	<option [ngValue]="null">Don't change</option>
-	@for(opt of options; track opt) {
+	} @for(opt of options; track opt) {
 	<option value="{{opt.value}}">{{opt.label}}</option>
 	}
 </select>

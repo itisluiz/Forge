@@ -42,7 +42,10 @@
 				<span *ngIf="isFieldInvalid('passwordConfirm')"> <mat-icon>error</mat-icon> {{ passwordErrorMessage }} </span>
 			</p>
 			<p class="form-failed" *ngIf="signupFailed"><mat-icon>error</mat-icon> {{ overallErrorMessage }}</p>
-			<button type="submit" [disabled]="signupForm.invalid">Next</button>
+			<button type="submit" [disabled]="signupForm.invalid || signupLoading" [class.loading]="signupLoading">
+				{{ signupLoading ? "" : "Next" }}
+				<span class="loading-spinner"></span>
+			</button>
 		</form>
 		<p class="forgot-label">Already have an account? <span (click)="navigateTo('/login')">Sign in</span></p>
 	</div>
