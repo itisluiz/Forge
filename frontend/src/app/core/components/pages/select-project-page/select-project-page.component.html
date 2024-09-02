@@ -139,10 +139,10 @@
 									<button mat-menu-item (click)="editProject(project.eid)">
 										<span>Edit information</span>
 									</button>
+									<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
+										<span>Invite a person</span>
+									</button>
 								}
-								<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
-									<span>Invite a person</span>
-								</button>
 								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, project.eid)">
 									<span>Leave project</span>
 								</button>
@@ -259,6 +259,7 @@
 		[title]="'Invite a person to ' + projectName"
 		buttonName="Make an invitation"
 		buttonCancelName="Cancel"
+		[loading]="loadingMakeInvite"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('invite')"
 		(onButtonClick)="handleButtonClick('invite')"
@@ -270,6 +271,7 @@
 			name="quantity"
 			type="number"
 			placeholder="Number of uses"
+			innerHTML="1"
 		></app-input>
 
 		<app-input
@@ -279,6 +281,7 @@
 			name="duration"
 			type="number"
 			placeholder="Number of hours"
+			innerHTML="24"
 		></app-input>
 
 		<app-select
@@ -325,6 +328,7 @@
 			label="Role"
 			name="memberRole"
 			type="number"
+			[dontChangeOption]="true"
 			[options]="[
 				{ value: 1, label: 'Product Owner' },
 				{ value: 2, label: 'Scrum Master' },
@@ -343,6 +347,7 @@
 				{ value: true, label: 'Yes' },
 				{ value: false, label: 'No' }
 			]"
+			[dontChangeOption]="true"
 			[errorMessage]="projectEditMemberError"
 		></app-select>
 	</app-popup-component>
@@ -350,17 +355,27 @@
 
 @if (popUpInviteResult) {
 	<app-popup-component
-		title="Copy the invitation link"
-		buttonName="Copy code"
+		title="Copy the invitation code"
+		buttonName="Copy URL"
 		buttonCancelName="Close"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('inviteResult')"
-		(onButtonClick)="copyToClipboard(invitationResult)"
+		(onButtonClick)="copyToClipboard(makeInvitationUrl(invitationResult))"
 	>
+		<h4>Manually use the code</h4>
 		<div class="fake-input">
 			<p>{{ invitationResult }}</p>
 
 			<button class="button-icon" mat-icon-button (click)="copyToClipboard(invitationResult)">
+				<mat-icon>content_copy</mat-icon>
+			</button>
+		</div>
+
+		<h4>Or share the URL</h4>
+		<div class="copy-link fake-input">
+			<p class="link">{{ makeInvitationUrl(invitationResult) }}</p>
+
+			<button class="button-icon" mat-icon-button (click)="copyToClipboard(makeInvitationUrl(invitationResult))">
 				<mat-icon>content_copy</mat-icon>
 			</button>
 		</div>
@@ -384,6 +399,7 @@
 	<app-delete-popup
 		[title]="'Leave Project'"
 		[description]="'Are you sure you want to leave this project? You cannot go back on this action.'"
+		confirmButtonLabel="Leave"
 		(cancelEmitter)="closePopUp('leaveConfirm')"
 		(confirmDeleteEmmiter)="leaveProject(projectId)"
 	></app-delete-popup>

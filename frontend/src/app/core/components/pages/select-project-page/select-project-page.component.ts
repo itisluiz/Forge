@@ -98,6 +98,7 @@ export class SelectProjectPageComponent implements OnInit {
 	public validProjectUpdateForm = true;
 	public validProjectJoinForm = false;
 	public loadingSaveProjectUpdate = false;
+	public loadingMakeInvite = false;
 
 	constructor(
 		private projectApiService: ProjectApiService,
@@ -106,6 +107,16 @@ export class SelectProjectPageComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getProjects();
+		const urlParams = new URLSearchParams(window.location.search);
+
+		const inviteCode = urlParams.get("inviteCode");
+		if (inviteCode && inviteCode.length === 24) {
+			console.log("Invite Code:", inviteCode);
+			urlParams.delete("inviteCode");
+			window.history.replaceState({}, "", window.location.pathname);
+
+			this.joinProject(inviteCode);
+		}
 	}
 
 	selectProject(projectId: string) {
@@ -267,9 +278,11 @@ export class SelectProjectPageComponent implements OnInit {
 				this.invitationResult = result.invitation.code;
 				this.popUpInviteResult = true;
 				this.popUpInvite = false;
+				this.loadingMakeInvite = false;
 			},
 			error: (error) => {
 				console.error(error);
+				this.loadingMakeInvite = false;
 			},
 		});
 	}
@@ -344,11 +357,12 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	handleInviteProject() {
-		const usesValue = Number(this.projectInviteUses.value);
+		const usesValue = Math.floor(Number(this.projectInviteUses.value));
 		const durationValue = Number(this.projectInviteDuration.value);
-		const roleValue: ProjectRole = Number(this.projectInviteRole.value) as ProjectRole;
+		const roleValue = Number(this.projectInviteRole.value) as ProjectRole;
 
 		if (usesValue && durationValue && roleValue) {
+			this.loadingMakeInvite = true;
 			const request: ProjectMakeInvitationRequest = {
 				uses: usesValue,
 				durationHours: durationValue,
@@ -519,6 +533,10 @@ export class SelectProjectPageComponent implements OnInit {
 
 	navigateTo(route: string) {
 		this.router.navigate([route]);
+	}
+
+	makeInvitationUrl(invitationCode: string): string {
+		return window.location.origin + `/select-project?inviteCode=${invitationCode}`;
 	}
 
 	copyToClipboard(value: string) {

@@ -14,6 +14,15 @@
 	p {
 		font-size: v.$paragraph-font;
 		color: v.$black-color;
+		text-wrap: nowrap;
+		overflow: hidden;
+	}
+
+	.link {
+		margin-top: 1em;
+		color: v.$green-color;
+		text-decoration: underline;
+		cursor: pointer;
 	}
 
 	button {
@@ -410,5 +419,17 @@ select {
 	}
 	100% {
 		transform: rotate(360deg);
+	}
+}
+
+h4 {
+	font-weight: 500;
+}
+
+.copy-link {
+	p {
+		font-size: v.$paragraph-font;
+		color: v.$black-color;
+		margin-bottom: 16px;
 	}
 }

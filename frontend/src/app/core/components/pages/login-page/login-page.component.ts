@@ -18,6 +18,7 @@ export class LoginPageComponent implements OnInit {
 	loginForm!: FormGroup;
 	loginFailed: boolean = false;
 	formSubmitted: boolean = false;
+	public loginLoading: boolean = false;
 
 	constructor(
 		private userApiService: UserApiService,
@@ -44,12 +45,15 @@ export class LoginPageComponent implements OnInit {
 				password: this.loginForm.get("password")!.value,
 			};
 
+			this.loginLoading = true;
 			this.userApiService.signin(request).subscribe({
 				next: (result) => {
 					this.router.navigate(["/select-project"]);
+					this.loginLoading = false;
 				},
 				error: (error: ApiErrorResponse) => {
 					this.loginFailed = true;
+					this.loginLoading = false;
 				},
 			});
 		}
