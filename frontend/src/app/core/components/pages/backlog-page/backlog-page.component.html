@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="backlog-grid sprint">
-			<ng-container *ngIf="currentSprint$ | async as currentSprint">
+			<ng-container *ngIf="currentSprint$ | async as currentSprint; else noCurrentSprint">
 				<div class="title">
 					<div class="left">
 						<div class="left-content">
@@ -26,6 +26,7 @@
 							</div>
 						</div>
 						<p class="desc">Current Sprint</p>
+						<p>Status: {{ sprintStatusParser(currentSprint.status) }}</p>
 					</div>
 
 					<div class="right">
@@ -44,7 +45,7 @@
 								<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 								<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							</mat-expansion-panel-header>
-							@if (getTasksDataSource(userstory.eid).data.length > 0) {
+							@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 								<table
 									mat-table
 									[dataSource]="getTasksDataSource(userstory.eid)"
@@ -111,6 +112,12 @@
 					}
 				</mat-accordion>
 			</ng-container>
+			<ng-template #noCurrentSprint>
+				<div class="no-sprint">
+					<h3>No current sprint available. Please create a new sprint.</h3>
+					<button class="green-button" (click)="openPopUpCreateSprint()">Create new Sprint</button>
+				</div>
+			</ng-template>
 		</div>
 
 		<div class="backlog-grid">
@@ -123,7 +130,7 @@
 							<span>items</span>
 						</div>
 					</div>
-					<p class="desc">Breve descrição do que será feito na task</p>
+					<p class="desc">Find below the list of all User Stories</p>
 				</div>
 
 				<div class="right">
@@ -395,6 +402,44 @@
 			<div class="pop-up-footer">
 				<button type="submit" [disabled]="createTaskForm.invalid">Create</button>
 				<button class="cancel-epic" (click)="closePopUpCreateTask()">Cancel</button>
+			</div>
+		</form>
+	</div>
+}
+
+@if (popUpCreateSprint) {
+	<div class="pop-up-background" (click)="closePopUpCreateSprint()"></div>
+	<div class="epic-pop-up">
+		<div class="epic-pop-up-header">
+			<h2>Create a Sprint</h2>
+			<p>Fill in the necessary information to create a sprint.</p>
+		</div>
+		<form [formGroup]="createSprintForm" class="pop-up-form" (ngSubmit)="submitCreateSprintForm()">
+			<div class="pop-up-form-content">
+				<div class="input-wrapper">
+					<label for="sprint-starts-at">Starts at</label>
+					<input
+						type="date"
+						id="sprint-starts-at"
+						name="sprint-starts-at"
+						formControlName="startDate"
+						placeholder="Insert the start date of the sprint"
+					/>
+				</div>
+				<div class="input-wrapper">
+					<label for="sprint-ends-at">Ends at</label>
+					<input
+						type="date"
+						id="sprint-ends-at"
+						name="sprint-ends-at"
+						formControlName="endDate"
+						placeholder="Insert the end date of the sprint"
+					/>
+				</div>
+			</div>
+			<div class="pop-up-footer">
+				<button type="submit" [disabled]="createSprintForm.invalid">Create</button>
+				<button class="cancel-epic" (click)="closePopUpCreateSprint()">Cancel</button>
 			</div>
 		</form>
 	</div>
