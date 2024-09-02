@@ -33,6 +33,8 @@ export class PopupComponent implements OnInit, OnDestroy {
 	@Input() buttonName!: string;
 	@Input() buttonCancelName!: string;
 	@Input() cancelButton!: boolean;
+	@Input() buttonEnabled: boolean = true;
+	@Input() loading: boolean = false;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() onButtonClick = new EventEmitter<void>();
 

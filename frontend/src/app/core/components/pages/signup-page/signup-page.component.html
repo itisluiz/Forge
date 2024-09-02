@@ -16,7 +16,7 @@
 		<form [formGroup]="signupForm" class="signup-form" (ngSubmit)="signup()">
 			<div class="name-input">
 				<p class="left">
-					<label for="name">Nome</label>
+					<label for="name">Name</label>
 					<input type="text" formControlName="name" placeholder="Ex: Peter" />
 					<span *ngIf="isFieldInvalid('name')"> <mat-icon>error</mat-icon> {{ nameErrorMessage }} </span>
 				</p>

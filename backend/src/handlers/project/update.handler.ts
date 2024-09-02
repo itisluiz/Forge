@@ -20,7 +20,7 @@ export default async function (req: Request, res: Response) {
 		});
 		project.set(
 			{
-				...(projectUpdateRequest.code && { code: projectUpdateRequest.code }),
+				...(projectUpdateRequest.code && { code: projectUpdateRequest.code.toUpperCase() }),
 				...(projectUpdateRequest.title && { title: projectUpdateRequest.title }),
 				...(projectUpdateRequest.description && { description: projectUpdateRequest.description }),
 			},

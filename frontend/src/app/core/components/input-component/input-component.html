@@ -1,5 +1,15 @@
 <label for="{{for}}">{{label}}</label>
-<input name="{{name}}" type="{{type}}" placeholder="{{placeholder}}" #inputRef />
+<input
+	(input)="input"
+	[disabled]="disabled"
+	[hidden]="hidden"
+	[minLength]="minLength"
+	[maxLength]="maxLength"
+	name="{{name}}"
+	type="{{type}}"
+	placeholder="{{placeholder}}"
+	#inputRef
+/>
 
 @if (errorMessage) {
 

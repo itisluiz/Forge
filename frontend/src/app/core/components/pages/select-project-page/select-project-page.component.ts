@@ -21,6 +21,7 @@ import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequ
 import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.dto";
 import { SelectComponent } from "../../select-component/select-component";
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
+import { ProjectRolePipe } from "../../../pipes/project-role.pipe";
 
 @Component({
 	selector: "app-select-project-page",
@@ -35,6 +36,7 @@ import { DeletePopupComponent } from "../../delete-popup/delete-popup.component"
 		MatTabsModule,
 		SelectComponent,
 		DeletePopupComponent,
+		ProjectRolePipe,
 	],
 	templateUrl: "./select-project-page.component.html",
 	styleUrl: "./select-project-page.component.scss",
@@ -55,8 +57,12 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("updateProjectDescription") updateProjectDescription!: InputComponent;
 
 	@ViewChild("memberEid") memberEid!: InputComponent;
-	@ViewChild("memberRole") memberRole!: InputComponent;
-	@ViewChild("isMemberAdmin") isMemberAdmin!: InputComponent;
+	@ViewChild("memberRole") memberRole!: SelectComponent;
+	@ViewChild("isMemberAdmin") isMemberAdmin!: SelectComponent;
+
+	@ViewChild("popupCreateProjectRef") popupCreateProjectRef!: PopupComponent;
+	@ViewChild("popupUpdateMemberRef") popupUpdateMemberRef!: PopupComponent;
+	@ViewChild("popupJoinRef") popupJoinRef!: PopupComponent;
 
 	public dataSource!: ProjectSelfComposite[];
 
@@ -89,6 +95,10 @@ export class SelectProjectPageComponent implements OnInit {
 	public projectEditMemberError: string = "";
 	public projectUpdateError: string = "";
 
+	public validProjectUpdateForm = true;
+	public validProjectJoinForm = false;
+	public loadingSaveProjectUpdate = false;
+
 	constructor(
 		private projectApiService: ProjectApiService,
 		private router: Router,
@@ -100,6 +110,16 @@ export class SelectProjectPageComponent implements OnInit {
 
 	selectProject(projectId: string) {
 		this.selectedProjectId = projectId;
+	}
+
+	revalidateProjectUpdateForm() {
+		const valid = this.updateProjectCode.valid && this.updateProjectName.valid && this.updateProjectDescription.valid;
+		this.validProjectUpdateForm = valid;
+	}
+
+	revalidateProjectJoinForm() {
+		const valid = this.projectJoin.valid;
+		this.validProjectJoinForm = valid;
 	}
 
 	createProject(projectNewRequest: ProjectNewRequest) {
@@ -150,9 +170,11 @@ export class SelectProjectPageComponent implements OnInit {
 			next: (result) => {
 				console.log(result);
 				this.getProjects();
+				this.popupJoinRef.loading = false;
 				this.popUpJoin = false;
 			},
 			error: (error) => {
+				this.popupJoinRef.loading = false;
 				console.error(error);
 			},
 		});
@@ -173,6 +195,7 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	updateProject(projectId: string) {
+		this.loadingSaveProjectUpdate = true;
 		const request: ProjectUpdateRequest = {
 			code: this.updateProjectCode.value,
 			title: this.updateProjectName.value,
@@ -189,10 +212,12 @@ export class SelectProjectPageComponent implements OnInit {
 				console.log("updateProject(): ", result);
 				this.projectUpdateError = "";
 				this.getProjects();
+				this.loadingSaveProjectUpdate = false;
 				this.editMode = false;
 			},
 			error: (error) => {
 				console.error(error);
+				this.loadingSaveProjectUpdate = false;
 				this.projectUpdateError = "Invalid input. Please, check your project details and try again.";
 			},
 		});
@@ -257,9 +282,13 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.updateMember(projectId, projectUpdateMemberRequest).subscribe({
 			next: (result) => {
 				console.log(result);
+				this.popupUpdateMemberRef.loading = false;
+				this.popUpEditMember = false;
+				this.getEspeficProject(projectId);
 			},
 			error: (error) => {
 				console.error(error);
+				this.popupUpdateMemberRef.loading = false;
 			},
 		});
 	}
@@ -301,43 +330,17 @@ export class SelectProjectPageComponent implements OnInit {
 
 	handleEditMember() {
 		const eidValue = this.memberEid.value;
-		const roleValue = Number(this.memberRole.value);
-		const adminValue = this.isMemberAdmin.value.toString();
+		const roleValue = this.memberRole.valueRaw !== null ? Number(this.memberRole.valueRaw) : undefined;
+		const adminValue = this.isMemberAdmin.valueRaw === null ? undefined : this.isMemberAdmin.valueRaw === "true";
 
-		if (eidValue && roleValue >= 1 && roleValue <= 4 && adminValue) {
-			const request: ProjectUpdateMemberRequest = {
-				eid: eidValue,
-				role: roleValue,
-				admin: adminValue === "true" ? true : undefined,
-			};
+		const request: ProjectUpdateMemberRequest = {
+			eid: eidValue,
+			role: roleValue,
+			admin: adminValue,
+		};
 
-			if (adminValue === "false") {
-				this.getEspeficProject(this.projectInfo.eid);
-				this.projectInfo.members.forEach((member) => {
-					if (member.eid === eidValue) {
-						console.log("member.admin: ", member.eid, eidValue);
-						if (member.admin) {
-							console.log("member.admin: ", member.admin);
-							this.projectEditMemberError = "You cannot remove admin from this user. Just the role was updated.";
-							return;
-						}
-					}
-				});
-			}
-
-			if (adminValue === "true") {
-				this.projectEditMemberError = "";
-			}
-
-			this.updateMember(this.projectInfo.eid, request);
-		} else {
-			if (adminValue === "false") {
-				this.projectEditMemberError = "Error: You cannot remove admin from this user.";
-				return;
-			}
-
-			this.projectEditMemberError = "Invalid input. Please, check your member details and try again.";
-		}
+		this.popupUpdateMemberRef.loading = true;
+		this.updateMember(this.projectInfo.eid, request);
 	}
 
 	handleInviteProject() {
@@ -359,16 +362,22 @@ export class SelectProjectPageComponent implements OnInit {
 		}
 	}
 
-	handleCreateProject() {
-		const titleValue = this.projectTitleCreate.value;
-		const descriptionValue = this.projectDescriptionCreate.value;
-		const codeValue = this.projectCodeCreate.value;
+	revalidateProjectCreateForm() {
+		const valid = this.projectTitleCreate.valid && this.projectDescriptionCreate.valid && this.projectCodeCreate.valid;
+		this.popupCreateProjectRef.buttonEnabled = valid;
+	}
 
-		if (titleValue && descriptionValue && codeValue.length === 3) {
+	handleCreateProject() {
+		this.popupCreateProjectRef.loading = true;
+		const title = this.projectTitleCreate;
+		const description = this.projectDescriptionCreate;
+		const code = this.projectCodeCreate;
+
+		if (title.valid && description.valid && code.valid) {
 			const request: ProjectNewRequest = {
-				title: titleValue,
-				description: descriptionValue,
-				code: codeValue,
+				title: title.value,
+				description: description.value,
+				code: code.value,
 			};
 
 			this.createProject(request);
@@ -384,6 +393,7 @@ export class SelectProjectPageComponent implements OnInit {
 		const inputValue = this.projectJoin.value;
 
 		if (this.isValidProjectCode(inputValue)) {
+			this.popupJoinRef.loading = true;
 			this.joinProject(inputValue);
 			this.projectCodeError = "";
 		} else {
@@ -394,6 +404,7 @@ export class SelectProjectPageComponent implements OnInit {
 
 	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string, isMemberAdmin?: boolean) {
 		if (popUp === "join") {
+			this.validProjectJoinForm = false;
 			this.popUpJoin = true;
 			console.log("Opening join pop-up, popUpJoin:", this.popUpJoin);
 			return;
