@@ -18,4 +18,8 @@ export class TaskApiService {
 	public newTask(taskNewRequest: TaskNewRequest, projectEid: string): Observable<TaskResponse> {
 		return this.apiService.call<TaskResponse, TaskNewRequest>("POST", `task/${projectEid}/new`, undefined, taskNewRequest);
 	}
+
+	public getTask(projectEid: string, taskEid: string): Observable<TaskResponse> {
+		return this.apiService.call<TaskResponse>("GET", `task/${projectEid}/${taskEid}/get`);
+	}
 }

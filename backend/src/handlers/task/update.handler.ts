@@ -65,6 +65,8 @@ export default async function (req: Request, res: Response) {
 				completedAt = null;
 				break;
 			case TaskStatus.INPROGRESS:
+			case TaskStatus.AVAILABLETOREVIEW:
+			case TaskStatus.REVIEWING:
 				completedAt = null;
 				if (!task.dataValues.startedAt) {
 					startedAt = new Date();

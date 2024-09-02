@@ -6,7 +6,7 @@ import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { Observable, combineLatest, forkJoin, of, throwError } from "rxjs";
-import { catchError, map, mergeMap, shareReplay, switchMap } from "rxjs/operators";
+import { catchError, filter, map, mergeMap, shareReplay, switchMap } from "rxjs/operators";
 import { ActivatedRoute } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
@@ -25,80 +25,14 @@ import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmember
 import { TaskNewRequest } from "forge-shared/dto/request/tasknewrequest.dto";
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
-
-export interface History {
-	type: string;
-	key: string;
-	subject: string;
-	description: string;
-	status: string;
-	assignee: string;
-	priority: string;
-	created: string;
-}
-
-const historiesData: History[] = [
-	{
-		type: "Feature",
-		key: "TASK-001",
-		subject: "Implement login functionality",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "In Progress",
-		assignee: "John Doe",
-		priority: "High",
-		created: "2022-01-01",
-	},
-	{
-		type: "Bug",
-		key: "BUG-001",
-		subject: "Fix navigation bar alignment",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "Backlog",
-		assignee: "Jane Smith",
-		priority: "Medium",
-		created: "2022-01-02",
-	},
-	{
-		type: "Tests",
-		key: "BUG-001",
-		subject: "Fix navigation bar alignment",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "Done",
-		assignee: "Jane Smith",
-		priority: "Low",
-		created: "2022-01-02",
-	},
-	{
-		type: "Feature",
-		key: "TASK-001",
-		subject: "Implement login functionality",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "In Progress",
-		assignee: "John Doe",
-		priority: "High",
-		created: "2022-01-01",
-	},
-	{
-		type: "Feature",
-		key: "BUG-001",
-		subject: "Fix navigation bar alignment",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "In Progress",
-		assignee: "Jane Smith",
-		priority: "Medium",
-		created: "2022-01-02",
-	},
-	{
-		type: "Tests",
-		key: "BUG-001",
-		subject: "Fix navigation bar alignment",
-		description: "Como usuário, desejo um novo menu para cadastro de tarefas que seja intuitivo e eficiente.",
-		status: "Done",
-		assignee: "Jane Smith",
-		priority: "Low",
-		created: "2022-01-02",
-	},
-];
+import { SprintApiService } from "../../../services/sprint-api.service";
+import { SprintPeriodStatus } from "forge-shared/enum/sprintperiodstatus.enum";
+import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse.dto";
+import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
+import { UserstoryApiService } from "../../../services/userstory-api.service";
+import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
+import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
+import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 
 @Component({
 	selector: "app-backlog-page",
@@ -126,6 +60,10 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		}),
 	);
 
+	userStoriesInBacklog$: Observable<UserstorySelfComposite[]> = this.allUserStories$.pipe(
+		map((userStories) => userStories.filter((userStory) => !userStory.sprintEid)),
+	);
+
 	getUserStories(epicEid: string): Observable<UserstorySelfComposite[]> {
 		return this.epicApiService.getEpic(this.projectEid, epicEid).pipe(
 			map((epicResponse: EpicResponse) => {
@@ -133,6 +71,30 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			}),
 		);
 	}
+
+	allSprints$: Observable<SprintSelfResponse> = this.sprintApiService.self(this.projectEid).pipe(
+		map((response) => {
+			return response;
+		}),
+	);
+
+	currentAndFutureSprints$: Observable<SprintSelfComposite[]> = this.allSprints$.pipe(
+		map((response) => {
+			return response.sprints.filter(
+				(sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
+			);
+		}),
+	);
+
+	currentSprint$: Observable<SprintSelfComposite> = this.allSprints$.pipe(
+		map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
+		filter((sprint): sprint is SprintSelfComposite => sprint !== undefined), // Filtra valores undefined
+	);
+
+	userStoriesInCurrentSprint$: Observable<UserstorySelfComposite[]> = this.currentSprint$.pipe(
+		switchMap((sprint) => this.userstoryApiService.selfBySprint(this.projectEid, sprint.eid)),
+		map((response) => response.userstories),
+	);
 
 	@ViewChildren("itemCell")
 	itemCell!: QueryList<ElementRef>;
@@ -147,12 +109,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	table!: MatTable<History>;
 
 	constructor(
-		private renderer: Renderer2,
 		private route: ActivatedRoute,
 		private epicApiService: EpicApiService,
 		private formBuilder: FormBuilder,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
+		private sprintApiService: SprintApiService,
+		private userstoryApiService: UserstoryApiService,
 	) {}
 
 	ngOnInit(): void {
@@ -198,30 +161,24 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	}
 
 	displayedColumns: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
-	dataSource = [...historiesData];
 
 	tasksMap$: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }> = new Observable();
 	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
-	popUpActive: boolean = false;
+	popUpTask: boolean = false;
 	popUpAddToSprint: boolean = false;
 	popUpCreateTask: boolean = false;
-	clickedItemDetails: History = {
-		type: "",
-		key: "",
-		subject: "",
-		description: "",
-		status: "",
-		assignee: "",
-		priority: "",
-		created: "",
-	};
+	popUpCreateSprint: boolean = false;
 
 	addToSprintForm!: FormGroup;
 	createTaskForm!: FormGroup;
+	createSprintForm!: FormGroup;
+
 	isPanelDisabled: boolean = false;
 	eidSelectedUserStory: string = "";
+
+	selectedTask$: Observable<TaskResponse> = new Observable();
 
 	toggleExpansionPanel() {
 		this.isPanelDisabled = !this.isPanelDisabled;
@@ -230,60 +187,29 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	ngAfterViewInit(): void {
 		this.setTypeColor();
 		this.setStatusStyle();
-		this.popUpController();
 	}
 
-	popUpController() {
-		let elements = document.querySelectorAll(".mat-mdc-row");
-		const fields = ["type", "key", "subject", "status", "assignee", "priority", "created"];
+	openTaskPopUp(taskEid: string) {
+		this.selectedTask$ = this.taskApiService.getTask(this.projectEid, taskEid);
+		this.popUpTask = true;
+		setTimeout(() => {
+			// Wait for the pop-up to be rendered
+			this.setStatusStylePopUp();
+		}, 205);
+	}
 
-		elements.forEach((element) => {
-			this.renderer.listen(element, "click", (): any => {
-				const content = element.querySelectorAll(".mat-mdc-cell");
-				let array: any[] = [];
-
-				content.forEach((cell, index) => {
-					let text = cell.textContent?.trim() ?? "";
-					let svgName = "";
-
-					if (index === 5) {
-						const child = cell.firstElementChild;
-
-						if (child instanceof HTMLImageElement) {
-							const src = child.src;
-							svgName = src.substring(src.lastIndexOf("/") + 1).replace(".svg", "");
-						}
-					}
-
-					if (svgName != "") {
-						text = svgName;
-					}
-
-					array.push(text);
-
-					if (index < fields.length) {
-						if (text !== "") {
-							this.clickedItemDetails[fields[index] as keyof History] = text;
-						}
-					}
-				});
-
-				this.openPopUp();
-
-				setTimeout(() => {
-					this.setStatusStylePopUp(element);
-				}, 0);
-
-				return this.clickedItemDetails;
-			});
+	setStatusStylePopUp() {
+		this.statusPopUp.forEach((cell) => {
+			const { color, background, textDecoration, fontWeight } = this.determineStyle(cell.nativeElement.textContent.trim());
+			cell.nativeElement.style.backgroundColor = `${background}`;
+			cell.nativeElement.style.color = `${color}`;
+			cell.nativeElement.style.textDecoration = `${textDecoration}`;
+			cell.nativeElement.style.fontWeight = `${fontWeight}`;
 		});
 	}
 
-	openPopUp() {
-		this.popUpActive = true;
-	}
-
-	openPopUpAddToSprint() {
+	openPopUpAddToSprint(userStoryEid: string) {
+		this.eidSelectedUserStory = userStoryEid;
 		this.popUpAddToSprint = true;
 		this.toggleExpansionPanel();
 		document.body.style.overflow = "hidden";
@@ -309,14 +235,34 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			responsible: ["", Validators.required],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			type: ["", Validators.required],
+			priority: ["", Validators.required],
 		});
 	}
-	responsiblePersons = [
-		{ id: "1", name: "Alice" },
-		{ id: "2", name: "Bob" },
-		{ id: "3", name: "Charlie" },
-		// Adicione mais pessoas conforme necessário
-	];
+
+	openPopUpCreateSprint() {
+		this.popUpCreateSprint = true;
+		document.body.style.overflow = "hidden";
+		this.buildCreateSprintForm();
+	}
+
+	buildCreateSprintForm() {
+		this.createSprintForm = this.formBuilder.group({
+			startDate: [this.getCurrentDate(), Validators.required],
+			endDate: [this.getDateAfterDays(15), Validators.required],
+		});
+	}
+
+	private getCurrentDate(): string {
+		const today = new Date();
+		return today.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+	}
+
+	// Método para obter a data após um número específico de dias a partir da data atual
+	private getDateAfterDays(days: number): string {
+		const date = new Date();
+		date.setDate(date.getDate() + days);
+		return date.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+	}
 
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
@@ -329,7 +275,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			popUp.classList.add("fade-out");
 		}
 		setTimeout(() => {
-			this.popUpActive = false;
+			this.popUpTask = false;
 		}, 200);
 	}
 
@@ -343,8 +289,36 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "auto";
 	}
 
+	closePopUpCreateSprint() {
+		this.popUpCreateSprint = false;
+		document.body.style.overflow = "auto";
+	}
+
 	submitAddToSprintForm() {
-		this.closePopUpAddToSprint();
+		const sprintEid = this.addToSprintForm.get("sprint");
+		const userStoryUpdateRequest = { sprintEid: sprintEid?.value };
+		this.userstoryApiService
+			.updateUserstories(this.projectEid, this.eidSelectedUserStory, userStoryUpdateRequest)
+			.subscribe({
+				next: () => {
+					this.closePopUpAddToSprint();
+					this.updateAllUserStoriesPlacement();
+				},
+				error: (error) => {
+					console.log(error.error.message);
+				},
+			});
+	}
+
+	updateAllUserStoriesPlacement() {
+		this.userStoriesInCurrentSprint$ = this.currentSprint$.pipe(
+			switchMap((sprint) => this.userstoryApiService.selfBySprint(this.projectEid, sprint.eid)),
+			map((response) => response.userstories),
+		);
+
+		this.userStoriesInBacklog$ = this.allUserStories$.pipe(
+			map((userStories) => userStories.filter((userStory) => !userStory.sprintEid)),
+		);
 	}
 
 	submitCreateTaskForm() {
@@ -352,17 +326,64 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		const responsibleEid = this.createTaskForm.get("responsible");
 		const description = this.createTaskForm.get("description");
 		const type = this.createTaskForm.get("type");
+		const priority = this.createTaskForm.get("priority");
 
 		const taskNewRequest = {
 			userstoryEid: this.eidSelectedUserStory,
 			responsibleEid: responsibleEid?.value,
 			title: title?.value,
 			description: description?.value,
-			type: parseFloat(type?.value),
+			type: parseInt(type?.value),
 			status: TaskStatus.TODO,
+			priority: parseInt(priority?.value),
 		} as TaskNewRequest;
 		this.createTask(taskNewRequest);
 		this.closePopUpCreateTask();
+	}
+
+	submitCreateSprintForm() {
+		const startDateValue = this.createSprintForm.get("startDate")?.value;
+		const endDateValue = this.createSprintForm.get("endDate")?.value;
+
+		const startDate = this.convertLocalToUTCISO(startDateValue);
+		const endDate = this.convertLocalToUTCISO(endDateValue);
+
+		const sprintNewRequest = {
+			startsAt: startDate,
+			endsAt: endDate,
+			status: SprintStatus.PLAN,
+		} as SprintNewRequest;
+
+		this.sprintApiService.newSprint(sprintNewRequest, this.projectEid).subscribe({
+			next: (sprint) => {
+				this.allSprints$ = this.sprintApiService.self(this.projectEid);
+				this.currentAndFutureSprints$ = this.allSprints$.pipe(
+					map((response) => {
+						return response.sprints.filter(
+							(sprint) =>
+								sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
+						);
+					}),
+				);
+				this.currentSprint$ = this.allSprints$.pipe(
+					map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
+					filter((sprint): sprint is SprintSelfComposite => sprint !== undefined),
+				);
+				this.closePopUpCreateSprint();
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+
+		this.closePopUpCreateSprint();
+	}
+
+	private convertLocalToUTCISO(date: string): string {
+		const localDate = new Date(date);
+		const localTimezoneOffset = localDate.getTimezoneOffset();
+		const localDateUTC = new Date(localDate.getTime() + localTimezoneOffset * 60000);
+		return localDateUTC.toISOString();
 	}
 
 	createTask(taskNewRequest: TaskNewRequest) {
@@ -410,27 +431,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
-	setStatusStylePopUp(element: any) {
-		const status = element.querySelector(".mat-mdc-cell:nth-child(4)");
-		const { color, background, textDecoration, fontWeight } = this.determineStyle(status.textContent.trim());
-
-		const currentStatus = document.getElementById("container-status-pop");
-		if (currentStatus) {
-			currentStatus.style.backgroundColor = `${background}`;
-			currentStatus.style.color = `${color}`;
-			currentStatus.style.textDecoration = `${textDecoration}`;
-			currentStatus.style.fontWeight = `${fontWeight}`;
-		}
-	}
-
-	priorityParserString(priority: string) {
-		let pre = "../../../../../assets/";
-		let pos = ".svg";
-
-		return pre + priority.toLowerCase() + pos;
-	}
-
-	priorityParser(priority: number) {
+	priorityImageParser(priority: number) {
 		let pre = "../../../../../assets/";
 		let pos = ".svg";
 		let priorityName: string;
@@ -449,6 +450,19 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				throw new Error("Invalid priority");
 		}
 		return pre + priorityName + pos;
+	}
+
+	priorityTextParser(priority: number) {
+		switch (priority) {
+			case Priority.LOW:
+				return "Low";
+			case Priority.MEDIUM:
+				return "Medium";
+			case Priority.HIGH:
+				return "High";
+			default:
+				throw new Error("Invalid priority");
+		}
 	}
 
 	determineStyle(status: string) {
@@ -515,11 +529,33 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		}
 	}
 
+	sprintStatusParser(status: number): string {
+		switch (status) {
+			case SprintStatus.PLAN:
+				return "Plan";
+			case SprintStatus.DESIGN:
+				return "Design";
+			case SprintStatus.DEVELOP:
+				return "Develop";
+			case SprintStatus.TEST:
+				return "Test";
+			case SprintStatus.DEPLOY:
+				return "Deploy";
+			case SprintStatus.REVIEW:
+				return "Review";
+			case SprintStatus.LAUNCH:
+				return "Launch";
+			default:
+				return "";
+		}
+	}
+
 	getProject(): Observable<ProjectResponse> {
 		return this.projectApiService.getEspecificProject(this.projectEid);
 	}
 
-	getProjectMemberFromMap(userEid: string): ProjectMemberComposite | null {
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
 		return this.projectMembersMap[userEid] || null;
 	}
 

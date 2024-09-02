@@ -48,19 +48,8 @@ export class UserstoryApiService {
 		);
 	}
 
-	public self(projectEid: string, epicEid: string): Observable<UserstorySelfResponse> {
-		return this.apiService.call<UserstorySelfResponse>("GET", `userstory/${projectEid}/${epicEid}/self`);
-	}
-
 	public selfBySprint(projectEid: string, sprintEid: string): Observable<UserstorySelfResponse> {
 		return this.apiService.call<UserstorySelfResponse>("GET", `userstory/${projectEid}/${sprintEid}/selfbysprint`);
 	}
-
-	public getUserStory(projectEid: string, userstoryEid: string): Observable<UserstoryResponse> {
-		return this.apiService.call<UserstoryResponse>("GET", `userstory/${projectEid}/${userstoryEid}/get`);
-	}
-
-	public delete(projectEid: string, userstoryEid: string): Observable<void> {
-		return this.apiService.call<void>("DELETE", `userstory/${projectEid}/${userstoryEid}/delete`);
-	}
 }
+

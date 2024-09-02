@@ -202,6 +202,37 @@ app-navbar {
 		}
 	}
 
+	& > .sprint {
+		.no-sprint {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			height: 100px;
+			font-size: v.$h2-font;
+			color: v.$grey-color;
+
+			h3 {
+				margin-bottom: 10px;
+				font-weight: 500;
+			}
+
+			.green-button {
+				color: white;
+				background-color: v.$green-color;
+				border-radius: 2px;
+				margin: unset;
+				border: none;
+				padding: 10px 20px;
+
+				&:disabled {
+					background-color: v.$disabled-background-color;
+					color: v.$disabled-color;
+					cursor: not-allowed;
+				}
+			}
+		}
+	}
 	& > .header-grid {
 		grid-column: auto;
 		grid-row: 1;
@@ -364,6 +395,25 @@ app-navbar {
 
 				img {
 					margin-right: 7px;
+				}
+			}
+		}
+
+		.key {
+			span {
+				font-weight: 600;
+				color: v.$darkest-green-color;
+			}
+		}
+
+		.assignee {
+			.content {
+				display: flex;
+				align-items: center;
+				img {
+					width: 16px;
+					height: 16px;
+					border-radius: 50%;
 				}
 			}
 		}
