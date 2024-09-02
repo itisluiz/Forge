@@ -31,6 +31,8 @@ import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse
 import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
+import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
+import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 
 @Component({
 	selector: "app-backlog-page",
@@ -167,9 +169,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	popUpTask: boolean = false;
 	popUpAddToSprint: boolean = false;
 	popUpCreateTask: boolean = false;
+	popUpCreateSprint: boolean = false;
 
 	addToSprintForm!: FormGroup;
 	createTaskForm!: FormGroup;
+	createSprintForm!: FormGroup;
+
 	isPanelDisabled: boolean = false;
 	eidSelectedUserStory: string = "";
 
@@ -234,6 +239,31 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
+	openPopUpCreateSprint() {
+		this.popUpCreateSprint = true;
+		document.body.style.overflow = "hidden";
+		this.buildCreateSprintForm();
+	}
+
+	buildCreateSprintForm() {
+		this.createSprintForm = this.formBuilder.group({
+			startDate: [this.getCurrentDate(), Validators.required],
+			endDate: [this.getDateAfterDays(15), Validators.required],
+		});
+	}
+
+	private getCurrentDate(): string {
+		const today = new Date();
+		return today.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+	}
+
+	// Método para obter a data após um número específico de dias a partir da data atual
+	private getDateAfterDays(days: number): string {
+		const date = new Date();
+		date.setDate(date.getDate() + days);
+		return date.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+	}
+
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
 		if (backgroundPopUp) {
@@ -256,6 +286,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	closePopUpCreateTask() {
 		this.popUpCreateTask = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpCreateSprint() {
+		this.popUpCreateSprint = false;
 		document.body.style.overflow = "auto";
 	}
 
@@ -304,6 +339,51 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		} as TaskNewRequest;
 		this.createTask(taskNewRequest);
 		this.closePopUpCreateTask();
+	}
+
+	submitCreateSprintForm() {
+		const startDateValue = this.createSprintForm.get("startDate")?.value;
+		const endDateValue = this.createSprintForm.get("endDate")?.value;
+
+		const startDate = this.convertLocalToUTCISO(startDateValue);
+		const endDate = this.convertLocalToUTCISO(endDateValue);
+
+		const sprintNewRequest = {
+			startsAt: startDate,
+			endsAt: endDate,
+			status: SprintStatus.PLAN,
+		} as SprintNewRequest;
+
+		this.sprintApiService.newSprint(sprintNewRequest, this.projectEid).subscribe({
+			next: (sprint) => {
+				this.allSprints$ = this.sprintApiService.self(this.projectEid);
+				this.currentAndFutureSprints$ = this.allSprints$.pipe(
+					map((response) => {
+						return response.sprints.filter(
+							(sprint) =>
+								sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
+						);
+					}),
+				);
+				this.currentSprint$ = this.allSprints$.pipe(
+					map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
+					filter((sprint): sprint is SprintSelfComposite => sprint !== undefined),
+				);
+				this.closePopUpCreateSprint();
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+
+		this.closePopUpCreateSprint();
+	}
+
+	private convertLocalToUTCISO(date: string): string {
+		const localDate = new Date(date);
+		const localTimezoneOffset = localDate.getTimezoneOffset();
+		const localDateUTC = new Date(localDate.getTime() + localTimezoneOffset * 60000);
+		return localDateUTC.toISOString();
 	}
 
 	createTask(taskNewRequest: TaskNewRequest) {
@@ -444,6 +524,27 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				return "Done";
 			case 4:
 				return "Cancelled";
+			default:
+				return "";
+		}
+	}
+
+	sprintStatusParser(status: number): string {
+		switch (status) {
+			case SprintStatus.PLAN:
+				return "Plan";
+			case SprintStatus.DESIGN:
+				return "Design";
+			case SprintStatus.DEVELOP:
+				return "Develop";
+			case SprintStatus.TEST:
+				return "Test";
+			case SprintStatus.DEPLOY:
+				return "Deploy";
+			case SprintStatus.REVIEW:
+				return "Review";
+			case SprintStatus.LAUNCH:
+				return "Launch";
 			default:
 				return "";
 		}
