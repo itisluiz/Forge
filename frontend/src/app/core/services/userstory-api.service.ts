@@ -7,6 +7,8 @@ import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.d
 import { UserstorySelfResponse } from "forge-shared/dto/response/userstoryselfresponse.dto";
 import { AcceptanceCriteriaNewRequest } from "forge-shared/dto/request/acceptancecriterianewrequest.dto";
 import { AcceptanceCriteriaResponse } from "forge-shared/dto/response/acceptancecriteriaresponse.dto";
+import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
+import { AcceptanceCriteriaUpdateRequest } from "forge-shared/dto/request/acceptancecriteriaupdaterequest.dto";
 
 @Injectable({
 	providedIn: "root",
@@ -35,6 +37,26 @@ export class UserstoryApiService {
 		);
 	}
 
+	public getAcceptanceCriteria(projectEid: string, userstoryEid: string): Observable<AcceptanceCriteriaSelfResponse> {
+		return this.apiService.call<AcceptanceCriteriaSelfResponse>(
+			"GET",
+			`acceptancecriteria/${projectEid}/${userstoryEid}/self`,
+		);
+	}
+
+	public updateAcceptanceCriteria(
+		projectEid: string,
+		acceptanceCriteriaEid: string,
+		acceptanceCriteriaUpdateRequest: AcceptanceCriteriaUpdateRequest,
+	): Observable<AcceptanceCriteriaResponse> {
+		return this.apiService.call<AcceptanceCriteriaResponse, AcceptanceCriteriaUpdateRequest>(
+			"PATCH",
+			`acceptancecriteria/${projectEid}/${acceptanceCriteriaEid}/update`,
+			undefined,
+			acceptanceCriteriaUpdateRequest,
+		);
+	}
+
 	public updateUserstories(
 		projectEid: string,
 		userstoryEid: string,
@@ -50,5 +72,9 @@ export class UserstoryApiService {
 
 	public selfBySprint(projectEid: string, sprintEid: string): Observable<UserstorySelfResponse> {
 		return this.apiService.call<UserstorySelfResponse>("GET", `userstory/${projectEid}/${sprintEid}/selfbysprint`);
+	}
+
+	public get(projectEid: string, userstoryEid: string): Observable<UserstoryResponse> {
+		return this.apiService.call<UserstoryResponse>("GET", `userstory/${projectEid}/${userstoryEid}/get`);
 	}
 }

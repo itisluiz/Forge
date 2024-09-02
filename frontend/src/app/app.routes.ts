@@ -20,7 +20,7 @@ export const routes: Routes = [
 	{ path: ":projectEid/backlog", component: BacklogPageComponent },
 	{ path: "signup", component: SignupPageComponent },
 	{ path: "select-project", component: SelectProjectPageComponent },
-	{ path: "user-story", component: UserStoryPageComponent },
+	{ path: ":projectEid/:userstoryEid/user-story", component: UserStoryPageComponent },
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
 	{ path: "**", redirectTo: "/" },
 ];

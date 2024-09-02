@@ -87,6 +87,7 @@
 	<div class="pop-up-background" (click)="closePopUpIssue()"></div>
 
 	<app-user-story-popup
+		[isEditMode]="false"
 		(closePopUpEmitter)="closePopUpIssue()"
 		(handleUserStoryAndClosePopupEmitter)="addNewUserStoryInDataSource($event)"
 		[projectEid]="projectEid"

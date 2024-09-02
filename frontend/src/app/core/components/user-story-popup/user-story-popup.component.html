@@ -1,6 +1,8 @@
 <div class="test-case-pop-up-header">
-	<h2>Create a new user story</h2>
-	<p>To create a new user story, fill the fields below.</p>
+	<h2 *ngIf="!isEditMode">Create a new user story</h2>
+	<h2 *ngIf="isEditMode">Edit user story</h2>
+	<p *ngIf="!isEditMode">To create a new user story, fill the fields below.</p>
+	<p *ngIf="isEditMode">Modify the fields as needed.</p>
 </div>
 
 <mat-stepper #stepper>
@@ -107,8 +109,23 @@
 
 			<div class="pop-up-footer-second-form">
 				<button class="span-style" matStepperPrevious>Back</button>
-				<button class="grey-button" mat-button matStepperNext [disabled]="firstFormGroup.invalid || secondFormGroup.invalid">
+				<button
+					class="grey-button"
+					*ngIf="!isEditMode"
+					mat-button
+					matStepperNext
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+				>
 					Create user story
+				</button>
+				<button
+					class="grey-button"
+					*ngIf="isEditMode"
+					mat-button
+					matStepperNext
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+				>
+					Submit modifications
 				</button>
 			</div>
 		</form>

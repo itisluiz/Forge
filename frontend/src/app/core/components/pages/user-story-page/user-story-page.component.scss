@@ -146,8 +146,23 @@ app-navbar {
 		}
 
 		.criteria {
-			ol {
-				padding-left: 1.4em;
+			.criteria-wrapper {
+				background-color: #ffffff;
+				margin-bottom: 15px;
+				padding: 15px;
+				border: 1px solid #ddd;
+				border-radius: 5px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+				p {
+					margin: 0 0 10px;
+					color: #555;
+					font-size: 14px;
+
+					&:last-child {
+						margin-bottom: 0;
+					}
+				}
 			}
 		}
 
