@@ -148,7 +148,9 @@
 							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							<mat-panel-description>
-								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
+								<button class="green-button" *ngIf="currentSprint$ | async" (click)="openPopUpAddToSprint(userstory.eid)">
+									Add to a sprint
+								</button>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
