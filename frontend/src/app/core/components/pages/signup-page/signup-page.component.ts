@@ -155,7 +155,6 @@ export class SignupPageComponent implements OnInit {
 		const password = this.signupForm.get("password");
 		const passwordConfirm = this.signupForm.get("passwordConfirm");
 
-		// TODO: The sign up page isn't making sure both passwords are equal. And I cba to figure this out.
 		if (this.signupFailed || password?.value !== passwordConfirm?.value) {
 			return "Your passwords must be equals. Please try again.";
 		}
