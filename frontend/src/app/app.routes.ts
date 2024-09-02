@@ -15,6 +15,7 @@ export const routes: Routes = [
 	{ path: "login", component: LoginPageComponent },
 	{ path: "agile", component: AgileProcessComponent },
 	{ path: "kanban", component: KanbanPageComponent },
+	{ path: ":projectEid/kanban", component: KanbanPageComponent },
 	{ path: ":projectEid/epics", component: EpicsPageComponent },
 	{ path: ":projectEid/backlog", component: BacklogPageComponent },
 	{ path: "signup", component: SignupPageComponent },
