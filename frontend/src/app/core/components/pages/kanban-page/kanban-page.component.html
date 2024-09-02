@@ -31,7 +31,7 @@
 						<mat-icon>more_horiz</mat-icon>
 					</button>
 					<p *ngIf="currentSprint$ | async as currentSprint" class="sprint-date">
-						Início da Sprint: {{ currentSprint?.startsAt || "N/A" }}
+						Início da Sprint: {{ formatDate(currentSprint?.startsAt!) || "N/A" }}
 					</p>
 				</div>
 			</div>
@@ -45,8 +45,6 @@
 							<mat-panel-description> {{ userStory.description }} </mat-panel-description>
 						</mat-expansion-panel-header>
 
-						<!-- <h2>{{ getTasks(projectEid, userStory.eid) | async }}</h2>
-						<h2>JOAFSJBPFAJBKDSKPBJA</h2> -->
 						<div cdkDropListGroup class="group-list">
 							<div class="kanban-wrapper">
 								<div class="title">
@@ -56,7 +54,6 @@
 										<span>left</span>
 									</div>
 								</div>
-								<!-- <h2>{{ getTasks(projectEid, userStory.eid) | async }}</h2> -->
 
 								<div cdkDropList [cdkDropListData]="toDo" class="kanban-list" (cdkDropListDropped)="drop($event)">
 									@for (task of getTasksFromMap(userStory.eid) | async; track $index) {
@@ -66,29 +63,10 @@
 												<div [class]="typeParser(task.type)"></div>
 												<h3>{{ task.title }}</h3>
 												<p class="desc">{{ task.description }}</p>
-												<img [src]="task.responsibleEid" />
+												<img src="{{ getProjectMemberFromMap(task.responsibleEid)?.gravatar }}" />
 											</div>
 										</div>
 									}
-									<!-- @for (item of toDo; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									} -->
 								</div>
 							</div>
 
@@ -102,22 +80,14 @@
 								</div>
 
 								<div cdkDropList [cdkDropListData]="inProgress" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (item of inProgress; track item) {
+									@for (task of getTasksFromMap(userStory.eid) | async; track $index) {
 										<div class="container-item" cdkDrag>
 											<div class="placeholder" *cdkDragPlaceholder></div>
 											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
+												<div [class]="typeParser(task.type)"></div>
+												<h3>{{ task.title }}</h3>
+												<p class="desc">{{ task.description }}</p>
+												<img src="{{ getProjectMemberFromMap(task.responsibleEid)?.gravatar }}" />
 											</div>
 										</div>
 									}

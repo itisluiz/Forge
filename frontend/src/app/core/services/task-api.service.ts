@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { TaskNewRequest } from "forge-shared/dto/request/tasknewrequest.dto";
+import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 
 @Injectable({
@@ -21,5 +22,14 @@ export class TaskApiService {
 
 	public getTask(projectEid: string, taskEid: string): Observable<TaskResponse> {
 		return this.apiService.call<TaskResponse>("GET", `task/${projectEid}/${taskEid}/get`);
+	}
+
+	public updateTask(projectEid: string, taskEid: string, taskUpdateRequest: TaskUpdateRequest): Observable<TaskResponse> {
+		return this.apiService.call<TaskResponse, TaskUpdateRequest>(
+			"PATCH",
+			`task/${projectEid}/${taskEid}/update`,
+			undefined,
+			taskUpdateRequest,
+		);
 	}
 }

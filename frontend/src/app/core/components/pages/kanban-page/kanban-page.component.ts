@@ -40,6 +40,11 @@ import { TaskApiService } from "../../../services/task-api.service";
 import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse.dto";
+import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
+import { ProjectApiService } from "../../../services/project-api.service";
+import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
+import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
 
 @Component({
 	selector: "app-kanban-page",
@@ -61,11 +66,14 @@ import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse
 export class KanbanPageComponent implements OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
+
 	constructor(
 		private route: ActivatedRoute,
 		private userStoryApiService: UserstoryApiService,
 		private sprintApiService: SprintApiService,
 		private taskApiService: TaskApiService,
+		private projectApiService: ProjectApiService,
 	) {}
 
 	allSprints$: Observable<SprintSelfResponse> = this.sprintApiService.self(this.projectEid).pipe(
@@ -106,6 +114,18 @@ export class KanbanPageComponent implements OnInit {
 			}),
 			shareReplay(1),
 		);
+
+		this.tasksMap$.subscribe((u) => console.log("u ", u));
+
+		this.getProject()
+			.pipe(
+				map((project) => {
+					project.members.forEach((member) => {
+						this.projectMembersMap[member.eid] = member;
+					});
+				}),
+			)
+			.subscribe();
 	}
 
 	getTasks(projectEid: string, userStoryEid: string): Observable<TaskSelfComposite[]> {
@@ -118,6 +138,10 @@ export class KanbanPageComponent implements OnInit {
 
 	getTasksFromMap(userStoryEid: string): Observable<TaskSelfComposite[]> {
 		return this.tasksMap$.pipe(map((tasksMap) => tasksMap[userStoryEid]));
+	}
+
+	updateTaskStatus(taskEid: string, request: TaskUpdateRequest) {
+		this.taskApiService.updateTask(this.projectEid, taskEid, request).subscribe({});
 	}
 
 	formatDate(dateString: string): string {
@@ -197,5 +221,18 @@ export class KanbanPageComponent implements OnInit {
 			default:
 				return "";
 		}
+	}
+
+	getProject(): Observable<ProjectResponse> {
+		return this.projectApiService.getEspecificProject(this.projectEid);
+	}
+
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
+		return this.projectMembersMap[userEid] || null;
+	}
+
+	getAllProjectMembers(): ProjectMemberComposite[] {
+		return Object.values(this.projectMembersMap);
 	}
 }
