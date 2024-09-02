@@ -33,14 +33,16 @@ export class SelectComponent implements OnInit, OnDestroy {
 	@Input() name!: string;
 	@Input() errorMessage?: string;
 	@Input() innerHTML?: string;
+	@Input() dontChangeOption: boolean = false;
 	@Input() options!: any[];
 
 	@ViewChild("selectRef", { static: true }) selectElement!: ElementRef;
 
-	selectedOption: any | null = null;
+	selectedOption: any | null;
 
 	ngOnInit(): void {
 		this.checkInnerHTML();
+		this.selectedOption = this.dontChangeOption ? null : this.options[0]?.value;
 	}
 
 	ngOnDestroy(): void {}
@@ -66,5 +68,13 @@ export class SelectComponent implements OnInit, OnDestroy {
 			return value;
 		}
 		return this.selectedOption || "";
+	}
+
+	get valueRaw(): string | null {
+		if (this.selectedOption === null || this.selectedOption === undefined || this.selectedOption === "") {
+			return null;
+		}
+
+		return this.selectedOption;
 	}
 }

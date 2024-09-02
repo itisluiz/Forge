@@ -35,6 +35,14 @@ export class InputComponent implements OnInit, OnDestroy {
 	@Input() placeholder?: string;
 	@Input() errorMessage?: string;
 	@Input() innerHTML?: string;
+	@Input() upperCase: boolean = false;
+	@Input() required: boolean = false;
+	@Input() minLength: number = 0;
+	@Input() maxLength: number = 1024;
+	@Input() input?: any;
+	@Input() hidden: boolean = false;
+	@Input() disabled: boolean = false;
+	@Input() defaultValue: string = "";
 
 	@ViewChild("inputRef", { static: true }) inputElement!: ElementRef;
 
@@ -56,5 +64,17 @@ export class InputComponent implements OnInit, OnDestroy {
 
 	get value(): string {
 		return this.inputElement.nativeElement.value;
+	}
+
+	get valid(): boolean {
+		if (this.value.length < this.minLength || this.value.length > this.maxLength) {
+			return false;
+		}
+
+		if (this.required && this.value.length === 0) {
+			return false;
+		}
+
+		return this.inputElement.nativeElement.validity.valid;
 	}
 }

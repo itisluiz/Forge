@@ -17,14 +17,20 @@
 							type="text"
 							[placeholder]="projectInfo.code"
 							[innerHTML]="projectInfo.code"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
+							[minLength]="3"
+							[maxLength]="3"
 						></app-input>
 
 						<app-input
 							#updateProjectName
 							for="projectName"
-							label="Project`s name"
+							label="Project's name"
 							name="projectName"
 							type="text"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
 							[placeholder]="projectInfo.title"
 							[innerHTML]="projectInfo.title"
 						></app-input>
@@ -35,6 +41,8 @@
 							label="Description"
 							name="description"
 							type="text"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
 							[placeholder]="projectInfo.description"
 							[innerHTML]="projectInfo.description"
 							[errorMessage]="projectUpdateError"
@@ -42,16 +50,22 @@
 					</div>
 
 					<div class="action-buttons">
-						<button class="action-buttons_action action-buttons_button" (click)="updateProject(projectInfo.eid)">
-							Save changes
+						<button
+							class="action-buttons_action action-buttons_button"
+							[disabled]="!validProjectUpdateForm || loadingSaveProjectUpdate"
+							[class.loading]="loadingSaveProjectUpdate"
+							(click)="updateProject(projectInfo.eid)"
+						>
+							{{ !loadingSaveProjectUpdate ? "Save changes" : "" }}
+							<span class="loading-spinner"></span>
 						</button>
 						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
 				<mat-tab label="Members">
 					<div class="header-members">
-						<p>Nome</p>
-						<p>Sobrenome</p>
+						<p>Name</p>
+						<p>Role</p>
 						<p>Email</p>
 						<p>Actions</p>
 					</div>
@@ -59,13 +73,14 @@
 						@for (member of projectInfo.members; track member) {
 							<div class="member">
 								@if (member.admin) {
-									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }}</p>
+									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }} {{ member.surname }}</p>
 								} @else {
-									<p>{{ member.name }}</p>
+									<p>{{ member.name }} {{ member.surname }}</p>
 								}
 
-								<p>{{ member.surname }}</p>
+								<p>{{ member.role | projectRole }}</p>
 								<p>{{ member.email }}</p>
+
 								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
 									<mat-icon>more_vert</mat-icon>
 								</button>
@@ -77,11 +92,6 @@
 								</mat-menu>
 							</div>
 						}
-					</div>
-
-					<div class="action-buttons">
-						<button class="action-buttons_action action-buttons_button">Save changes</button>
-						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
 					</div>
 				</mat-tab>
 			</mat-tab-group>
@@ -102,8 +112,8 @@
 						<mat-icon>more_vert</mat-icon>
 					</button>
 					<mat-menu #menu="matMenu">
-						<button mat-menu-item>
-							<span (click)="openPopUp('create')">Create a project</span>
+						<button mat-menu-item (click)="openPopUp('create')">
+							<span>Create a project</span>
 						</button>
 					</mat-menu>
 				</div>
@@ -118,7 +128,7 @@
 				<div class="list">
 					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
 						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
-							<p>{{ project.code }}:</p>
+							<p>{{ project.code }}</p>
 							<span>{{ project.title }}</span>
 
 							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
@@ -126,19 +136,19 @@
 							</button>
 							<mat-menu #project_menu="matMenu">
 								@if (project.admin) {
-									<button mat-menu-item>
-										<span (click)="editProject(project.eid)">Edit information</span>
+									<button mat-menu-item (click)="editProject(project.eid)">
+										<span>Edit information</span>
+									</button>
+									<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
+										<span>Invite a person</span>
 									</button>
 								}
-								<button mat-menu-item>
-									<span (click)="openPopUp('invite', project.title, project.eid)">Invite a person</span>
-								</button>
-								<button mat-menu-item>
-									<span (click)="openPopUp('leaveConfirm', undefined, project.eid)">Leave project</span>
+								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, project.eid)">
+									<span>Leave project</span>
 								</button>
 								@if (project.admin) {
-									<button mat-menu-item>
-										<span (click)="openPopUp('deleteConfirm', undefined, project.eid)">Delete project</span>
+									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, project.eid)">
+										<span>Delete project</span>
 									</button>
 								}
 							</mat-menu>
@@ -168,10 +178,12 @@
 
 @if (popUpJoin) {
 	<app-popup-component
+		#popupJoinRef
 		title="Join in a project"
 		description="Enter your project's code to get access to the project."
 		buttonName="Join"
 		buttonCancelName="Cancel"
+		[buttonEnabled]="validProjectJoinForm"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('join')"
 		(onButtonClick)="handleButtonClick('join')"
@@ -183,17 +195,23 @@
 			label="Code"
 			name="code"
 			type="text"
-			placeholder="Enter your code"
+			placeholder="Enter the 24-character long code"
+			[required]="true"
+			[minLength]="24"
+			[maxLength]="24"
+			(input)="revalidateProjectJoinForm()"
 		></app-input>
 	</app-popup-component>
 }
 
 @if (popUpCreateProject) {
 	<app-popup-component
+		#popupCreateProjectRef
 		title="Create a new project"
 		description="Enter the information of your project."
 		buttonName="Create"
 		buttonCancelName="Cancel"
+		[buttonEnabled]="false"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('create')"
 		(onButtonClick)="handleButtonClick('create')"
@@ -205,6 +223,8 @@
 			name="title"
 			type="text"
 			placeholder="Title of your project"
+			[required]="true"
+			(input)="revalidateProjectCreateForm()"
 		></app-input>
 
 		<app-input
@@ -214,6 +234,8 @@
 			name="description"
 			type="text"
 			placeholder="Description of your project"
+			[required]="true"
+			(input)="revalidateProjectCreateForm()"
 		></app-input>
 
 		<app-input
@@ -223,7 +245,11 @@
 			label="Code"
 			name="code"
 			type="text"
-			placeholder="Enter your project code"
+			placeholder="Enter your project three-letter code"
+			[required]="true"
+			[minLength]="3"
+			[maxLength]="3"
+			(input)="revalidateProjectCreateForm()"
 		></app-input>
 	</app-popup-component>
 }
@@ -233,6 +259,7 @@
 		[title]="'Invite a person to ' + projectName"
 		buttonName="Make an invitation"
 		buttonCancelName="Cancel"
+		[loading]="loadingMakeInvite"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('invite')"
 		(onButtonClick)="handleButtonClick('invite')"
@@ -244,6 +271,7 @@
 			name="quantity"
 			type="number"
 			placeholder="Number of uses"
+			innerHTML="1"
 		></app-input>
 
 		<app-input
@@ -253,6 +281,7 @@
 			name="duration"
 			type="number"
 			placeholder="Number of hours"
+			innerHTML="24"
 		></app-input>
 
 		<app-select
@@ -274,6 +303,7 @@
 
 @if (popUpEditMember) {
 	<app-popup-component
+		#popupUpdateMemberRef
 		title="Edit member permissions"
 		buttonName="Save changes"
 		buttonCancelName="Cancel"
@@ -289,6 +319,7 @@
 			type="text"
 			placeholder="Member eid"
 			[innerHTML]="currentMemberId"
+			[disabled]="true"
 		></app-input>
 
 		<app-select
@@ -297,6 +328,7 @@
 			label="Role"
 			name="memberRole"
 			type="number"
+			[dontChangeOption]="true"
 			[options]="[
 				{ value: 1, label: 'Product Owner' },
 				{ value: 2, label: 'Scrum Master' },
@@ -315,6 +347,7 @@
 				{ value: true, label: 'Yes' },
 				{ value: false, label: 'No' }
 			]"
+			[dontChangeOption]="true"
 			[errorMessage]="projectEditMemberError"
 		></app-select>
 	</app-popup-component>
@@ -322,17 +355,27 @@
 
 @if (popUpInviteResult) {
 	<app-popup-component
-		title="Copy the invitation link"
-		buttonName="Copy code"
+		title="Copy the invitation code"
+		buttonName="Copy URL"
 		buttonCancelName="Close"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('inviteResult')"
-		(onButtonClick)="copyToClipboard(invitationResult)"
+		(onButtonClick)="copyToClipboard(makeInvitationUrl(invitationResult))"
 	>
+		<h4>Manually use the code</h4>
 		<div class="fake-input">
 			<p>{{ invitationResult }}</p>
 
 			<button class="button-icon" mat-icon-button (click)="copyToClipboard(invitationResult)">
+				<mat-icon>content_copy</mat-icon>
+			</button>
+		</div>
+
+		<h4>Or share the URL</h4>
+		<div class="copy-link fake-input">
+			<p class="link">{{ makeInvitationUrl(invitationResult) }}</p>
+
+			<button class="button-icon" mat-icon-button (click)="copyToClipboard(makeInvitationUrl(invitationResult))">
 				<mat-icon>content_copy</mat-icon>
 			</button>
 		</div>
@@ -356,6 +399,7 @@
 	<app-delete-popup
 		[title]="'Leave Project'"
 		[description]="'Are you sure you want to leave this project? You cannot go back on this action.'"
+		confirmButtonLabel="Leave"
 		(cancelEmitter)="closePopUp('leaveConfirm')"
 		(confirmDeleteEmmiter)="leaveProject(projectId)"
 	></app-delete-popup>

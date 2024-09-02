@@ -30,7 +30,10 @@
 				<p class="form-failed" *ngIf="loginFailed">
 					<mat-icon>error</mat-icon> Invalid email or password. Please try again.
 				</p>
-				<button type="submit" [disabled]="loginForm.invalid">Next</button>
+				<button type="submit" [disabled]="loginForm.invalid || loginLoading" [class.loading]="loginLoading">
+					{{ loginLoading ? "" : "Next" }}
+					<span class="loading-spinner"></span>
+				</button>
 			</form>
 			<p class="forgot-label">Do not have an account? <span (click)="navigateTo('/signup')">Create</span></p>
 		</div>

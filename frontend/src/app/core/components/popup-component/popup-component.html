@@ -9,7 +9,15 @@
 	<ng-content class="popup-content"></ng-content>
 
 	<div class="popup-footer">
-		<button class="popup-footer_action popup-footer_button" (click)="buttonClicked()">{{buttonName}}</button>
+		<button
+			class="popup-footer_action popup-footer_button"
+			[disabled]="!buttonEnabled || loading"
+			[class.loading]="loading"
+			(click)="buttonClicked()"
+		>
+			{{!loading ? buttonName : "" }}
+			<span class="loading-spinner"></span>
+		</button>
 		@if(cancelButton){
 		<button class="popup-footer_cancel popup-footer_button" (click)="closePopUp()">{{buttonCancelName}}</button>
 		}
