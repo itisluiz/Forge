@@ -67,4 +67,12 @@ export class SelectComponent implements OnInit, OnDestroy {
 		}
 		return this.selectedOption || "";
 	}
+
+	get valueRaw(): string | null {
+		if (this.selectedOption === null || this.selectedOption === undefined || this.selectedOption === "") {
+			return null;
+		}
+
+		return this.selectedOption;
+	}
 }

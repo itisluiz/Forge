@@ -88,14 +88,22 @@ select {
 				p {
 					flex: auto;
 					text-align: left;
-					max-width: 200px;
+					min-width: 20em;
+					max-width: 20em;
+
 					color: v.$label-background-dark-grey;
 					font-size: v.$sub-title-minor-font;
 				}
+
+				p:last-child {
+					text-align: right;
+				}
+				overflow: hidden;
 			}
 
 			.body-members {
 				height: 220px;
+				overflow: hidden;
 			}
 
 			.member {
@@ -107,14 +115,22 @@ select {
 					display: flex;
 					align-items: center;
 					gap: 5px;
+					color: #54d93e;
 				}
 
 				p {
 					flex: auto;
 					text-align: left;
-					max-width: 200px;
+					min-width: 20em;
+					max-width: 20em;
 					font-size: v.$sub-title-minor-font;
 				}
+
+				p:last-child {
+					display: flex;
+					justify-content: flex-end;
+				}
+				overflow: hidden;
 			}
 
 			.action-buttons {
@@ -278,7 +294,7 @@ select {
 					}
 
 					.project-info.active {
-						background-color: #a5a5a5;
+						background-color: #d2fccc;
 					}
 
 					.project-info {
@@ -288,11 +304,15 @@ select {
 						border-radius: 2px;
 						margin-bottom: 4px;
 						align-items: center;
-						justify-content: center;
+						justify-content: flex-start;
 						position: relative;
 
 						p {
-							margin-right: 5px;
+							margin-left: 1em;
+							text-align: left;
+							font-weight: bold;
+							color: #54d93e;
+							margin-right: 2em;
 						}
 
 						.mat-mdc-menu-trigger {
@@ -362,5 +382,33 @@ select {
 		margin-top: 2em;
 		font-size: v.$paragraph-font;
 		color: v.$grey-color;
+	}
+}
+
+.action-buttons {
+	button.loading {
+		position: relative;
+		overflow: hidden;
+		.loading-spinner {
+			position: absolute;
+			top: calc(50% - 0.5em - 2px);
+			left: calc(50% - 0.5em);
+			width: 1em;
+			height: 1em;
+			border: 2px solid #54d93e;
+			border-top: 2px solid;
+			border-radius: 50%;
+			z-index: 2;
+			animation: spin 0.6s linear infinite;
+		}
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
 	}
 }

@@ -1,6 +1,6 @@
 <label for="{{for}}">{{label}}</label>
 <select name="{{name}}" #inputRef [(ngModel)]="selectedOption">
-	<option [ngValue]="null" disabled>--selecione um valor--</option>
+	<option [ngValue]="null">Don't change</option>
 	@for(opt of options; track opt) {
 	<option value="{{opt.value}}">{{opt.label}}</option>
 	}
