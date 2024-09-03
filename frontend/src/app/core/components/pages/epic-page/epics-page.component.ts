@@ -8,7 +8,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
@@ -69,6 +69,7 @@ export class EpicsPageComponent implements OnInit {
 	constructor(
 		private formBuilder: FormBuilder,
 		private route: ActivatedRoute,
+		private router: Router,
 		private epicApiService: EpicApiService,
 	) {}
 
@@ -291,6 +292,11 @@ export class EpicsPageComponent implements OnInit {
 		dataSource.data = [...dataSource.data, userStory];
 		this.userStoriesDataSources[userStory.epicEid] = dataSource;
 		this.closePopUpIssue();
+	}
+
+	navigateToUserStory(userStoryEid: string) {
+		const fullRoute = `${this.projectEid}/${userStoryEid}/user-story`;
+		this.router.navigate([fullRoute]);
 	}
 
 	isFieldInvalid(fieldName: string): boolean {

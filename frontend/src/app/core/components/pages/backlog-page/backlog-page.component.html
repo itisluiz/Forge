@@ -301,14 +301,12 @@
 					<span>{{ selectedTask.createdAt | date }}</span>
 				</div>
 
-				<div class="info user-stories-link">
-					<p>User stories:</p>
-					<span>Forge - especification-fea001</span>
-				</div>
-
-				<div class="info epic-link">
-					<p>Epic link:</p>
-					<span>Forge - especification-fea001</span>
+				<div class="info user-story-link" *ngIf="userStory$ | async as userStory">
+					<p>User story:</p>
+					<span (click)="navigateToUserStory(userStory?.eid)">
+						{{ userStory?.title }}
+						<mat-icon>open_in_new</mat-icon>
+					</span>
 				</div>
 			</div>
 			<div class="pop-up-footer">
