@@ -169,7 +169,14 @@
 			}
 
 			@if (!editMode && !noProjects) {
-				<button class="footer-next" disabled="true" [disabled]="enableNextButton" (click)="navigateTo('/')">Next</button>
+				<button
+					class="footer-next"
+					disabled="true"
+					[disabled]="enableNextButton"
+					(click)="navigateTo(this.selectedProjectId + '/epics')"
+				>
+					Next
+				</button>
 			}
 		</div>
 	}

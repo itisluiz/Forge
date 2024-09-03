@@ -95,13 +95,28 @@
 					<label for="acceptanceCriteria">Acceptance criteria</label>
 
 					<div formArrayName="acceptanceCriteria">
-						<div *ngFor="let criterion of criteriaInputs.controls; let i = index" [formGroupName]="i">
+						<div
+							class="input-wrapper--layout"
+							*ngFor="let criterion of criteriaInputs.controls; let i = index"
+							[formGroupName]="i"
+						>
 							<div class="input-wrapper--criteria">
-								<input formControlName="given" placeholder="Given" />
-								<input formControlName="when" placeholder="When" />
-								<input formControlName="then" placeholder="Then" />
-								<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="given">Given</label>
+									<input id="given" name="given" formControlName="given" placeholder="Type here..." required />
+								</div>
+
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="when">When</label>
+									<input id="when" name="i-want" formControlName="when" placeholder="Type here..." required />
+								</div>
+
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="when">Then</label>
+									<input id="when" name="when" formControlName="then" placeholder="Type here..." required />
+								</div>
 							</div>
+							<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
 						</div>
 					</div>
 				</div>
