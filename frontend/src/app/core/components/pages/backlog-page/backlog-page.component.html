@@ -148,9 +148,7 @@
 							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
 							<mat-panel-description>
-								<button class="green-button" *ngIf="currentSprint$ | async" (click)="openPopUpAddToSprint(userstory.eid)">
-									Add to a sprint
-								</button>
+								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
@@ -303,14 +301,12 @@
 					<span>{{ selectedTask.createdAt | date }}</span>
 				</div>
 
-				<div class="info user-stories-link">
-					<p>User stories:</p>
-					<span>Forge - especification-fea001</span>
-				</div>
-
-				<div class="info epic-link">
-					<p>Epic link:</p>
-					<span>Forge - especification-fea001</span>
+				<div class="info user-story-link" *ngIf="userStory$ | async as userStory">
+					<p>User story:</p>
+					<span (click)="navigateToUserStory(userStory?.eid)">
+						{{ userStory?.title }}
+						<mat-icon>open_in_new</mat-icon>
+					</span>
 				</div>
 			</div>
 			<div class="pop-up-footer">

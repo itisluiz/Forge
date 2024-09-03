@@ -6,8 +6,8 @@ import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { Observable, combineLatest, forkJoin, of, throwError } from "rxjs";
-import { catchError, filter, map, mergeMap, shareReplay, switchMap } from "rxjs/operators";
-import { ActivatedRoute } from "@angular/router";
+import { catchError, filter, map, mergeMap, shareReplay, switchMap, tap } from "rxjs/operators";
+import { ActivatedRoute, Router } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
@@ -88,13 +88,17 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	currentSprint$: Observable<SprintSelfComposite> = this.allSprints$.pipe(
 		map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
-		filter((sprint): sprint is SprintSelfComposite => sprint !== undefined), // Filtra valores undefined
+		filter((sprint): sprint is SprintSelfComposite => sprint !== undefined),
 	);
 
 	userStoriesInCurrentSprint$: Observable<UserstorySelfComposite[]> = this.currentSprint$.pipe(
 		switchMap((sprint) => this.userstoryApiService.selfBySprint(this.projectEid, sprint.eid)),
 		map((response) => response.userstories),
 	);
+
+	userStory$: Observable<UserstoryResponse | null> = of(null);
+
+	task$: Observable<TaskResponse> = new Observable();
 
 	@ViewChildren("itemCell")
 	itemCell!: QueryList<ElementRef>;
@@ -116,6 +120,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		private projectApiService: ProjectApiService,
 		private sprintApiService: SprintApiService,
 		private userstoryApiService: UserstoryApiService,
+		private router: Router,
 	) {}
 
 	ngOnInit(): void {
@@ -192,10 +197,16 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	openTaskPopUp(taskEid: string) {
 		this.selectedTask$ = this.taskApiService.getTask(this.projectEid, taskEid);
 		this.popUpTask = true;
-		setTimeout(() => {
-			// Wait for the pop-up to be rendered
-			this.setStatusStylePopUp();
-		}, 205);
+
+		this.userStory$ = this.selectedTask$.pipe(
+			switchMap((task: TaskResponse) => {
+				if (task && task.userstoryEid) {
+					return this.userstoryApiService.get(this.projectEid, task.userstoryEid);
+				} else {
+					return of(null);
+				}
+			}),
+		);
 	}
 
 	setStatusStylePopUp() {
@@ -254,14 +265,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	private getCurrentDate(): string {
 		const today = new Date();
-		return today.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+		return today.toISOString().split("T")[0];
 	}
 
-	// Método para obter a data após um número específico de dias a partir da data atual
 	private getDateAfterDays(days: number): string {
 		const date = new Date();
 		date.setDate(date.getDate() + days);
-		return date.toISOString().split("T")[0]; // Retorna a data no formato 'YYYY-MM-DD'
+		return date.toISOString().split("T")[0];
 	}
 
 	closePopUp() {
@@ -515,6 +525,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	}
 
 	statusParser(status: number): string {
+		this.setStatusStylePopUp();
 		switch (status) {
 			case 1:
 				return "To do";
@@ -561,5 +572,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	getAllProjectMembers(): ProjectMemberComposite[] {
 		return Object.values(this.projectMembersMap);
+	}
+
+	navigateToUserStory(userStoryEid: string | undefined): void {
+		if (userStoryEid) {
+			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
+		}
 	}
 }
