@@ -16,7 +16,7 @@
 		<form [formGroup]="signupForm" class="signup-form" (ngSubmit)="signup()">
 			<div class="name-input">
 				<p class="left">
-					<label for="name">Nome</label>
+					<label for="name">Name</label>
 					<input type="text" formControlName="name" placeholder="Ex: Peter" />
 					<span *ngIf="isFieldInvalid('name')"> <mat-icon>error</mat-icon> {{ nameErrorMessage }} </span>
 				</p>
@@ -42,8 +42,20 @@
 				<span *ngIf="isFieldInvalid('passwordConfirm')"> <mat-icon>error</mat-icon> {{ passwordErrorMessage }} </span>
 			</p>
 			<p class="form-failed" *ngIf="signupFailed"><mat-icon>error</mat-icon> {{ overallErrorMessage }}</p>
-			<button type="submit" [disabled]="signupForm.invalid">Next</button>
+			<button
+				type="submit"
+				[disabled]="
+					signupForm.invalid ||
+					signupLoading ||
+					signupForm.get('password')?.value !== signupForm.get('passwordConfirm')?.value
+				"
+				[class.loading]="signupLoading"
+			>
+				{{ signupLoading ? "" : "Next" }}
+				<span class="loading-spinner"></span>
+			</button>
 		</form>
+		<p class="forgot-label">Already have an account? <span (click)="navigateTo('/login')">Sign in</span></p>
 	</div>
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>

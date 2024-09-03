@@ -15,7 +15,7 @@ export default async function (req: Request, res: Response) {
 
 	try {
 		const user = await sequelize.models["user"].findOne({
-			where: { email: userSigninRequest.email.toLowerCase() },
+			where: { email: userSigninRequest.email.trim().toLowerCase() },
 			transaction,
 		});
 		if (!user || !validatePassword(userSigninRequest.password, user.dataValues.password)) {

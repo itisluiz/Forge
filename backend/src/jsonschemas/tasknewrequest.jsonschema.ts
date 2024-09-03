@@ -31,7 +31,11 @@ export const taskNewRequestJsonSchema = {
 			type: "integer",
 			minimum: 1,
 		},
+		priority: {
+			type: "integer",
+			minimum: 1,
+		},
 	},
-	required: ["userstoryEid", "title", "description", "status", "type"],
+	required: ["userstoryEid", "title", "description", "status", "type", "priority"],
 	additionalProperties: false,
 };

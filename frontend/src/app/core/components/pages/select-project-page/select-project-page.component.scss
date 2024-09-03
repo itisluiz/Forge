@@ -1,5 +1,65 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 
+.fake-input {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 20px;
+	padding: 10px 10px 10px 20px;
+	background-color: #f2f2f2;
+	border: none;
+	border-radius: 2px;
+	margin-bottom: 16px;
+
+	p {
+		font-size: v.$paragraph-font;
+		color: v.$black-color;
+		text-wrap: nowrap;
+		overflow: hidden;
+	}
+
+	.link {
+		margin-top: 1em;
+		color: v.$green-color;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	button {
+		scale: 0.7;
+		height: 45px;
+		width: 45px;
+	}
+}
+
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+select {
+	height: 20px;
+	padding: 10px 10px 10px 20px;
+	background-color: #f2f2f2;
+	border: none;
+	border-radius: 2px;
+	margin-bottom: 16px;
+
+	&:focus {
+		outline: none;
+		padding: 9px 9px 9px 19px;
+		border: 1px solid v.$green-color;
+	}
+}
+
 .select-project-container {
 	display: flex;
 	flex-direction: column;
@@ -7,7 +67,6 @@
 	align-items: center;
 	min-height: calc(100svh - 65px);
 	width: 100vw;
-	margin-top: 2em;
 
 	.select-project-component > div {
 		margin: 3em 55px 0 55px;
@@ -19,6 +78,106 @@
 		display: flex;
 		flex-direction: column;
 		width: 1100px;
+		height: 591px;
+		position: relative;
+
+		.tabs {
+			margin: 40px 55px 0 55px;
+
+			.input-container {
+				margin-top: 40px;
+			}
+
+			.header-members {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-top: 40px;
+
+				p {
+					flex: auto;
+					text-align: left;
+					min-width: 20em;
+					max-width: 20em;
+
+					color: v.$label-background-dark-grey;
+					font-size: v.$sub-title-minor-font;
+				}
+
+				p:last-child {
+					text-align: right;
+				}
+				overflow: hidden;
+			}
+
+			.body-members {
+				height: 220px;
+				overflow: hidden;
+			}
+
+			.member {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+
+				.adm {
+					display: flex;
+					align-items: center;
+					gap: 5px;
+					color: #54d93e;
+				}
+
+				p {
+					flex: auto;
+					text-align: left;
+					min-width: 20em;
+					max-width: 20em;
+					font-size: v.$sub-title-minor-font;
+				}
+
+				p:last-child {
+					display: flex;
+					justify-content: flex-end;
+				}
+				overflow: hidden;
+			}
+
+			.action-buttons {
+				display: flex;
+				flex-direction: row-reverse;
+				gap: 8px;
+				width: 100%;
+				margin-top: 30px;
+				margin-bottom: 3em;
+
+				&_button {
+					height: 40px;
+					cursor: pointer;
+					font-weight: 500;
+					border: none;
+					border-radius: 2px;
+					width: 180px;
+
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
+				}
+
+				&_action {
+					color: v.$white-color;
+					font-size: v.$button-font;
+					background-color: v.$green-color;
+				}
+
+				&_cancel {
+					font-size: v.$button-font;
+					background-color: v.$white-color;
+					color: v.$black-color;
+				}
+			}
+		}
 
 		.title {
 			display: flex;
@@ -41,7 +200,7 @@
 			.right-side {
 				display: flex;
 				align-items: center;
-				height: 31px;
+				height: 40px;
 
 				button {
 					display: flex;
@@ -61,6 +220,61 @@
 			}
 		}
 
+		.no-project {
+			display: flex;
+			flex-direction: column;
+			margin: 0 auto;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			text-align: center;
+			margin-top: -80px;
+
+			h2 {
+				font-size: v.$title-font;
+				margin-bottom: 10px;
+				font-weight: 500;
+			}
+
+			p {
+				width: 60%;
+			}
+
+			.buttons {
+				display: flex;
+				gap: 12px;
+				width: 100%;
+				margin-top: 29px;
+				justify-content: center;
+
+				&_button {
+					height: 40px;
+					cursor: pointer;
+					border: none;
+					border-radius: 2px;
+					padding: 0 14px;
+
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
+				}
+
+				&_action {
+					color: v.$white-color;
+					font-size: v.$button-font;
+					background-color: v.$green-color;
+				}
+
+				&_cancel {
+					font-size: v.$button-font;
+					background-color: v.$epics-light-grey-color;
+					color: v.$black-color;
+				}
+			}
+		}
+
 		.projects {
 			.header {
 				width: 100%;
@@ -70,6 +284,9 @@
 			}
 
 			.list {
+				max-height: 200px;
+				overflow: auto;
+
 				& > div {
 					cursor: pointer;
 
@@ -77,6 +294,16 @@
 						transition: 0.1s;
 						cursor: pointer;
 						filter: brightness(0.8);
+
+						.project-info {
+							button {
+								display: block;
+							}
+						}
+					}
+
+					.project-info.active {
+						background-color: #d2fccc;
 					}
 
 					.project-info {
@@ -86,37 +313,76 @@
 						border-radius: 2px;
 						margin-bottom: 4px;
 						align-items: center;
-						justify-content: center;
+						justify-content: flex-start;
+						position: relative;
 
 						p {
-							margin-right: 5px;
+							margin-left: 1em;
+							text-align: left;
+							font-weight: bold;
+							color: #54d93e;
+							margin-right: 2em;
+						}
+
+						.mat-mdc-menu-trigger {
+							opacity: 0.4;
+							position: absolute;
+							right: 20px;
+							top: 14px;
+
+							&:hover {
+								opacity: 1;
+							}
+
+							&:focus {
+								opacity: 1;
+							}
+
+							&:active {
+								opacity: 1;
+							}
+						}
+
+						.cdk-focused,
+						.cdk-mouse-focused {
+							opacity: 1;
+						}
+
+						.material-icons {
+							transform: translateY(-1.5px);
+						}
+
+						.button-icon {
+							transform: translateY(-2px);
 						}
 					}
 				}
 			}
+		}
 
-			.footer-next {
-				display: flex;
-				margin: 0 auto;
-				width: 320px;
-				height: 40px;
-				align-items: center;
-				justify-content: center;
-				color: v.$white-color;
-				font-weight: 500;
-				font-size: v.$button-font;
-				background-color: v.$green-color;
-				border: none;
-				border-radius: 2px;
-				margin-top: 120px;
-				margin-bottom: 64px;
-				cursor: pointer;
+		.footer-next {
+			display: flex;
+			margin: 0 auto;
+			width: 320px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			color: v.$white-color;
+			font-weight: 500;
+			font-size: v.$button-font;
+			background-color: v.$green-color;
+			border: none;
+			border-radius: 2px;
+			cursor: pointer;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 64px;
 
-				&:disabled {
-					background-color: v.$disabled-background-color;
-					color: v.$disabled-color;
-					cursor: not-allowed;
-				}
+			&:disabled {
+				background-color: v.$disabled-background-color;
+				color: v.$disabled-color;
+				cursor: not-allowed;
 			}
 		}
 	}
@@ -125,5 +391,45 @@
 		margin-top: 2em;
 		font-size: v.$paragraph-font;
 		color: v.$grey-color;
+	}
+}
+
+.action-buttons {
+	button.loading {
+		position: relative;
+		overflow: hidden;
+		.loading-spinner {
+			position: absolute;
+			top: calc(50% - 0.5em - 2px);
+			left: calc(50% - 0.5em);
+			width: 1em;
+			height: 1em;
+			border: 2px solid #54d93e;
+			border-top: 2px solid;
+			border-radius: 50%;
+			z-index: 2;
+			animation: spin 0.6s linear infinite;
+		}
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+h4 {
+	font-weight: 500;
+}
+
+.copy-link {
+	p {
+		font-size: v.$paragraph-font;
+		color: v.$black-color;
+		margin-bottom: 16px;
 	}
 }

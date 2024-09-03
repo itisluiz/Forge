@@ -1,0 +1,21 @@
+<label for="{{for}}">{{label}}</label>
+<input
+	(input)="input"
+	[disabled]="disabled"
+	[hidden]="hidden"
+	[minLength]="minLength"
+	[maxLength]="maxLength"
+	name="{{name}}"
+	type="{{type}}"
+	placeholder="{{placeholder}}"
+	#inputRef
+/>
+
+@if (errorMessage) {
+
+<div class="error-message">
+	<mat-icon>error</mat-icon>
+	{{errorMessage}}
+</div>
+
+}

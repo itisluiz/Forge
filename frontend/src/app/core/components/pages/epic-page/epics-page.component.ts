@@ -2,65 +2,25 @@ import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren }
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { MatTable, MatTableModule } from "@angular/material/table";
+import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
-import { Observable } from "rxjs";
+import { catchError, combineLatest, Observable, of, shareReplay, switchMap, throwError } from "rxjs";
 import { map } from "rxjs";
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 import { EpicNewRequest } from "forge-shared/dto/request/epicnewrequest.dto";
 import { EpicUpdateRequest } from "forge-shared/dto/request/epicupdaterequest.dto";
-
-export interface History {
-	key: string;
-	name: string;
-	description: string;
-	status: string;
-	priority: string;
-	time_created: string;
-}
-
-const HISTORIES_DATA: History[] = [
-	{
-		key: "HTY-1",
-		name: "História 1",
-		description: "Descrição 1",
-		status: "Backlog",
-		priority: "Low",
-		time_created: "2024-02-01",
-	},
-	{
-		key: "HTY-2",
-		name: "História 2",
-		description: "Descrição 2",
-		status: "Development",
-		priority: "Medium",
-		time_created: "2024-02-01",
-	},
-	{
-		key: "HTY-3",
-		name: "História 3",
-		description: "Descrição 3",
-		status: "Production",
-		priority: "Medium",
-		time_created: "2024-02-01",
-	},
-	{
-		key: "HTY-4",
-		name: "História 4",
-		description: "Descrição 4",
-		status: "Homologation",
-		priority: "High",
-		time_created: "2024-02-01",
-	},
-];
+import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
+import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
+import { Priority } from "forge-shared/enum/priority.enum";
+import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 
 @Component({
 	selector: "app-kanban-page",
@@ -81,10 +41,7 @@ const HISTORIES_DATA: History[] = [
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
 })
-export class EpicsPageComponent implements AfterViewInit, OnInit {
-	displayedColumns: string[] = ["key", "name", "description", "status", "priority", "time_created"];
-	histories = [...HISTORIES_DATA];
-
+export class EpicsPageComponent implements OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
 	epics$: Observable<EpicSelfComposite[]> = this.epicApiService.getEpics(this.projectEid).pipe(
@@ -93,8 +50,10 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		}),
 	);
 
-	@ViewChildren("statusContainer")
-	statusContainer!: QueryList<ElementRef>;
+	userStoriesMap$: Observable<{ [epicEid: string]: UserstorySelfComposite[] }> = new Observable();
+	userStoriesDataSources: { [epicEid: string]: MatTableDataSource<UserstorySelfComposite> } = {};
+
+	displayedColumns: string[] = ["key", "title", "description", "priority"];
 
 	popUpCreateEpic: boolean = false;
 	popUpIssue: boolean = false;
@@ -110,49 +69,62 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	constructor(
 		private formBuilder: FormBuilder,
 		private route: ActivatedRoute,
+		private router: Router,
 		private epicApiService: EpicApiService,
 	) {}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.userStoriesMap$ = this.epics$.pipe(
+			switchMap((epics) => {
+				const userStoriesObservables = epics.map((epic) =>
+					this.getUserStories(epic.eid).pipe(
+						catchError(() => of([])),
+						map((userStories) => ({ [epic.eid]: userStories })),
+					),
+				);
 
-	ngAfterViewInit(): void {
-		this.statusContainer.forEach((cell) => {
-			let color;
-			let background;
-			let textDecoration;
-			let fontWeight;
+				return combineLatest(userStoriesObservables).pipe(
+					map((userStoriesArray) =>
+						userStoriesArray.filter((entry) => entry !== null).reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+					),
+				);
+			}),
+			shareReplay(1),
+		);
 
-			switch (cell.nativeElement.textContent.trim()) {
-				case "Development": // IN_DEVELOPMENT
-					color = "#fff";
-					background = "#93C088";
-					break;
-				case "Homologation": // IN_HOMOLOGATION
-					color = "#fff";
-					background = "#1A73DC";
-					break;
-				case "Production": // IN_PRODUCTION
-					color = "#fff";
-					background = "#187600";
-					textDecoration = "line-through";
-					break;
-				default: // BACKLOG
-					color = "#7A7A7A";
-					background = "#D8D8D8";
-					fontWeight = "400";
-			}
-			cell.nativeElement.style.backgroundColor = `${background}`;
-			cell.nativeElement.style.color = `${color}`;
-			cell.nativeElement.style.textDecoration = `${textDecoration}`;
-			cell.nativeElement.style.fontWeight = `${fontWeight}`;
+		this.userStoriesMap$.subscribe((userStoriesMap) => {
+			Object.keys(userStoriesMap).forEach((epicEid) => {
+				this.userStoriesDataSources[epicEid] = new MatTableDataSource(userStoriesMap[epicEid]);
+			});
 		});
 	}
 
-	priorityParser(priority: string) {
+	getUserStories(epicEid: string): Observable<UserstorySelfComposite[]> {
+		return this.epicApiService.getEpic(this.projectEid, epicEid).pipe(
+			map((epicResponse: EpicResponse) => {
+				return epicResponse.userstories;
+			}),
+		);
+	}
+
+	priorityParser(priority: number) {
 		let pre = "../../../../../assets/";
 		let pos = ".svg";
-
-		return pre + priority.toLowerCase() + pos;
+		let priorityName: string;
+		switch (priority) {
+			case Priority.LOW:
+				priorityName = "low";
+				break;
+			case Priority.MEDIUM:
+				priorityName = "medium";
+				break;
+			case Priority.HIGH:
+				priorityName = "high";
+				break;
+			default:
+				throw new Error("Invalid priority");
+		}
+		return pre + priorityName + pos;
 	}
 
 	toggleExpansionPanel() {
@@ -167,13 +139,13 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 
 	buildCreateEpicForm() {
 		this.createEpicForm = this.formBuilder.group({
-			code: ["", [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
 			name: ["", [Validators.required, Validators.minLength(3)]],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 		});
 	}
 
-	openPopUpIssue() {
+	openPopUpIssue(epicEid: string) {
+		this.eidSelectedEpic = epicEid;
 		this.popUpIssue = true;
 		document.body.style.overflow = "hidden";
 	}
@@ -189,7 +161,6 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		this.epicApiService.getEpic(this.projectEid, this.eidSelectedEpic).subscribe({
 			next: (epic) => {
 				this.editEpicForm = this.formBuilder.group({
-					code: [epic.code, [Validators.required, Validators.maxLength(15), Validators.minLength(3)]],
 					name: [epic.title, [Validators.required, Validators.minLength(3)]],
 					description: [epic.description, [Validators.required, Validators.minLength(3)]],
 				});
@@ -231,13 +202,11 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	}
 
 	submitForm() {
-		const code = this.createEpicForm.get("code");
 		const name = this.createEpicForm.get("name");
 		const description = this.createEpicForm.get("description");
 
 		if (this.createEpicForm.valid) {
 			let epicNewRequest = {
-				code: code?.value,
 				title: name?.value,
 				description: description?.value,
 			} as EpicNewRequest;
@@ -245,6 +214,10 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 		}
 
 		this.closePopUpCreateEpic();
+	}
+
+	getUserStoriesDataSource(epicEid: string): MatTableDataSource<UserstorySelfComposite> {
+		return this.userStoriesDataSources[epicEid] || new MatTableDataSource([]);
 	}
 
 	createEpic(epicNewRequest: EpicNewRequest) {
@@ -261,13 +234,11 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 	}
 
 	submitEditEpicForm() {
-		const code = this.editEpicForm.get("code");
 		const name = this.editEpicForm.get("name");
 		const description = this.editEpicForm.get("description");
 
 		if (this.editEpicForm.valid) {
 			let epicUpdateRequest = {
-				code: code?.value,
 				title: name?.value,
 				description: description?.value,
 			} as EpicUpdateRequest;
@@ -314,6 +285,18 @@ export class EpicsPageComponent implements AfterViewInit, OnInit {
 				return response.epics;
 			}),
 		);
+	}
+
+	addNewUserStoryInDataSource(userStory: UserstoryResponse) {
+		const dataSource = this.getUserStoriesDataSource(userStory.epicEid);
+		dataSource.data = [...dataSource.data, userStory];
+		this.userStoriesDataSources[userStory.epicEid] = dataSource;
+		this.closePopUpIssue();
+	}
+
+	navigateToUserStory(userStoryEid: string) {
+		const fullRoute = `${this.projectEid}/${userStoryEid}/user-story`;
+		this.router.navigate([fullRoute]);
 	}
 
 	isFieldInvalid(fieldName: string): boolean {

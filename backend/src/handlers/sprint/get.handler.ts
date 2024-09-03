@@ -17,8 +17,9 @@ export default async function (req: Request, res: Response) {
 		sprint = await sequelize.models["sprint"].findOne({
 			where: {
 				id: sprintId,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
+			include: { model: sequelize.models["userstory"], attributes: ["id"], include: [sequelize.models["task"]] },
 			transaction,
 		});
 
@@ -32,6 +33,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapSprintResponse(sprint);
+	const response = mapSprintResponse(sprint, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

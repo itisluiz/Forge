@@ -18,12 +18,19 @@ module.exports = {
 				createdAt: new Date(0),
 				updatedAt: new Date(0),
 			},
+			{
+				id: 3,
+				title: "Test",
+				description: "An endeavour towards testing the existing functionality",
+				createdAt: new Date(0),
+				updatedAt: new Date(0),
+			},
 		]);
 	},
 
 	async down(queryInterface, Sequelize) {
 		await queryInterface.bulkDelete("etasktypes", {
-			id: [1, 2],
+			id: [1, 2, 3],
 		});
 	},
 };

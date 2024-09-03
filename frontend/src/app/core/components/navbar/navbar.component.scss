@@ -4,6 +4,8 @@
 	height: 55px;
 	background-color: v.$dark-color;
 	padding: 0 2em;
+	display: flex;
+	align-items: center;
 
 	mat-drawer-container {
 		z-index: 999;
@@ -13,32 +15,76 @@
 		}
 	}
 
+	.trollando {
+		color: v.$lemon-color !important;
+		animation: swing 4s infinite alternate;
+	}
+
+	@keyframes swing {
+		0% {
+			transform: translateX(0) rotate(0deg);
+		}
+		50% {
+			transform: translateX(10px) rotate(15deg);
+		}
+		100% {
+			transform: translateX(-10px) rotate(-15deg);
+		}
+	}
+
+	.search-bar {
+		width: 350px;
+		transform: translateY(10px);
+
+		mat-label {
+			font-size: v.$paragraph-font;
+		}
+
+		mat-option {
+			::ng-deep .mdc-list-item__primary-text {
+				font-size: v.$paragraph-font;
+			}
+
+			span {
+				font-size: v.$paragraph-font;
+			}
+		}
+	}
+
+	::ng-deep .mdc-text-field {
+		border-radius: 0;
+	}
+
+	::ng-deep .mat-mdc-text-field-wrapper {
+		background-color: v.$light-grey-color;
+	}
+
+	::ng-deep .mat-mdc-form-field-flex {
+		height: 55px;
+	}
+
+	::ng-deep .mdc-line-ripple:before {
+		border-bottom-color: transparent;
+	}
+
 	img {
 		width: 50px;
 		margin-right: 45px;
 	}
 
-	input {
-		height: 100%;
-		padding: 0 2em;
-		margin-left: 25px;
-		width: 350px;
-		border: none;
-		background-color: v.$light-grey-color;
-
-		&::placeholder {
-			color: v.$dark-grey-color;
-		}
-
-		&:focus {
-			outline: none;
-		}
-	}
-
 	span {
 		font-size: 14px;
 		margin-right: 45px;
-		color: v.$white-color;
+		color: #fff;
+		height: 55px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		transition: filter 0.3s;
+
+		&:hover {
+			filter: brightness(0.85);
+		}
 	}
 
 	.spacer {
@@ -48,6 +94,15 @@
 	button {
 		mat-icon {
 			color: v.$white-color;
+			display: flex;
+			margin: 0 auto;
+
+			img {
+				border-radius: 50%;
+				object-fit: cover;
+				height: 23px;
+				width: 23px;
+			}
 		}
 	}
 }

@@ -7,6 +7,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
+		index: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: false,
+		},
 		title: {
 			type: DataTypes.STRING(64),
 			allowNull: false,
@@ -14,6 +18,14 @@ export function define(modelName: string, sequelize: Sequelize) {
 		description: {
 			type: DataTypes.STRING(256),
 			allowNull: false,
+		},
+		startedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
+		},
+		completedAt: {
+			type: DataTypes.DATE,
+			allowNull: true,
 		},
 	});
 }
@@ -24,6 +36,7 @@ export function associate(modelName: string, sequelize: Sequelize) {
 
 	thisModel.belongsTo(models["etaskstatus"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["etasktype"], { foreignKey: { allowNull: false } });
+	thisModel.belongsTo(models["epriority"], { foreignKey: { allowNull: false } });
 	thisModel.belongsTo(models["user"], { foreignKey: { allowNull: true, name: "assignedTo" }, onDelete: "SET NULL" });
 	thisModel.belongsTo(models["userstory"], { foreignKey: { allowNull: false }, onDelete: "CASCADE" });
 }

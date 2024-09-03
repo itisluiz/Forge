@@ -1,6 +1,8 @@
 <div class="test-case-pop-up-header">
-	<h2>Create a new user story</h2>
-	<p>To create a new user story, fill the fields below.</p>
+	<h2 *ngIf="!isEditMode">Create a new user story</h2>
+	<h2 *ngIf="isEditMode">Edit user story</h2>
+	<p *ngIf="!isEditMode">To create a new user story, fill the fields below.</p>
+	<p *ngIf="isEditMode">Modify the fields as needed.</p>
 </div>
 
 <mat-stepper #stepper>
@@ -69,16 +71,23 @@
 						placeholder="Write the premisses here..."
 					></textarea>
 				</div>
+				<div class="input-wrapper">
+					<label for="priority">Priority</label>
+					<select id="priority" name="priority" formControlName="priority">
+						<option value="1">Low</option>
+						<option value="2">Medium</option>
+						<option value="3">High</option>
+					</select>
+				</div>
 			</div>
 			<div class="pop-up-footer">
 				<span (click)="closePopUp()">Cancel</span>
 				<button type="submit" class="grey-button" matStepperNext>Next step</button>
-				<!-- [disabled]="userStoryForm.invalid" -->
 			</div>
 		</form>
 	</mat-step>
 	<mat-step [stepControl]="secondFormGroup" errorMessage="Address is required.">
-		<form [formGroup]="secondFormGroup" class="second-form">
+		<form [formGroup]="secondFormGroup" class="second-form" (ngSubmit)="submitSecondForm()">
 			<button class="green-button" (click)="addCriteria()">Add a criteria</button>
 			<ng-template matStepLabel>Acceptance criteria</ng-template>
 			<div class="column-grid">
@@ -86,11 +95,28 @@
 					<label for="acceptanceCriteria">Acceptance criteria</label>
 
 					<div formArrayName="acceptanceCriteria">
-						<div *ngFor="let criterion of criteriaInputs.controls; let i = index" [formGroupName]="i">
+						<div
+							class="input-wrapper--layout"
+							*ngFor="let criterion of criteriaInputs.controls; let i = index"
+							[formGroupName]="i"
+						>
 							<div class="input-wrapper--criteria">
-								<input formControlName="criterion" placeholder="Criterion description here" />
-								<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="given">Given</label>
+									<input id="given" name="given" formControlName="given" placeholder="Type here..." required />
+								</div>
+
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="when">When</label>
+									<input id="when" name="i-want" formControlName="when" placeholder="Type here..." required />
+								</div>
+
+								<div class="input-wrapper--acceptance-criteria">
+									<label for="when">Then</label>
+									<input id="when" name="when" formControlName="then" placeholder="Type here..." required />
+								</div>
 							</div>
+							<mat-icon class="delete" (click)="removeCriteria(i)">delete</mat-icon>
 						</div>
 					</div>
 				</div>
@@ -98,7 +124,24 @@
 
 			<div class="pop-up-footer-second-form">
 				<button class="span-style" matStepperPrevious>Back</button>
-				<button class="grey-button" mat-button matStepperNext>Create issue</button>
+				<button
+					class="grey-button"
+					*ngIf="!isEditMode"
+					mat-button
+					matStepperNext
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+				>
+					Create user story
+				</button>
+				<button
+					class="grey-button"
+					*ngIf="isEditMode"
+					mat-button
+					matStepperNext
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+				>
+					Submit modifications
+				</button>
 			</div>
 		</form>
 	</mat-step>

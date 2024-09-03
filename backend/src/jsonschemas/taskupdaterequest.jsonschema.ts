@@ -26,6 +26,10 @@ export const taskUpdateRequestJsonSchema = {
 			type: "integer",
 			minimum: 1,
 		},
+		priority: {
+			type: "integer",
+			minimum: 1,
+		},
 	},
 	required: [],
 	additionalProperties: false,

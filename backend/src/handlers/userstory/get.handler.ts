@@ -18,13 +18,16 @@ export default async function (req: Request, res: Response) {
 			where: {
 				id: userstoryId,
 			},
-			include: {
-				model: sequelize.models["epic"],
-				where: {
-					projectId: authProject.projectId,
+			include: [
+				{
+					model: sequelize.models["epic"],
+					where: {
+						projectId: authProject.project.dataValues.id,
+					},
+					attributes: ["projectId"],
 				},
-				attributes: ["projectId"],
-			},
+				sequelize.models["task"],
+			],
 			transaction,
 		});
 
@@ -38,6 +41,6 @@ export default async function (req: Request, res: Response) {
 		throw error;
 	}
 
-	const response = mapUserstoryResponse(userstory);
+	const response = mapUserstoryResponse(userstory, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

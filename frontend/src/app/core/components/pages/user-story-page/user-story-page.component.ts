@@ -7,6 +7,9 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
 import { TestCasePopupComponent } from "../../test-case-popup/test-case-popup.component";
+import { ActivatedRoute } from "@angular/router";
+import { UserstoryApiService } from "../../../services/userstory-api.service";
+import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
 
 export interface testCaseDisplay {
 	key: string;
@@ -52,11 +55,15 @@ const TEST_CASES_DATA: testCaseDisplay[] = [
 		MatSelectModule,
 		CommonModule,
 		TestCasePopupComponent,
+		UserStoryPopupComponent,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
 })
 export class UserStoryPageComponent implements OnInit {
+	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
+	userstoryEid: string = this.route.snapshot.paramMap.get("userstoryEid")!;
+
 	displayedColumns: string[] = ["key", "description", "link"];
 
 	acceptanceCriteria: string[] = [
@@ -68,27 +75,40 @@ export class UserStoryPageComponent implements OnInit {
 	];
 	testCases = [...TEST_CASES_DATA];
 
-	editModeEnabled: boolean = false;
-
 	popUpActive: boolean = false;
+	popUpEditUserStory: boolean = false;
 
+	userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
+
+	acceptanceCriteria$ = this.userstoryApiService.getAcceptanceCriteria(this.projectEid, this.userstoryEid);
+	constructor(
+		private route: ActivatedRoute,
+		private userstoryApiService: UserstoryApiService,
+	) {}
 	ngOnInit(): void {}
-
-	enableEditMode() {
-		this.editModeEnabled = true;
-	}
-
-	disableEditMode() {
-		this.editModeEnabled = false;
-	}
 
 	openPopUp() {
 		this.popUpActive = true;
 		document.body.style.overflow = "hidden";
 	}
 
+	openPopUpEditUserStory() {
+		this.popUpEditUserStory = true;
+		document.body.style.overflow = "hidden";
+	}
+
 	closePopUp() {
 		this.popUpActive = false;
 		document.body.style.overflow = "auto";
+	}
+
+	closePopUpEditUserStory() {
+		this.popUpEditUserStory = false;
+		document.body.style.overflow = "auto";
+	}
+
+	setUpdatedUserStory() {
+		this.userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
+		this.closePopUpEditUserStory();
 	}
 }

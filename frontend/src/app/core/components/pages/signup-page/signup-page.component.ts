@@ -20,6 +20,7 @@ export class SignupPageComponent implements OnInit {
 	formSubmitted: boolean = false;
 	regexName: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
 	regexPassword: RegExp = /^(?=.*[!@#$%^&*]).{7,}$/;
+	public signupLoading: boolean = false;
 
 	constructor(
 		private userApiService: UserApiService,
@@ -83,7 +84,7 @@ export class SignupPageComponent implements OnInit {
 		const password = signupForm.get("password")?.value;
 		const confirmPassword = signupForm.get("passwordConfirm")?.value;
 
-		return password === confirmPassword ? true : false;
+		return password === confirmPassword;
 	}
 
 	signup() {
@@ -100,15 +101,23 @@ export class SignupPageComponent implements OnInit {
 				surname: this.signupForm.get("lastName")!.value,
 			};
 
+			this.signupLoading = true;
+
 			this.userApiService.signup(request).subscribe({
 				next: (result) => {
 					this.router.navigate(["/select-project"]);
+					this.signupLoading = false;
 				},
 				error: (error: ApiErrorResponse) => {
 					this.signupFailed = true;
+					this.signupLoading = false;
 				},
 			});
 		}
+	}
+
+	navigateTo(route: string) {
+		this.router.navigate([route]);
 	}
 
 	get nameErrorMessage(): string {
@@ -146,7 +155,7 @@ export class SignupPageComponent implements OnInit {
 		const password = this.signupForm.get("password");
 		const passwordConfirm = this.signupForm.get("passwordConfirm");
 
-		if (this.signupFailed && password?.value !== passwordConfirm?.value) {
+		if (this.signupFailed || password?.value !== passwordConfirm?.value) {
 			return "Your passwords must be equals. Please try again.";
 		}
 		return "Invalid email or password. Please try again.";

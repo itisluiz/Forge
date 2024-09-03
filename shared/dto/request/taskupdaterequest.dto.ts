@@ -1,3 +1,4 @@
+import { Priority } from "../../enum/priority.enum";
 import { TaskStatus } from "../../enum/taskstatus.enum";
 import { TaskType } from "../../enum/tasktype.enum";
 
@@ -23,6 +24,9 @@ import { TaskType } from "../../enum/tasktype.enum";
  *         type:
  *           $ref: '#/components/schemas/TaskType'
  *           nullable: true
+ *         priority:
+ *           $ref: '#/components/schemas/Priority'
+ *           nullable: true
  */
 export interface TaskUpdateRequest {
 	responsibleEid?: string;
@@ -30,4 +34,5 @@ export interface TaskUpdateRequest {
 	description?: string;
 	status?: TaskStatus;
 	type?: TaskType;
+	priority?: Priority;
 }

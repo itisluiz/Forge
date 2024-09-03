@@ -5,9 +5,6 @@
  *     EpicUpdateRequest:
  *       type: object
  *       properties:
- *         code:
- *           type: string
- *           nullable: true
  *         title:
  *           type: string
  *           nullable: true
@@ -16,7 +13,6 @@
  *           nullable: true
  */
 export interface EpicUpdateRequest {
-	code?: string;
 	title?: string;
 	description?: string;
 }

@@ -1,36 +1,413 @@
 <div class="select-project-container">
-	<div class="select-project-component">
-		<div class="title">
-			<div class="left-side">
-				<h1>Please select your project</h1>
-				<p>To have access to the management process, choose one project</p>
+	@if (editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>{{ projectInfo.title }}'s information</h1>
+				</div>
 			</div>
+			<mat-tab-group class="tabs">
+				<mat-tab label="Informations">
+					<div class="input-container">
+						<app-input
+							#updateProjectCode
+							for="code"
+							label="Code"
+							name="code"
+							type="text"
+							[placeholder]="projectInfo.code"
+							[innerHTML]="projectInfo.code"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
+							[minLength]="3"
+							[maxLength]="3"
+						></app-input>
 
-			<div class="right-side">
-				<button id="join">Join</button>
-				<button mat-icon-button>
-					<mat-icon>more_vert</mat-icon>
-				</button>
-			</div>
+						<app-input
+							#updateProjectName
+							for="projectName"
+							label="Project's name"
+							name="projectName"
+							type="text"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
+							[placeholder]="projectInfo.title"
+							[innerHTML]="projectInfo.title"
+						></app-input>
+
+						<app-input
+							#updateProjectDescription
+							for="description"
+							label="Description"
+							name="description"
+							type="text"
+							(input)="revalidateProjectUpdateForm()"
+							[required]="true"
+							[placeholder]="projectInfo.description"
+							[innerHTML]="projectInfo.description"
+							[errorMessage]="projectUpdateError"
+						></app-input>
+					</div>
+
+					<div class="action-buttons">
+						<button
+							class="action-buttons_action action-buttons_button"
+							[disabled]="!validProjectUpdateForm || loadingSaveProjectUpdate"
+							[class.loading]="loadingSaveProjectUpdate"
+							(click)="updateProject(projectInfo.eid)"
+						>
+							{{ !loadingSaveProjectUpdate ? "Save changes" : "" }}
+							<span class="loading-spinner"></span>
+						</button>
+						<button class="action-buttons_cancel action-buttons_button" (click)="editMode = !editMode">Cancel</button>
+					</div>
+				</mat-tab>
+				<mat-tab label="Members">
+					<div class="header-members">
+						<p>Name</p>
+						<p>Role</p>
+						<p>Email</p>
+						<p>Actions</p>
+					</div>
+					<div class="body-members">
+						@for (member of projectInfo.members; track member) {
+							<div class="member">
+								@if (member.admin) {
+									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }} {{ member.surname }}</p>
+								} @else {
+									<p>{{ member.name }} {{ member.surname }}</p>
+								}
+
+								<p>{{ member.role | projectRole }}</p>
+								<p>{{ member.email }}</p>
+
+								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+								<mat-menu #member_menu="matMenu">
+									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">
+										Edit permissions
+									</button>
+									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
+								</mat-menu>
+							</div>
+						}
+					</div>
+				</mat-tab>
+			</mat-tab-group>
 		</div>
+	}
 
-		<div class="projects">
-			<div class="header">
-				<span>Projects</span>
-				<span>Total: {{ dataSource.length }}</span>
+	@if (!editMode) {
+		<div class="select-project-component">
+			<div class="title">
+				<div class="left-side">
+					<h1>Please select your project</h1>
+					<p>To have access to the management process, choose one project</p>
+				</div>
+
+				<div class="right-side">
+					<button id="join" (click)="openPopUp('join')">Join</button>
+					<button mat-icon-button [matMenuTriggerFor]="menu">
+						<mat-icon>more_vert</mat-icon>
+					</button>
+					<mat-menu #menu="matMenu">
+						<button mat-menu-item (click)="openPopUp('create')">
+							<span>Create a project</span>
+						</button>
+					</mat-menu>
+				</div>
 			</div>
 
-			<div class="list">
-				<div *ngFor="let project of dataSource">
-					<div class="project-info">
-						<p>{{ project.name }}:</p>
-						<span>{{ project.description }}</span>
+			<div class="projects">
+				<div class="header">
+					<span>Projects</span>
+					<span>Total: {{ dataSource.length }}</span>
+				</div>
+
+				<div class="list">
+					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
+						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
+							<p>{{ project.code }}</p>
+							<span>{{ project.title }}</span>
+
+							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
+								<mat-icon>more_vert</mat-icon>
+							</button>
+							<mat-menu #project_menu="matMenu">
+								@if (project.admin) {
+									<button mat-menu-item (click)="editProject(project.eid)">
+										<span>Edit information</span>
+									</button>
+									<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
+										<span>Invite a person</span>
+									</button>
+								}
+								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, project.eid)">
+									<span>Leave project</span>
+								</button>
+								@if (project.admin) {
+									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, project.eid)">
+										<span>Delete project</span>
+									</button>
+								}
+							</mat-menu>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<button class="footer-next">Next</button>
+			@if (!editMode && noProjects) {
+				<div class="no-project">
+					<h2>Not part of any project?</h2>
+					<p>You can quickly create one or join an existing one by clicking the button below.</p>
+					<div class="buttons">
+						<button class="buttons_cancel buttons_button" (click)="openPopUp('join')">Join</button>
+						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create</button>
+					</div>
+				</div>
+			}
+
+			@if (!editMode && !noProjects) {
+				<button
+					class="footer-next"
+					disabled="true"
+					[disabled]="enableNextButton"
+					(click)="navigateTo(this.selectedProjectId + '/epics')"
+				>
+					Next
+				</button>
+			}
 		</div>
-	</div>
+	}
 	<p class="copyright">All content © 2024 Forge. Unauthorized reproduction or distribution is prohibited.</p>
 </div>
+
+@if (popUpJoin) {
+	<app-popup-component
+		#popupJoinRef
+		title="Join in a project"
+		description="Enter your project's code to get access to the project."
+		buttonName="Join"
+		buttonCancelName="Cancel"
+		[buttonEnabled]="validProjectJoinForm"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('join')"
+		(onButtonClick)="handleButtonClick('join')"
+	>
+		<app-input
+			#projectJoin
+			[errorMessage]="projectCodeError"
+			for="code"
+			label="Code"
+			name="code"
+			type="text"
+			placeholder="Enter the 24-character long code"
+			[required]="true"
+			[minLength]="24"
+			[maxLength]="24"
+			(input)="revalidateProjectJoinForm()"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpCreateProject) {
+	<app-popup-component
+		#popupCreateProjectRef
+		title="Create a new project"
+		description="Enter the information of your project."
+		buttonName="Create"
+		buttonCancelName="Cancel"
+		[buttonEnabled]="false"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('create')"
+		(onButtonClick)="handleButtonClick('create')"
+	>
+		<app-input
+			#projectTitleCreate
+			for="title"
+			label="Title"
+			name="title"
+			type="text"
+			placeholder="Title of your project"
+			[required]="true"
+			(input)="revalidateProjectCreateForm()"
+		></app-input>
+
+		<app-input
+			#projectDescriptionCreate
+			for="description"
+			label="Description"
+			name="description"
+			type="text"
+			placeholder="Description of your project"
+			[required]="true"
+			(input)="revalidateProjectCreateForm()"
+		></app-input>
+
+		<app-input
+			#projectCodeCreate
+			[errorMessage]="projectCreateError"
+			for="code"
+			label="Code"
+			name="code"
+			type="text"
+			placeholder="Enter your project three-letter code"
+			[required]="true"
+			[minLength]="3"
+			[maxLength]="3"
+			(input)="revalidateProjectCreateForm()"
+		></app-input>
+	</app-popup-component>
+}
+
+@if (popUpInvite) {
+	<app-popup-component
+		[title]="'Invite a person to ' + projectName"
+		buttonName="Make an invitation"
+		buttonCancelName="Cancel"
+		[loading]="loadingMakeInvite"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('invite')"
+		(onButtonClick)="handleButtonClick('invite')"
+	>
+		<app-input
+			#projectInviteUses
+			for="quantity"
+			label="Uses quantity"
+			name="quantity"
+			type="number"
+			placeholder="Number of uses"
+			innerHTML="1"
+		></app-input>
+
+		<app-input
+			#projectInviteDuration
+			for="duration"
+			label="Duration"
+			name="duration"
+			type="number"
+			placeholder="Number of hours"
+			innerHTML="24"
+		></app-input>
+
+		<app-select
+			#projectInviteRole
+			[errorMessage]="projectInvitationError"
+			for="role"
+			label="Role"
+			name="role"
+			type="text"
+			[options]="[
+				{ value: 1, label: 'Product Owner' },
+				{ value: 2, label: 'Scrum Master' },
+				{ value: 3, label: 'Developer' },
+				{ value: 4, label: 'Tester' }
+			]"
+		></app-select>
+	</app-popup-component>
+}
+
+@if (popUpEditMember) {
+	<app-popup-component
+		#popupUpdateMemberRef
+		title="Edit member permissions"
+		buttonName="Save changes"
+		buttonCancelName="Cancel"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('editMember')"
+		(onButtonClick)="handleButtonClick('editMember')"
+	>
+		<app-input
+			#memberEid
+			for="memberEid"
+			label="Member's eid"
+			name="memberEid"
+			type="text"
+			placeholder="Member eid"
+			[innerHTML]="currentMemberId"
+			[disabled]="true"
+		></app-input>
+
+		<app-select
+			#memberRole
+			for="memberRole"
+			label="Role"
+			name="memberRole"
+			type="number"
+			[dontChangeOption]="true"
+			[options]="[
+				{ value: 1, label: 'Product Owner' },
+				{ value: 2, label: 'Scrum Master' },
+				{ value: 3, label: 'Developer' },
+				{ value: 4, label: 'Tester' }
+			]"
+		></app-select>
+
+		<app-select
+			#isMemberAdmin
+			for="isMemberAdmin"
+			label="Admin"
+			name="isMemberAdmin"
+			type="boolean"
+			[options]="[
+				{ value: true, label: 'Yes' },
+				{ value: false, label: 'No' }
+			]"
+			[dontChangeOption]="true"
+			[errorMessage]="projectEditMemberError"
+		></app-select>
+	</app-popup-component>
+}
+
+@if (popUpInviteResult) {
+	<app-popup-component
+		title="Copy the invitation code"
+		buttonName="Copy URL"
+		buttonCancelName="Close"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('inviteResult')"
+		(onButtonClick)="copyToClipboard(makeInvitationUrl(invitationResult))"
+	>
+		<h4>Manually use the code</h4>
+		<div class="fake-input">
+			<p>{{ invitationResult }}</p>
+
+			<button class="button-icon" mat-icon-button (click)="copyToClipboard(invitationResult)">
+				<mat-icon>content_copy</mat-icon>
+			</button>
+		</div>
+
+		<h4>Or share the URL</h4>
+		<div class="copy-link fake-input">
+			<p class="link">{{ makeInvitationUrl(invitationResult) }}</p>
+
+			<button class="button-icon" mat-icon-button (click)="copyToClipboard(makeInvitationUrl(invitationResult))">
+				<mat-icon>content_copy</mat-icon>
+			</button>
+		</div>
+	</app-popup-component>
+}
+
+@if (popUpDeleteProject) {
+	<div class="pop-up-background" (click)="closePopUp('deleteConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Delete Project'"
+		[description]="'Are you sure you want to delete this project? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUp('deleteConfirm')"
+		(confirmDeleteEmmiter)="deleteProject(projectId)"
+	></app-delete-popup>
+}
+
+@if (popUpLeaveProject) {
+	<div class="pop-up-background" (click)="closePopUp('leaveConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Leave Project'"
+		[description]="'Are you sure you want to leave this project? You cannot go back on this action.'"
+		confirmButtonLabel="Leave"
+		(cancelEmitter)="closePopUp('leaveConfirm')"
+		(confirmDeleteEmmiter)="leaveProject(projectId)"
+	></app-delete-popup>
+}

@@ -1,4 +1,5 @@
 import { Priority } from "../../enum/priority.enum";
+import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
 
 /**
  * @swagger
@@ -14,6 +15,8 @@ import { Priority } from "../../enum/priority.enum";
  *         sprintEid:
  *           type: string
  *           nullable: true
+ *         code:
+ *           type: string
  *         title:
  *           type: string
  *         description:
@@ -30,6 +33,10 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         storyJustification:
  *           type: string
+ *         tasks:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/TaskSelfComposite'
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -41,6 +48,7 @@ export interface UserstoryResponse {
 	eid: string;
 	epicEid: string;
 	sprintEid?: string;
+	code: string;
 	title: string;
 	description: string;
 	narrative: string;
@@ -49,6 +57,7 @@ export interface UserstoryResponse {
 	storyActor: string;
 	storyObjective: string;
 	storyJustification: string;
+	tasks: TaskSelfComposite[];
 	createdAt: string;
 	updatedAt: string;
 }

@@ -46,18 +46,62 @@ app-navbar {
 						margin-right: 11px;
 					}
 
-					.items {
+					.tag {
 						display: flex;
 						align-items: center;
 						gap: 2px;
-						background-color: v.$lemon-color;
 						padding: 1px 2.5px;
 						border-radius: 3px;
 						height: fit-content;
+						margin-right: 0.1em;
 
 						span {
 							font-size: 9px;
 							color: v.$white-color;
+						}
+
+						&.past {
+							background-color: v.$grey-color;
+						}
+
+						&.ongoing {
+							background-color: v.$lemon-color;
+						}
+
+						&.future {
+							background-color: v.$grey-color;
+						}
+
+						&.plan {
+							background-color: #ff6347;
+						}
+
+						&.design {
+							background-color: #ffa500;
+						}
+
+						&.develop {
+							background-color: #8404be;
+						}
+
+						&.test {
+							background-color: #325bcd;
+						}
+
+						&.deploy {
+							background-color: #41bce1;
+						}
+
+						&.launch {
+							background-color: #a82be2;
+						}
+
+						&.review {
+							background-color: #ff1493;
+						}
+
+						&.complete {
+							background-color: #009400;
 						}
 					}
 				}
@@ -136,6 +180,21 @@ app-navbar {
 			color: v.$grey-color;
 			max-width: 550px;
 		}
+	}
+}
+
+.responsible {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	p {
+		margin-top: 1em !important;
+		font-size: 0.8em !important;
+	}
+	.priority {
+		margin-top: 1em;
+		margin-right: 0.5em;
+		margin-left: auto;
 	}
 }
 

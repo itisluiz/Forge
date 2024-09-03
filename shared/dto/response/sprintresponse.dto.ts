@@ -1,4 +1,6 @@
+import { SprintPeriodStatus } from "../../enum/sprintperiodstatus.enum";
 import { SprintStatus } from "../../enum/sprintstatus.enum";
+import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
 
 /**
  * @swagger
@@ -17,6 +19,12 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *           format: date-time
  *         status:
  *           $ref: '#/components/schemas/SprintStatus'
+ *         periodStatus:
+ *           $ref: '#/components/schemas/SprintPeriodStatus'
+ *         tasks:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/TaskSelfComposite'
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -29,6 +37,8 @@ export interface SprintResponse {
 	startsAt: string;
 	endsAt: string;
 	status: SprintStatus;
+	periodStatus: SprintPeriodStatus;
+	tasks: TaskSelfComposite[];
 	createdAt: string;
 	updatedAt: string;
 }

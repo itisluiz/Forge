@@ -71,7 +71,7 @@ app-navbar {
 			font-weight: 400;
 
 			&:nth-of-type(1) {
-				flex-grow: 0.2;
+				flex-grow: 0.5;
 				font-weight: 500;
 				color: v.$purple-color;
 			}
@@ -103,37 +103,19 @@ app-navbar {
 				&:nth-child(4) {
 					text-align: center;
 				}
-
-				&:nth-child(5) {
-					text-align: center;
-				}
-
-				&:nth-child(6) {
-					text-align: center;
-				}
 			}
 
 			.mat-mdc-cell {
 				border: none;
 
-				&:nth-child(6) {
-					text-align: center;
-				}
-
 				&:nth-child(1) {
 					color: v.$epics-dark-green-color;
 					font-weight: 500;
-				}
-
-				&:nth-child(5) {
-					text-align: center;
+					width: 16%;
 				}
 
 				&:nth-child(4) {
 					text-align: center;
-					display: flex;
-					align-items: center;
-					justify-content: center;
 					padding: 10px;
 					.status-container {
 						border-radius: 2px;
@@ -145,6 +127,11 @@ app-navbar {
 
 			.mat-mdc-row {
 				height: 40px;
+
+				&:hover {
+					cursor: pointer;
+					filter: brightness(0.9);
+				}
 
 				&:nth-child(odd) {
 					background-color: v.$background-grey;

@@ -13,7 +13,7 @@ export default async function (req: Request, res: Response) {
 	try {
 		sprints = await sequelize.models["sprint"].findAll({
 			where: {
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
 			order: [["startsAt", "ASC"]],
 			transaction,

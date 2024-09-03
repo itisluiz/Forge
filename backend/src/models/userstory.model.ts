@@ -7,6 +7,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
+		index: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: false,
+		},
 		title: {
 			type: DataTypes.STRING(64),
 			allowNull: false,

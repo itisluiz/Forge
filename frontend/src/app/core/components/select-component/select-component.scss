@@ -1,0 +1,39 @@
+@use "../../../../../src/assets/variables.scss" as v;
+
+:host {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	select {
+		height: 40px;
+		padding: 0px 0px 0px 20px;
+		background-color: #f2f2f2;
+		border: none;
+		border-radius: 2px;
+		margin-bottom: 16px;
+
+		&:focus {
+			outline: none;
+			padding: 9px 9px 9px 19px;
+			border: 1px solid v.$green-color;
+		}
+	}
+
+	.error-message {
+		display: flex;
+		align-items: flex-start;
+		position: absolute;
+		color: v.$error-color;
+		top: 65px;
+		font-size: v.$observation-font;
+
+		mat-icon {
+			font-size: v.$paragraph-font;
+			height: fit-content;
+			width: fit-content;
+			margin-right: 5px;
+			margin-top: 2px;
+		}
+	}
+}

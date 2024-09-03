@@ -1,3 +1,4 @@
+import { Priority } from "../../enum/priority.enum";
 import { TaskStatus } from "../../enum/taskstatus.enum";
 import { TaskType } from "../../enum/tasktype.enum";
 
@@ -15,6 +16,8 @@ import { TaskType } from "../../enum/tasktype.enum";
  *         responsibleEid:
  *           type: string
  *           nullable: true
+ *         code:
+ *           type: string
  *         title:
  *           type: string
  *         description:
@@ -23,6 +26,16 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           $ref: '#/components/schemas/TaskStatus'
  *         type:
  *           $ref: '#/components/schemas/TaskType'
+ *         priority:
+ *           $ref: '#/components/schemas/Priority'
+ *         startedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         completedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -34,10 +47,14 @@ export interface TaskResponse {
 	eid: string;
 	userstoryEid: string;
 	responsibleEid?: string;
+	code: string;
 	title: string;
 	description: string;
 	status: TaskStatus;
 	type: TaskType;
+	priority: Priority;
+	startedAt?: string;
+	completedAt?: string;
 	createdAt: string;
 	updatedAt: string;
 }

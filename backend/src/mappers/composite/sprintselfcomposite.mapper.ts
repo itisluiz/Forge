@@ -8,5 +8,6 @@ export function mapSprintSelfComposite(sprint: any, index: number): SprintSelfCo
 		startsAt: sprint.dataValues.startsAt,
 		endsAt: sprint.dataValues.endsAt,
 		status: sprint.dataValues.esprintstatusId,
+		periodStatus: sprint.getPeriodStatus(),
 	};
 }

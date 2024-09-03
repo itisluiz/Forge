@@ -1,0 +1,29 @@
+@if (popUpActive) {
+
+<div class="content-wrapper">
+	<div class="popup-header">
+		<h2 class="popup-header_title">{{ title }}</h2>
+		<p class="popup-header_description">{{ description }}</p>
+	</div>
+
+	<ng-content class="popup-content"></ng-content>
+
+	<div class="popup-footer">
+		<button
+			class="popup-footer_action popup-footer_button"
+			[disabled]="!buttonEnabled || loading"
+			[class.loading]="loading"
+			(click)="buttonClicked()"
+		>
+			{{!loading ? buttonName : "" }}
+			<span class="loading-spinner"></span>
+		</button>
+		@if(cancelButton){
+		<button class="popup-footer_cancel popup-footer_button" (click)="closePopUp()">{{buttonCancelName}}</button>
+		}
+	</div>
+</div>
+
+<div class="popup-background" (click)="closePopUp()"></div>
+
+}

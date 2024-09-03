@@ -9,25 +9,28 @@ export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
+
 	let epic: any;
 
 	try {
 		epic = await sequelize.models["epic"].create(
 			{
-				code: epicNewRequest.code,
 				title: epicNewRequest.title,
+				index: authProject.project.dataValues.epicIndex,
 				description: epicNewRequest.description,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 			},
-			{ transaction },
+			{ transaction, include: [sequelize.models["userstory"]] },
 		);
 
+		await authProject.project.increment("epicIndex", { transaction });
+		await epic.reload({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
 		throw error;
 	}
 
-	const response = mapEpicResponse(epic);
+	const response = mapEpicResponse(epic, authProject.project.dataValues.code);
 	res.status(200).send(response);
 }

@@ -19,9 +19,9 @@ export default async function (req: Request, res: Response) {
 		invitation = await sequelize.models["projectinvitation"].create(
 			{
 				code: randomBytes(12).toString("hex"),
-				uses: projectMakeInvitationRequest.uses,
+				remainingUses: projectMakeInvitationRequest.uses,
 				durationHours: projectMakeInvitationRequest.durationHours,
-				projectId: authProject.projectId,
+				projectId: authProject.project.dataValues.id,
 				eprojectroleId: projectMakeInvitationRequest.role,
 			},
 			{
