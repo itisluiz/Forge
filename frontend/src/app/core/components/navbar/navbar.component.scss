@@ -15,6 +15,23 @@
 		}
 	}
 
+	.trollando {
+		color: v.$lemon-color !important;
+		animation: swing 4s infinite alternate;
+	}
+
+	@keyframes swing {
+		0% {
+			transform: translateX(0) rotate(0deg);
+		}
+		50% {
+			transform: translateX(10px) rotate(15deg);
+		}
+		100% {
+			transform: translateX(-10px) rotate(-15deg);
+		}
+	}
+
 	.search-bar {
 		width: 350px;
 		transform: translateY(10px);

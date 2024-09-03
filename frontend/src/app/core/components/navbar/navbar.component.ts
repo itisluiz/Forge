@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -40,8 +40,18 @@ export interface SearchBar {
 	styleUrl: "./navbar.component.scss",
 })
 export class NavbarComponent {
+	@ViewChild("audioPlayer") audioPlayer!: ElementRef<HTMLAudioElement>;
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 	userPhoto!: string;
+	trollando: boolean = false;
+
+	playAudio() {
+		if ((this.trollando = !this.trollando)) {
+			this.audioPlayer.nativeElement.play();
+		} else {
+			this.audioPlayer.nativeElement.pause();
+		}
+	}
 
 	constructor(
 		private router: Router,

@@ -116,8 +116,10 @@ export class KanbanPageComponent implements OnInit {
 		return `${user.name} ${user.surname}`;
 	}
 
-	getTasksOfStatus(sprintEid: string, status: TaskStatus) {
-		return this.detailedSprints[sprintEid]?.tasks.filter((task) => task.status === status);
+	getTasksOfStatus(sprintEid: string, userstoryEid: string, status: TaskStatus) {
+		return this.detailedSprints[sprintEid]?.tasks.filter(
+			(task) => task.userstoryEid === userstoryEid && task.status === status,
+		);
 	}
 
 	ngOnInit(): void {
