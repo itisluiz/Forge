@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { LoginPageComponent } from "./core/components/pages/login-page/login-page.component";
 import { MainPageComponent } from "./core/components/pages/main-page/main-page.component";
-import { AgileProcessComponent } from "./core/components/agile-process/agile-process.component";
 import { KanbanPageComponent } from "./core/components/pages/kanban-page/kanban-page.component";
 import { EpicsPageComponent } from "./core/components/pages/epic-page/epics-page.component";
 import { BacklogPageComponent } from "./core/components/pages/backlog-page/backlog-page.component";
@@ -11,10 +10,8 @@ import { UserStoryPageComponent } from "./core/components/pages/user-story-page/
 import { UserStoryPopupComponent } from "./core/components/user-story-popup/user-story-popup.component";
 
 export const routes: Routes = [
-	{ path: "", component: MainPageComponent },
+	//{ path: "", component: MainPageComponent },
 	{ path: "login", component: LoginPageComponent },
-	{ path: "agile", component: AgileProcessComponent },
-	{ path: "kanban", component: KanbanPageComponent },
 	{ path: ":projectEid/kanban", component: KanbanPageComponent },
 	{ path: ":projectEid/epics", component: EpicsPageComponent },
 	{ path: ":projectEid/backlog", component: BacklogPageComponent },
@@ -22,5 +19,5 @@ export const routes: Routes = [
 	{ path: "select-project", component: SelectProjectPageComponent },
 	{ path: ":projectEid/:userstoryEid/user-story", component: UserStoryPageComponent },
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
-	{ path: "**", redirectTo: "/" },
+	{ path: "**", redirectTo: "/select-project" },
 ];
