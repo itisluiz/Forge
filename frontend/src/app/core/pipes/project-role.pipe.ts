@@ -1,19 +1,20 @@
 import { Pipe, PipeTransform } from "@angular/core";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Pipe({
 	name: "projectRole",
 	standalone: true,
 })
 export class ProjectRolePipe implements PipeTransform {
-	transform(value: number): string {
+	transform(value: ProjectRole): string {
 		switch (value) {
-			case 1:
+			case ProjectRole.PRODUCT_OWNER:
 				return "Product Owner";
-			case 2:
+			case ProjectRole.SCRUM_MASTER:
 				return "Scrum Master";
-			case 3:
+			case ProjectRole.DEVELOPER:
 				return "Developer";
-			case 4:
+			case ProjectRole.TESTER:
 				return "Tester";
 			default:
 				return "Unknown Role";
