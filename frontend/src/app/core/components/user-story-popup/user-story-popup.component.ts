@@ -203,38 +203,60 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 		const criteriaArray = this.secondFormGroup.get("acceptanceCriteria") as FormArray;
 
 		if (criteriaArray) {
+			const existingCriteriaEids = new Set<string>(); // Para armazenar critérios existentes
+			const newCriteria: AcceptanceCriteriaNewRequest[] = []; // Para armazenar novos critérios
+
 			criteriaArray.controls.forEach((control: AbstractControl) => {
 				const criteria = control.value;
-
-				if (!isEditMode) {
-					const acceptanceCriteriaNewRequest: AcceptanceCriteriaNewRequest = {
+				if (criteria.criteriaEid) {
+					existingCriteriaEids.add(criteria.criteriaEid);
+				} else {
+					// Critérios novos
+					newCriteria.push({
 						userstoryEid: userstoryEid,
 						given: criteria.given,
 						when: criteria.when,
 						then: criteria.then,
-					};
-
-					this.createAcceptanceCriteria(acceptanceCriteriaNewRequest).subscribe({
-						next: (response) => console.log("Critério de aceitação criado com sucesso:", response),
-						error: (error) => console.error("Erro ao criar o critério de aceitação:", error),
-					});
-				} else {
-					const acceptanceCriteriaUpdateRequest: AcceptanceCriteriaUpdateRequest = {
-						given: criteria.given,
-						when: criteria.when,
-						then: criteria.then,
-					};
-
-					const criteriaEid = criteria.criteriaEid;
-					this.updateAcceptanceCriteria(acceptanceCriteriaUpdateRequest, criteriaEid).subscribe({
-						next: (response) => console.log("Critério de aceitação editado com sucesso:", response),
-						error: (error) => console.error("Erro ao editar o critério de aceitação:", error),
 					});
 				}
 			});
+
+			if (isEditMode) {
+				this.updateExistingCriteria(existingCriteriaEids, userstoryEid);
+			}
+			this.createNewCriteria(newCriteria, userstoryEid);
 		} else {
 			console.error('FormArray "acceptanceCriteria" não encontrado no secondFormGroup');
 		}
+	}
+
+	private updateExistingCriteria(existingCriteriaEids: Set<string>, userstoryEid: string) {
+		const criteriaArray = this.secondFormGroup.get("acceptanceCriteria") as FormArray;
+
+		criteriaArray.controls.forEach((control: AbstractControl) => {
+			const criteria = control.value;
+			if (criteria.criteriaEid) {
+				const acceptanceCriteriaUpdateRequest: AcceptanceCriteriaUpdateRequest = {
+					given: criteria.given,
+					when: criteria.when,
+					then: criteria.then,
+				};
+
+				this.updateAcceptanceCriteria(acceptanceCriteriaUpdateRequest, criteria.criteriaEid).subscribe({
+					next: (response) => console.log("Critério de aceitação editado com sucesso:", response),
+					error: (error) => console.error("Erro ao editar o critério de aceitação:", error),
+				});
+			}
+		});
+	}
+
+	private createNewCriteria(newCriteria: AcceptanceCriteriaNewRequest[], userstoryEid: string) {
+		newCriteria.forEach((criteria) => {
+			this.createAcceptanceCriteria(criteria).subscribe({
+				next: (response) => console.log("Critério de aceitação criado com sucesso:", response),
+				error: (error) => console.error("Erro ao criar o critério de aceitação:", error),
+			});
+		});
 	}
 
 	createUserStory(userstoryNewRequest: UserstoryNewRequest): Observable<UserstoryResponse> {
