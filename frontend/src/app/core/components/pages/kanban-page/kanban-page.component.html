@@ -55,21 +55,18 @@
 											<div class="title">
 												<h2>To do</h2>
 												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, 1).length }}</span>
+													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 1).length }}</span>
 													<span>left</span>
 												</div>
 											</div>
 											<div cdkDropList id="taskstatus-1" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, 1); track task) {
+												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 1); track task) {
 													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
 															<h3>{{ task.title }}</h3>
 															<p class="desc">{{ task.description }}</p>
-															<p class="behaviour">
-																{{ task.description }}
-															</p>
 															<span class="responsible">
 																@if (task.responsibleEid) {
 																	<img [src]="getGravatarUrl(task.responsibleEid)" />
@@ -93,22 +90,19 @@
 											<div class="title">
 												<h2>In progress</h2>
 												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, 2).length }}</span>
+													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 2).length }}</span>
 													<span>left</span>
 												</div>
 											</div>
 
 											<div cdkDropList id="taskstatus-2" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, 2); track task) {
+												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 2); track task) {
 													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
 															<h3>{{ task.title }}</h3>
 															<p class="desc">{{ task.description }}</p>
-															<p class="behaviour">
-																{{ task.description }}
-															</p>
 															<span class="responsible">
 																@if (task.responsibleEid) {
 																	<img [src]="getGravatarUrl(task.responsibleEid)" />
@@ -132,22 +126,19 @@
 											<div class="title">
 												<h2>Available to review</h2>
 												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, 3).length }}</span>
+													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 3).length }}</span>
 													<span>left</span>
 												</div>
 											</div>
 
 											<div cdkDropList id="taskstatus-3" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, 3); track task) {
+												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 3); track task) {
 													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
 															<h3>{{ task.title }}</h3>
 															<p class="desc">{{ task.description }}</p>
-															<p class="behaviour">
-																{{ task.description }}
-															</p>
 															<span class="responsible">
 																@if (task.responsibleEid) {
 																	<img [src]="getGravatarUrl(task.responsibleEid)" />
@@ -171,22 +162,19 @@
 											<div class="title">
 												<h2>Reviewing</h2>
 												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, 4).length }}</span>
+													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 4).length }}</span>
 													<span>left</span>
 												</div>
 											</div>
 
 											<div cdkDropList id="taskstatus-4" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, 4); track task) {
+												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 4); track task) {
 													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
 															<h3>{{ task.title }}</h3>
 															<p class="desc">{{ task.description }}</p>
-															<p class="behaviour">
-																{{ task.description }}
-															</p>
 															<span class="responsible">
 																@if (task.responsibleEid) {
 																	<img [src]="getGravatarUrl(task.responsibleEid)" />
@@ -210,22 +198,19 @@
 											<div class="title">
 												<h2>Done</h2>
 												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, 5).length }}</span>
+													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 5).length }}</span>
 													<span>completed</span>
 												</div>
 											</div>
 
 											<div cdkDropList id="taskstatus-5" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, 5); track task) {
+												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 5); track task) {
 													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
 															<h3>{{ task.title }}</h3>
 															<p class="desc">{{ task.description }}</p>
-															<p class="behaviour">
-																{{ task.description }}
-															</p>
 															<span class="responsible">
 																@if (task.responsibleEid) {
 																	<img [src]="getGravatarUrl(task.responsibleEid)" />

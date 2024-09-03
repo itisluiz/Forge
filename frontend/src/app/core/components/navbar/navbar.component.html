@@ -23,8 +23,11 @@
 
 	<span class="spacer"></span>
 
-	<button mat-icon-button>
-		<mat-icon>notifications</mat-icon>
+	<button mat-icon-button (click)="playAudio()">
+		<mat-icon [class.trollando]="trollando">notifications</mat-icon>
+		<audio #audioPlayer hidden>
+			<source src="../../../../assets/omeutcc.mp3" type="audio/mp3" />
+		</audio>
 	</button>
 	<button mat-icon-button>
 		<mat-icon>settings</mat-icon>
