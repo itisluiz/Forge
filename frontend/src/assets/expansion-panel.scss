@@ -150,7 +150,7 @@ mat-accordion {
 			}
 		}
 
-		img {
+		img:not(.nonavatar) {
 			width: 27px;
 			height: 27px;
 			border-radius: 50%;

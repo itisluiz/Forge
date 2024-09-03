@@ -483,8 +483,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 		switch (status) {
 			case "In Progress":
+				color = "#fff";
+				background = "#FFA500";
+				break;
 			case "Available to review":
-			case "In review":
+			case "Reviewing":
 				color = "#fff";
 				background = "#93C088";
 				break;
@@ -532,8 +535,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			case 2:
 				return "In Progress";
 			case 3:
-				return "Done";
+				return "Available to review";
 			case 4:
+				return "Reviewing";
+			case 5:
+				return "Done";
+			case 6:
 				return "Cancelled";
 			default:
 				return "";

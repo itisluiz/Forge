@@ -13,386 +13,250 @@
 			<p>Quadro Kanban para Gerenciamento de Features Disponíveis e Prontas para o Início do Desenvolvimento de Projetos.</p>
 		</div>
 
-		<div class="kanban-grid">
-			<div class="title">
-				<div class="left">
-					<div class="left-content">
-						<h2>Sprint {{ (currentSprint$ | async)?.index }}</h2>
-						<div class="items">
-							<span>{{ (userStoriesFromCurrentSprint$ | async)?.userstories?.length }}</span>
-							<span>items</span>
+		@for (sprint of sprints; track $index) {
+			<div class="kanban-grid">
+				<div class="title">
+					<div class="left">
+						<div class="left-content">
+							<h2>Sprint {{ sprint.index }}</h2>
+							<div class="tag {{ sprint.status | sprintStatusClass }}">
+								<span>{{ sprint.status | sprintStatus }}</span>
+							</div>
+							<div class="tag {{ sprint.periodStatus | sprintPeriodStatusClass }}">
+								<span>{{ sprint.periodStatus | sprintPeriodStatus }}</span>
+							</div>
 						</div>
 					</div>
-					<p class="desc">Breve descrição do que será feito na task</p>
+
+					<div class="right">
+						<button mat-icon-button>
+							<mat-icon>more_horiz</mat-icon>
+						</button>
+
+						<p class="sprint-date">
+							Started at {{ sprint.startsAt | date: "dd/MM/YYYY" }} with {{ sprint.endsAt | daysDifference }} day(s) left
+						</p>
+					</div>
 				</div>
 
-				<div class="right">
-					<button mat-icon-button>
-						<mat-icon>more_horiz</mat-icon>
-					</button>
-					<p *ngIf="currentSprint$ | async as currentSprint" class="sprint-date">
-						Início da Sprint: {{ currentSprint?.startsAt || "N/A" }}
-					</p>
-				</div>
-			</div>
+				@if (detailedSprints[sprint.eid] && userStoriesPerSprint[sprint.eid]) {
+					<mat-accordion multi>
+						@if (userStoriesPerSprint[sprint.eid].length > 0) {
+							@for (userstory of userStoriesPerSprint[sprint.eid]; track userstory) {
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<mat-panel-title> {{ userstory.code }} </mat-panel-title>
+										<mat-panel-title> {{ userstory.title }} </mat-panel-title>
+										<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+									</mat-expansion-panel-header>
 
-			<mat-accordion multi>
-				@for (userStory of (userStoriesFromCurrentSprint$ | async)?.userstories; track userStory) {
-					<mat-expansion-panel>
-						<mat-expansion-panel-header>
-							<mat-panel-title> {{ userStory.code }} </mat-panel-title>
-							<mat-panel-title> {{ userStory.title }} </mat-panel-title>
-							<mat-panel-description> {{ userStory.description }} </mat-panel-description>
-						</mat-expansion-panel-header>
+									<div cdkDropListGroup class="group-list">
+										<div class="kanban-wrapper">
+											<div class="title">
+												<h2>To do</h2>
+												<div class="count">
+													<span>{{ getTasksOfStatus(sprint.eid, 1).length }}</span>
+													<span>left</span>
+												</div>
+											</div>
+											<div cdkDropList id="taskstatus-1" class="kanban-list" (cdkDropListDropped)="drop($event)">
+												@for (task of getTasksOfStatus(sprint.eid, 1); track task) {
+													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+														<div class="placeholder" *cdkDragPlaceholder></div>
+														<div class="content">
+															<div [class]="task.type | taskTypeClass"></div>
+															<h3>{{ task.title }}</h3>
+															<p class="desc">{{ task.description }}</p>
+															<p class="behaviour">
+																{{ task.description }}
+															</p>
+															<span class="responsible">
+																@if (task.responsibleEid) {
+																	<img [src]="getGravatarUrl(task.responsibleEid)" />
+																	<p>{{ getUsername(task.responsibleEid) }}</p>
+																} @else {
+																	<p>Not assigned</p>
+																}
+																<img
+																	class="nonavatar priority"
+																	src="{{ task.priority | priority | icon }}"
+																	alt="{{ task.priority }} priority"
+																/>
+															</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
 
-						<!-- <h2>{{ getTasks(projectEid, userStory.eid) | async }}</h2>
-						<h2>JOAFSJBPFAJBKDSKPBJA</h2> -->
-						<div cdkDropListGroup class="group-list">
-							<div class="kanban-wrapper">
-								<div class="title">
-									<h2>To do</h2>
-									<div class="count">
-										<span>1</span>
-										<span>left</span>
+										<div class="kanban-wrapper">
+											<div class="title">
+												<h2>In progress</h2>
+												<div class="count">
+													<span>{{ getTasksOfStatus(sprint.eid, 2).length }}</span>
+													<span>left</span>
+												</div>
+											</div>
+
+											<div cdkDropList id="taskstatus-2" class="kanban-list" (cdkDropListDropped)="drop($event)">
+												@for (task of getTasksOfStatus(sprint.eid, 2); track task) {
+													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+														<div class="placeholder" *cdkDragPlaceholder></div>
+														<div class="content">
+															<div [class]="task.type | taskTypeClass"></div>
+															<h3>{{ task.title }}</h3>
+															<p class="desc">{{ task.description }}</p>
+															<p class="behaviour">
+																{{ task.description }}
+															</p>
+															<span class="responsible">
+																@if (task.responsibleEid) {
+																	<img [src]="getGravatarUrl(task.responsibleEid)" />
+																	<p>{{ getUsername(task.responsibleEid) }}</p>
+																} @else {
+																	<p>Not assigned</p>
+																}
+																<img
+																	class="nonavatar priority"
+																	src="{{ task.priority | priority | icon }}"
+																	alt="{{ task.priority }} priority"
+																/>
+															</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
+
+										<div class="kanban-wrapper">
+											<div class="title">
+												<h2>Available to review</h2>
+												<div class="count">
+													<span>{{ getTasksOfStatus(sprint.eid, 3).length }}</span>
+													<span>left</span>
+												</div>
+											</div>
+
+											<div cdkDropList id="taskstatus-3" class="kanban-list" (cdkDropListDropped)="drop($event)">
+												@for (task of getTasksOfStatus(sprint.eid, 3); track task) {
+													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+														<div class="placeholder" *cdkDragPlaceholder></div>
+														<div class="content">
+															<div [class]="task.type | taskTypeClass"></div>
+															<h3>{{ task.title }}</h3>
+															<p class="desc">{{ task.description }}</p>
+															<p class="behaviour">
+																{{ task.description }}
+															</p>
+															<span class="responsible">
+																@if (task.responsibleEid) {
+																	<img [src]="getGravatarUrl(task.responsibleEid)" />
+																	<p>{{ getUsername(task.responsibleEid) }}</p>
+																} @else {
+																	<p>Not assigned</p>
+																}
+																<img
+																	class="nonavatar priority"
+																	src="{{ task.priority | priority | icon }}"
+																	alt="{{ task.priority }} priority"
+																/>
+															</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
+
+										<div class="kanban-wrapper">
+											<div class="title">
+												<h2>Reviewing</h2>
+												<div class="count">
+													<span>{{ getTasksOfStatus(sprint.eid, 4).length }}</span>
+													<span>left</span>
+												</div>
+											</div>
+
+											<div cdkDropList id="taskstatus-4" class="kanban-list" (cdkDropListDropped)="drop($event)">
+												@for (task of getTasksOfStatus(sprint.eid, 4); track task) {
+													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+														<div class="placeholder" *cdkDragPlaceholder></div>
+														<div class="content">
+															<div [class]="task.type | taskTypeClass"></div>
+															<h3>{{ task.title }}</h3>
+															<p class="desc">{{ task.description }}</p>
+															<p class="behaviour">
+																{{ task.description }}
+															</p>
+															<span class="responsible">
+																@if (task.responsibleEid) {
+																	<img [src]="getGravatarUrl(task.responsibleEid)" />
+																	<p>{{ getUsername(task.responsibleEid) }}</p>
+																} @else {
+																	<p>Not assigned</p>
+																}
+																<img
+																	class="nonavatar priority"
+																	src="{{ task.priority | priority | icon }}"
+																	alt="{{ task.priority }} priority"
+																/>
+															</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
+
+										<div class="kanban-wrapper">
+											<div class="title">
+												<h2>Done</h2>
+												<div class="count">
+													<span>{{ getTasksOfStatus(sprint.eid, 5).length }}</span>
+													<span>completed</span>
+												</div>
+											</div>
+
+											<div cdkDropList id="taskstatus-5" class="kanban-list" (cdkDropListDropped)="drop($event)">
+												@for (task of getTasksOfStatus(sprint.eid, 5); track task) {
+													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+														<div class="placeholder" *cdkDragPlaceholder></div>
+														<div class="content">
+															<div [class]="task.type | taskTypeClass"></div>
+															<h3>{{ task.title }}</h3>
+															<p class="desc">{{ task.description }}</p>
+															<p class="behaviour">
+																{{ task.description }}
+															</p>
+															<span class="responsible">
+																@if (task.responsibleEid) {
+																	<img [src]="getGravatarUrl(task.responsibleEid)" />
+																	<p>{{ getUsername(task.responsibleEid) }}</p>
+																} @else {
+																	<p>Not assigned</p>
+																}
+																<img
+																	class="nonavatar priority"
+																	src="{{ task.priority | priority | icon }}"
+																	alt="{{ task.priority }} priority"
+																/>
+															</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
 									</div>
-								</div>
-								<!-- <h2>{{ getTasks(projectEid, userStory.eid) | async }}</h2> -->
-
-								<div cdkDropList [cdkDropListData]="toDo" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (task of getTasksFromMap(userStory.eid) | async; track $index) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="typeParser(task.type)"></div>
-												<h3>{{ task.title }}</h3>
-												<p class="desc">{{ task.description }}</p>
-												<img [src]="task.responsibleEid" />
-											</div>
-										</div>
-									}
-									<!-- @for (item of toDo; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									} -->
-								</div>
-							</div>
-
-							<div class="kanban-wrapper">
-								<div class="title">
-									<h2>In progress</h2>
-									<div class="count">
-										<span>{{ inProgress.length }}</span>
-										<span>left</span>
-									</div>
-								</div>
-
-								<div cdkDropList [cdkDropListData]="inProgress" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (item of inProgress; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-
-							<div class="kanban-wrapper">
-								<div class="title">
-									<h2>Available to review</h2>
-									<div class="count">
-										<span>{{ availableReview.length }}</span>
-										<span>left</span>
-									</div>
-								</div>
-
-								<div cdkDropList [cdkDropListData]="availableReview" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (item of availableReview; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-
-							<div class="kanban-wrapper">
-								<div class="title">
-									<h2>Reviewing</h2>
-									<div class="count">
-										<span>{{ reviewing.length }}</span>
-										<span>left</span>
-									</div>
-								</div>
-
-								<div cdkDropList [cdkDropListData]="reviewing" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (item of reviewing; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-
-							<div class="kanban-wrapper">
-								<div class="title">
-									<h2>Done</h2>
-									<div class="count">
-										<span>{{ done.length }}</span>
-										<span>left</span>
-									</div>
-								</div>
-
-								<div cdkDropList [cdkDropListData]="done" class="kanban-list" (cdkDropListDropped)="drop($event)">
-									@for (item of done; track item) {
-										<div class="container-item" cdkDrag>
-											<div class="placeholder" *cdkDragPlaceholder></div>
-											<div class="content">
-												<div [class]="item.type"></div>
-												<h3>{{ item.name }}</h3>
-												<p class="desc">{{ item.description }}</p>
-												<p class="behaviour">
-													<strong>Comportamento Atual: </strong>
-													{{ item.currentBehavior }}
-												</p>
-												<p class="behaviour">
-													<strong>Comportamento Esperado: </strong>
-													{{ item.expectedBehavior }}
-												</p>
-												<img [src]="item.photo" />
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-						</div>
-					</mat-expansion-panel>
+								</mat-expansion-panel>
+							}
+						} @else {
+							<p>This sprint has no user stories</p>
+						}
+					</mat-accordion>
+				} @else {
+					<div class="spinner">
+						<mat-progress-bar mode="buffer"></mat-progress-bar>
+					</div>
 				}
-
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Key </mat-panel-title>
-						<mat-panel-title> This is the expansion title </mat-panel-title>
-						<mat-panel-description> This is a summary of the content </mat-panel-description>
-					</mat-expansion-panel-header>
-
-					<div cdkDropListGroup class="group-list">
-						<div class="kanban-wrapper">
-							<div class="title">
-								<h2>To do</h2>
-								<div class="count">
-									<span>{{ toDo.length }}</span>
-									<span>left</span>
-								</div>
-							</div>
-
-							<div cdkDropList [cdkDropListData]="toDo" class="kanban-list" (cdkDropListDropped)="drop($event)">
-								@for (item of toDo; track item) {
-									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
-											<div [class]="item.type"></div>
-											<h3>{{ item.name }}</h3>
-											<p class="desc">{{ item.description }}</p>
-											<p class="behaviour">
-												<strong>Comportamento Atual: </strong>
-												{{ item.currentBehavior }}
-											</p>
-											<p class="behaviour">
-												<strong>Comportamento Esperado: </strong>
-												{{ item.expectedBehavior }}
-											</p>
-											<img [src]="item.photo" />
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-
-						<div class="kanban-wrapper">
-							<div class="title">
-								<h2>In progress</h2>
-								<div class="count">
-									<span>{{ inProgress.length }}</span>
-									<span>left</span>
-								</div>
-							</div>
-
-							<div cdkDropList [cdkDropListData]="inProgress" class="kanban-list" (cdkDropListDropped)="drop($event)">
-								@for (item of inProgress; track item) {
-									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
-											<div [class]="item.type"></div>
-											<h3>{{ item.name }}</h3>
-											<p class="desc">{{ item.description }}</p>
-											<p class="behaviour">
-												<strong>Comportamento Atual: </strong>
-												{{ item.currentBehavior }}
-											</p>
-											<p class="behaviour">
-												<strong>Comportamento Esperado: </strong>
-												{{ item.expectedBehavior }}
-											</p>
-											<img [src]="item.photo" />
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-
-						<div class="kanban-wrapper">
-							<div class="title">
-								<h2>Available to review</h2>
-								<div class="count">
-									<span>{{ availableReview.length }}</span>
-									<span>left</span>
-								</div>
-							</div>
-
-							<div cdkDropList [cdkDropListData]="availableReview" class="kanban-list" (cdkDropListDropped)="drop($event)">
-								@for (item of availableReview; track item) {
-									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
-											<div [class]="item.type"></div>
-											<h3>{{ item.name }}</h3>
-											<p class="desc">{{ item.description }}</p>
-											<p class="behaviour">
-												<strong>Comportamento Atual: </strong>
-												{{ item.currentBehavior }}
-											</p>
-											<p class="behaviour">
-												<strong>Comportamento Esperado: </strong>
-												{{ item.expectedBehavior }}
-											</p>
-											<img [src]="item.photo" />
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-
-						<div class="kanban-wrapper">
-							<div class="title">
-								<h2>Reviewing</h2>
-								<div class="count">
-									<span>{{ reviewing.length }}</span>
-									<span>left</span>
-								</div>
-							</div>
-
-							<div cdkDropList [cdkDropListData]="reviewing" class="kanban-list" (cdkDropListDropped)="drop($event)">
-								@for (item of reviewing; track item) {
-									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
-											<div [class]="item.type"></div>
-											<h3>{{ item.name }}</h3>
-											<p class="desc">{{ item.description }}</p>
-											<p class="behaviour">
-												<strong>Comportamento Atual: </strong>
-												{{ item.currentBehavior }}
-											</p>
-											<p class="behaviour">
-												<strong>Comportamento Esperado: </strong>
-												{{ item.expectedBehavior }}
-											</p>
-											<img [src]="item.photo" />
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-
-						<div class="kanban-wrapper">
-							<div class="title">
-								<h2>Done</h2>
-								<div class="count">
-									<span>{{ done.length }}</span>
-									<span>left</span>
-								</div>
-							</div>
-
-							<div cdkDropList [cdkDropListData]="done" class="kanban-list" (cdkDropListDropped)="drop($event)">
-								@for (item of done; track item) {
-									<div class="container-item" cdkDrag>
-										<div class="placeholder" *cdkDragPlaceholder></div>
-										<div class="content">
-											<div [class]="item.type"></div>
-											<h3>{{ item.name }}</h3>
-											<p class="desc">{{ item.description }}</p>
-											<p class="behaviour">
-												<strong>Comportamento Atual: </strong>
-												{{ item.currentBehavior }}
-											</p>
-											<p class="behaviour">
-												<strong>Comportamento Esperado: </strong>
-												{{ item.expectedBehavior }}
-											</p>
-											<img [src]="item.photo" />
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-				</mat-expansion-panel>
-			</mat-accordion>
-		</div>
+			</div>
+		}
 	</div>
 </div>
