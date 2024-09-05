@@ -89,6 +89,14 @@ app-navbar {
 			margin-top: 10px;
 		}
 
+		.sprint-history {
+			.mat-mdc-cell {
+				&:nth-child(2) {
+					width: 200px !important;
+				}
+			}
+		}
+
 		.history-table {
 			width: 100%;
 			border-spacing: 0px 1.5px;
