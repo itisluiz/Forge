@@ -21,6 +21,7 @@ import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryself
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
 import { Priority } from "forge-shared/enum/priority.enum";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
+import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 
 @Component({
 	selector: "app-kanban-page",
@@ -37,6 +38,7 @@ import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.d
 		CommonModule,
 		UserStoryPopupComponent,
 		DeletePopupComponent,
+		MaxLengthPipe,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",

@@ -48,7 +48,7 @@
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						@if (getUserStoriesDataSource(epic.eid).data.length > 0) {
-							<table mat-table [dataSource]="getUserStoriesDataSource(epic.eid)" class="epics-table">
+							<table mat-table [dataSource]="getUserStoriesDataSource(epic.eid)" class="mat-elevation-z8 epics-table">
 								<ng-container matColumnDef="key">
 									<th mat-header-cell *matHeaderCellDef>Key</th>
 									<td mat-cell *matCellDef="let story" (click)="navigateToUserStory(story.eid)">{{ story.code }}</td>
@@ -56,12 +56,16 @@
 
 								<ng-container matColumnDef="title">
 									<th mat-header-cell *matHeaderCellDef>History</th>
-									<td mat-cell *matCellDef="let story" (click)="navigateToUserStory(story.eid)">{{ story.title }}</td>
+									<td mat-cell *matCellDef="let story" (click)="navigateToUserStory(story.eid)">
+										{{ story.title | maxLength: 40 }}
+									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="description">
 									<th mat-header-cell *matHeaderCellDef>Description</th>
-									<td mat-cell *matCellDef="let story" (click)="navigateToUserStory(story.eid)">{{ story.description }}</td>
+									<td mat-cell *matCellDef="let story" (click)="navigateToUserStory(story.eid)">
+										{{ story.description | maxLength: 50 }}
+									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="priority">
@@ -72,7 +76,7 @@
 								</ng-container>
 
 								<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+								<tr class="type-color" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 							</table>
 						}
 						<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>

@@ -30,14 +30,21 @@ mat-accordion {
 
 	&:nth-of-type(1) {
 		flex-grow: 0.5;
+		max-width: 110px;
+		width: 100%;
 		font-weight: 500;
 		color: v.$dark-green-color;
+	}
+
+	&:nth-of-type(2) {
+		max-width: 400px;
 	}
 }
 
 .mat-expansion-panel-header-description {
 	color: v.$grey-color;
 	margin: 10px 0;
+	max-width: 500px;
 }
 
 .group-list {

@@ -97,6 +97,7 @@ app-navbar {
 		.epics-table {
 			width: 100%;
 			border-spacing: 0px 1.5px;
+
 			.mat-mdc-header-cell {
 				border: none;
 
@@ -111,7 +112,16 @@ app-navbar {
 				&:nth-child(1) {
 					color: v.$epics-dark-green-color;
 					font-weight: 500;
-					width: 16%;
+					width: 150px;
+					border-left: 3px solid v.$epics-dark-green-color;
+				}
+
+				&:nth-child(2) {
+					width: 200px;
+				}
+
+				&:nth-child(2) {
+					width: 400px;
 				}
 
 				&:nth-child(4) {
