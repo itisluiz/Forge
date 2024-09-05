@@ -145,8 +145,8 @@
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
 							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
-							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
-							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+							<mat-panel-title> {{ userstory.title | maxLength: 30 }} </mat-panel-title>
+							<mat-panel-description> {{ userstory.description | maxLength: 30 }} </mat-panel-description>
 							<mat-panel-description>
 								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
 							</mat-panel-description>

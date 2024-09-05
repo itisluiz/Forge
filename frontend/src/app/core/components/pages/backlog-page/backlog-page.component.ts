@@ -33,11 +33,12 @@ import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
 import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
+import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 
 @Component({
 	selector: "app-backlog-page",
 	standalone: true,
-	imports: [NavbarComponent, MatIcon, MatExpansionModule, MatTableModule, CommonModule, ReactiveFormsModule],
+	imports: [NavbarComponent, MatIcon, MatExpansionModule, MatTableModule, CommonModule, ReactiveFormsModule, MaxLengthPipe],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
 })

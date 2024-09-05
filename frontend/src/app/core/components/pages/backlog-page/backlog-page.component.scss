@@ -108,6 +108,10 @@ app-navbar {
 			.mat-mdc-cell {
 				border: none;
 
+				&:nth-child(1) {
+					width: 150px;
+				}
+
 				&:nth-child(6) {
 					text-align: center;
 				}
@@ -115,6 +119,7 @@ app-navbar {
 				&:nth-child(2) {
 					color: v.$dark-green-color;
 					font-weight: 500;
+					width: 400px;
 				}
 
 				&:nth-child(5) {
@@ -167,6 +172,10 @@ app-navbar {
 
 		&:nth-child(3) {
 			.mat-expansion-panel-header-description {
+				&:nth-of-type(1) {
+					max-width: 500px;
+				}
+
 				&:nth-last-of-type(1) {
 					flex-grow: 0.5;
 					display: flex;
