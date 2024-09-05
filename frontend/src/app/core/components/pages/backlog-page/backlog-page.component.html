@@ -42,15 +42,15 @@
 						<mat-expansion-panel>
 							<mat-expansion-panel-header>
 								<mat-panel-title> {{ userstory.code }} </mat-panel-title>
-								<mat-panel-title> {{ userstory.title }} </mat-panel-title>
-								<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+								<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
+								<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 							</mat-expansion-panel-header>
 							@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 								<table
 									mat-table
 									[dataSource]="getTasksDataSource(userstory.eid)"
 									matSort
-									class="mat-elevation-z8 history-table"
+									class="mat-elevation-z8 history-table sprint-history"
 								>
 									<ng-container matColumnDef="type">
 										<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
