@@ -13,6 +13,22 @@ app-navbar {
 	margin-top: 67px;
 }
 
+.default-class {
+	border-left: 3px solid v.$green-color !important;
+}
+
+.task-class {
+	border-left: 3px solid v.$green-color !important;
+}
+
+.bug-class {
+	border-left: 3px solid v.$alert-color !important;
+}
+
+.test-class {
+	border-left: 3px solid v.$blue-color !important;
+}
+
 .grid-container {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -91,8 +107,29 @@ app-navbar {
 
 		.sprint-history {
 			.mat-mdc-cell {
+				&:nth-child(1) {
+					width: 100px !important;
+				}
+
 				&:nth-child(2) {
-					width: 200px !important;
+					width: 160px !important;
+				}
+
+				&:nth-child(3) {
+					flex: auto;
+				}
+
+				&:nth-child(5),
+				&:nth-child(7) {
+					width: 150px !important;
+				}
+
+				&:nth-child(4) {
+					width: 190px !important;
+				}
+
+				&:nth-child(6) {
+					width: 130px !important;
 				}
 			}
 		}
@@ -149,7 +186,6 @@ app-navbar {
 
 				&:nth-child(4) {
 					text-align: center;
-					display: flex;
 					align-items: center;
 					justify-content: center;
 					padding: 10px;
@@ -159,6 +195,7 @@ app-navbar {
 						border-radius: 2px;
 						font-weight: 500;
 						width: 100px;
+						margin: 0 auto;
 					}
 				}
 			}
@@ -374,7 +411,8 @@ app-navbar {
 				align-items: center;
 				border-radius: 2px;
 				font-weight: 500;
-				width: 100px;
+				padding: 0 8px;
+				min-width: 84px;
 				justify-content: center;
 				font-weight: 400;
 			}

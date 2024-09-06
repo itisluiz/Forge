@@ -32,6 +32,7 @@ import { IconPipe } from "../../../pipes/icon.pipe";
 import { DaysDifferencePipe } from "../../../pipes/days-difference.pipe";
 import { SprintStatusPipe } from "../../../pipes/sprint-status.pipe";
 import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
+import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 
 @Component({
 	selector: "app-kanban-page",
@@ -55,6 +56,7 @@ import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
 		DaysDifferencePipe,
 		SprintStatusPipe,
 		SprintStatusClassPipe,
+		MaxLengthPipe,
 	],
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",

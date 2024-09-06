@@ -487,6 +487,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				color = "#fff";
 				background = "#FFA500";
 				break;
+			case "Available t...":
 			case "Available to review":
 			case "Reviewing":
 				color = "#fff";
@@ -585,6 +586,19 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	navigateToUserStory(userStoryEid: string | undefined): void {
 		if (userStoryEid) {
 			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
+		}
+	}
+
+	getTaskTypeClass(type: number): string {
+		switch (type) {
+			case 1:
+				return "task-class";
+			case 2:
+				return "bug-class";
+			case 3:
+				return "test-class";
+			default:
+				return "default-class";
 		}
 	}
 }
