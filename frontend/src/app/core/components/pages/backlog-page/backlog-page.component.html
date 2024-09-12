@@ -50,7 +50,7 @@
 									mat-table
 									[dataSource]="getTasksDataSource(userstory.eid)"
 									matSort
-									class="mat-elevation-z8 history-table sprint-history"
+									class="mat-elevation-z8 tasks-table sprint-history"
 								>
 									<ng-container matColumnDef="type">
 										<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
@@ -158,12 +158,7 @@
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
-							<table
-								mat-table
-								[dataSource]="getTasksDataSource(userstory.eid)"
-								matSort
-								class="mat-elevation-z8 history-table"
-							>
+							<table mat-table [dataSource]="getTasksDataSource(userstory.eid)" matSort class="mat-elevation-z8 tasks-table">
 								<ng-container matColumnDef="type">
 									<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
 									<td #itemCell mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">

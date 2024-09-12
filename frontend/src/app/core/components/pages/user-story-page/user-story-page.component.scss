@@ -1,5 +1,6 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 @use "../../../../../assets/expansion-panel.scss";
+@import "../backlog-page/backlog-page.component.scss";
 
 app-navbar {
 	width: 100vw;
@@ -169,10 +170,8 @@ app-navbar {
 		.test-cases {
 			// THERE ARE TEST CASES AVAILABLE
 
-			table {
-				all: initial;
-			}
 			.test-case-table {
+				all: initial;
 				width: auto;
 				border-spacing: 0px 1.5px;
 
