@@ -45,13 +45,29 @@ import { IconPipe } from "../../../pipes/icon.pipe";
 	styleUrl: "./planning-poker-page.component.scss",
 })
 export class PlanningPokerPageComponent implements OnInit {
+	@ViewChildren("expand") expand!: QueryList<ElementRef>;
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
 	scoreToggle: boolean = false;
+	expandToggle: boolean = false;
 	activeCard: string | null = null;
 
 	setScoreToggle() {
 		this.scoreToggle = !this.scoreToggle;
+	}
+
+	setExpandToggle() {
+		this.expand.forEach((element: ElementRef) => {
+			element.nativeElement.style.transition = "height .2s";
+
+			if (!this.expandToggle) {
+				element.nativeElement.style.height = "285px";
+			} else {
+				element.nativeElement.style.height = "160px";
+			}
+		});
+
+		this.expandToggle = !this.expandToggle;
 	}
 
 	setActiveCard(cardValue: string) {

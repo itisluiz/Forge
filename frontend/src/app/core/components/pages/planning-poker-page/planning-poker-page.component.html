@@ -49,24 +49,32 @@
 						<div class="planning-poker_participants-display_name">Luiz</div>
 					</div>
 				</div>
-				<div class="planning-poker_current-userstory">
+				<div class="planning-poker_current-userstory" #expand>
+					<img
+						src="../../../../../assets/expand-icon.svg"
+						class="planning-poker_current-userstory--expand"
+						(click)="setExpandToggle()"
+					/>
 					<button class="planning-poker_button" (click)="setScoreToggle()" matRipple>Reveal votes</button>
 					<div class="planning-poker_current-userstory--title">[FEA001] New Task Registration Menu</div>
 					<div class="planning-poker_current-userstory--description">
 						Implement a new intuitive menu for task registration, aiming to improve usability and efficiency in project
 						management.
 					</div>
-					<div class="hr"></div>
-					<div class="planning-poker_current-userstory--header">User story</div>
-					<div class="planning-poker_current-userstory--content">
-						<span class="planning-poker_current-userstory--span">As</span> user
-					</div>
-					<div class="planning-poker_current-userstory--content">
-						<span class="planning-poker_current-userstory--span">I want</span> user
-					</div>
-					<div class="planning-poker_current-userstory--content">
-						<span class="planning-poker_current-userstory--span">So that</span> user
-					</div>
+
+					@if (expandToggle) {
+						<div class="hr"></div>
+						<div class="planning-poker_current-userstory--header">User story</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">As</span> user
+						</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">I want</span> user
+						</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">So that</span> user
+						</div>
+					}
 				</div>
 				<div class="planning-poker_available-cards">
 					<div class="planning-poker_available-cards--header">Choose your card</div>
@@ -91,6 +99,26 @@
 						This is a queue of issues that you will judge. Pay attention to the current issue.
 					</p>
 				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-now">Voting now...</p>
+				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-waiting">Waiting...</p>
+				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-waiting">Waiting...</p>
+				</div>
+
+				<div class="issues-list_add-issue">+ Add another issue</div>
 			</div>
 		</div>
 	</ng-container>
