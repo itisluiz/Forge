@@ -8,6 +8,7 @@ import { SignupPageComponent } from "./core/components/pages/signup-page/signup-
 import { SelectProjectPageComponent } from "./core/components/pages/select-project-page/select-project-page.component";
 import { UserStoryPageComponent } from "./core/components/pages/user-story-page/user-story-page.component";
 import { UserStoryPopupComponent } from "./core/components/user-story-popup/user-story-popup.component";
+import { PlanningPokerPageComponent } from "./core/components/pages/planning-poker-page/planning-poker-page.component";
 
 export const routes: Routes = [
 	//{ path: "", component: MainPageComponent },
@@ -19,5 +20,6 @@ export const routes: Routes = [
 	{ path: "select-project", component: SelectProjectPageComponent },
 	{ path: ":projectEid/:userstoryEid/user-story", component: UserStoryPageComponent },
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
+	{ path: ":projectEid/:userstoryEid/planning-poker", component: PlanningPokerPageComponent },
 	{ path: "**", redirectTo: "/select-project" },
 ];
