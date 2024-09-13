@@ -1,0 +1,145 @@
+<app-navbar></app-navbar>
+<div class="user-story-page-content">
+	<ng-container *ngIf="userStory$ | async as userStory">
+		<div class="grid-container content-wrapper">
+			<div class="header-grid">
+				<div class="breadcrump-story-wrapper">
+					<ul class="breadcrumber">
+						<li><a href="">Squad BES</a></li>
+						<div class="spacer">></div>
+						<li><a href="">TCC 1</a></li>
+						<div class="spacer">></div>
+						<li><a href="/user-story">Planning Poker</a></li>
+					</ul>
+					<h1 id="user-story-title">Planning poker</h1>
+
+					<div class="buttons-header">
+						<button id="button-edit-page" class="grey-button" matRipple>Start session</button>
+					</div>
+				</div>
+
+				<p>Current item: pass_current_item</p>
+				<div class="hr"></div>
+			</div>
+			<div class="planning-poker">
+				<div class="planning-poker_participants-counter">
+					<div class="planning-poker_participants-counter--all">4 Participants</div>
+					<div class="planning-poker_participants-counter--voted">2 Voted</div>
+				</div>
+				<div class="planning-poker_participants-display">
+					<div class="planning-poker_participants-display_wrapper">
+						@if (scoreToggle) {
+							<div class="planning-poker_participants-display_score">num</div>
+						}
+						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
+						<div class="planning-poker_participants-display_name">Leonardo</div>
+					</div>
+					<div class="planning-poker_participants-display_wrapper">
+						@if (scoreToggle) {
+							<div class="planning-poker_participants-display_score">num</div>
+						}
+						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
+						<div class="planning-poker_participants-display_name">Pedro</div>
+					</div>
+					<div class="planning-poker_participants-display_wrapper">
+						@if (scoreToggle) {
+							<div class="planning-poker_participants-display_score">num</div>
+						}
+						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
+						<div class="planning-poker_participants-display_name">Luiz</div>
+					</div>
+				</div>
+				<div class="planning-poker_current-userstory" #expand>
+					<img
+						src="../../../../../assets/expand-icon.svg"
+						class="planning-poker_current-userstory--expand"
+						(click)="setExpandToggle()"
+					/>
+					<button class="planning-poker_button" (click)="setScoreToggle()" matRipple>Reveal votes</button>
+					<div class="planning-poker_current-userstory--title">[FEA001] New Task Registration Menu</div>
+					<div class="planning-poker_current-userstory--description">
+						Implement a new intuitive menu for task registration, aiming to improve usability and efficiency in project
+						management.
+					</div>
+
+					@if (expandToggle) {
+						<div class="hr"></div>
+						<div class="planning-poker_current-userstory--header">User story</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">As</span> user
+						</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">I want</span> user
+						</div>
+						<div class="planning-poker_current-userstory--content">
+							<span class="planning-poker_current-userstory--span">So that</span> user
+						</div>
+					}
+				</div>
+				<div class="planning-poker_available-cards">
+					<div class="planning-poker_available-cards--header">Choose your card</div>
+					<div class="planning-poker_available-cards--content">
+						<button
+							class="planning-poker_available-cards--card"
+							*ngFor="let card of [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?']"
+							(click)="setActiveCard(card.toString())"
+							[ngClass]="{ active: activeCard === card.toString() }"
+						>
+							<span>{{ card }}</span> {{ card }} <span>{{ card }}</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="grid-container issues-list">
+			<div class="issues-list_content">
+				<div class="issues-list_header">
+					<h2 class="issues-list_header--title">Issues</h2>
+					<p class="issues-list_header--paragraph">
+						This is a queue of issues that you will judge. Pay attention to the current issue.
+					</p>
+				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-now">Voting now...</p>
+				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-waiting">Waiting...</p>
+				</div>
+				<div class="issues-list_issue">
+					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+					<p class="issues-list_issue--type">Issue</p>
+					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
+					<p class="issues-list_issue--status-waiting">Waiting...</p>
+				</div>
+
+				<div class="issues-list_add-issue">+ Add another issue</div>
+			</div>
+		</div>
+	</ng-container>
+</div>
+
+@if (popUpActive) {
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+
+	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUp()"> </app-test-case-popup>
+}
+
+@if (popUpEditUserStory) {
+	<div class="pop-up-background" (click)="closePopUpEditUserStory()"></div>
+
+	<app-user-story-popup
+		[isEditMode]="true"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUpEditUserStory()"
+		(handleEditedUserStoryAndClosePopupEmitter)="setUpdatedUserStory()"
+		[userStoryEditData$]="userStory$"
+		[criteriaEditData$]="acceptanceCriteria$"
+	>
+	</app-user-story-popup>
+}

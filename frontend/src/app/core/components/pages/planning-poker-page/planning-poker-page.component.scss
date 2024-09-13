@@ -1,0 +1,455 @@
+@use "../../../../../../src/assets/variables.scss" as v;
+@use "../../../../../assets/expansion-panel.scss";
+@import "../backlog-page/backlog-page.component.scss";
+
+app-navbar {
+	width: 100vw;
+	position: fixed;
+	top: 0;
+	z-index: 10;
+}
+
+.user-story-page-content {
+	margin-top: 40px;
+	display: flex;
+
+	.content-wrapper {
+		margin: 1em 12px 0 1em;
+	}
+
+	.issues-list {
+		margin: 1em 1em 0 0;
+	}
+}
+
+.ai-button {
+	background: linear-gradient(90deg, #289e0b 0%, #187600 37%, #72c800 100%);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	&:hover {
+		filter: brightness(1.15);
+	}
+}
+
+.grey-button {
+	padding: 10px 14px 10px 14px;
+	background-color: v.$epics-light-grey-color;
+	border: none;
+	border-radius: 4px;
+}
+
+.content-wrapper {
+	.planning-poker {
+		padding: 0 2.5em 4em 2.5em;
+		transition: all 0.5s ease-in-out;
+
+		&_participants-counter {
+			display: flex;
+			gap: 8px;
+
+			&--all {
+				font-size: v.$observation-font;
+				color: v.$black-color;
+				font-weight: 400;
+				background-color: v.$epics-light-grey-color;
+				border-radius: 15px;
+				padding: 2px 10px;
+			}
+
+			&--voted {
+				font-size: v.$observation-font;
+				color: v.$white-color;
+				font-weight: 500;
+				background-color: v.$dark-green-color;
+				border-radius: 15px;
+				padding: 2px 12px;
+			}
+		}
+
+		&_participants-display {
+			display: flex;
+			margin-top: 16px;
+			gap: 8px;
+			margin-bottom: 40px;
+
+			&_wrapper {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				position: relative;
+				gap: 4px;
+			}
+
+			&_avatar {
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			&_score {
+				position: absolute;
+				top: 0;
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				background-color: v.$dark-green-color;
+				text-align: center;
+				color: v.$white-color;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: v.$h2-font;
+				animation: scaleIn 0.25s ease-in-out forwards;
+			}
+
+			&_name {
+				font-size: 12px;
+				color: v.$black-color;
+				font-weight: 400;
+				text-align: center;
+			}
+		}
+
+		&_current-userstory {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			background-color: v.$background-grey;
+			padding: 32px 0;
+			border-radius: 12px;
+			position: relative;
+			height: 160px;
+
+			&--expand {
+				position: absolute;
+				right: 24px;
+				top: 24px;
+				cursor: pointer;
+			}
+
+			&--title {
+				font-size: v.$title-font;
+				font-weight: 500;
+				margin-top: 16px;
+			}
+
+			&--description {
+				font-size: v.$sub-title-minor-font;
+				color: v.$grey-color;
+				font-weight: 400;
+				margin-top: 12px;
+				margin-bottom: 16px;
+				max-width: 70%;
+			}
+
+			.hr {
+				width: 70%;
+				height: 1.6px;
+				background-color: rgba(0, 0, 0, 0.2);
+				transition: width 1.2s;
+			}
+
+			&--header {
+				text-transform: uppercase;
+				color: v.$dark-green-color;
+				margin-top: 24px;
+				margin-bottom: 8px;
+				font-weight: 600;
+				font-size: 12px;
+				transition: all 1.2s;
+			}
+
+			&--span {
+				font-weight: 500;
+				transition: all 1.2s;
+			}
+		}
+
+		&_available-cards {
+			display: flex;
+			flex-direction: column;
+
+			&--header {
+				text-align: center;
+				font-size: v.$paragraph-font;
+				margin-top: 36px;
+			}
+
+			&--content {
+				display: flex;
+				justify-content: center;
+				gap: 4px;
+				margin-top: 22px;
+			}
+
+			&--card.active {
+				background-color: v.$dark-green-color;
+				color: v.$white-color;
+				filter: none;
+				transform: translateY(-8px);
+			}
+
+			&--card {
+				position: relative;
+				height: 90px;
+				width: 56px;
+				font-size: v.$title-font;
+				border-radius: 8px;
+				border: none;
+
+				span {
+					font-size: 7px;
+					&:nth-of-type(1) {
+						position: absolute;
+						left: 5px;
+						top: 5px;
+					}
+
+					&:nth-of-type(2) {
+						position: absolute;
+						right: 5px;
+						bottom: 5px;
+					}
+				}
+
+				&:hover {
+					background-color: v.$dark-green-color;
+					color: v.$white-color;
+					filter: none;
+				}
+			}
+		}
+
+		&_button {
+			padding: 8px 12px 8px 12px;
+			background-color: v.$background-darkest-grey;
+			color: v.$white-color;
+			border: none;
+			border-radius: 4px;
+			min-height: 36px;
+		}
+	}
+}
+
+.issues-list {
+	width: min-content;
+
+	&_content {
+		max-width: 360px;
+		min-width: 360px;
+		margin: 2em 2.5em;
+		padding: 0 !important;
+	}
+
+	&_header {
+		margin-bottom: 24px;
+
+		&--title {
+			font-size: v.$h2-font;
+			font-weight: 500;
+			margin-right: 11px;
+		}
+
+		&--paragraph {
+			font-size: v.$paragraph-font;
+			color: v.$grey-color;
+			font-weight: 400;
+			margin-top: 10px;
+		}
+	}
+
+	&_issue {
+		position: relative;
+		background-color: v.$background-grey;
+		border-radius: 8px;
+		padding: 16px 24px;
+		margin-top: 12px;
+
+		&--link {
+			position: absolute;
+			right: 24px;
+			top: 16px;
+			width: 15px;
+			height: 15px;
+			cursor: pointer;
+		}
+
+		&--type {
+			text-transform: uppercase;
+			color: v.$dark-green-color;
+			font-weight: 600;
+			font-size: 12px;
+		}
+
+		&--title {
+			font-size: v.$sub-title-font;
+			font-weight: 500;
+			margin-bottom: 12px;
+		}
+
+		&--status-now {
+			font-size: 10px;
+			color: v.$white-color;
+			font-weight: 400;
+			padding: 4px 8px;
+			background-color: v.$dark-green-color;
+			border-radius: 4px;
+			width: fit-content;
+		}
+
+		&--status-waiting {
+			font-size: 10px;
+			color: v.$black-color;
+			font-weight: 400;
+			padding: 4px 8px;
+			background-color: #56565620;
+			border-radius: 4px;
+			width: fit-content;
+		}
+	}
+
+	&_add-issue {
+		color: v.$dark-green-color;
+		font-weight: 500;
+		font-size: v.$paragraph-font;
+		cursor: pointer;
+		margin-top: 26px;
+	}
+}
+
+.grid-container {
+	background-color: v.$white-color;
+	display: flex;
+	flex: auto;
+	flex-direction: column;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto;
+	gap: 12px;
+
+	border-radius: 12px 12px 0 0;
+
+	& > .header-grid {
+		grid-column: auto;
+		grid-row: 1;
+		z-index: 0;
+		padding: 2em 2.5em 0 2.5em;
+
+		.breadcrump-story-wrapper {
+			display: grid;
+			grid-template-columns: auto auto;
+			grid-template-rows: auto auto;
+			grid-template-areas:
+				"top right"
+				"bottom right";
+
+			.breadcrumber {
+				grid-area: top;
+				display: flex;
+				align-items: center;
+				text-decoration: none;
+
+				.spacer {
+					font-size: 11px;
+				}
+
+				li + div {
+					margin: 0 5px;
+				}
+
+				li {
+					font-size: v.$observation-font;
+					font-weight: 400;
+					cursor: pointer;
+					list-style: none;
+
+					&:nth-last-child(1) {
+						font-weight: 500;
+					}
+
+					a {
+						text-decoration: none;
+						color: v.$dark-green-color;
+					}
+				}
+			}
+
+			h1 {
+				grid-area: bottom;
+				font-size: v.$title-font;
+				font-weight: 500;
+				margin-bottom: 19px;
+			}
+
+			.buttons-header {
+				grid-area: right;
+				align-self: center;
+				justify-self: end;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				transform: translateY(95%);
+
+				.mat-icon-button {
+					display: flex;
+					align-items: center;
+					background-color: transparent;
+					border: none;
+				}
+			}
+		}
+
+		p {
+			font-size: v.$paragraph-font;
+			color: v.$grey-color;
+			font-weight: 400;
+			max-width: 550px;
+		}
+
+		.hr {
+			margin-top: 24px;
+			width: 100%;
+			height: 1.6px;
+			background-color: rgba(0, 0, 0, 0.2);
+		}
+	}
+}
+
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+@media only screen and (max-width: 1500px) {
+	.user-story-page-content {
+		margin: 51px 3em 0 3em;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	.user-story-page-content {
+		margin: 87px 5em 0 5em;
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
