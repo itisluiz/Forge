@@ -400,6 +400,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.closePopUpCreateTask();
 	}
 
+	removeTaskFromDataSource(task: TaskResponse) {
+		const dataSource = this.getTasksDataSource(task.userstoryEid);
+		dataSource.data = dataSource.data.filter((t) => t.eid !== task.eid);
+		this.tasksDataSources[task.userstoryEid] = dataSource;
+		this.closePopUp();
+	}
+
 	setTypeColor() {
 		this.itemCell.forEach((cell) => {
 			let color;

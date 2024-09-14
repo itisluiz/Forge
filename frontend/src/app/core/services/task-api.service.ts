@@ -32,4 +32,8 @@ export class TaskApiService {
 	public getTask(projectEid: string, taskEid: string): Observable<TaskResponse> {
 		return this.apiService.call<TaskResponse>("GET", `task/${projectEid}/${taskEid}/get`);
 	}
+
+	public deleteTask(projectEid: string, taskEid: string): Observable<void> {
+		return this.apiService.call<void>("DELETE", `task/${projectEid}/${taskEid}/delete`);
+	}
 }

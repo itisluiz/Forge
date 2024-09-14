@@ -133,6 +133,12 @@
 				}
 			}
 		}
+
+		.buttons-wrapper {
+			display: flex;
+			align-items: center;
+			margin-top: 20px;
+		}
 	}
 
 	.pop-up-footer {
@@ -229,4 +235,8 @@
 	100% {
 		transform: translateX(0);
 	}
+}
+
+.pop-up-background {
+	z-index: 100 !important;
 }
