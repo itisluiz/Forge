@@ -161,7 +161,13 @@
 							<table mat-table [dataSource]="getTasksDataSource(userstory.eid)" matSort class="mat-elevation-z8 tasks-table">
 								<ng-container matColumnDef="type">
 									<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-									<td #itemCell mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td
+										#itemCell
+										[ngClass]="getTaskTypeClass(element.type)"
+										mat-cell
+										*matCellDef="let element"
+										(click)="openTaskPopUp(element.eid)"
+									>
 										{{ typeParser(element.type) }}
 									</td>
 								</ng-container>
@@ -248,7 +254,7 @@
 }
 
 @if (popUpTask) {
-	<ng-container *ngIf="selectedTask$ | async as selectedTask">
+	<!-- <ng-container *ngIf="selectedTask$ | async as selectedTask">
 		<div class="pop-up-background" (click)="closePopUp()"></div>
 
 		<div class="history-pop-up">
@@ -339,6 +345,16 @@
 				<div class="hr"></div>
 			</div>
 		</div>
+	</ng-container> -->
+
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+	<ng-container *ngIf="selectedTask$ | async as selectedTask">
+		<app-task-details
+			[task]="selectedTask"
+			[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
+			[projectEid]="projectEid"
+			(closePopUpEmitter)="closePopUp()"
+		></app-task-details>
 	</ng-container>
 }
 
