@@ -84,7 +84,9 @@
 							<tr mat-row *matRowDef="let row; columns: displayedColumnsTestCases"></tr>
 						</table>
 						<div class="test-case-buttons">
-							<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
+							<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+								Create test case
+							</button>
 						</div>
 					} @else {
 						<div class="no-test-cases-available">
@@ -94,7 +96,9 @@
 							</p>
 
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+									Create test case
+								</button>
 							</div>
 						</div>
 					}
@@ -105,7 +109,13 @@
 						<table mat-table [dataSource]="tasks!.tasks" matSort class="mat-elevation-z8 tasks-table">
 							<ng-container matColumnDef="type">
 								<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-								<td [ngClass]="getTaskTypeClass(element.type)" #itemCell mat-cell *matCellDef="let element">
+								<td
+									[ngClass]="getTaskTypeClass(element.type)"
+									#itemCell
+									mat-cell
+									*matCellDef="let element"
+									(click)="openTaskPopUp(element)"
+								>
 									{{ typeParser(element.type) }}
 								</td>
 							</ng-container>
@@ -155,17 +165,19 @@
 								</td>
 							</ng-container>
 							<tr mat-header-row *matHeaderRowDef="displayedColumnsTasks"></tr>
-							<tr mat-row *matRowDef="let row; columns: displayedColumnsTasks"></tr>
+							<tr mat-row *matRowDef="let row; columns: displayedColumnsTasks" (click)="openTaskPopUp(row)"></tr>
 						</table>
 						<div class="test-case-buttons">
-							<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create task</button>
+							<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">Create task</button>
 						</div>
 					} @else {
 						<div class="no-test-cases-available">
 							<p>It seems that you have not created any Tasks. To create one, click the button below.</p>
 
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create task</button>
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+									Create task
+								</button>
 							</div>
 						</div>
 					}
@@ -175,10 +187,11 @@
 	</ng-container>
 </div>
 
-@if (popUpActive) {
-	<div class="pop-up-background" (click)="closePopUp()"></div>
+@if (popUpTestCase) {
+	<div class="pop-up-background" (click)="closePopUpTestCase()"></div>
 
-	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUp()"> </app-test-case-popup>
+	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUpTestCase()">
+	</app-test-case-popup>
 }
 
 @if (popUpEditUserStory) {
@@ -193,4 +206,14 @@
 		[criteriaEditData$]="acceptanceCriteria$"
 	>
 	</app-user-story-popup>
+}
+
+@if (popUpTask) {
+	<div class="pop-up-background" (click)="closePopUpTask()"></div>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUpTask()"
+	></app-task-details>
 }

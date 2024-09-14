@@ -33,6 +33,10 @@ import { DaysDifferencePipe } from "../../../pipes/days-difference.pipe";
 import { SprintStatusPipe } from "../../../pipes/sprint-status.pipe";
 import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
+import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
+import { TaskDetailsComponent } from "../../task-details/task-details.component";
+import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 
 @Component({
 	selector: "app-kanban-page",
@@ -57,6 +61,7 @@ import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 		SprintStatusPipe,
 		SprintStatusClassPipe,
 		MaxLengthPipe,
+		TaskDetailsComponent,
 	],
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",
@@ -67,6 +72,8 @@ export class KanbanPageComponent implements OnInit {
 	detailedSprints: { [key: string]: SprintResponse } = {};
 	userStoriesPerSprint: { [key: string]: UserstorySelfComposite[] } = {};
 	project?: ProjectResponse;
+	popUpTask: boolean = false;
+	selectedTask!: TaskResponse;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -118,6 +125,14 @@ export class KanbanPageComponent implements OnInit {
 		return `${user.name} ${user.surname}`;
 	}
 
+	getUser(userEid: string): ProjectMemberComposite {
+		const member = this.project!.members.find((member) => member.eid === userEid);
+		if (!member) {
+			throw new Error(`Member with eid ${userEid} not found`);
+		}
+		return member;
+	}
+
 	getTasksOfStatus(sprintEid: string, userstoryEid: string, status: TaskStatus) {
 		return this.detailedSprints[sprintEid]?.tasks.filter(
 			(task) => task.userstoryEid === userstoryEid && task.status === status,
@@ -143,5 +158,29 @@ export class KanbanPageComponent implements OnInit {
 				this.loadSprintData();
 			},
 		});
+	}
+
+	openTaskPopUp(taskEid: string) {
+		this.taskApiService.getTask(this.projectEid, taskEid).subscribe({
+			next: (task) => {
+				this.selectedTask = task;
+				this.popUpTask = true;
+			},
+		});
+	}
+
+	closePopUpTask() {
+		let backgroundPopUp = document.querySelector(".pop-up-background");
+		if (backgroundPopUp) {
+			backgroundPopUp.classList.add("fade-opacity");
+		}
+
+		let popUp = document.querySelector(".history-pop-up");
+		if (popUp) {
+			popUp.classList.add("fade-out");
+		}
+		setTimeout(() => {
+			this.popUpTask = false;
+		}, 200);
 	}
 }
