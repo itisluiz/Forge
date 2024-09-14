@@ -278,5 +278,6 @@
 		[responsible]="getUser(selectedTask.responsibleEid!)"
 		[projectEid]="projectEid"
 		(closePopUpEmitter)="closePopUpTask()"
+		(closePopUpEmitterDeletedTask)="loadSprintData()"
 	></app-task-details>
 }

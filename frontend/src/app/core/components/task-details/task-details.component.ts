@@ -8,11 +8,13 @@ import { UserstoryApiService } from "../../services/userstory-api.service";
 import { MatIcon } from "@angular/material/icon";
 import { PriorityPipe } from "../../pipes/priority.pipe";
 import { IconPipe } from "../../pipes/icon.pipe";
+import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
+import { TaskApiService } from "../../services/task-api.service";
 
 @Component({
 	selector: "app-task-details",
 	standalone: true,
-	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe],
+	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent],
 	templateUrl: "./task-details.component.html",
 	styleUrl: "./task-details.component.scss",
 })
@@ -22,6 +24,9 @@ export class TaskDetailsComponent implements OnInit {
 	@Input() projectEid!: string;
 	userStory: UserstoryResponse | null = null;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
+	@Output() closePopUpEmitterDeletedTask = new EventEmitter<TaskResponse>();
+
+	popUpDeleteTask: boolean = false;
 
 	@ViewChildren("statusPopUp")
 	statusPopUp?: QueryList<ElementRef>;
@@ -29,6 +34,7 @@ export class TaskDetailsComponent implements OnInit {
 	constructor(
 		private router: Router,
 		private userstoryApiService: UserstoryApiService,
+		private taskApiService: TaskApiService,
 	) {}
 
 	ngOnInit(): void {
@@ -127,6 +133,41 @@ export class TaskDetailsComponent implements OnInit {
 		if (userStoryEid) {
 			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
 		}
+	}
+
+	openPopUpDeleteTask() {
+		this.popUpDeleteTask = true;
+		document.body.style.overflow = "hidden";
+	}
+
+	onDeleteTask() {
+		this.deleteTask();
+	}
+
+	deleteTask() {
+		this.taskApiService.deleteTask(this.projectEid, this.task.eid).subscribe({
+			next: (result) => {
+				console.log("Task deleted successfully");
+				this.closePopUpDeleteTask();
+				this.closePopUpEmitterDeletedTask.emit(this.task);
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	closePopUpDeleteTask() {
+		this.popUpDeleteTask = false;
+		this.closePopUp();
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpCancelled() {
+		this.popUpDeleteTask = false;
+		document.body.style.overflow = "auto";
 	}
 
 	closePopUp() {

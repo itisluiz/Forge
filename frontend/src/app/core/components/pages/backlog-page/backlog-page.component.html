@@ -260,6 +260,7 @@
 		[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
 		[projectEid]="projectEid"
 		(closePopUpEmitter)="closePopUp()"
+		(closePopUpEmitterDeletedTask)="removeTaskFromDataSource($event)"
 	></app-task-details>
 }
 

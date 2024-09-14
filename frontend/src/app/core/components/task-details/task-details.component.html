@@ -56,6 +56,10 @@
 				<mat-icon>open_in_new</mat-icon>
 			</span>
 		</div>
+		<div class="buttons-wrapper">
+			<button id="button-edit-task" class="grey-button">Edit Task</button>
+			<mat-icon (click)="openPopUpDeleteTask()">delete</mat-icon>
+		</div>
 	</div>
 	<div class="pop-up-footer">
 		<div class="hr"></div>
@@ -86,3 +90,14 @@
 		<div class="hr"></div>
 	</div>
 </div>
+
+@if (popUpDeleteTask) {
+	<div class="pop-up-background" (click)="closePopUpCancelled()"></div>
+
+	<app-delete-popup
+		[title]="'Delete Task'"
+		[description]="'Are you sure you want to delete this task? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUpCancelled()"
+		(confirmDeleteEmmiter)="onDeleteTask()"
+	></app-delete-popup>
+}
