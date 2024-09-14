@@ -34,11 +34,21 @@ import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.d
 import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
 import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
+import { TaskDetailsComponent } from "../../task-details/task-details.component";
 
 @Component({
 	selector: "app-backlog-page",
 	standalone: true,
-	imports: [NavbarComponent, MatIcon, MatExpansionModule, MatTableModule, CommonModule, ReactiveFormsModule, MaxLengthPipe],
+	imports: [
+		NavbarComponent,
+		MatIcon,
+		MatExpansionModule,
+		MatTableModule,
+		CommonModule,
+		ReactiveFormsModule,
+		MaxLengthPipe,
+		TaskDetailsComponent,
+	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
 })
@@ -106,9 +116,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	@ViewChildren("statusContainer")
 	statusContainer!: QueryList<ElementRef>;
-
-	@ViewChildren("statusPopUp")
-	statusPopUp!: QueryList<ElementRef>;
 
 	@ViewChild(MatTable)
 	table!: MatTable<History>;
@@ -208,16 +215,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				}
 			}),
 		);
-	}
-
-	setStatusStylePopUp() {
-		this.statusPopUp.forEach((cell) => {
-			const { color, background, textDecoration, fontWeight } = this.determineStyle(cell.nativeElement.textContent.trim());
-			cell.nativeElement.style.backgroundColor = `${background}`;
-			cell.nativeElement.style.color = `${color}`;
-			cell.nativeElement.style.textDecoration = `${textDecoration}`;
-			cell.nativeElement.style.fontWeight = `${fontWeight}`;
-		});
 	}
 
 	openPopUpAddToSprint(userStoryEid: string) {
@@ -530,7 +527,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	}
 
 	statusParser(status: number): string {
-		this.setStatusStylePopUp();
 		switch (status) {
 			case 1:
 				return "To do";
@@ -581,12 +577,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	getAllProjectMembers(): ProjectMemberComposite[] {
 		return Object.values(this.projectMembersMap);
-	}
-
-	navigateToUserStory(userStoryEid: string | undefined): void {
-		if (userStoryEid) {
-			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
-		}
 	}
 
 	getTaskTypeClass(type: number): string {
