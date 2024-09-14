@@ -67,19 +67,19 @@
 
 									<ng-container matColumnDef="key">
 										<th mat-header-cell *matHeaderCellDef>Key</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.code }}</td>
+										<td mat-cell *matCellDef="let element">{{ element.code }}</td>
 									</ng-container>
 
 									<ng-container matColumnDef="subject">
 										<th mat-header-cell *matHeaderCellDef>Subject</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											{{ element.description | maxLength: 45 }}
 										</td>
 									</ng-container>
 
 									<ng-container matColumnDef="status">
 										<th mat-header-cell *matHeaderCellDef>Status</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											<div #statusContainer class="status-container">
 												{{ statusParser(element.status) | maxLength: 11 }}
 											</div>
@@ -88,7 +88,7 @@
 
 									<ng-container matColumnDef="assignee">
 										<th mat-header-cell *matHeaderCellDef>Responsible</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											<div class="assignee-container">
 												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
 												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
@@ -98,19 +98,19 @@
 
 									<ng-container matColumnDef="priority">
 										<th mat-header-cell *matHeaderCellDef>Priority</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											<img [src]="priorityImageParser(element.priority)" />
 										</td>
 									</ng-container>
 
 									<ng-container matColumnDef="created">
 										<th mat-header-cell *matHeaderCellDef>Created</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											{{ element.createdAt | date }}
 										</td>
 									</ng-container>
 									<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-									<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+									<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
 								</table>
 							}
 							<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
@@ -174,17 +174,17 @@
 
 								<ng-container matColumnDef="key">
 									<th mat-header-cell *matHeaderCellDef>Key</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.code }}</td>
+									<td mat-cell *matCellDef="let element">{{ element.code }}</td>
 								</ng-container>
 
 								<ng-container matColumnDef="subject">
 									<th mat-header-cell *matHeaderCellDef>Subject</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.description }}</td>
+									<td mat-cell *matCellDef="let element">{{ element.description }}</td>
 								</ng-container>
 
 								<ng-container matColumnDef="status">
 									<th mat-header-cell *matHeaderCellDef>Status</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										<div #statusContainer class="status-container">
 											{{ statusParser(element.status) }}
 										</div>
@@ -193,7 +193,7 @@
 
 								<ng-container matColumnDef="assignee">
 									<th mat-header-cell *matHeaderCellDef>Responsible</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										<div class="assignee-container">
 											<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
 											<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
@@ -203,19 +203,19 @@
 
 								<ng-container matColumnDef="priority">
 									<th mat-header-cell *matHeaderCellDef>Priority</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										<img [src]="priorityImageParser(element.priority)" />
 									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="created">
 									<th mat-header-cell *matHeaderCellDef>Created</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										{{ element.createdAt | date }}
 									</td>
 								</ng-container>
 								<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+								<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
 							</table>
 						}
 						<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
@@ -254,108 +254,13 @@
 }
 
 @if (popUpTask) {
-	<!-- <ng-container *ngIf="selectedTask$ | async as selectedTask">
-		<div class="pop-up-background" (click)="closePopUp()"></div>
-
-		<div class="history-pop-up">
-			<img class="close" src="../../../../../assets/double-arrow.svg" (click)="closePopUp()" />
-			<div class="history-pop-up-header">
-				<h2>{{ selectedTask.title }}</h2>
-				<p class="history-desc">{{ selectedTask.description }}</p>
-			</div>
-			<div class="pop-up-content">
-				<div class="info key">
-					<p>Key:</p>
-					<span>{{ selectedTask.code }}</span>
-				</div>
-				<div class="info status">
-					<p>Status:</p>
-					<div class="status-wrapper">
-						<div id="container-status-pop" #statusPopUp>
-							<span>
-								{{ statusParser(selectedTask.status) }}
-							</span>
-						</div>
-					</div>
-				</div>
-
-				<div class="info priority">
-					<p>Priority:</p>
-					<div class="content">
-						<img [src]="priorityImageParser(selectedTask.priority)" />
-						<span>{{ priorityTextParser(selectedTask.priority) }}</span>
-					</div>
-				</div>
-
-				<div class="info type">
-					<p>Type:</p>
-					<span>{{ typeParser(selectedTask.type) }}</span>
-				</div>
-
-				<div class="info assignee">
-					<p>Assignee:</p>
-					<div class="content">
-						<img [src]="getProjectMemberFromMap(selectedTask.responsibleEid)?.gravatar" />
-						<span>
-							{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.name }}
-							{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.surname }}
-						</span>
-					</div>
-				</div>
-
-				<div class="info created">
-					<p>Created:</p>
-					<span>{{ selectedTask.createdAt | date }}</span>
-				</div>
-
-				<div class="info user-story-link" *ngIf="userStory$ | async as userStory">
-					<p>User story:</p>
-					<span (click)="navigateToUserStory(userStory?.eid)">
-						{{ userStory?.title }}
-						<mat-icon>open_in_new</mat-icon>
-					</span>
-				</div>
-			</div>
-			<div class="pop-up-footer">
-				<div class="hr"></div>
-				<div class="comments-container">
-					<div class="comment">
-						<div class="user">
-							<div class="id">
-								<img [src]="getProjectMemberFromMap(selectedTask.responsibleEid)?.gravatar" />
-								<p>
-									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.name }}
-									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.surname }}
-								</p>
-								<span>1 hour ago</span>
-							</div>
-							<div class="actions">
-								<button mat-icon-button>
-									<mat-icon>more_horiz</mat-icon>
-								</button>
-							</div>
-						</div>
-						<div class="message">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa omnis fugit eligendi.</div>
-					</div>
-				</div>
-				<div class="input-comment">
-					<img src="../../../../../assets/image-fake.svg" />
-					<input type="text" placeholder="Add a comment.." />
-				</div>
-				<div class="hr"></div>
-			</div>
-		</div>
-	</ng-container> -->
-
 	<div class="pop-up-background" (click)="closePopUp()"></div>
-	<ng-container *ngIf="selectedTask$ | async as selectedTask">
-		<app-task-details
-			[task]="selectedTask"
-			[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
-			[projectEid]="projectEid"
-			(closePopUpEmitter)="closePopUp()"
-		></app-task-details>
-	</ng-container>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUp()"
+	></app-task-details>
 }
 
 @if (popUpCreateTask) {

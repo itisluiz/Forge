@@ -16,9 +16,11 @@ import { TaskApiService } from "../../../services/task-api.service";
 import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { IconPipe } from "../../../pipes/icon.pipe";
+import { TaskDetailsComponent } from "../../task-details/task-details.component";
+import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 
 export interface testCaseDisplay {
 	key: string;
@@ -68,6 +70,7 @@ const TEST_CASES_DATA: testCaseDisplay[] = [
 		MaxLengthPipe,
 		PriorityPipe,
 		IconPipe,
+		TaskDetailsComponent,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
@@ -89,8 +92,9 @@ export class UserStoryPageComponent implements OnInit {
 	];
 	testCases = [...TEST_CASES_DATA];
 
-	popUpActive: boolean = false;
+	popUpTestCase: boolean = false;
 	popUpEditUserStory: boolean = false;
+	popUpTask: boolean = false;
 
 	userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
 
@@ -102,6 +106,10 @@ export class UserStoryPageComponent implements OnInit {
 	statusContainer!: QueryList<ElementRef>;
 
 	acceptanceCriteria$ = this.userstoryApiService.getAcceptanceCriteria(this.projectEid, this.userstoryEid);
+	selectedTask!: TaskResponse;
+
+	private subscriptions = new Subscription();
+
 	constructor(
 		private route: ActivatedRoute,
 		private userstoryApiService: UserstoryApiService,
@@ -115,21 +123,23 @@ export class UserStoryPageComponent implements OnInit {
 	}
 
 	loadTasksData() {
-		this.taskApiService.getTasks(this.projectEid, this.userstoryEid).subscribe({
+		const taskSub = this.taskApiService.getTasks(this.projectEid, this.userstoryEid).subscribe({
 			next: (tasks) => {
 				this.tasks = tasks;
 			},
 		});
+		this.subscriptions.add(taskSub);
 	}
 
 	loadMembersData() {
-		this.projectApiService.getEspecificProject(this.projectEid).subscribe({
+		const membersSub = this.projectApiService.getEspecificProject(this.projectEid).subscribe({
 			next: (project) => {
 				project.members.forEach((member) => {
 					this.projectMembersMap[member.eid] = member;
 				});
 			},
 		});
+		this.subscriptions.add(membersSub);
 	}
 
 	setStatusStyle() {
@@ -177,8 +187,8 @@ export class UserStoryPageComponent implements OnInit {
 		return { color, background, textDecoration, fontWeight };
 	}
 
-	openPopUp() {
-		this.popUpActive = true;
+	openPopUpTestCase() {
+		this.popUpTestCase = true;
 		document.body.style.overflow = "hidden";
 	}
 
@@ -187,14 +197,34 @@ export class UserStoryPageComponent implements OnInit {
 		document.body.style.overflow = "hidden";
 	}
 
-	closePopUp() {
-		this.popUpActive = false;
+	openTaskPopUp(task: TaskResponse) {
+		this.selectedTask = task;
+		this.popUpTask = true;
+	}
+
+	closePopUpTestCase() {
+		this.popUpTestCase = false;
 		document.body.style.overflow = "auto";
 	}
 
 	closePopUpEditUserStory() {
 		this.popUpEditUserStory = false;
 		document.body.style.overflow = "auto";
+	}
+
+	closePopUpTask() {
+		let backgroundPopUp = document.querySelector(".pop-up-background");
+		if (backgroundPopUp) {
+			backgroundPopUp.classList.add("fade-opacity");
+		}
+
+		let popUp = document.querySelector(".history-pop-up");
+		if (popUp) {
+			popUp.classList.add("fade-out");
+		}
+		setTimeout(() => {
+			this.popUpTask = false;
+		}, 200);
 	}
 
 	setUpdatedUserStory() {
@@ -255,5 +285,9 @@ export class UserStoryPageComponent implements OnInit {
 			default:
 				return "";
 		}
+	}
+
+	ngOnDestroy() {
+		this.subscriptions.unsubscribe();
 	}
 }

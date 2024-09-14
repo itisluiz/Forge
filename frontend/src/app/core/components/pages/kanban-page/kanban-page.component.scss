@@ -1,5 +1,6 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 @use "../../../../../assets/expansion-panel.scss";
+@use "../../pages/backlog-page/backlog-page.component.scss";
 
 app-navbar {
 	width: 100vw;
@@ -219,3 +220,16 @@ app-navbar {
 		margin: 67px 5em 0 5em;
 	}
 }
+
+// .pop-up-background {
+// 	position: fixed;
+// 	top: 0;
+// 	left: 0;
+// 	width: 100vw;
+// 	height: 100vh;
+// 	background-color: v.$pop-up-background-color;
+// 	z-index: 50;
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+// }

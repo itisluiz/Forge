@@ -61,7 +61,12 @@
 											</div>
 											<div cdkDropList id="taskstatus-1" class="kanban-list" (cdkDropListDropped)="drop($event)">
 												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 1); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+													<div
+														class="container-item"
+														cdkDrag
+														id="task-{{ sprint.eid }}-{{ task.eid }}"
+														(click)="openTaskPopUp(task.eid)"
+													>
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
@@ -97,7 +102,12 @@
 
 											<div cdkDropList id="taskstatus-2" class="kanban-list" (cdkDropListDropped)="drop($event)">
 												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 2); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+													<div
+														class="container-item"
+														cdkDrag
+														id="task-{{ sprint.eid }}-{{ task.eid }}"
+														(click)="openTaskPopUp(task.eid)"
+													>
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
@@ -133,7 +143,12 @@
 
 											<div cdkDropList id="taskstatus-3" class="kanban-list" (cdkDropListDropped)="drop($event)">
 												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 3); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+													<div
+														class="container-item"
+														cdkDrag
+														id="task-{{ sprint.eid }}-{{ task.eid }}"
+														(click)="openTaskPopUp(task.eid)"
+													>
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
@@ -169,7 +184,12 @@
 
 											<div cdkDropList id="taskstatus-4" class="kanban-list" (cdkDropListDropped)="drop($event)">
 												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 4); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+													<div
+														class="container-item"
+														cdkDrag
+														id="task-{{ sprint.eid }}-{{ task.eid }}"
+														(click)="openTaskPopUp(task.eid)"
+													>
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
@@ -205,7 +225,12 @@
 
 											<div cdkDropList id="taskstatus-5" class="kanban-list" (cdkDropListDropped)="drop($event)">
 												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 5); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
+													<div
+														class="container-item"
+														cdkDrag
+														id="task-{{ sprint.eid }}-{{ task.eid }}"
+														(click)="openTaskPopUp(task.eid)"
+													>
 														<div class="placeholder" *cdkDragPlaceholder></div>
 														<div class="content">
 															<div [class]="task.type | taskTypeClass"></div>
@@ -245,3 +270,13 @@
 		}
 	</div>
 </div>
+
+@if (popUpTask) {
+	<div class="pop-up-background" (click)="closePopUpTask()"></div>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getUser(selectedTask.responsibleEid!)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUpTask()"
+	></app-task-details>
+}

@@ -107,8 +107,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		map((response) => response.userstories),
 	);
 
-	userStory$: Observable<UserstoryResponse | null> = of(null);
-
 	task$: Observable<TaskResponse> = new Observable();
 
 	@ViewChildren("itemCell")
@@ -191,7 +189,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	isPanelDisabled: boolean = false;
 	eidSelectedUserStory: string = "";
 
-	selectedTask$: Observable<TaskResponse> = new Observable();
+	selectedTask!: TaskResponse;
 
 	toggleExpansionPanel() {
 		this.isPanelDisabled = !this.isPanelDisabled;
@@ -202,19 +200,9 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.setStatusStyle();
 	}
 
-	openTaskPopUp(taskEid: string) {
-		this.selectedTask$ = this.taskApiService.getTask(this.projectEid, taskEid);
+	openTaskPopUp(task: TaskResponse) {
+		this.selectedTask = task;
 		this.popUpTask = true;
-
-		this.userStory$ = this.selectedTask$.pipe(
-			switchMap((task: TaskResponse) => {
-				if (task && task.userstoryEid) {
-					return this.userstoryApiService.get(this.projectEid, task.userstoryEid);
-				} else {
-					return of(null);
-				}
-			}),
-		);
 	}
 
 	openPopUpAddToSprint(userStoryEid: string) {
