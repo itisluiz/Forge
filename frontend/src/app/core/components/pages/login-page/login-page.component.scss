@@ -138,6 +138,20 @@
 					position: relative;
 					margin-bottom: 0.5em;
 
+					.password-icon {
+						position: absolute;
+						right: 80px;
+						bottom: 0;
+						height: 45px;
+
+						mat-icon {
+							opacity: 0.7;
+							color: v.$grey-color;
+							cursor: pointer;
+							font-size: 22px;
+						}
+					}
+
 					input {
 						width: 300px;
 						height: 45px;
