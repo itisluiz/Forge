@@ -27,6 +27,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.DATE,
 			allowNull: true,
 		},
+		complexity: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+		},
 	});
 }
 
