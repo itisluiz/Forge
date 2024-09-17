@@ -2,12 +2,12 @@
  * @swagger
  * components:
  *   schemas:
- *     PlanningpokerSessionResponse:
+ *     PlanningpokerCreatesessionResponse:
  *       type: object
  *       properties:
  *         sessionCode:
  *           type: string
  */
-export interface PlanningpokerSessionResponse {
+export interface PlanningpokerCreatesessionResponse {
 	sessionCode: string;
 }

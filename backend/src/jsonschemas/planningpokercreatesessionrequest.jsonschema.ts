@@ -1,6 +1,6 @@
-export const planningpokerSessionRequestJsonSchema = {
+export const planningpokerCreatesessionRequestJsonSchema = {
 	$schema: "http://json-schema.org/draft-07/schema#",
-	title: "PlanningpokerSessionRequestJsonSchema",
+	title: "PlanningpokerCreatesessionRequestJsonSchema",
 	type: "object",
 	properties: {
 		agenda: {

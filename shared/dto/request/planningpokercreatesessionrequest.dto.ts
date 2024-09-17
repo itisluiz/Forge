@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     PlanningpokerSessionRequest:
+ *     PlanningpokerCreatesessionRequest:
  *       type: object
  *       properties:
  *         agenda:
@@ -12,7 +12,7 @@
  *           items:
  *             type: string
  */
-export interface PlanningpokerSessionRequest {
+export interface PlanningpokerCreatesessionRequest {
 	agenda: string;
 	userstoryEids: string[];
 }
