@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -14,6 +15,8 @@ import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 import { ProjectApiService } from "../../services/project-api.service";
 import { UserApiService } from "../../services/user-api.service";
+import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
+import { TokenService } from "../../services/token.service";
 
 export interface SearchBar {
 	name: string;
@@ -35,6 +38,8 @@ export interface SearchBar {
 		FormsModule,
 		ReactiveFormsModule,
 		AsyncPipe,
+		MatMenuModule,
+		DeletePopupComponent,
 	],
 	templateUrl: "./navbar.component.html",
 	styleUrl: "./navbar.component.scss",
@@ -44,6 +49,7 @@ export class NavbarComponent {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 	userPhoto!: string;
 	trollando: boolean = false;
+	popUpLeaveForge: boolean = false;
 
 	playAudio() {
 		if ((this.trollando = !this.trollando)) {
@@ -57,6 +63,7 @@ export class NavbarComponent {
 		private router: Router,
 		private route: ActivatedRoute,
 		private userApiService: UserApiService,
+		private tokenService: TokenService,
 	) {}
 
 	myControl = new FormControl<string | SearchBar>("");
@@ -93,6 +100,23 @@ export class NavbarComponent {
 	navigateTo(route: string) {
 		console.log(route);
 		this.router.navigate([route]);
+	}
+
+	openPopUp(popUp: string) {
+		if (popUp === "leaveConfirm") {
+			this.popUpLeaveForge = true;
+		}
+	}
+
+	closePopUp(popUp: string) {
+		if (popUp === "leaveConfirm") {
+			this.popUpLeaveForge = false;
+		}
+	}
+
+	leaveForge() {
+		this.tokenService.delete();
+		this.router.navigate(["/login"]);
 	}
 
 	private _filter(name: string): SearchBar[] {

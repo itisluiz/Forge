@@ -1,5 +1,18 @@
 @use "../../../../assets/variables.scss" as v;
 
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 #menu-bar {
 	height: 55px;
 	background-color: v.$dark-color;

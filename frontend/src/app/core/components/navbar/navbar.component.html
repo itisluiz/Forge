@@ -29,10 +29,27 @@
 			<source src="../../../../assets/omeutcc.mp3" type="audio/mp3" />
 		</audio>
 	</button>
-	<button mat-icon-button>
+	<button mat-icon-button [matMenuTriggerFor]="menu">
 		<mat-icon>settings</mat-icon>
 	</button>
+	<mat-menu #menu="matMenu">
+		<button mat-menu-item (click)="openPopUp('leaveConfirm')">
+			<span>Logout</span>
+		</button>
+	</mat-menu>
 	<button mat-icon-button>
 		<mat-icon><img [src]="userPhoto" /></mat-icon>
 	</button>
 </mat-toolbar>
+
+@if (popUpLeaveForge) {
+	<div class="pop-up-background" (click)="closePopUp('leaveConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Logout'"
+		[description]="'Are you sure you want to logout? You cannot go back on this action.'"
+		confirmButtonLabel="Confirm"
+		(cancelEmitter)="closePopUp('leaveConfirm')"
+		(confirmDeleteEmmiter)="leaveForge()"
+	></app-delete-popup>
+}
