@@ -1,0 +1,61 @@
+<div class="epic-pop-up">
+	<div class="epic-pop-up-header">
+		<h2 *ngIf="!isEditMode">Create a Task</h2>
+		<h2 *ngIf="isEditMode">Edit Task</h2>
+		<p *ngIf="!isEditMode">Fill in the necessary information to create a task.</p>
+		<p *ngIf="isEditMode">Update the fields as needed.</p>
+	</div>
+	<form [formGroup]="taskForm" class="pop-up-form" (ngSubmit)="submitTaskForm()">
+		<div class="pop-up-form-content">
+			<div class="input-wrapper">
+				<label for="task-title">Task's Title</label>
+				<input
+					type="text"
+					id="task-title"
+					name="task-title"
+					formControlName="title"
+					placeholder="Insert the title of the task"
+				/>
+			</div>
+			<div class="input-wrapper">
+				<label for="responsible">Responsible</label>
+				<select id="responsible" name="responsible" formControlName="responsible">
+					<option value="">Select the responsible for the task</option>
+					<option *ngFor="let member of projectMembers" [value]="member.eid">{{ member.name }} {{ member.surname }}</option>
+				</select>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-description">Description</label>
+				<textarea
+					id="task-description"
+					name="task-description"
+					formControlName="description"
+					placeholder="Insert a description"
+				></textarea>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-type">Type</label>
+				<select id="task-type" name="task-type" formControlName="type">
+					<option value="">Select a type</option>
+					<option value="1">Task</option>
+					<option value="2">Bug</option>
+					<option value="3">Test</option>
+				</select>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-priority">Priority</label>
+				<select id="task-priority" name="task-priority" formControlName="priority">
+					<option value="">Select a priority</option>
+					<option value="1">Low</option>
+					<option value="2">Medium</option>
+					<option value="3">High</option>
+				</select>
+			</div>
+		</div>
+		<div class="pop-up-footer">
+			<button type="submit" *ngIf="!isEditMode" [disabled]="taskForm.invalid">Create</button>
+			<button type="submit" *ngIf="isEditMode" [disabled]="taskForm.invalid">Submit Modifications</button>
+			<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
+		</div>
+	</form>
+</div>
