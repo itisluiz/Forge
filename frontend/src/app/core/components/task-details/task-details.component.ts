@@ -10,11 +10,12 @@ import { PriorityPipe } from "../../pipes/priority.pipe";
 import { IconPipe } from "../../pipes/icon.pipe";
 import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
 import { TaskApiService } from "../../services/task-api.service";
+import { TaskPopupComponent } from "../task-popup/task-popup.component";
 
 @Component({
 	selector: "app-task-details",
 	standalone: true,
-	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent],
+	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent, TaskPopupComponent],
 	templateUrl: "./task-details.component.html",
 	styleUrl: "./task-details.component.scss",
 })
@@ -25,8 +26,10 @@ export class TaskDetailsComponent implements OnInit {
 	userStory: UserstoryResponse | null = null;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() closePopUpEmitterDeletedTask = new EventEmitter<TaskResponse>();
+	@Output() closePopUpEmitterEditedTask = new EventEmitter<TaskResponse>();
 
 	popUpDeleteTask: boolean = false;
+	popUpEditTask: boolean = false;
 
 	@ViewChildren("statusPopUp")
 	statusPopUp?: QueryList<ElementRef>;
@@ -47,6 +50,69 @@ export class TaskDetailsComponent implements OnInit {
 				this.userStory = userStory;
 			});
 		}
+	}
+
+	loadEditedTask() {
+		this.taskApiService.getTask(this.projectEid, this.task.eid).subscribe((task) => {
+			this.task = task;
+			this.closePopUpEditTask();
+		});
+	}
+
+	navigateToUserStory(userStoryEid: string | undefined): void {
+		if (userStoryEid) {
+			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
+		}
+	}
+
+	openPopUpEditTask() {
+		this.popUpEditTask = true;
+		document.body.style.overflow = "hidden";
+	}
+
+	openPopUpDeleteTask() {
+		this.popUpDeleteTask = true;
+		document.body.style.overflow = "hidden";
+	}
+
+	onDeleteTask() {
+		this.deleteTask();
+	}
+
+	deleteTask() {
+		this.taskApiService.deleteTask(this.projectEid, this.task.eid).subscribe({
+			next: (result) => {
+				console.log("Task deleted successfully");
+				this.closePopUpDeleteTask();
+				this.closePopUpEmitterDeletedTask.emit(this.task);
+				// TODO: Toaster success
+			},
+			error: (error) => {
+				// TODO: Toaster error
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	closePopUpDeleteTask() {
+		this.popUpDeleteTask = false;
+		this.closePopUp();
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpCancelled() {
+		this.popUpDeleteTask = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUpEditTask() {
+		this.closePopUpEmitterEditedTask.emit(this.task);
+		this.popUpEditTask = false;
+		document.body.style.overflow = "auto";
+	}
+
+	closePopUp() {
+		this.closePopUpEmitter.emit();
 	}
 
 	typeParser(type: number): string {
@@ -127,50 +193,5 @@ export class TaskDetailsComponent implements OnInit {
 		}
 
 		return { color, background, textDecoration, fontWeight };
-	}
-
-	navigateToUserStory(userStoryEid: string | undefined): void {
-		if (userStoryEid) {
-			this.router.navigate([this.projectEid, userStoryEid, "user-story"]);
-		}
-	}
-
-	openPopUpDeleteTask() {
-		this.popUpDeleteTask = true;
-		document.body.style.overflow = "hidden";
-	}
-
-	onDeleteTask() {
-		this.deleteTask();
-	}
-
-	deleteTask() {
-		this.taskApiService.deleteTask(this.projectEid, this.task.eid).subscribe({
-			next: (result) => {
-				console.log("Task deleted successfully");
-				this.closePopUpDeleteTask();
-				this.closePopUpEmitterDeletedTask.emit(this.task);
-				// TODO: Toaster success
-			},
-			error: (error) => {
-				// TODO: Toaster error
-				console.log(error.error.message);
-			},
-		});
-	}
-
-	closePopUpDeleteTask() {
-		this.popUpDeleteTask = false;
-		this.closePopUp();
-		document.body.style.overflow = "auto";
-	}
-
-	closePopUpCancelled() {
-		this.popUpDeleteTask = false;
-		document.body.style.overflow = "auto";
-	}
-
-	closePopUp() {
-		this.closePopUpEmitter.emit();
 	}
 }
