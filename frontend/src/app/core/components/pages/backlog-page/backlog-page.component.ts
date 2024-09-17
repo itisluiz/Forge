@@ -186,7 +186,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	popUpCreateSprint: boolean = false;
 
 	addToSprintForm!: FormGroup;
-	createTaskForm!: FormGroup;
 	createSprintForm!: FormGroup;
 
 	eidSelectedUserStory: string = "";
@@ -223,23 +222,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
-	openPopUpCreateTask(userStoryEid: string) {
-		this.eidSelectedUserStory = userStoryEid;
-		this.popUpCreateTask = true;
-		document.body.style.overflow = "hidden";
-		this.buildCreateTaskForm();
-	}
-
-	buildCreateTaskForm() {
-		this.createTaskForm = this.formBuilder.group({
-			title: ["", [Validators.required, Validators.minLength(3)]],
-			responsible: ["", Validators.required],
-			description: ["", [Validators.required, Validators.minLength(3)]],
-			type: ["", Validators.required],
-			priority: ["", Validators.required],
-		});
-	}
-
 	openPopUpCreateSprint() {
 		this.popUpCreateSprint = true;
 		document.body.style.overflow = "hidden";
@@ -251,6 +233,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			startDate: [this.getCurrentDate(), Validators.required],
 			endDate: [this.getDateAfterDays(15), Validators.required],
 		});
+	}
+
+	openPopUpCreateTask(userStoryEid: string) {
+		this.eidSelectedUserStory = userStoryEid;
+		this.popUpCreateTask = true;
+		document.body.style.overflow = "hidden";
 	}
 
 	private getCurrentDate(): string {
@@ -325,26 +313,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		);
 	}
 
-	submitCreateTaskForm() {
-		const title = this.createTaskForm.get("title");
-		const responsibleEid = this.createTaskForm.get("responsible");
-		const description = this.createTaskForm.get("description");
-		const type = this.createTaskForm.get("type");
-		const priority = this.createTaskForm.get("priority");
-
-		const taskNewRequest = {
-			userstoryEid: this.eidSelectedUserStory,
-			responsibleEid: responsibleEid?.value,
-			title: title?.value,
-			description: description?.value,
-			type: parseInt(type?.value),
-			status: TaskStatus.TODO,
-			priority: parseInt(priority?.value),
-		} as TaskNewRequest;
-		this.createTask(taskNewRequest);
-		this.closePopUpCreateTask();
-	}
-
 	submitCreateSprintForm() {
 		const startDateValue = this.createSprintForm.get("startDate")?.value;
 		const endDateValue = this.createSprintForm.get("endDate")?.value;
@@ -388,17 +356,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		const localTimezoneOffset = localDate.getTimezoneOffset();
 		const localDateUTC = new Date(localDate.getTime() + localTimezoneOffset * 60000);
 		return localDateUTC.toISOString();
-	}
-
-	createTask(taskNewRequest: TaskNewRequest) {
-		this.taskApiService.newTask(taskNewRequest, this.projectEid).subscribe({
-			next: (task) => {
-				this.addNewTaskInDataSource(task);
-			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
-		});
 	}
 
 	addNewTaskInDataSource(task: TaskResponse) {

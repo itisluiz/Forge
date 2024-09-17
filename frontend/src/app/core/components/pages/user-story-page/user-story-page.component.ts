@@ -21,6 +21,7 @@ import { ProjectApiService } from "../../../services/project-api.service";
 import { IconPipe } from "../../../pipes/icon.pipe";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
+import { TaskPopupComponent } from "../../task-popup/task-popup.component";
 
 export interface testCaseDisplay {
 	key: string;
@@ -71,6 +72,7 @@ const TEST_CASES_DATA: testCaseDisplay[] = [
 		PriorityPipe,
 		IconPipe,
 		TaskDetailsComponent,
+		TaskPopupComponent,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
@@ -95,6 +97,7 @@ export class UserStoryPageComponent implements OnInit {
 	popUpTestCase: boolean = false;
 	popUpEditUserStory: boolean = false;
 	popUpTask: boolean = false;
+	popUpCreateTask: boolean = false;
 
 	userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
 
@@ -126,6 +129,7 @@ export class UserStoryPageComponent implements OnInit {
 		const taskSub = this.taskApiService.getTasks(this.projectEid, this.userstoryEid).subscribe({
 			next: (tasks) => {
 				this.tasks = tasks;
+				this.closePopUpCreateTask();
 			},
 		});
 		this.subscriptions.add(taskSub);
@@ -202,6 +206,11 @@ export class UserStoryPageComponent implements OnInit {
 		this.popUpTask = true;
 	}
 
+	openPopUpCreateTask() {
+		this.popUpCreateTask = true;
+		document.body.style.overflow = "hidden";
+	}
+
 	closePopUpTestCase() {
 		this.popUpTestCase = false;
 		document.body.style.overflow = "auto";
@@ -225,6 +234,11 @@ export class UserStoryPageComponent implements OnInit {
 		setTimeout(() => {
 			this.popUpTask = false;
 		}, 200);
+	}
+
+	closePopUpCreateTask() {
+		this.popUpCreateTask = false;
+		document.body.style.overflow = "auto";
 	}
 
 	setUpdatedUserStory() {

@@ -169,7 +169,7 @@
 								<tr mat-row *matRowDef="let row; columns: displayedColumnsTasks" (click)="openTaskPopUp(row)"></tr>
 							</table>
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()">
 									Create task
 								</button>
 							</div>
@@ -178,7 +178,7 @@
 								<p>It seems that you have not created any Tasks. To create one, click the button below.</p>
 
 								<div class="test-case-buttons">
-									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()">
 										Create task
 									</button>
 								</div>
@@ -220,5 +220,17 @@
 		[projectEid]="projectEid"
 		(closePopUpEmitter)="closePopUpTask()"
 		(closePopUpEmitterDeletedTask)="loadTasksData()"
+		(closePopUpEmitterEditedTask)="loadTasksData()"
 	></app-task-details>
+}
+
+@if (popUpCreateTask) {
+	<div class="pop-up-background" (click)="closePopUpCreateTask()"></div>
+	<app-task-popup
+		[isEditMode]="false"
+		[projectEid]="projectEid"
+		[userStoryEid]="userstoryEid"
+		(handleTaskAndClosePopupEmitter)="loadTasksData()"
+		(closePopUpEmitter)="closePopUpCreateTask()"
+	></app-task-popup>
 }
