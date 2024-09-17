@@ -57,7 +57,7 @@
 			</span>
 		</div>
 		<div class="buttons-wrapper">
-			<button id="button-edit-task" class="grey-button">Edit Task</button>
+			<button id="button-edit-task" class="grey-button" (click)="openPopUpEditTask()">Edit Task</button>
 			<mat-icon (click)="openPopUpDeleteTask()">delete</mat-icon>
 		</div>
 	</div>
@@ -90,6 +90,18 @@
 		<div class="hr"></div>
 	</div>
 </div>
+
+@if (popUpEditTask) {
+	<div class="pop-up-background" (click)="closePopUpEditTask()"></div>
+
+	<app-task-popup
+		[isEditMode]="true"
+		[projectEid]="projectEid"
+		[taskEditData]="task"
+		(handleEditedTaskAndClosePopupEmitter)="loadEditedTask()"
+		(closePopUpEmitter)="closePopUpEditTask()"
+	></app-task-popup>
+}
 
 @if (popUpDeleteTask) {
 	<div class="pop-up-background" (click)="closePopUpCancelled()"></div>

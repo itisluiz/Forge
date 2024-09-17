@@ -35,6 +35,7 @@ import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto"
 import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
+import { TaskPopupComponent } from "../../task-popup/task-popup.component";
 
 @Component({
 	selector: "app-backlog-page",
@@ -48,6 +49,7 @@ import { TaskDetailsComponent } from "../../task-details/task-details.component"
 		ReactiveFormsModule,
 		MaxLengthPipe,
 		TaskDetailsComponent,
+		TaskPopupComponent,
 	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
@@ -107,7 +109,9 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		map((response) => response.userstories),
 	);
 
-	task$: Observable<TaskResponse> = new Observable();
+	tasksPerUserStory$: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }> = new Observable();
+	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
 	@ViewChildren("itemCell")
 	itemCell!: QueryList<ElementRef>;
@@ -130,7 +134,20 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.tasksMap$ = this.allUserStories$.pipe(
+		this.loadTasks();
+		this.getProject()
+			.pipe(
+				map((project) => {
+					project.members.forEach((member) => {
+						this.projectMembersMap[member.eid] = member;
+					});
+				}),
+			)
+			.subscribe();
+	}
+
+	loadTasks() {
+		this.tasksPerUserStory$ = this.allUserStories$.pipe(
 			switchMap((userStories) => {
 				const tasksObservables = userStories.map((userStory) =>
 					this.getTasks(userStory.eid).pipe(
@@ -146,21 +163,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			shareReplay(1),
 		);
 
-		this.tasksMap$.subscribe((tasksMap) => {
+		this.tasksPerUserStory$.subscribe((tasksMap) => {
 			Object.keys(tasksMap).forEach((userStoryEid) => {
 				this.tasksDataSources[userStoryEid] = new MatTableDataSource(tasksMap[userStoryEid]);
 			});
 		});
-
-		this.getProject()
-			.pipe(
-				map((project) => {
-					project.members.forEach((member) => {
-						this.projectMembersMap[member.eid] = member;
-					});
-				}),
-			)
-			.subscribe();
 	}
 
 	getTasks(userStoryEid: string): Observable<TaskSelfComposite[]> {
@@ -173,24 +180,18 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	displayedColumns: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
 
-	tasksMap$: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }> = new Observable();
-	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
-	projectMembersMap: Record<string, ProjectMemberComposite> = {};
-
 	popUpTask: boolean = false;
 	popUpAddToSprint: boolean = false;
 	popUpCreateTask: boolean = false;
 	popUpCreateSprint: boolean = false;
 
 	addToSprintForm!: FormGroup;
-	createTaskForm!: FormGroup;
 	createSprintForm!: FormGroup;
 
-	isPanelDisabled: boolean = false;
 	eidSelectedUserStory: string = "";
-
 	selectedTask!: TaskResponse;
 
+	isPanelDisabled: boolean = false;
 	toggleExpansionPanel() {
 		this.isPanelDisabled = !this.isPanelDisabled;
 	}
@@ -199,6 +200,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.setTypeColor();
 		this.setStatusStyle();
 	}
+
+	// Open Popups
 
 	openTaskPopUp(task: TaskResponse) {
 		this.selectedTask = task;
@@ -219,23 +222,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
-	openPopUpCreateTask(userStoryEid: string) {
-		this.eidSelectedUserStory = userStoryEid;
-		this.popUpCreateTask = true;
-		document.body.style.overflow = "hidden";
-		this.buildCreateTaskForm();
-	}
-
-	buildCreateTaskForm() {
-		this.createTaskForm = this.formBuilder.group({
-			title: ["", [Validators.required, Validators.minLength(3)]],
-			responsible: ["", Validators.required],
-			description: ["", [Validators.required, Validators.minLength(3)]],
-			type: ["", Validators.required],
-			priority: ["", Validators.required],
-		});
-	}
-
 	openPopUpCreateSprint() {
 		this.popUpCreateSprint = true;
 		document.body.style.overflow = "hidden";
@@ -249,6 +235,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		});
 	}
 
+	openPopUpCreateTask(userStoryEid: string) {
+		this.eidSelectedUserStory = userStoryEid;
+		this.popUpCreateTask = true;
+		document.body.style.overflow = "hidden";
+	}
+
 	private getCurrentDate(): string {
 		const today = new Date();
 		return today.toISOString().split("T")[0];
@@ -259,6 +251,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		date.setDate(date.getDate() + days);
 		return date.toISOString().split("T")[0];
 	}
+
+	// Close Popups
 
 	closePopUp() {
 		let backgroundPopUp = document.querySelector(".pop-up-background");
@@ -290,6 +284,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "auto";
 	}
 
+	// Submit Forms
+
 	submitAddToSprintForm() {
 		const sprintEid = this.addToSprintForm.get("sprint");
 		const userStoryUpdateRequest = { sprintEid: sprintEid?.value };
@@ -315,26 +311,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.userStoriesInBacklog$ = this.allUserStories$.pipe(
 			map((userStories) => userStories.filter((userStory) => !userStory.sprintEid)),
 		);
-	}
-
-	submitCreateTaskForm() {
-		const title = this.createTaskForm.get("title");
-		const responsibleEid = this.createTaskForm.get("responsible");
-		const description = this.createTaskForm.get("description");
-		const type = this.createTaskForm.get("type");
-		const priority = this.createTaskForm.get("priority");
-
-		const taskNewRequest = {
-			userstoryEid: this.eidSelectedUserStory,
-			responsibleEid: responsibleEid?.value,
-			title: title?.value,
-			description: description?.value,
-			type: parseInt(type?.value),
-			status: TaskStatus.TODO,
-			priority: parseInt(priority?.value),
-		} as TaskNewRequest;
-		this.createTask(taskNewRequest);
-		this.closePopUpCreateTask();
 	}
 
 	submitCreateSprintForm() {
@@ -382,17 +358,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		return localDateUTC.toISOString();
 	}
 
-	createTask(taskNewRequest: TaskNewRequest) {
-		this.taskApiService.newTask(taskNewRequest, this.projectEid).subscribe({
-			next: (task) => {
-				this.addNewTaskInDataSource(task);
-			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
-		});
-	}
-
 	addNewTaskInDataSource(task: TaskResponse) {
 		const dataSource = this.getTasksDataSource(task.userstoryEid);
 		dataSource.data = [...dataSource.data, task];
@@ -406,6 +371,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.tasksDataSources[task.userstoryEid] = dataSource;
 		this.closePopUp();
 	}
+
+	// Styling
 
 	setTypeColor() {
 		this.itemCell.forEach((cell) => {
@@ -561,19 +528,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		}
 	}
 
-	getProject(): Observable<ProjectResponse> {
-		return this.projectApiService.getEspecificProject(this.projectEid);
-	}
-
-	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
-		if (!userEid) return null;
-		return this.projectMembersMap[userEid] || null;
-	}
-
-	getAllProjectMembers(): ProjectMemberComposite[] {
-		return Object.values(this.projectMembersMap);
-	}
-
 	getTaskTypeClass(type: number): string {
 		switch (type) {
 			case 1:
@@ -585,5 +539,16 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			default:
 				return "default-class";
 		}
+	}
+
+	// Get Project infos
+
+	getProject(): Observable<ProjectResponse> {
+		return this.projectApiService.getEspecificProject(this.projectEid);
+	}
+
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
+		return this.projectMembersMap[userEid] || null;
 	}
 }
