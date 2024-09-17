@@ -24,7 +24,12 @@
 				</p>
 				<p class="password-input">
 					<label for="password">Password</label>
-					<input type="password" formControlName="password" placeholder="Password" />
+					<input [type]="passwordFieldType" formControlName="password" placeholder="Password" />
+					<span class="password-icon">
+						<mat-icon (click)="togglePasswordVisibility()">
+							{{ passwordFieldType === "password" ? "visibility" : "visibility_off" }}
+						</mat-icon>
+					</span>
 					<span *ngIf="loginFailed"> <mat-icon>error</mat-icon> {{ genericErrorMessage }} </span>
 				</p>
 				<p class="form-failed" *ngIf="loginFailed">
