@@ -17,5 +17,7 @@ export function mapPlanningpokerResponse(pokerSession: PlanningpokerSession): Pl
 		participants: pokerSession.participants.map(mapPlanningpokerParticipantComposite),
 		selectedTaskEid: encryptPK("task", pokerSession.selectedTaskId!),
 		revealed: pokerSession.revealed,
+		voteAverage: pokerSession.voteAverage,
+		voteClosestFibonacci: pokerSession.voteClosestFibonacci,
 	};
 }

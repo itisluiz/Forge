@@ -99,7 +99,7 @@ router.post(
 router.post(
 	"/api/planningpoker/:projectEid/:sessionCode/settask",
 	authorize(),
-	authorizeProject(false, [ProjectRole.SCRUM_MASTER]),
+	pokerSession(true),
 	jsonBody(),
 	jsonBodySchema(planningpokerSettaskRequestJsonSchema),
 	async (req, res) => {
@@ -139,14 +139,9 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.post(
-	"/api/planningpoker/:projectEid/:sessionCode/revealvotes",
-	authorize(),
-	authorizeProject(false, [ProjectRole.SCRUM_MASTER]),
-	async (req, res) => {
-		await handle("planningpoker", "revealvotes", req, res);
-	},
-);
+router.post("/api/planningpoker/:projectEid/:sessionCode/revealvotes", authorize(), pokerSession(true), async (req, res) => {
+	await handle("planningpoker", "revealvotes", req, res);
+});
 
 /**
  * @swagger
@@ -189,7 +184,7 @@ router.post(
 router.post(
 	"/api/planningpoker/:projectEid/:sessionCode/saveresult",
 	authorize(),
-	authorizeProject(false, [ProjectRole.SCRUM_MASTER]),
+	pokerSession(true),
 	jsonBody(),
 	jsonBodySchema(planningpokerVoteRequestJsonSchema),
 	async (req, res) => {
@@ -238,7 +233,7 @@ router.post(
 router.post(
 	"/api/planningpoker/:projectEid/:sessionCode/vote",
 	authorize(),
-	authorizeProject(),
+	pokerSession(),
 	jsonBody(),
 	jsonBodySchema(planningpokerVoteRequestJsonSchema),
 	async (req, res) => {

@@ -19,6 +19,8 @@ export interface PlanningpokerSession {
 	participants: PlanningpokerParticipant[];
 	selectedTaskId: number | null;
 	revealed: boolean;
+	voteAverage?: number | null;
+	voteClosestFibonacci?: number | null;
 }
 
 function cleanupParticipants(session: PlanningpokerSession) {

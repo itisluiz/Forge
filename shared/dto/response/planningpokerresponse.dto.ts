@@ -28,6 +28,12 @@ import { UserstorySelfComposite } from "../composite/userstoryselfcomposite.dto"
  *           nullable: true
  *         revealed:
  *           type: boolean
+ *         voteAverage:
+ *           type: number
+ *           nullable: true
+ *         voteClosestFibonacci:
+ *           type: number
+ *           nullable: true
  */
 export interface PlanningpokerResponse {
 	agenda: string;
@@ -36,4 +42,6 @@ export interface PlanningpokerResponse {
 	participants: PlanningpokerParticipantComposite[];
 	selectedTaskEid: string | null;
 	revealed: boolean;
+	voteAverage?: number | null;
+	voteClosestFibonacci?: number | null;
 }
