@@ -12,6 +12,9 @@ export function mapTaskSelfComposite(task: any, projectCode: string): TaskSelfCo
 		status: task.dataValues.etaskstatusId,
 		type: task.dataValues.etasktypeId,
 		priority: task.dataValues.epriorityId,
+		startedAt: task.dataValues.startedAt,
+		completedAt: task.dataValues.completedAt,
+		complexity: task.dataValues.complexity,
 		createdAt: task.dataValues.createdAt,
 	};
 }

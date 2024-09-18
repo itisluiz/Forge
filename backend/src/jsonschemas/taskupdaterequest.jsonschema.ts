@@ -30,6 +30,18 @@ export const taskUpdateRequestJsonSchema = {
 			type: "integer",
 			minimum: 1,
 		},
+		startedAt: {
+			type: ["string", "null"],
+			format: "date-time",
+		},
+		completedAt: {
+			type: ["string", "null"],
+			format: "date-time",
+		},
+		complexity: {
+			type: ["number", "null"],
+			exclusiveMinimum: 0,
+		},
 	},
 	required: [],
 	additionalProperties: false,

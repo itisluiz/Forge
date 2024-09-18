@@ -56,31 +56,41 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("Task not found in the project");
 		}
 
-		let startedAt: Date | null | undefined = undefined;
-		let completedAt: Date | null | undefined = undefined;
+		let startedAt: Date | null | undefined = taskUpdateRequest.startedAt
+			? new Date(taskUpdateRequest.startedAt)
+			: (taskUpdateRequest.startedAt as null | undefined);
+		let completedAt: Date | null | undefined = taskUpdateRequest.completedAt
+			? new Date(taskUpdateRequest.completedAt)
+			: (taskUpdateRequest.completedAt as null | undefined);
 
 		switch (taskUpdateRequest.status) {
 			case TaskStatus.TODO:
-				startedAt = null;
-				completedAt = null;
+				startedAt = startedAt ?? null;
+				completedAt = completedAt ?? null;
 				break;
 			case TaskStatus.INPROGRESS:
 			case TaskStatus.AVAILABLETOREVIEW:
 			case TaskStatus.REVIEWING:
-				completedAt = null;
+				completedAt = completedAt ?? null;
 				if (!task.dataValues.startedAt) {
-					startedAt = new Date();
+					startedAt = startedAt ?? new Date();
 				}
 				break;
 			case TaskStatus.DONE:
 			case TaskStatus.CANCELLED:
 				if (!task.dataValues.completedAt) {
-					completedAt = new Date();
+					completedAt = completedAt ?? new Date();
 				}
 				if (!task.dataValues.startedAt) {
-					startedAt = completedAt;
+					startedAt = startedAt ?? completedAt;
 				}
 				break;
+		}
+
+		let newStartedAt = startedAt === undefined ? task.dataValues.startedAt : startedAt;
+		let newCompletedAt = completedAt === undefined ? task.dataValues.completedAt : completedAt;
+		if ((!newStartedAt && newCompletedAt) || (newStartedAt && newCompletedAt && newStartedAt > newCompletedAt)) {
+			throw new BadRequestError("The start/completion interval is invalid");
 		}
 
 		task.set(
@@ -91,6 +101,7 @@ export default async function (req: Request, res: Response) {
 				...(taskUpdateRequest.status && { etaskstatusId: taskUpdateRequest.status }),
 				...(taskUpdateRequest.type && { etasktypeId: taskUpdateRequest.type }),
 				...(taskUpdateRequest.priority && { epriorityId: taskUpdateRequest.priority }),
+				...(taskUpdateRequest.complexity !== undefined && { complexity: taskUpdateRequest.complexity }),
 				...(startedAt !== undefined && { startedAt: startedAt }),
 				...(completedAt !== undefined && { completedAt: completedAt }),
 			},

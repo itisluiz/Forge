@@ -28,6 +28,17 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           $ref: '#/components/schemas/TaskType'
  *         priority:
  *           $ref: '#/components/schemas/Priority'
+ *         startedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         completedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         complexity:
+ *           type: number
+ *           nullable: true
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -42,5 +53,8 @@ export interface TaskSelfComposite {
 	status: TaskStatus;
 	type: TaskType;
 	priority: Priority;
+	startedAt?: string;
+	completedAt?: string;
+	complexity?: number;
 	createdAt: string;
 }

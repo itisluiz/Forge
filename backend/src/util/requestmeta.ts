@@ -1,5 +1,6 @@
 import { AuthToken } from "forge-shared/dto/authtoken.dto";
 import { Model } from "sequelize";
+import { PlanningpokerSession } from "../session/planningpoker.session";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { Request } from "express";
 
@@ -13,6 +14,10 @@ export function setProjectData(req: Request, project: Model<any, any>, projectme
 	(req as any).__reqinjection_project = project;
 	(req as any).__reqinjection_projectadmin = projectmembership.dataValues.isAdmin;
 	(req as any).__reqinjection_projectrole = projectmembership.dataValues.eprojectroleId;
+}
+
+export function setPlanningpokerData(req: Request, planningPokerSession: PlanningpokerSession) {
+	(req as any).__reqinjection_planningpoker = planningPokerSession;
 }
 //#endregion
 
@@ -30,5 +35,9 @@ export function getProjectData(req: Request) {
 		projectAdmin: (req as any).__reqinjection_projectadmin as boolean,
 		projectRole: (req as any).__reqinjection_projectrole as ProjectRole,
 	};
+}
+
+export function getPlanningpokerData(req: Request) {
+	return (req as any).__reqinjection_planningpoker as PlanningpokerSession;
 }
 //#endregion

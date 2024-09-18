@@ -36,6 +36,9 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           type: string
  *           format: date-time
  *           nullable: true
+ *         complexity:
+ *           type: number
+ *           nullable: true
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -55,6 +58,7 @@ export interface TaskResponse {
 	priority: Priority;
 	startedAt?: string;
 	completedAt?: string;
+	complexity?: number;
 	createdAt: string;
 	updatedAt: string;
 }
