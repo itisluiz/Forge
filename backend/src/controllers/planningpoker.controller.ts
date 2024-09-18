@@ -5,6 +5,7 @@ import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { planningpokerCreatesessionRequestJsonSchema } from "../jsonschemas/planningpokercreatesessionrequest.jsonschema.js";
 import { planningpokerSettaskRequestJsonSchema } from "../jsonschemas/planningpokersettaskrequest.jsonschema.js";
 import { planningpokerVoteRequestJsonSchema } from "../jsonschemas/planningpokervoterequest.jsonschema.js";
+import { pokerSession } from "../middleware/pokersession.middleware.js";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum.js";
 import { Router } from "express";
 
@@ -281,7 +282,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.get("/api/planningpoker/:projectEid/:sessionCode", authorize(), async (req, res) => {
+router.get("/api/planningpoker/:projectEid/:sessionCode", authorize(), pokerSession(), async (req, res) => {
 	await handle("planningpoker", "get", req, res);
 });
 

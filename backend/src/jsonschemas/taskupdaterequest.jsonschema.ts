@@ -39,7 +39,7 @@ export const taskUpdateRequestJsonSchema = {
 			format: "date-time",
 		},
 		complexity: {
-			type: "number",
+			type: ["number", "null"],
 			exclusiveMinimum: 0,
 		},
 	},

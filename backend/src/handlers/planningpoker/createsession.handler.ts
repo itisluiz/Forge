@@ -50,11 +50,7 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("None of the user stories provided have tasks");
 		}
 
-		sessionCode = planningpoker.create(
-			planningpokerCreatesessionRequest.agenda,
-			authProject.project.dataValues.id,
-			userstories,
-		);
+		sessionCode = planningpoker.create(planningpokerCreatesessionRequest.agenda, authProject.project, userstories);
 
 		await transaction.commit();
 	} catch (error) {
