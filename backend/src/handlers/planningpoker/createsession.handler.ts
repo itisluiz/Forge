@@ -3,10 +3,9 @@ import { decryptPK } from "../../util/encryption.js";
 import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
 import { Op } from "sequelize";
-import { planningpoker, PlanningpokerSession } from "../../session/planningpoker.session.js";
+import { planningpoker } from "../../session/planningpoker.session.js";
 import { PlanningpokerCreatesessionRequest } from "forge-shared/dto/request/planningpokercreatesessionrequest.dto";
 import { PlanningpokerCreatesessionResponse } from "forge-shared/dto/response/planningpokercreatesessionresponse.dto";
-import { randomBytes } from "crypto";
 import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
@@ -15,43 +14,48 @@ export default async function (req: Request, res: Response) {
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
 
-	let userstoryIds = planningpokerCreatesessionRequest.userstoryEids.map((userstoryEid) =>
-		decryptPK("userstory", userstoryEid),
+	let userstoryIds = new Set(
+		planningpokerCreatesessionRequest.userstoryEids.map((userstoryEid) => decryptPK("userstory", userstoryEid)),
 	);
-	userstoryIds = Array.from(new Set(userstoryIds));
 
-	let planningpokerCreatesessionCode;
+	let sessionCode: any;
 
 	try {
 		const userstories = await sequelize.models["userstory"].findAll({
 			where: {
 				id: {
-					[Op.in]: userstoryIds,
+					[Op.in]: [...userstoryIds],
 				},
 			},
-			include: {
-				model: sequelize.models["epic"],
-				where: {
-					projectId: authProject.project.dataValues.id,
+			include: [
+				{
+					model: sequelize.models["epic"],
+					where: {
+						projectId: authProject.project.dataValues.id,
+					},
+					attributes: ["projectId"],
 				},
-				attributes: ["projectId"],
-			},
+				{
+					model: sequelize.models["task"],
+				},
+			],
 			transaction,
 		});
 
-		if (userstories.length !== userstoryIds.length) {
+		if (userstories.length !== userstoryIds.size) {
 			throw new BadRequestError("One or more user stories were not found in the project");
 		}
 
-		planningpokerCreatesessionCode = randomBytes(12).toString("hex");
-		const planningpokerCreatesession: PlanningpokerSession = {
-			agenda: planningpokerCreatesessionRequest.agenda,
-			projectId: authProject.project.dataValues.id,
-			userstoryIds: userstoryIds,
-			startedAt: new Date(),
-		};
+		if (userstories.every((userstory) => userstory.dataValues.tasks.length === 0)) {
+			throw new BadRequestError("None of the user stories provided have tasks");
+		}
 
-		planningpoker.create(planningpokerCreatesessionCode, planningpokerCreatesession);
+		sessionCode = planningpoker.create(
+			planningpokerCreatesessionRequest.agenda,
+			authProject.project.dataValues.id,
+			userstories,
+		);
+
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
@@ -59,7 +63,7 @@ export default async function (req: Request, res: Response) {
 	}
 
 	const response: PlanningpokerCreatesessionResponse = {
-		sessionCode: planningpokerCreatesessionCode,
+		sessionCode: sessionCode,
 	};
 	res.status(200).send(response);
 }

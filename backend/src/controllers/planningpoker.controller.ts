@@ -151,7 +151,7 @@ router.post(
  * @swagger
  * /api/planningpoker/{projectEid}/{sessionCode}/saveresult:
  *   post:
- *     summary: Saves a voting result the currently voted task.
+ *     summary: Saves a voting result to the currently voted task.
  *     parameters:
  *       - in: path
  *         name: projectEid
