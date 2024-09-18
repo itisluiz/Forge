@@ -247,10 +247,17 @@ router.post(
 
 /**
  * @swagger
- * /api/planningpoker/{sessionCode}:
+ * /api/planningpoker/{projectEid}/{sessionCode}:
  *   get:
  *     summary: Get the updated planning poker session data. Meant to be polled.
  *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
  *         name: sessionCode
  *         schema:
  *           type: string
@@ -274,7 +281,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/FailureResponse'
  */
-router.post("/api/planningpoker/:sessionCode", async (req, res) => {
+router.get("/api/planningpoker/:projectEid/:sessionCode", authorize(), async (req, res) => {
 	await handle("planningpoker", "get", req, res);
 });
 

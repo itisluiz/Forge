@@ -40,8 +40,6 @@ function create(agenda: string, projectId: number, userstories: Model<any, any>[
 		revealed: false,
 	};
 
-	console.log(session);
-
 	planningpokerSessions.set(sessionCode, session);
 	return sessionCode;
 }
