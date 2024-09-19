@@ -243,6 +243,40 @@ router.post(
 
 /**
  * @swagger
+ * /api/planningpoker/{projectEid}/sessions:
+ *   get:
+ *     summary: Lists the active planning poker sessions for the project.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - planningpoker
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PlanningpokerSelfResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/planningpoker/:projectEid/sessions", authorize(), authorizeProject(), async (req, res) => {
+	await handle("planningpoker", "sessions", req, res);
+});
+
+/**
+ * @swagger
  * /api/planningpoker/{projectEid}/{sessionCode}:
  *   get:
  *     summary: Get the updated planning poker session data. Meant to be polled.

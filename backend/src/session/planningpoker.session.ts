@@ -2,7 +2,7 @@ import { Model } from "sequelize";
 import { randomBytes } from "crypto";
 import NodeCache from "node-cache";
 
-const sessionTTL = 900;
+const sessionTTL = 300;
 const participantTTL = 30;
 const planningpokerSessions = new NodeCache({ stdTTL: sessionTTL, checkperiod: 300, useClones: false });
 
@@ -13,6 +13,7 @@ export interface PlanningpokerParticipant {
 }
 
 export interface PlanningpokerSession {
+	sessionCode: string;
 	agenda: string;
 	project: Model<any, any>;
 	userstories: Model<any, any>[];
@@ -43,6 +44,7 @@ function heartbeatParticipant(session: PlanningpokerSession, user: Model<any, an
 function create(agenda: string, project: Model<any, any>, userstories: Model<any, any>[]): string {
 	const sessionCode = randomBytes(12).toString("hex");
 	const session: PlanningpokerSession = {
+		sessionCode,
 		agenda,
 		project,
 		userstories,
@@ -66,4 +68,12 @@ function get(sessionCode: string): PlanningpokerSession | undefined {
 	return planningpokerSessions.get(sessionCode);
 }
 
-export const planningpoker = { create, get, heartbeatParticipant };
+function getByProjectId(projectId: number): PlanningpokerSession[] {
+	const sessions = planningpokerSessions
+		.keys()
+		.map((sessionCode) => planningpokerSessions.get(sessionCode) as PlanningpokerSession)
+		.filter((session) => session);
+	return sessions.filter((session) => session.project.dataValues.id === projectId);
+}
+
+export const planningpoker = { create, get, getByProjectId, heartbeatParticipant };
