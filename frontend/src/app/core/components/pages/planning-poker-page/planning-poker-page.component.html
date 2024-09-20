@@ -1,26 +1,37 @@
 <app-navbar></app-navbar>
-<div class="user-story-page-content">
-	<ng-container *ngIf="userStory$ | async as userStory">
-		<div class="grid-container content-wrapper">
-			<div class="header-grid">
-				<div class="breadcrump-story-wrapper">
-					<ul class="breadcrumber">
-						<li><a href="">Squad BES</a></li>
-						<div class="spacer">></div>
-						<li><a href="">TCC 1</a></li>
-						<div class="spacer">></div>
-						<li><a href="/user-story">Planning Poker</a></li>
-					</ul>
-					<h1 id="user-story-title">Planning poker</h1>
+<div class="planning-poker-content">
+	<div class="grid-container content-wrapper">
+		<div class="header-grid">
+			<div class="breadcrump-story-wrapper">
+				<ul class="breadcrumber">
+					<li><a href="">Squad BES</a></li>
+					<div class="spacer">></div>
+					<li><a href="">TCC 1</a></li>
+					<div class="spacer">></div>
+					<li><a href="/user-story">Planning Poker</a></li>
+				</ul>
+				<h1 id="user-story-title">Planning poker</h1>
 
-					<div class="buttons-header">
-						<button id="button-edit-page" class="grey-button" matRipple>Start session</button>
-					</div>
+				<div class="buttons-header">
+					<button class="grey-button" matRipple (click)="switchSession()">Start session</button>
 				</div>
-
-				<p>Current item: pass_current_item</p>
-				<div class="hr"></div>
 			</div>
+
+			<p>Current item: pass_current_item</p>
+			<div class="hr"></div>
+		</div>
+
+		@if (!inSession) {
+			<div class="warning">
+				<mat-icon>warning</mat-icon>
+				<p class="warning_label">
+					There is no active Planning Poker session at the moment. You can create one by clicking the button below.
+				</p>
+				<button class="green-button" matRipple (click)="openPopUp('createSession')">Start a new session</button>
+			</div>
+		}
+
+		@if (inSession) {
 			<div class="planning-poker">
 				<div class="planning-poker_participants-counter">
 					<div class="planning-poker_participants-counter--all">4 Participants</div>
@@ -90,7 +101,10 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		}
+	</div>
+
+	@if (inSession) {
 		<div class="grid-container issues-list">
 			<div class="issues-list_content">
 				<div class="issues-list_header">
@@ -121,25 +135,27 @@
 				<div class="issues-list_add-issue">+ Add another issue</div>
 			</div>
 		</div>
-	</ng-container>
+	}
 </div>
 
-@if (popUpActive) {
-	<div class="pop-up-background" (click)="closePopUp()"></div>
-
-	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUp()"> </app-test-case-popup>
-}
-
-@if (popUpEditUserStory) {
-	<div class="pop-up-background" (click)="closePopUpEditUserStory()"></div>
-
-	<app-user-story-popup
-		[isEditMode]="true"
-		[projectEid]="projectEid"
-		(closePopUpEmitter)="closePopUpEditUserStory()"
-		(handleEditedUserStoryAndClosePopupEmitter)="setUpdatedUserStory()"
-		[userStoryEditData$]="userStory$"
-		[criteriaEditData$]="acceptanceCriteria$"
+@if (popUpCreateSession) {
+	<app-popup-component
+		title="Create a new planning poker room"
+		description="Fill the needed information to be able to create your epic."
+		buttonName="Create planning poker"
+		buttonCancelName="Cancel"
+		[cancelButton]="true"
+		(closePopUpEmitter)="closePopUp('createSession')"
 	>
-	</app-user-story-popup>
+		<app-input
+			#pokerSubject
+			for="pokerSubject"
+			label="Room's topic"
+			name="pokerSubject"
+			type="text"
+			placeholder="Subject of the room"
+			[required]="true"
+			[minLength]="3"
+		></app-input>
+	</app-popup-component>
 }
