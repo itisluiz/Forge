@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren } from "@angular/core";
+import { Component, computed, ElementRef, OnInit, QueryList, signal, ViewChild, ViewChildren } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -20,6 +20,9 @@ import { Observable } from "rxjs";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { MatRippleModule } from "@angular/material/core";
 import { IconPipe } from "../../../pipes/icon.pipe";
+import { PopupComponent } from "../../popup-component/popup-component";
+import { InputComponent } from "../../input-component/input-component";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -40,17 +43,36 @@ import { IconPipe } from "../../../pipes/icon.pipe";
 		PriorityPipe,
 		IconPipe,
 		MatRippleModule,
+		PopupComponent,
+		InputComponent,
+		MatCheckboxModule,
 	],
 	templateUrl: "./planning-poker-page.component.html",
 	styleUrl: "./planning-poker-page.component.scss",
 })
 export class PlanningPokerPageComponent implements OnInit {
 	@ViewChildren("expand") expand!: QueryList<ElementRef>;
+	@ViewChild("pokerSubject") pokerSubject!: InputComponent;
+
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
 	scoreToggle: boolean = false;
 	expandToggle: boolean = false;
 	activeCard: string | null = null;
+	inSession: boolean = false;
+	popUpCreateSession: boolean = false;
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
+
+	constructor(
+		private route: ActivatedRoute,
+		private projectApiService: ProjectApiService,
+	) {}
+
+	switchSession() {
+		this.inSession = !this.inSession;
+	}
+
+	ngOnInit(): void {}
 
 	setScoreToggle() {
 		this.scoreToggle = !this.scoreToggle;
@@ -74,160 +96,6 @@ export class PlanningPokerPageComponent implements OnInit {
 		this.activeCard = cardValue;
 	}
 
-	userstoryEid: string = this.route.snapshot.paramMap.get("userstoryEid")!;
-
-	displayedColumnsTestCases: string[] = ["key", "description", "link"];
-
-	displayedColumnsTasks: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
-
-	acceptanceCriteria: string[] = [
-		"Guest users can click the profile icon in the home page and create an account.",
-		"Guest users can proceed to the cart page and create an account.",
-		"Guest users can click the wishlist icon against the product to display the wishlist overlay and create an account.",
-		"An error message will display if the user enters an existing or invalid email address and other details.",
-		"All fields cannot be blank. An error message will display if the user registers with a blank field.",
-	];
-
-	popUpActive: boolean = false;
-	popUpEditUserStory: boolean = false;
-
-	userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
-
-	tasks?: TaskSelfResponse;
-
-	projectMembersMap: Record<string, ProjectMemberComposite> = {};
-
-	@ViewChildren("statusContainer")
-	statusContainer!: QueryList<ElementRef>;
-
-	acceptanceCriteria$ = this.userstoryApiService.getAcceptanceCriteria(this.projectEid, this.userstoryEid);
-	constructor(
-		private route: ActivatedRoute,
-		private userstoryApiService: UserstoryApiService,
-		private taskApiService: TaskApiService,
-		private projectApiService: ProjectApiService,
-	) {}
-
-	ngOnInit(): void {
-		this.loadMembersData();
-		this.loadTasksData();
-	}
-
-	loadTasksData() {
-		this.taskApiService.getTasks(this.projectEid, this.userstoryEid).subscribe({
-			next: (tasks) => {
-				this.tasks = tasks;
-			},
-		});
-	}
-
-	loadMembersData() {
-		this.projectApiService.getEspecificProject(this.projectEid).subscribe({
-			next: (project) => {
-				project.members.forEach((member) => {
-					this.projectMembersMap[member.eid] = member;
-				});
-			},
-		});
-	}
-
-	setStatusStyle() {
-		this.statusContainer.forEach((cell) => {
-			const { color, background, textDecoration, fontWeight } = this.determineStyle(cell.nativeElement.textContent.trim());
-			cell.nativeElement.style.backgroundColor = `${background}`;
-			cell.nativeElement.style.color = `${color}`;
-			cell.nativeElement.style.textDecoration = `${textDecoration}`;
-			cell.nativeElement.style.fontWeight = `${fontWeight}`;
-		});
-	}
-
-	determineStyle(status: string) {
-		let color;
-		let background;
-		let textDecoration;
-		let fontWeight;
-
-		switch (status) {
-			case "In Progress":
-				color = "#fff";
-				background = "#FFA500";
-				break;
-			case "Available t...":
-			case "Available to review":
-			case "Reviewing":
-				color = "#fff";
-				background = "#93C088";
-				break;
-			case "Done":
-				color = "#fff";
-				background = "#187600";
-				textDecoration = "line-through";
-				break;
-			case "Cancelled":
-				color = "#fff";
-				background = "#8B0000";
-				break;
-			default:
-				color = "#7A7A7A";
-				background = "#D8D8D8";
-				fontWeight = "400";
-		}
-
-		return { color, background, textDecoration, fontWeight };
-	}
-
-	openPopUp() {
-		this.popUpActive = true;
-		document.body.style.overflow = "hidden";
-	}
-
-	openPopUpEditUserStory() {
-		this.popUpEditUserStory = true;
-		document.body.style.overflow = "hidden";
-	}
-
-	closePopUp() {
-		this.popUpActive = false;
-		document.body.style.overflow = "auto";
-	}
-
-	closePopUpEditUserStory() {
-		this.popUpEditUserStory = false;
-		document.body.style.overflow = "auto";
-	}
-
-	setUpdatedUserStory() {
-		this.userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
-		this.closePopUpEditUserStory();
-	}
-
-	getTaskTypeClass(type: number): string {
-		this.setStatusStyle();
-		switch (type) {
-			case 1:
-				return "task-class";
-			case 2:
-				return "bug-class";
-			case 3:
-				return "test-class";
-			default:
-				return "default-class";
-		}
-	}
-
-	typeParser(type: number): string {
-		switch (type) {
-			case 1:
-				return "Task";
-			case 2:
-				return "Bug";
-			case 3:
-				return "Test";
-			default:
-				return "";
-		}
-	}
-
 	getProject(): Observable<ProjectResponse> {
 		return this.projectApiService.getEspecificProject(this.projectEid);
 	}
@@ -237,22 +105,17 @@ export class PlanningPokerPageComponent implements OnInit {
 		return this.projectMembersMap[userEid] || null;
 	}
 
-	statusParser(status: number): string {
-		switch (status) {
-			case 1:
-				return "To do";
-			case 2:
-				return "In Progress";
-			case 3:
-				return "Available to review";
-			case 4:
-				return "Reviewing";
-			case 5:
-				return "Done";
-			case 6:
-				return "Cancelled";
-			default:
-				return "";
+	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string, isMemberAdmin?: boolean) {
+		if (popUp === "createSession") {
+			this.popUpCreateSession = true;
+			return;
+		}
+	}
+
+	closePopUp(popUp: string) {
+		if (popUp === "createSession") {
+			this.popUpCreateSession = false;
+			return;
 		}
 	}
 }

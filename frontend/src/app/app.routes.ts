@@ -20,6 +20,6 @@ export const routes: Routes = [
 	{ path: "select-project", component: SelectProjectPageComponent },
 	{ path: ":projectEid/:userstoryEid/user-story", component: UserStoryPageComponent },
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
-	{ path: ":projectEid/:userstoryEid/planning-poker", component: PlanningPokerPageComponent },
+	{ path: ":projectEid/planning-poker", component: PlanningPokerPageComponent },
 	{ path: "**", redirectTo: "/select-project" },
 ];
