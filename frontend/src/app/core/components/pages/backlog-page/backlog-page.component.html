@@ -14,31 +14,45 @@
 		</div>
 
 		<div class="backlog-grid sprint">
-			<ng-container *ngIf="currentSprint$ | async as currentSprint; else noCurrentSprint">
+			@if (currentSprint.eid) {
 				<div class="title">
 					<div class="left">
 						<div class="left-content">
 							<h2>Sprint {{ currentSprint.index }}</h2>
-
-							<div class="items">
-								<span>{{ (userStoriesInCurrentSprint$ | async)?.length }}</span>
-								<span>items</span>
+							<div class="tag {{ currentSprint.status | sprintStatusClass }}">
+								<span>{{ currentSprint.status | sprintStatus }}</span>
 							</div>
+							@if (userStoriesPerSprint[currentSprint.eid]) {
+								<div class="tag items">
+									<span>{{ userStoriesPerSprint[currentSprint.eid].length }}</span>
+									<span>items</span>
+								</div>
+							}
 						</div>
 						<p class="desc">Current Sprint</p>
-						<p>Status: {{ sprintStatusParser(currentSprint.status) }}</p>
 					</div>
 
 					<div class="right">
-						<button mat-icon-button>
+						<button mat-icon-button [matMenuTriggerFor]="menu">
 							<mat-icon>more_horiz</mat-icon>
 						</button>
-						<p class="sprint-date">Start of sprint: {{ currentSprint.startsAt | date }}</p>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item>
+								<span>Encerrar sprint</span>
+							</button>
+							<button mat-menu-item>
+								<span>Remover sprint</span>
+							</button>
+						</mat-menu>
+						<p class="sprint-date">
+							Started at {{ currentSprint.startsAt | date: "dd/MM/YYYY" }} with
+							{{ currentSprint.endsAt | daysDifference }} day(s) left
+						</p>
 					</div>
 				</div>
 
 				<mat-accordion multi>
-					@for (userstory of userStoriesInCurrentSprint$ | async; track $index) {
+					@for (userstory of userStoriesPerSprint[currentSprint.eid]; track $index) {
 						<mat-expansion-panel>
 							<mat-expansion-panel-header>
 								<mat-panel-title> {{ userstory.code }} </mat-panel-title>
@@ -117,13 +131,12 @@
 						</mat-expansion-panel>
 					}
 				</mat-accordion>
-			</ng-container>
-			<ng-template #noCurrentSprint>
+			} @else {
 				<div class="no-sprint">
 					<h3>No current sprint available. Please create a new sprint.</h3>
 					<button class="green-button" (click)="openPopUpCreateSprint()">Create new Sprint</button>
 				</div>
-			</ng-template>
+			}
 		</div>
 
 		<div class="backlog-grid">
@@ -132,30 +145,26 @@
 					<div class="left-content">
 						<h2>Backlog</h2>
 						<div class="items">
-							<span>{{ (userStoriesInBacklog$ | async)?.length }}</span>
+							<span>{{ userStoriesInBacklog.length }}</span>
 							<span>items</span>
 						</div>
 					</div>
-					<p class="desc">Find below the list of all User Stories</p>
-				</div>
-
-				<div class="right">
-					<button mat-icon-button>
-						<mat-icon>more_horiz</mat-icon>
-					</button>
+					<p class="desc">Find below the list of UserStories</p>
 				</div>
 			</div>
 
 			<mat-accordion multi>
-				@for (userstory of userStoriesInBacklog$ | async; track $index) {
+				@for (userstory of userStoriesInBacklog; track $index) {
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
 							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 							<mat-panel-title> {{ userstory.title | maxLength: 35 }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
-							<mat-panel-description>
-								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
-							</mat-panel-description>
+							@if (currentSprint.eid) {
+								<mat-panel-description>
+									<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
+								</mat-panel-description>
+							}
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 							<table mat-table [dataSource]="getTasksDataSource(userstory.eid)" matSort class="mat-elevation-z8 tasks-table">
@@ -223,8 +232,164 @@
 				}
 			</mat-accordion>
 		</div>
+
+		<!-- Future Sprints -->
+		@if (futureSprints.length > 0) {
+			<div class="backlog-grid sprint-group-title future-sprint">
+				<h1>Future Sprints</h1>
+				<p>Find below the list of future sprints.</p>
+			</div>
+			<div class="buceta">
+				@for (sprint of allSprints; track $index) {
+					@if (detailedSprints[sprint.eid] && sprint.periodStatus === 3) {
+						<ng-container
+							*ngTemplateOutlet="
+								sprintTemplate;
+								context: { sprint: sprint, userStoriesPerSprint: userStoriesPerSprint, addTasksButtonAvailable: true }
+							"
+						></ng-container>
+					}
+				}
+			</div>
+		}
+
+		<!-- Past Sprints -->
+		@if (pastSprints.length > 0) {
+			<div class="backlog-grid sprint-group-title">
+				<h1>Past Sprints</h1>
+				<p>Find below the list of past sprints.</p>
+			</div>
+			@for (sprint of allSprints; track $index) {
+				@if (detailedSprints[sprint.eid] && sprint.periodStatus === 1) {
+					<ng-container
+						*ngTemplateOutlet="
+							sprintTemplate;
+							context: { sprint: sprint, userStoriesPerSprint: userStoriesPerSprint, addTasksButtonAvailable: false }
+						"
+					></ng-container>
+				}
+			}
+		}
 	</div>
 </div>
+
+<!-- Template used to display future and past sprints -->
+<ng-template
+	#sprintTemplate
+	let-sprint="sprint"
+	let-userStoriesPerSprint="userStoriesPerSprint"
+	let-addTasksButtonAvailable="addTasksButtonAvailable"
+>
+	<div class="backlog-grid sprint {{ sprint.periodStatus | sprintPeriodStatusClass }}-sprint">
+		<div class="title">
+			<div class="left">
+				<div class="left-content">
+					<h2>Sprint {{ sprint.index }}</h2>
+					<div class="tag {{ sprint.status | sprintStatusClass }}">
+						<span>{{ sprint.status | sprintStatus }}</span>
+					</div>
+					<div class="tag {{ sprint.periodStatus | sprintPeriodStatusClass }}">
+						<span>{{ sprint.periodStatus | sprintPeriodStatus }}</span>
+					</div>
+					<div class="tag items">
+						<span>{{ userStoriesPerSprint[sprint.eid].length }}</span>
+						<span>items</span>
+					</div>
+				</div>
+				<p class="desc">Period {{ sprint.startsAt | date: "dd/MM/YYYY" }} - {{ sprint.endsAt | date: "dd/MM/YYYY" }}</p>
+			</div>
+
+			<div class="right">
+				<button mat-icon-button>
+					<mat-icon>more_horiz</mat-icon>
+				</button>
+			</div>
+		</div>
+
+		<mat-accordion multi>
+			@for (userstory of userStoriesPerSprint[sprint.eid]; track $index) {
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						<mat-panel-title> {{ userstory.code }} </mat-panel-title>
+						<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
+						<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
+					</mat-expansion-panel-header>
+					@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
+						<table
+							mat-table
+							[dataSource]="getTasksDataSource(userstory.eid)"
+							matSort
+							class="mat-elevation-z8 tasks-table sprint-history"
+						>
+							<ng-container matColumnDef="type">
+								<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+								<td
+									[ngClass]="getTaskTypeClass(element.type)"
+									#itemCell
+									mat-cell
+									*matCellDef="let element"
+									(click)="openTaskPopUp(element.eid)"
+								>
+									{{ typeParser(element.type) }}
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="key">
+								<th mat-header-cell *matHeaderCellDef>Key</th>
+								<td mat-cell *matCellDef="let element">{{ element.code }}</td>
+							</ng-container>
+
+							<ng-container matColumnDef="subject">
+								<th mat-header-cell *matHeaderCellDef>Subject</th>
+								<td mat-cell *matCellDef="let element">
+									{{ element.description | maxLength: 45 }}
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="status">
+								<th mat-header-cell *matHeaderCellDef>Status</th>
+								<td mat-cell *matCellDef="let element">
+									<div #statusContainer class="status-container">
+										{{ statusParser(element.status) | maxLength: 11 }}
+									</div>
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="assignee">
+								<th mat-header-cell *matHeaderCellDef>Responsible</th>
+								<td mat-cell *matCellDef="let element">
+									<div class="assignee-container">
+										<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+										<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+									</div>
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="priority">
+								<th mat-header-cell *matHeaderCellDef>Priority</th>
+								<td mat-cell *matCellDef="let element">
+									<img [src]="priorityImageParser(element.priority)" />
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="created">
+								<th mat-header-cell *matHeaderCellDef>Created</th>
+								<td mat-cell *matCellDef="let element">
+									{{ element.createdAt | date }}
+								</td>
+							</ng-container>
+							<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+							<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
+						</table>
+					}
+					<div *ngIf="addTasksButtonAvailable" class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">
+						+ Add another task
+					</div>
+				</mat-expansion-panel>
+			}
+		</mat-accordion>
+	</div>
+</ng-template>
 
 @if (popUpAddToSprint) {
 	<div class="pop-up-background" (click)="closePopUpAddToSprint()"></div>
@@ -238,8 +403,8 @@
 				<div class="input-wrapper">
 					<label for="sprint">Sprint</label>
 					<select name="sprint" id="sprint" formControlName="sprint">
-						<option value="">-- Select a sprint --</option>
-						@for (sprint of currentAndFutureSprints$ | async; track $index) {
+						<option value="">Select a sprint</option>
+						@for (sprint of currentAndFutureSprints; track $index) {
 							<option value="{{ sprint.eid }}">Sprint {{ sprint.index }}</option>
 						}
 					</select>
