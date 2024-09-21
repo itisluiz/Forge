@@ -1,4 +1,14 @@
-import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, Renderer2, OnInit } from "@angular/core";
+import {
+	Component,
+	ViewChild,
+	ViewChildren,
+	QueryList,
+	ElementRef,
+	AfterViewInit,
+	Renderer2,
+	OnInit,
+	Inject,
+} from "@angular/core";
 import { MatIcon } from "@angular/material/icon";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -7,11 +17,11 @@ import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { Observable, combineLatest, forkJoin, of, throwError } from "rxjs";
 import { catchError, filter, map, mergeMap, shareReplay, switchMap, tap } from "rxjs/operators";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DOCUMENT } from "@angular/common";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 import { TaskApiService } from "../../../services/task-api.service";
@@ -63,6 +73,7 @@ import { MatMenuModule } from "@angular/material/menu";
 		SprintPeriodStatusPipe,
 		SprintPeriodStatusClassPipe,
 		MatMenuModule,
+		RouterModule,
 	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
@@ -100,7 +111,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		private projectApiService: ProjectApiService,
 		private sprintApiService: SprintApiService,
 		private userstoryApiService: UserstoryApiService,
-		private router: Router,
+		@Inject(DOCUMENT) private document: Document,
 	) {}
 
 	ngOnInit(): void {
@@ -505,6 +516,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	}
 
 	getTaskTypeClass(type: number): string {
+		this.styleSprintsByClass();
 		switch (type) {
 			case 1:
 				return "task-class";
@@ -514,6 +526,25 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				return "test-class";
 			default:
 				return "default-class";
+		}
+	}
+
+	styleSprintsByClass() {
+		for (let i = 0; i < this.document.getElementsByClassName("past-sprint").length; i++) {
+			if (i == 0) {
+				this.document.getElementsByClassName("past-sprint")[i].classList.add("first-sprint");
+			}
+			if (i == this.document.getElementsByClassName("past-sprint").length - 1) {
+				this.document.getElementsByClassName("past-sprint")[i].classList.add("last-sprint");
+			}
+		}
+		for (let i = 0; i < this.document.getElementsByClassName("future-sprint").length; i++) {
+			if (i == 0) {
+				this.document.getElementsByClassName("future-sprint")[i].classList.add("first-sprint");
+			}
+			if (i == this.document.getElementsByClassName("future-sprint").length - 1) {
+				this.document.getElementsByClassName("future-sprint")[i].classList.add("last-sprint");
+			}
 		}
 	}
 
