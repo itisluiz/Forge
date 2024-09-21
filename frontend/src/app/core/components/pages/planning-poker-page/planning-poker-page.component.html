@@ -17,11 +17,17 @@
 				</div>
 			</div>
 
-			<p>Current item: pass_current_item</p>
+			@if (sessionList && !inSession) {
+				<p>Create a personal poker room to estimate a complexity to your tasks. Your team mates can join.</p>
+			}
+
+			@if (inSession) {
+				<p>Current item: pass_current_item</p>
+			}
 			<div class="hr"></div>
 		</div>
 
-		@if (!inSession) {
+		@if (!inSession && !sessionList) {
 			<div class="warning">
 				<mat-icon>warning</mat-icon>
 				<p class="warning_label">
@@ -31,34 +37,45 @@
 			</div>
 		}
 
+		@if (sessionList && !inSession) {
+			<div class="session_title">
+				<h3>Available sessions</h3>
+				<p>Click in a room to enter</p>
+			</div>
+			<div class="session">
+				<div class="session_header">
+					<p class="session_header--th">Room</p>
+					<p class="session_header--th">Participants</p>
+					<p class="session_header--th">Issues to vote</p>
+				</div>
+				@for (session of allSessionList; track $index) {
+					<div class="session_body" (click)="enterSession(session.sessionCode)">
+						<p class="session_body--td"><mat-icon>circle</mat-icon> {{ session.agenda }}</p>
+						<p class="session_body--td">{{ session.participantCount }}</p>
+						<p class="session_body--td">TODO, alterar quando o luiz muda para us</p>
+					</div>
+				}
+			</div>
+		}
+
 		@if (inSession) {
 			<div class="planning-poker">
 				<div class="planning-poker_participants-counter">
-					<div class="planning-poker_participants-counter--all">4 Participants</div>
+					<div class="planning-poker_participants-counter--all">
+						{{ currentSessionData.participants.length }} Participants
+					</div>
 					<div class="planning-poker_participants-counter--voted">2 Voted</div>
 				</div>
 				<div class="planning-poker_participants-display">
-					<div class="planning-poker_participants-display_wrapper">
-						@if (scoreToggle) {
-							<div class="planning-poker_participants-display_score">num</div>
-						}
-						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
-						<div class="planning-poker_participants-display_name">Leonardo</div>
-					</div>
-					<div class="planning-poker_participants-display_wrapper">
-						@if (scoreToggle) {
-							<div class="planning-poker_participants-display_score">num</div>
-						}
-						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
-						<div class="planning-poker_participants-display_name">Pedro</div>
-					</div>
-					<div class="planning-poker_participants-display_wrapper">
-						@if (scoreToggle) {
-							<div class="planning-poker_participants-display_score">num</div>
-						}
-						<img src="../../../../../assets/photo.jpeg" class="planning-poker_participants-display_avatar" />
-						<div class="planning-poker_participants-display_name">Luiz</div>
-					</div>
+					@for (person of currentSessionData.participants; track $index) {
+						<div class="planning-poker_participants-display_wrapper">
+							@if (scoreToggle) {
+								<div class="planning-poker_participants-display_score">{{ person.vote }}</div>
+							}
+							<img [src]="person.gravatar" class="planning-poker_participants-display_avatar" />
+							<div class="planning-poker_participants-display_name">{{ person.name }}</div>
+						</div>
+					}
 				</div>
 				<div class="planning-poker_current-userstory" #expand>
 					<img
@@ -146,6 +163,7 @@
 		buttonCancelName="Cancel"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('createSession')"
+		(onButtonClick)="createSession()"
 	>
 		<app-input
 			#pokerSubject

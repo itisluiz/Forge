@@ -61,6 +61,96 @@ app-navbar {
 		}
 	}
 
+	.session {
+		padding: 0.5em 2.5em 0 2.5em;
+
+		&_title {
+			padding: 1em 2.5em 0 2.5em;
+
+			& > h3 {
+				font-weight: 600;
+				font-size: v.$sub-title-font;
+			}
+
+			& > p {
+				font-size: v.$paragraph-font;
+				color: v.$grey-color;
+				font-weight: 400;
+			}
+		}
+
+		&_header {
+			display: flex;
+			align-items: center;
+			border-top: 1px solid v.$background-dark-grey;
+			justify-content: space-between;
+			background-color: v.$background-grey;
+			padding: 4px 0;
+
+			&--th {
+				font-size: v.$paragraph-font;
+				font-weight: 500;
+				width: 33%;
+				text-align: left;
+
+				&:nth-of-type(1) {
+					padding-left: 2em;
+				}
+			}
+		}
+
+		&_body {
+			display: flex;
+			font-size: v.$paragraph-font;
+			text-align: left;
+			justify-content: space-between;
+			position: relative;
+
+			&:hover {
+				background-color: v.$background-grey;
+
+				&::after {
+					content: "Click to enter";
+					position: absolute;
+					cursor: pointer;
+					width: 130px;
+					max-height: 35px;
+					padding: 9px 0;
+					background-color: v.$darkest-green-color;
+					bottom: 0;
+					font-size: 12px;
+					top: 0;
+					right: 0;
+					text-align: center;
+					color: v.$white-color;
+					animation: slideLeft 0.1s ease-in-out forwards;
+				}
+			}
+
+			&--td {
+				width: 33%;
+				text-align: left;
+				border-bottom: 1px solid v.$background-dark-grey;
+				border-top: 1px solid v.$background-dark-grey;
+				padding: 6px 0;
+				cursor: pointer;
+
+				& > mat-icon {
+					width: 8px;
+					height: 8px;
+					border-radius: 50%;
+					margin-right: 8px;
+					background-color: v.$green-color;
+					color: v.$green-color;
+				}
+
+				&:nth-of-type(1) {
+					padding-left: 2em;
+				}
+			}
+		}
+	}
+
 	.planning-poker {
 		padding: 0 2.5em 4em 2.5em;
 		transition: all 0.5s ease-in-out;
@@ -351,6 +441,7 @@ app-navbar {
 	grid-template-columns: 1fr;
 	grid-template-rows: auto auto;
 	gap: 12px;
+	min-height: 90vh;
 
 	border-radius: 12px 12px 0 0;
 
@@ -471,5 +562,14 @@ app-navbar {
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+@keyframes slideLeft {
+	from {
+		width: 0;
+	}
+	to {
+		width: 100px;
 	}
 }
