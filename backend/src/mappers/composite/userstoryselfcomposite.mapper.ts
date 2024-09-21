@@ -10,5 +10,6 @@ export function mapUserstorySelfComposite(userstory: any, projectCode: string): 
 		title: userstory.dataValues.title,
 		description: userstory.dataValues.description,
 		priority: userstory.dataValues.epriorityId,
+		effortScore: userstory.dataValues.effortScore,
 	};
 }

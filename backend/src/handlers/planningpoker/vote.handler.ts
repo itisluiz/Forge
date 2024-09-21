@@ -4,12 +4,12 @@ import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpoker
 import { Request, Response } from "express";
 
 export default async function (req: Request, res: Response) {
-	const planningpokerSettaskRequest = req.body as PlanningpokerVoteRequest;
+	const planningpokerVoteRequest = req.body as PlanningpokerVoteRequest;
 	const authUser = getUserData(req);
 	const pokerSession = getPlanningpokerData(req);
 
-	if (!pokerSession.selectedTaskId) {
-		throw new ForbiddenError("You can't vote before a task has been selected");
+	if (!pokerSession.selectedUserstoryId) {
+		throw new ForbiddenError("You can't vote before a userstory has been selected");
 	}
 
 	if (pokerSession.revealed) {
@@ -19,10 +19,11 @@ export default async function (req: Request, res: Response) {
 	const user = pokerSession.participants.find(
 		(participant) => participant.user.dataValues.id === authUser.user.dataValues.id,
 	);
+
 	if (!user) {
 		throw new NotFoundError("User not found in the planning poker session");
 	}
 
-	user.vote = planningpokerSettaskRequest.vote;
+	user.vote = planningpokerVoteRequest.vote;
 	res.status(200).send();
 }

@@ -39,6 +39,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.STRING(128),
 			allowNull: false,
 		},
+		effortScore: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+		},
 	});
 }
 

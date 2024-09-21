@@ -5,7 +5,7 @@ export function mapPlanningpokerSelfComposite(pokerSession: PlanningpokerSession
 	return {
 		sessionCode: pokerSession.sessionCode,
 		agenda: pokerSession.agenda,
-		taskCount: pokerSession.userstories.flatMap((userstory) => userstory.dataValues.tasks).length,
+		userstoryCount: pokerSession.sprint.dataValues.userstories.length,
 		participantCount: pokerSession.participants.length,
 	};
 }

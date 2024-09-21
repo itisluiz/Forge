@@ -2,7 +2,6 @@ import { BadRequestError } from "../../error/externalhandling.error.js";
 import { decryptPK } from "../../util/encryption.js";
 import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
-import { Op } from "sequelize";
 import { planningpoker } from "../../session/planningpoker.session.js";
 import { PlanningpokerCreatesessionRequest } from "forge-shared/dto/request/planningpokercreatesessionrequest.dto";
 import { PlanningpokerCreatesessionResponse } from "forge-shared/dto/response/planningpokercreatesessionresponse.dto";
@@ -13,44 +12,29 @@ export default async function (req: Request, res: Response) {
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
-
-	let userstoryIds = new Set(
-		planningpokerCreatesessionRequest.userstoryEids.map((userstoryEid) => decryptPK("userstory", userstoryEid)),
-	);
+	const sprintId = decryptPK("sprint", planningpokerCreatesessionRequest.sprintEid);
 
 	let sessionCode: any;
 
 	try {
-		const userstories = await sequelize.models["userstory"].findAll({
+		const sprint = await sequelize.models["sprint"].findOne({
 			where: {
-				id: {
-					[Op.in]: [...userstoryIds],
-				},
+				id: sprintId,
+				projectId: authProject.project.dataValues.id,
 			},
-			include: [
-				{
-					model: sequelize.models["epic"],
-					where: {
-						projectId: authProject.project.dataValues.id,
-					},
-					attributes: ["projectId"],
-				},
-				{
-					model: sequelize.models["task"],
-				},
-			],
+			include: sequelize.models["userstory"],
 			transaction,
 		});
 
-		if (userstories.length !== userstoryIds.size) {
-			throw new BadRequestError("One or more user stories were not found in the project");
+		if (!sprint) {
+			throw new BadRequestError("The sprint provided does not exist or does not belong to the project");
 		}
 
-		if (userstories.every((userstory) => userstory.dataValues.tasks.length === 0)) {
-			throw new BadRequestError("None of the user stories provided have tasks");
+		if (sprint.dataValues.userstories.length === 0) {
+			throw new BadRequestError("The provided sprint does not have any userstories");
 		}
 
-		sessionCode = planningpoker.create(planningpokerCreatesessionRequest.agenda, authProject.project, userstories);
+		sessionCode = planningpoker.create(planningpokerCreatesessionRequest.agenda, authProject.project, sprint);
 
 		await transaction.commit();
 	} catch (error) {

@@ -22,6 +22,9 @@ import { Priority } from "../../enum/priority.enum";
  *           type: string
  *         priority:
  *           $ref: '#/components/schemas/Priority'
+ *         effortScore:
+ *           type: number
+ *           nullable: true
  */
 export interface UserstorySelfComposite {
 	eid: string;
@@ -31,4 +34,5 @@ export interface UserstorySelfComposite {
 	title: string;
 	description: string;
 	priority: Priority;
+	effortScore?: number;
 }

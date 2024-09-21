@@ -16,9 +16,9 @@ export interface PlanningpokerSession {
 	sessionCode: string;
 	agenda: string;
 	project: Model<any, any>;
-	userstories: Model<any, any>[];
+	sprint: Model<any, any>;
 	participants: PlanningpokerParticipant[];
-	selectedTaskId: number | null;
+	selectedUserstoryId: number | null;
 	revealed: boolean;
 	voteAverage?: number | null;
 	voteClosestFibonacci?: number | null;
@@ -41,15 +41,15 @@ function heartbeatParticipant(session: PlanningpokerSession, user: Model<any, an
 	participant.lastHeartbeat = new Date();
 }
 
-function create(agenda: string, project: Model<any, any>, userstories: Model<any, any>[]): string {
+function create(agenda: string, project: Model<any, any>, sprint: Model<any, any>): string {
 	const sessionCode = randomBytes(12).toString("hex");
 	const session: PlanningpokerSession = {
 		sessionCode,
 		agenda,
 		project,
-		userstories,
+		sprint,
 		participants: [],
-		selectedTaskId: null,
+		selectedUserstoryId: null,
 		revealed: false,
 	};
 
@@ -72,8 +72,10 @@ function getByProjectId(projectId: number): PlanningpokerSession[] {
 	const sessions = planningpokerSessions
 		.keys()
 		.map((sessionCode) => planningpokerSessions.get(sessionCode) as PlanningpokerSession)
-		.filter((session) => session);
-	return sessions.filter((session) => session.project.dataValues.id === projectId);
+		.filter((session) => session && session.project.dataValues.id === projectId);
+
+	sessions.forEach((session) => cleanupParticipants(session));
+	return sessions;
 }
 
 export const planningpoker = { create, get, getByProjectId, heartbeatParticipant };

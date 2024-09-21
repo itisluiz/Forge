@@ -16,6 +16,7 @@ export function mapUserstoryResponse(userstory: any, projectCode: string): Users
 		storyActor: userstory.dataValues.storyActor,
 		storyObjective: userstory.dataValues.storyObjective,
 		storyJustification: userstory.dataValues.storyJustification,
+		effortScore: userstory.dataValues.effortScore,
 		tasks: userstory.dataValues.tasks.map((task: any) => mapTaskSelfComposite(task, projectCode)),
 		createdAt: userstory.dataValues.createdAt,
 		updatedAt: userstory.dataValues.updatedAt,
