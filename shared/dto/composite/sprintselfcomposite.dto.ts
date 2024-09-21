@@ -12,6 +12,7 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *           type: string
  *         index:
  *           type: integer
+ *           nullable: true
  *         startsAt:
  *           type: string
  *           format: date-time
@@ -25,7 +26,7 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  */
 export interface SprintSelfComposite {
 	eid: string;
-	index: number;
+	index?: number;
 	startsAt: string;
 	endsAt: string;
 	status: SprintStatus;

@@ -3,7 +3,7 @@ import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { planningpokerCreatesessionRequestJsonSchema } from "../jsonschemas/planningpokercreatesessionrequest.jsonschema.js";
-import { planningpokerSettaskRequestJsonSchema } from "../jsonschemas/planningpokersettaskrequest.jsonschema.js";
+import { planningpokerSetuserstoryRequestJsonSchema } from "../jsonschemas/planningpokersetuserstoryrequest.jsonschema.js";
 import { planningpokerVoteRequestJsonSchema } from "../jsonschemas/planningpokervoterequest.jsonschema.js";
 import { pokerSession } from "../middleware/pokersession.middleware.js";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum.js";
@@ -60,9 +60,9 @@ router.post(
 
 /**
  * @swagger
- * /api/planningpoker/{projectEid}/{sessionCode}/settask:
+ * /api/planningpoker/{projectEid}/{sessionCode}/setuserstory:
  *   post:
- *     summary: Set the task currently being voted in the planning poker session.
+ *     summary: Set the userstory currently being voted in the planning poker session.
  *     parameters:
  *       - in: path
  *         name: projectEid
@@ -85,7 +85,7 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/PlanningpokerSettaskRequest'
+ *             $ref: '#/components/schemas/PlanningpokerSetuserstoryRequest'
  *     responses:
  *       200:
  *         description: Success
@@ -97,13 +97,13 @@ router.post(
  *               $ref: '#/components/schemas/FailureResponse'
  */
 router.post(
-	"/api/planningpoker/:projectEid/:sessionCode/settask",
+	"/api/planningpoker/:projectEid/:sessionCode/setuserstory",
 	authorize(),
 	pokerSession(true),
 	jsonBody(),
-	jsonBodySchema(planningpokerSettaskRequestJsonSchema),
+	jsonBodySchema(planningpokerSetuserstoryRequestJsonSchema),
 	async (req, res) => {
-		await handle("planningpoker", "settask", req, res);
+		await handle("planningpoker", "setuserstory", req, res);
 	},
 );
 

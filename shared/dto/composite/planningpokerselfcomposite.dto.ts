@@ -9,7 +9,7 @@
  *           type: string
  *         agenda:
  *           type: string
- *         taskCount:
+ *         userstoryCount:
  *           type: number
  *         participantCount:
  *           type: number
@@ -17,6 +17,6 @@
 export interface PlanningpokerSelfComposite {
 	sessionCode: string;
 	agenda: string;
-	taskCount: number;
+	userstoryCount: number;
 	participantCount: number;
 }

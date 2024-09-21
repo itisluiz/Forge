@@ -1,5 +1,5 @@
 import { PlanningpokerParticipantComposite } from "../composite/planningpokerparticipantcomposite.dto";
-import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
+import { SprintSelfComposite } from "../composite/sprintselfcomposite.dto";
 import { UserstorySelfComposite } from "../composite/userstoryselfcomposite.dto";
 
 /**
@@ -11,19 +11,17 @@ import { UserstorySelfComposite } from "../composite/userstoryselfcomposite.dto"
  *       properties:
  *         agenda:
  *           type: string
+ *         sprint:
+ *           $ref: '#/components/schemas/SprintSelfComposite'
  *         userstories:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/UserstorySelfComposite'
- *         tasks:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/TaskSelfComposite'
  *         participants:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/PlanningpokerParticipantComposite'
- *         selectedTaskEid:
+ *         selectedUserstoryEid:
  *           type: string
  *           nullable: true
  *         revealed:
@@ -37,10 +35,10 @@ import { UserstorySelfComposite } from "../composite/userstoryselfcomposite.dto"
  */
 export interface PlanningpokerResponse {
 	agenda: string;
+	sprint: SprintSelfComposite;
 	userstories: UserstorySelfComposite[];
-	tasks: TaskSelfComposite[];
 	participants: PlanningpokerParticipantComposite[];
-	selectedTaskEid: string | null;
+	selectedUserstoryEid: string | null;
 	revealed: boolean;
 	voteAverage?: number | null;
 	voteClosestFibonacci?: number | null;
