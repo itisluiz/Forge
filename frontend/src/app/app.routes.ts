@@ -21,5 +21,6 @@ export const routes: Routes = [
 	{ path: ":projectEid/:userstoryEid/user-story", component: UserStoryPageComponent },
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
 	{ path: ":projectEid/planning-poker", component: PlanningPokerPageComponent },
+	{ path: "planning-poker/:projectEid/:session", component: PlanningPokerPageComponent },
 	{ path: "**", redirectTo: "/select-project" },
 ];
