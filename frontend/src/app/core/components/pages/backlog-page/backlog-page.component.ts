@@ -1,4 +1,14 @@
-import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, Renderer2, OnInit } from "@angular/core";
+import {
+	Component,
+	ViewChild,
+	ViewChildren,
+	QueryList,
+	ElementRef,
+	AfterViewInit,
+	Renderer2,
+	OnInit,
+	Inject,
+} from "@angular/core";
 import { MatIcon } from "@angular/material/icon";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -7,11 +17,11 @@ import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { Observable, combineLatest, forkJoin, of, throwError } from "rxjs";
 import { catchError, filter, map, mergeMap, shareReplay, switchMap, tap } from "rxjs/operators";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DOCUMENT } from "@angular/common";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 import { TaskApiService } from "../../../services/task-api.service";
@@ -36,6 +46,13 @@ import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
 import { TaskPopupComponent } from "../../task-popup/task-popup.component";
+import { DaysDifferencePipe } from "../../../pipes/days-difference.pipe";
+import { SprintStatusPipe } from "../../../pipes/sprint-status.pipe";
+import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
+import { SprintPeriodStatusPipe } from "../../../pipes/sprint-periodstatus.pipe";
+import { SprintPeriodStatusClassPipe } from "../../../pipes/sprint-periodstatus-class.pipe";
+import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
 	selector: "app-backlog-page",
@@ -50,6 +67,13 @@ import { TaskPopupComponent } from "../../task-popup/task-popup.component";
 		MaxLengthPipe,
 		TaskDetailsComponent,
 		TaskPopupComponent,
+		DaysDifferencePipe,
+		SprintStatusPipe,
+		SprintStatusClassPipe,
+		SprintPeriodStatusPipe,
+		SprintPeriodStatusClassPipe,
+		MatMenuModule,
+		RouterModule,
 	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
@@ -57,59 +81,16 @@ import { TaskPopupComponent } from "../../task-popup/task-popup.component";
 export class BacklogPageComponent implements AfterViewInit, OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
-	epics$: Observable<EpicSelfComposite[]> = this.epicApiService.getEpics(this.projectEid).pipe(
-		map((response: EpicSelfResponse) => {
-			return response.epics;
-		}),
-	);
-
-	allUserStories$: Observable<UserstorySelfComposite[]> = this.epics$.pipe(
-		mergeMap((epics: EpicSelfComposite[]) => {
-			const userStoriesObservables = epics.map((epic) => this.getUserStories(epic.eid));
-
-			return forkJoin(userStoriesObservables).pipe(
-				map((userStoriesArray: UserstorySelfComposite[][]) => userStoriesArray.flat()),
-			);
-		}),
-	);
-
-	userStoriesInBacklog$: Observable<UserstorySelfComposite[]> = this.allUserStories$.pipe(
-		map((userStories) => userStories.filter((userStory) => !userStory.sprintEid)),
-	);
-
-	getUserStories(epicEid: string): Observable<UserstorySelfComposite[]> {
-		return this.epicApiService.getEpic(this.projectEid, epicEid).pipe(
-			map((epicResponse: EpicResponse) => {
-				return epicResponse.userstories;
-			}),
-		);
-	}
-
-	allSprints$: Observable<SprintSelfResponse> = this.sprintApiService.self(this.projectEid).pipe(
-		map((response) => {
-			return response;
-		}),
-	);
-
-	currentAndFutureSprints$: Observable<SprintSelfComposite[]> = this.allSprints$.pipe(
-		map((response) => {
-			return response.sprints.filter(
-				(sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
-			);
-		}),
-	);
-
-	currentSprint$: Observable<SprintSelfComposite> = this.allSprints$.pipe(
-		map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
-		filter((sprint): sprint is SprintSelfComposite => sprint !== undefined),
-	);
-
-	userStoriesInCurrentSprint$: Observable<UserstorySelfComposite[]> = this.currentSprint$.pipe(
-		switchMap((sprint) => this.userstoryApiService.selfBySprint(this.projectEid, sprint.eid)),
-		map((response) => response.userstories),
-	);
-
-	tasksPerUserStory$: Observable<{ [userStoryEid: string]: TaskSelfComposite[] }> = new Observable();
+	allSprints: SprintSelfComposite[] = [];
+	currentSprint: SprintSelfComposite = {} as SprintSelfComposite;
+	currentAndFutureSprints: SprintSelfComposite[] = [];
+	pastSprints: SprintSelfComposite[] = [];
+	futureSprints: SprintSelfComposite[] = [];
+	detailedSprints: { [key: string]: SprintResponse } = {};
+	userStoriesPerSprint: { [key: string]: UserstorySelfComposite[] } = {};
+	allUserStories: UserstorySelfComposite[] = [];
+	userStoriesInBacklog: UserstorySelfComposite[] = [];
+	tasksPerUserStory: { [userStoryEid: string]: TaskSelfComposite[] } = {};
 	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
@@ -130,11 +111,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		private projectApiService: ProjectApiService,
 		private sprintApiService: SprintApiService,
 		private userstoryApiService: UserstoryApiService,
-		private router: Router,
+		@Inject(DOCUMENT) private document: Document,
 	) {}
 
 	ngOnInit(): void {
-		this.loadTasks();
+		this.loadSprintData();
 		this.getProject()
 			.pipe(
 				map((project) => {
@@ -146,26 +127,73 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			.subscribe();
 	}
 
+	loadSprintData() {
+		this.sprintApiService.self(this.projectEid).subscribe({
+			next: (sprintSelfResponse) => {
+				// Load all Sprints
+				this.allSprints = sprintSelfResponse.sprints;
+
+				// Load current Sprint
+				this.currentSprint =
+					this.allSprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING) ||
+					({} as SprintSelfComposite);
+
+				// Load current and future Sprints
+				this.currentAndFutureSprints = this.allSprints.filter(
+					(sprint) =>
+						sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
+				);
+
+				// Load past Sprints to use in HTML to either display or not the Past Sprints block
+				this.pastSprints = this.allSprints.filter((sprint) => sprint.periodStatus === SprintPeriodStatus.PAST);
+
+				// Load future Sprints to use in HTML to either display or not the Future Sprints block
+				this.futureSprints = this.allSprints.filter((sprint) => sprint.periodStatus === SprintPeriodStatus.FUTURE);
+
+				sprintSelfResponse.sprints.forEach((sprint) => {
+					this.loadDetailedSprint(sprint.eid);
+				});
+			},
+		});
+	}
+
+	loadDetailedSprint(eid: string) {
+		// O forkJoin tá pegando os dados de sprint e userstory ao mesmo tempo e depois o subscribe tá separando eles
+		forkJoin({
+			sprintResponse: this.sprintApiService.getSprint(this.projectEid, eid),
+			userStoryResponse: this.userstoryApiService.selfBySprint(this.projectEid, eid),
+		}).subscribe({
+			next: ({ sprintResponse, userStoryResponse }) => {
+				this.detailedSprints[sprintResponse.eid] = sprintResponse;
+				this.userStoriesPerSprint[eid] = userStoryResponse.userstories;
+			},
+		});
+		this.loadBacklogData();
+	}
+
+	loadBacklogData() {
+		this.epicApiService
+			.getEpics(this.projectEid)
+			.pipe(switchMap((epicResponse) => this.epicApiService.getEpic(this.projectEid, epicResponse.epics[0].eid)))
+			.subscribe({
+				next: (epicResponse) => {
+					this.allUserStories = epicResponse.userstories;
+					this.userStoriesInBacklog = this.allUserStories.filter((userStory) => !userStory.sprintEid);
+					this.loadTasks();
+				},
+				error: (err) => {
+					console.error("Error loading backlog data", err);
+				},
+			});
+	}
+
 	loadTasks() {
-		this.tasksPerUserStory$ = this.allUserStories$.pipe(
-			switchMap((userStories) => {
-				const tasksObservables = userStories.map((userStory) =>
-					this.getTasks(userStory.eid).pipe(
-						catchError(() => of([])),
-						map((tasks) => ({ [userStory.eid]: tasks })),
-					),
-				);
-
-				return combineLatest(tasksObservables).pipe(
-					map((tasksArray) => tasksArray.filter((entry) => entry !== null).reduce((acc, curr) => ({ ...acc, ...curr }), {})),
-				);
-			}),
-			shareReplay(1),
-		);
-
-		this.tasksPerUserStory$.subscribe((tasksMap) => {
-			Object.keys(tasksMap).forEach((userStoryEid) => {
-				this.tasksDataSources[userStoryEid] = new MatTableDataSource(tasksMap[userStoryEid]);
+		this.allUserStories.forEach((userStory) => {
+			this.getTasks(userStory.eid).subscribe({
+				next: (tasks) => {
+					this.tasksPerUserStory[userStory.eid] = tasks;
+					this.tasksDataSources[userStory.eid] = new MatTableDataSource(tasks);
+				},
 			});
 		});
 	}
@@ -243,12 +271,14 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	private getCurrentDate(): string {
 		const today = new Date();
+		today.setHours(today.getHours() - 3); // Brazil time
 		return today.toISOString().split("T")[0];
 	}
 
 	private getDateAfterDays(days: number): string {
 		const date = new Date();
 		date.setDate(date.getDate() + days);
+		date.setHours(date.getHours() - 3); // Brazil time
 		return date.toISOString().split("T")[0];
 	}
 
@@ -271,6 +301,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	closePopUpAddToSprint() {
 		this.popUpAddToSprint = false;
+		document.body.style.overflow = "auto";
 		this.toggleExpansionPanel();
 	}
 
@@ -294,23 +325,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			.subscribe({
 				next: () => {
 					this.closePopUpAddToSprint();
-					this.updateAllUserStoriesPlacement();
+					this.loadSprintData();
 				},
 				error: (error) => {
 					console.log(error.error.message);
 				},
 			});
-	}
-
-	updateAllUserStoriesPlacement() {
-		this.userStoriesInCurrentSprint$ = this.currentSprint$.pipe(
-			switchMap((sprint) => this.userstoryApiService.selfBySprint(this.projectEid, sprint.eid)),
-			map((response) => response.userstories),
-		);
-
-		this.userStoriesInBacklog$ = this.allUserStories$.pipe(
-			map((userStories) => userStories.filter((userStory) => !userStory.sprintEid)),
-		);
 	}
 
 	submitCreateSprintForm() {
@@ -328,19 +348,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 		this.sprintApiService.newSprint(sprintNewRequest, this.projectEid).subscribe({
 			next: (sprint) => {
-				this.allSprints$ = this.sprintApiService.self(this.projectEid);
-				this.currentAndFutureSprints$ = this.allSprints$.pipe(
-					map((response) => {
-						return response.sprints.filter(
-							(sprint) =>
-								sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
-						);
-					}),
-				);
-				this.currentSprint$ = this.allSprints$.pipe(
-					map((response) => response.sprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING)),
-					filter((sprint): sprint is SprintSelfComposite => sprint !== undefined),
-				);
+				this.loadSprintData();
 				this.closePopUpCreateSprint();
 			},
 			error: (error) => {
@@ -507,28 +515,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		}
 	}
 
-	sprintStatusParser(status: number): string {
-		switch (status) {
-			case SprintStatus.PLAN:
-				return "Plan";
-			case SprintStatus.DESIGN:
-				return "Design";
-			case SprintStatus.DEVELOP:
-				return "Develop";
-			case SprintStatus.TEST:
-				return "Test";
-			case SprintStatus.DEPLOY:
-				return "Deploy";
-			case SprintStatus.REVIEW:
-				return "Review";
-			case SprintStatus.LAUNCH:
-				return "Launch";
-			default:
-				return "";
-		}
-	}
-
 	getTaskTypeClass(type: number): string {
+		this.styleSprintsByClass();
 		switch (type) {
 			case 1:
 				return "task-class";
@@ -538,6 +526,25 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				return "test-class";
 			default:
 				return "default-class";
+		}
+	}
+
+	styleSprintsByClass() {
+		for (let i = 0; i < this.document.getElementsByClassName("past-sprint").length; i++) {
+			if (i == 0) {
+				this.document.getElementsByClassName("past-sprint")[i].classList.add("first-sprint");
+			}
+			if (i == this.document.getElementsByClassName("past-sprint").length - 1) {
+				this.document.getElementsByClassName("past-sprint")[i].classList.add("last-sprint");
+			}
+		}
+		for (let i = 0; i < this.document.getElementsByClassName("future-sprint").length; i++) {
+			if (i == 0) {
+				this.document.getElementsByClassName("future-sprint")[i].classList.add("first-sprint");
+			}
+			if (i == this.document.getElementsByClassName("future-sprint").length - 1) {
+				this.document.getElementsByClassName("future-sprint")[i].classList.add("last-sprint");
+			}
 		}
 	}
 
