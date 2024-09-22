@@ -1,9 +1,10 @@
 <mat-toolbar id="menu-bar">
 	<img src="../../../../assets/logo.svg" />
 
-	<span (click)="navigateTo(options[2].route)">Sprint board</span>
-	<span (click)="navigateTo(options[0].route)">Epics</span>
-	<span (click)="navigateTo(options[1].route)">Backlog</span>
+	<span (click)="navigateTo(options[2].route)" [ngClass]="{ active: activeRoute == 'sprint' }">Sprint board</span>
+	<span (click)="navigateTo(options[0].route)" [ngClass]="{ active: activeRoute == 'epics' }">Epics</span>
+	<span (click)="navigateTo(options[1].route)" [ngClass]="{ active: activeRoute == 'backlog' }">Backlog</span>
+	<span (click)="navigateTo(options[3].route)" [ngClass]="{ active: activeRoute == 'planning-poker' }">Planning poker</span>
 
 	<!-- <input id="search-bar" placeholder="Search here..." /> -->
 

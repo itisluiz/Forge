@@ -107,7 +107,7 @@
 				</div>
 
 				<div class="right-side">
-					<button id="join" (click)="openPopUp('join')">Join</button>
+					<button id="join" (click)="openPopUp('join')" matRipple>Join</button>
 					<button mat-icon-button [matMenuTriggerFor]="menu">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -120,20 +120,51 @@
 			</div>
 
 			<div class="projects">
-				<div class="header">
-					<span>Projects</span>
-					<span>Total: {{ dataSource.length }}</span>
+				<div class="header" [ngClass]="checkDataSource(dataSource)">
+					<span>Project</span>
+					<span>Owner</span>
+					<span>Contributors</span>
+					<span>Created at</span>
+					<span>Action</span>
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
+					<div *ngFor="let project of completedDataSource" (click)="selectProject(project.eid)">
 						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
-							<p>{{ project.code }}</p>
-							<span>{{ project.title }}</span>
+							<div class="name">
+								<p class="name_title">{{ project.title }}</p>
+								<p class="name_description">{{ project.description }}</p>
+							</div>
 
-							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
-								<mat-icon>more_vert</mat-icon>
-							</button>
+							<div class="owner">
+								<p class="owner_name">{{ findProjectOwner(project) }}</p>
+							</div>
+
+							<div class="contributors">
+								@if (project.members.length === 1) {
+									<img class="contributors_image" [src]="project.members[0].gravatar" />
+								} @else {
+									@for (member of project.members.slice(0, 3); track member) {
+										<img class="contributors_image" [src]="member.gravatar" />
+									}
+									@if (project.members.length > 3) {
+										<div class="contributors_more">
+											<p class="count">+{{ project.members.length - 3 }}</p>
+										</div>
+									}
+								}
+							</div>
+
+							<div class="created">
+								<p>{{ project.createdAt | date: "dd MMM yy" }}</p>
+							</div>
+
+							<div class="action">
+								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+							</div>
+
 							<mat-menu #project_menu="matMenu">
 								@if (project.admin) {
 									<button mat-menu-item (click)="editProject(project.eid)">
@@ -159,11 +190,11 @@
 
 			@if (!editMode && noProjects) {
 				<div class="no-project">
-					<h2>Not part of any project?</h2>
-					<p>You can quickly create one or join an existing one by clicking the button below.</p>
+					<h2>No project available.</h2>
+					<p>You can quickly <span>create one</span> or <span>join</span> an existing one by clicking the button below.</p>
 					<div class="buttons">
 						<button class="buttons_cancel buttons_button" (click)="openPopUp('join')">Join</button>
-						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create</button>
+						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create new project</button>
 					</div>
 				</div>
 			}

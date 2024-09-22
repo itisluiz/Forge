@@ -85,10 +85,14 @@
 		margin-right: 45px;
 	}
 
+	.active {
+		color: v.$white-color;
+	}
+
 	span {
 		font-size: 14px;
 		margin-right: 45px;
-		color: #fff;
+		color: v.$hover-color;
 		height: 55px;
 		cursor: pointer;
 		display: flex;
@@ -96,7 +100,7 @@
 		transition: filter 0.3s;
 
 		&:hover {
-			filter: brightness(0.85);
+			filter: brightness(1.5);
 		}
 	}
 

@@ -1,5 +1,9 @@
 @use "../../../../../../src/assets/variables.scss" as v;
 
+.extend {
+	margin-right: 17px;
+}
+
 .fake-input {
 	display: flex;
 	justify-content: space-between;
@@ -188,12 +192,17 @@ select {
 				flex-direction: column;
 
 				h1 {
+					font-size: 28px;
 					font-weight: 500;
 				}
 
 				p {
-					font-size: v.$h2-font;
+					font-size: v.$sub-title-font;
+					color: v.$grey-color;
+					font-weight: 400;
+					max-width: 550px;
 					max-width: 350px;
+					margin-top: 12px;
 				}
 			}
 
@@ -208,11 +217,21 @@ select {
 					justify-content: center;
 					background-color: transparent;
 					border: none;
-					height: 100%;
+					height: 34px;
+
+					&:nth-child(2) {
+						width: 34px;
+
+						mat-icon {
+							height: 34px;
+							width: 34px;
+							transform: translate(-2.5px, 5px);
+						}
+					}
 				}
 
 				button:nth-child(1) {
-					width: 100px;
+					padding: 0 16px;
 					background-color: v.$epics-light-grey-color;
 					border-radius: 4px;
 					margin-right: 4px;
@@ -231,13 +250,22 @@ select {
 			margin-top: -80px;
 
 			h2 {
-				font-size: v.$title-font;
+				font-size: 20px;
 				margin-bottom: 10px;
 				font-weight: 500;
+				color: v.$grey-color;
 			}
 
 			p {
-				width: 60%;
+				width: 90%;
+				font-size: v.$paragraph-font;
+				color: v.$grey-color;
+
+				span {
+					color: v.$green-color;
+					cursor: pointer;
+					font-weight: 500;
+				}
 			}
 
 			.buttons {
@@ -248,7 +276,7 @@ select {
 				justify-content: center;
 
 				&_button {
-					height: 40px;
+					height: 34px;
 					cursor: pointer;
 					border: none;
 					border-radius: 2px;
@@ -263,37 +291,60 @@ select {
 
 				&_action {
 					color: v.$white-color;
-					font-size: v.$button-font;
+					font-size: v.$major-observation-font;
 					background-color: v.$green-color;
+					font-weight: 500;
 				}
 
 				&_cancel {
-					font-size: v.$button-font;
+					font-size: v.$major-observation-font;
 					background-color: v.$epics-light-grey-color;
 					color: v.$black-color;
+					font-weight: 500;
 				}
 			}
 		}
 
 		.projects {
 			.header {
-				width: 100%;
+				padding: 12px 20px;
 				display: flex;
 				justify-content: space-between;
-				margin-bottom: 14px;
+				border-top: 1px solid rgba(0, 0, 0, 0.2);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+				& > span {
+					text-transform: uppercase;
+					font-size: v.$major-observation-font;
+					font-weight: 600;
+					color: v.$label-background-grey;
+					opacity: 0.7;
+					display: flex;
+					flex: 1;
+
+					&:nth-child(1) {
+						min-width: 33%;
+					}
+
+					&:last-child {
+						width: 50px;
+						flex: none;
+					}
+				}
 			}
 
 			.list {
 				max-height: 200px;
-				overflow: auto;
+				overflow-y: auto;
 
 				& > div {
 					cursor: pointer;
+					border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
 					&:hover {
 						transition: 0.1s;
 						cursor: pointer;
-						filter: brightness(0.8);
+						background-color: rgba(0, 0, 0, 0.1);
 
 						.project-info {
 							button {
@@ -303,44 +354,122 @@ select {
 					}
 
 					.project-info.active {
-						background-color: #d2fccc;
+						background: v.$green-color;
+						border-radius: 12px;
+						border: none;
+						box-shadow:
+							0 8px 13px rgba(0, 0, 0, 0.08),
+							0 -8px 13px rgba(0, 0, 0, 0.08);
+						color: white;
+
+						& > div {
+							color: white;
+
+							p {
+								color: white;
+							}
+
+							button {
+								color: white;
+							}
+						}
 					}
 
 					.project-info {
 						display: flex;
 						height: 63px;
-						background-color: v.$background-grey;
 						border-radius: 2px;
-						margin-bottom: 4px;
 						align-items: center;
 						justify-content: flex-start;
 						position: relative;
+						padding: 0 20px;
 
-						p {
-							margin-left: 1em;
-							text-align: left;
-							font-weight: bold;
-							color: #54d93e;
-							margin-right: 2em;
+						&:hover {
+							filter: brightness(0.9);
 						}
 
-						.mat-mdc-menu-trigger {
-							opacity: 0.4;
-							position: absolute;
-							right: 20px;
-							top: 14px;
+						& > div {
+							display: flex;
+							flex: 1;
 
-							&:hover {
-								opacity: 1;
+							&:nth-child(1) {
+								min-width: 33%;
 							}
 
-							&:focus {
-								opacity: 1;
+							&:nth-child(5) {
+								width: 50px;
+								flex: none;
+
+								button {
+									width: 40px;
+								}
+							}
+						}
+
+						.name {
+							display: flex;
+							flex-direction: column;
+
+							&_title {
+								font-size: v.$paragraph-font;
+								font-weight: 500;
 							}
 
-							&:active {
-								opacity: 1;
+							&_description {
+								font-size: v.$observation-font;
+								color: v.$grey-color;
 							}
+						}
+
+						.owner {
+							&_name {
+								font-size: v.$paragraph-font;
+								color: v.$grey-color;
+							}
+						}
+
+						.contributors {
+							position: relative;
+							display: flex;
+
+							&_image {
+								height: 24px;
+								width: 24px;
+								border: 2px solid v.$white-color;
+								border-radius: 50%;
+								margin-right: -8px;
+							}
+
+							&_more {
+								height: 24px;
+								width: 24px;
+								border-radius: 50%;
+								margin-right: -8px;
+								border: 2px solid v.$white-color;
+								background-color: v.$background-grey;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+
+								.count {
+									font-size: v.$major-observation-font;
+									font-weight: 500;
+									text-align: center;
+									color: v.$label-background-grey;
+									transform: translate(-3px, 1px);
+								}
+							}
+
+							&:nth-child(1) {
+								position: absolute;
+								left: 0;
+								transform: translateX(0) !important;
+							}
+						}
+
+						.created {
+							font-size: v.$paragraph-font;
+							color: v.$grey-color;
 						}
 
 						.cdk-focused,
@@ -353,7 +482,8 @@ select {
 						}
 
 						.button-icon {
-							transform: translateY(-2px);
+							transform: translate(5px, -2px);
+							width: 50px;
 						}
 					}
 				}
