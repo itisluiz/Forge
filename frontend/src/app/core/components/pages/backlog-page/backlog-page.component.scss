@@ -44,6 +44,21 @@ app-navbar {
 	}
 
 	& > .backlog-grid {
+		.green-button {
+			color: white;
+			background-color: v.$green-color;
+			border-radius: 2px;
+			margin: unset;
+			border: none;
+			width: 114px;
+			height: 30px;
+
+			&:disabled {
+				background-color: v.$disabled-background-color;
+				color: v.$disabled-color;
+				cursor: not-allowed;
+			}
+		}
 		.title {
 			display: flex;
 			align-items: baseline;
@@ -165,6 +180,27 @@ app-navbar {
 			margin-top: 10px;
 		}
 
+		.mat-expansion-panel-header-title {
+			&:nth-of-type(1) {
+				// User Story priority
+				flex-grow: 0.1;
+				max-width: 14px;
+			}
+			&:nth-of-type(2) {
+				// User Story code
+				flex-grow: 0.4;
+				max-width: 110px;
+				width: 100%;
+				font-weight: 500;
+				color: v.$dark-green-color;
+				justify-content: center;
+			}
+			&:nth-of-type(3) {
+				// User Story title
+				max-width: 390px;
+			}
+		}
+
 		&:nth-child(3) {
 			.mat-expansion-panel-header-description {
 				&:nth-of-type(1) {
@@ -177,22 +213,6 @@ app-navbar {
 					align-items: center;
 					justify-content: center;
 					margin-right: 16px;
-
-					.green-button {
-						color: white;
-						background-color: v.$green-color;
-						border-radius: 2px;
-						margin: unset;
-						border: none;
-						width: 114px;
-						height: 30px;
-
-						&:disabled {
-							background-color: v.$disabled-background-color;
-							color: v.$disabled-color;
-							cursor: not-allowed;
-						}
-					}
 				}
 			}
 		}
@@ -227,6 +247,8 @@ app-navbar {
 			margin: unset;
 			border: none;
 			padding: 10px 20px;
+			width: initial;
+			height: initial;
 
 			&:disabled {
 				background-color: v.$disabled-background-color;
@@ -295,10 +317,31 @@ app-navbar {
 		margin-bottom: 0;
 		border-radius: 12px 12px 0 0;
 
-		h2 {
-			font-size: v.$h2-font;
-			font-weight: 500;
-			margin-bottom: 0;
+		.sprint-title-and-items-wrapper {
+			display: flex;
+			align-items: center;
+			width: fit-content;
+
+			h2 {
+				font-size: v.$h2-font;
+				font-weight: 500;
+				margin-bottom: 0;
+				margin-right: 11px;
+			}
+			.items {
+				display: flex;
+				align-items: center;
+				gap: 2px;
+				background-color: v.$lemon-color;
+				padding: 1px 2.5px;
+				border-radius: 3px;
+				height: fit-content;
+
+				span {
+					font-size: 9px;
+					color: v.$white-color;
+				}
+			}
 		}
 	}
 

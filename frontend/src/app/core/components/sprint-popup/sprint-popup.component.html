@@ -1,0 +1,51 @@
+<div class="epic-pop-up">
+	<div class="epic-pop-up-header">
+		<h2 *ngIf="!isEditMode">Create a Sprint</h2>
+		<h2 *ngIf="isEditMode">Edit Sprint</h2>
+		<p *ngIf="!isEditMode">Fill in the necessary information to create a sprint.</p>
+		<p *ngIf="isEditMode">Update the fields as needed.</p>
+	</div>
+	<form [formGroup]="sprintForm" class="pop-up-form" (ngSubmit)="submitSprintForm()">
+		<div class="pop-up-form-content">
+			<div class="input-wrapper">
+				<label for="sprint-starts-at">Starts at</label>
+				<input
+					type="date"
+					id="sprint-starts-at"
+					name="sprint-starts-at"
+					formControlName="startDate"
+					placeholder="Insert the start date of the sprint"
+				/>
+			</div>
+			<div class="input-wrapper">
+				<label for="sprint-ends-at">Ends at</label>
+				<input
+					type="date"
+					id="sprint-ends-at"
+					name="sprint-ends-at"
+					formControlName="endDate"
+					placeholder="Insert the end date of the sprint"
+				/>
+			</div>
+			@if (isEditMode) {
+				<div class="input-wrapper">
+					<label for="sprint-status">Status</label>
+					<select id="sprint-status" name="sprint-status" formControlName="status">
+						<option value="1">Plan</option>
+						<option value="2">Design</option>
+						<option value="3">Develop</option>
+						<option value="4">Test</option>
+						<option value="5">Deploy</option>
+						<option value="6">Review</option>
+						<option value="7">Launch</option>
+					</select>
+				</div>
+			}
+		</div>
+		<div class="pop-up-footer">
+			<button type="submit" *ngIf="!isEditMode" [disabled]="sprintForm.invalid">Create</button>
+			<button type="submit" *ngIf="isEditMode" [disabled]="sprintForm.invalid">Submit Modifications</button>
+			<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
+		</div>
+	</form>
+</div>
