@@ -144,6 +144,40 @@ router.get("/api/sprint/:projectEid/self", authorize(), authorizeProject(), asyn
 
 /**
  * @swagger
+ * /api/sprint/{projectEid}/current:
+ *   get:
+ *     summary: Get the ongoing/current sprint, or null if there is none.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - sprint
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SprintMonadResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/sprint/:projectEid/current", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "current", req, res);
+});
+
+/**
+ * @swagger
  * /api/sprint/{projectEid}/{sprintEid}/get:
  *   get:
  *     summary: Get a sprint by its identifier.
