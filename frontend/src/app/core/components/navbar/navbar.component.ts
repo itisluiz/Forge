@@ -50,6 +50,7 @@ export class NavbarComponent {
 	userPhoto!: string;
 	trollando: boolean = false;
 	popUpLeaveForge: boolean = false;
+	activeRoute: string = localStorage.getItem("activeRoute") || "";
 
 	playAudio() {
 		if ((this.trollando = !this.trollando)) {
@@ -71,6 +72,7 @@ export class NavbarComponent {
 		{ name: "Project Epics", route: `/${this.projectEid}/epics` },
 		{ name: "Project Backlog", route: `/${this.projectEid}/backlog` },
 		{ name: "Sprint Board", route: `/${this.projectEid}/kanban` },
+		{ name: "Planning Poker", route: `/${this.projectEid}/planning-poker` },
 	];
 
 	filteredOptions!: Observable<SearchBar[]>;
@@ -85,6 +87,8 @@ export class NavbarComponent {
 				return name ? this._filter(name as string) : this.options.slice();
 			}),
 		);
+
+		this.setActiveRoute(this.activeRoute);
 	}
 
 	getUser() {
@@ -97,9 +101,31 @@ export class NavbarComponent {
 		return user && user.name ? user.name : "";
 	}
 
+	setActiveRoute(route: string) {
+		if (route === this.options[0].route) {
+			this.activeRoute = "epics";
+		}
+		if (route === this.options[1].route) {
+			this.activeRoute = "backlog";
+		}
+		if (route === this.options[2].route) {
+			this.activeRoute = "sprint";
+		}
+		if (route === this.options[3].route) {
+			this.activeRoute = "planning-poker";
+		}
+		localStorage.setItem("activeRoute", this.activeRoute);
+		this.activeRoute = localStorage.getItem("activeRoute") || this.activeRoute;
+	}
+
 	navigateTo(route: string) {
-		console.log(route);
+		const storedRoute = localStorage.getItem("activeRoute");
+		if (storedRoute) {
+			this.activeRoute = storedRoute;
+		}
+
 		this.router.navigate([route]);
+		this.setActiveRoute(route);
 	}
 
 	openPopUp(popUp: string) {

@@ -22,6 +22,7 @@ import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.
 import { SelectComponent } from "../../select-component/select-component";
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 import { ProjectRolePipe } from "../../../pipes/project-role.pipe";
+import { MatRippleModule } from "@angular/material/core";
 
 @Component({
 	selector: "app-select-project-page",
@@ -37,6 +38,7 @@ import { ProjectRolePipe } from "../../../pipes/project-role.pipe";
 		SelectComponent,
 		DeletePopupComponent,
 		ProjectRolePipe,
+		MatRippleModule,
 	],
 	templateUrl: "./select-project-page.component.html",
 	styleUrl: "./select-project-page.component.scss",
@@ -65,6 +67,7 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("popupJoinRef") popupJoinRef!: PopupComponent;
 
 	public dataSource!: ProjectSelfComposite[];
+	public completedDataSource: any[] = [];
 
 	public popUpJoin: boolean = false;
 	public popUpCreateProject: boolean = false;
@@ -265,6 +268,7 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
 				this.projectInfo = response;
+				this.completedDataSource.push(response);
 			},
 			error: (error) => {
 				console.error(error);
@@ -287,8 +291,28 @@ export class SelectProjectPageComponent implements OnInit {
 		});
 	}
 
+	checkDataSource(dataSource: any) {
+		if (dataSource.length > 3) {
+			return "extend";
+		}
+		return "";
+	}
+
+	findProjectOwner(project: ProjectResponse) {
+		return project.members.find((member) => member.admin && member.role === 1)?.name;
+	}
+
+	updateAllProjectDetails() {
+		this.completedDataSource = [];
+		this.dataSource.forEach((project) => {
+			this.getEspeficProject(project.eid);
+		});
+		console.log("completedDataSource: ", this.completedDataSource);
+	}
+
 	updateProjectList(newList: ProjectSelfComposite[]) {
 		this.dataSource = newList;
+		this.updateAllProjectDetails();
 	}
 
 	updateMember(projectId: string, projectUpdateMemberRequest: ProjectUpdateMemberRequest) {
