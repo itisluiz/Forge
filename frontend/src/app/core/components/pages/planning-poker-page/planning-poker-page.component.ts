@@ -132,6 +132,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	createSession() {
+		/* 
 		const createRequest: PlanningpokerCreatesessionRequest = {
 			agenda: this.pokerSubject.value,
 			userstoryEids: this.allUserStories,
@@ -153,6 +154,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				console.error(error);
 			},
 		});
+		*/
 	}
 
 	loadSprintData() {

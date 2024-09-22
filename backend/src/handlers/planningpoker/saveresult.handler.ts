@@ -1,4 +1,4 @@
-import { ForbiddenError } from "../../error/externalhandling.error.js";
+import { ForbiddenError, NotFoundError } from "../../error/externalhandling.error.js";
 import { getPlanningpokerData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
 import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto.js";
@@ -19,19 +19,22 @@ export default async function (req: Request, res: Response) {
 		throw new ForbiddenError("Neither the current voting result or the provided value is a numerical value");
 	}
 
-	const task = pokerSession.userstories
-		.flatMap((userstory) => userstory.dataValues.tasks)
-		.find((task) => task.id === pokerSession.selectedTaskId);
+	const userstory = pokerSession.sprint.dataValues.userstories.find(
+		(userstory: any) => userstory.dataValues.id === pokerSession.selectedUserstoryId,
+	);
+	if (!userstory) {
+		throw new NotFoundError("The selected userstory does not exist in the sprint");
+	}
 
 	try {
-		await task.set(
+		await userstory.set(
 			{
-				complexity: vote,
+				effortScore: vote,
 			},
 			{ transaction },
 		);
 
-		await task.save({ transaction });
+		await userstory.save({ transaction });
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();

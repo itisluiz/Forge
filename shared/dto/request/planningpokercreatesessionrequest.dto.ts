@@ -7,12 +7,10 @@
  *       properties:
  *         agenda:
  *           type: string
- *         userstoryEids:
- *           type: array
- *           items:
- *             type: string
+ *         sprintEid:
+ *           type: string
  */
 export interface PlanningpokerCreatesessionRequest {
 	agenda: string;
-	userstoryEids: string[];
+	sprintEid: string;
 }

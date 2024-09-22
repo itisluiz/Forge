@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { PlanningpokerResponse } from "forge-shared/dto/response/planningpokerresponse.dto";
 import { PlanningpokerSelfResponse } from "forge-shared/dto/response/planningpokerselfresponse.dto";
-import { PlanningpokerSettaskRequest } from "forge-shared/dto/request/planningpokersettaskrequest.dto";
 import { PlanningpokerCreatesessionRequest } from "forge-shared/dto/request/planningpokercreatesessionrequest.dto";
 import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto";
 import { PlanningpokerCreatesessionResponse } from "forge-shared/dto/response/planningpokercreatesessionresponse.dto";

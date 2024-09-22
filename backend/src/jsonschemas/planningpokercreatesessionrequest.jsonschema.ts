@@ -8,16 +8,12 @@ export const planningpokerCreatesessionRequestJsonSchema = {
 			maxLength: 128,
 			minLength: 1,
 		},
-		userstoryEids: {
-			type: "array",
-			minItems: 1,
-			items: {
-				type: "string",
-				minLength: 8,
-				maxLength: 8,
-			},
+		sprintEid: {
+			type: "string",
+			maxLength: 8,
+			minLength: 8,
 		},
 	},
-	required: ["agenda", "userstoryEids"],
+	required: ["agenda", "sprintEid"],
 	additionalProperties: false,
 };

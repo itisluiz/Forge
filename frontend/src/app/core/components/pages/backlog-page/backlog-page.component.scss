@@ -33,13 +33,14 @@ app-navbar {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto auto;
-	gap: 12px;
+	gap: unset;
 	margin: 1em;
 
 	& > div {
 		background-color: v.$white-color;
 		border-radius: 12px;
 		padding: 1em;
+		margin-bottom: 12px;
 	}
 
 	& > .backlog-grid {
@@ -61,6 +62,65 @@ app-navbar {
 						font-size: v.$h2-font;
 						font-weight: 500;
 						margin-right: 11px;
+					}
+
+					.tag {
+						display: flex;
+						align-items: center;
+						gap: 2px;
+						padding: 1px 2.5px;
+						border-radius: 3px;
+						height: fit-content;
+						margin-right: 0.1em;
+
+						span {
+							font-size: 9px;
+							color: v.$white-color;
+						}
+
+						&.past {
+							background-color: v.$grey-color;
+						}
+
+						&.ongoing {
+							background-color: v.$lemon-color;
+						}
+
+						&.future {
+							background-color: v.$grey-color;
+						}
+
+						&.plan {
+							background-color: #ff6347;
+						}
+
+						&.design {
+							background-color: #ffa500;
+						}
+
+						&.develop {
+							background-color: #8404be;
+						}
+
+						&.test {
+							background-color: #325bcd;
+						}
+
+						&.deploy {
+							background-color: #41bce1;
+						}
+
+						&.launch {
+							background-color: #a82be2;
+						}
+
+						&.review {
+							background-color: #ff1493;
+						}
+
+						&.complete {
+							background-color: #009400;
+						}
 					}
 
 					.items {
@@ -146,34 +206,39 @@ app-navbar {
 		}
 	}
 
-	& > .sprint {
-		.no-sprint {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			height: 100px;
-			font-size: v.$h2-font;
-			color: v.$grey-color;
+	.no-sprint {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		height: 100px;
+		font-size: v.$h2-font;
+		color: v.$grey-color;
 
-			h3 {
-				margin-bottom: 10px;
-				font-weight: 500;
+		h3 {
+			margin-bottom: 10px;
+			font-weight: 500;
+		}
+
+		.green-button {
+			color: white;
+			background-color: v.$green-color;
+			border-radius: 2px;
+			margin: unset;
+			border: none;
+			padding: 10px 20px;
+
+			&:disabled {
+				background-color: v.$disabled-background-color;
+				color: v.$disabled-color;
+				cursor: not-allowed;
 			}
+		}
 
-			.green-button {
-				color: white;
-				background-color: v.$green-color;
-				border-radius: 2px;
-				margin: unset;
-				border: none;
-				padding: 10px 20px;
-
-				&:disabled {
-					background-color: v.$disabled-background-color;
-					color: v.$disabled-color;
-					cursor: not-allowed;
-				}
+		p {
+			a {
+				color: v.$dark-green-color;
+				text-decoration: none;
 			}
 		}
 	}
@@ -224,6 +289,47 @@ app-navbar {
 			color: v.$grey-color;
 			max-width: 550px;
 		}
+	}
+
+	& > .sprint-group-title {
+		margin-bottom: 0;
+		border-radius: 12px 12px 0 0;
+
+		h2 {
+			font-size: v.$h2-font;
+			font-weight: 500;
+			margin-bottom: 0;
+		}
+	}
+
+	& > .past-sprint,
+	& > .future-sprint {
+		margin-bottom: 0;
+		border-radius: 0;
+		padding: 0 20px 20px 20px;
+
+		.sprint-round-container {
+			border: 1px solid rgba(0, 0, 0, 0.3);
+			border-radius: 15px;
+			padding: 20px;
+
+			.title {
+				.left-content {
+					h2 {
+						font-size: 15px !important;
+					}
+				}
+			}
+		}
+	}
+
+	& > .first-sprint {
+		border-radius: 0px;
+	}
+
+	& > .last-sprint {
+		border-radius: 0 0 12px 12px;
+		margin-bottom: 12px;
 	}
 }
 
