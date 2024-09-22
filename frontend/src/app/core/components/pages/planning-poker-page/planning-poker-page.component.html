@@ -13,7 +13,11 @@
 				<h1 id="user-story-title">Planning poker</h1>
 
 				<div class="buttons-header">
-					<button class="grey-button" matRipple (click)="switchSession()">Start session</button>
+					@if (inSession) {
+						<button class="grey-button" matRipple>End session</button>
+					} @else {
+						<button class="grey-button" matRipple (click)="openPopUp('createSession')">Start session</button>
+					}
 				</div>
 			</div>
 
@@ -22,7 +26,7 @@
 			}
 
 			@if (inSession) {
-				<p>Current item: pass_current_item</p>
+				<p>{{ currentUserstoryBeingVoted ? "Current item: " + currentUserstoryBeingVoted!.title : "none" }}</p>
 			}
 			<div class="hr"></div>
 		</div>
@@ -52,7 +56,7 @@
 					<div class="session_body" (click)="enterSession(session.sessionCode)">
 						<p class="session_body--td"><mat-icon>circle</mat-icon> {{ session.agenda }}</p>
 						<p class="session_body--td">{{ session.participantCount }}</p>
-						<p class="session_body--td">TODO, alterar quando o luiz muda para us</p>
+						<p class="session_body--td">{{ session.userstoryCount }}</p>
 					</div>
 				}
 			</div>
@@ -77,43 +81,51 @@
 						</div>
 					}
 				</div>
-				<div class="planning-poker_current-userstory" #expand>
-					<img
-						src="../../../../../assets/expand-icon.svg"
-						class="planning-poker_current-userstory--expand"
-						(click)="setExpandToggle()"
-					/>
-					<button class="planning-poker_button" (click)="setScoreToggle()" matRipple>Reveal votes</button>
-					<div class="planning-poker_current-userstory--title">[FEA001] New Task Registration Menu</div>
-					<div class="planning-poker_current-userstory--description">
-						Implement a new intuitive menu for task registration, aiming to improve usability and efficiency in project
-						management.
-					</div>
 
-					@if (expandToggle) {
-						<div class="hr"></div>
-						<div class="planning-poker_current-userstory--header">User story</div>
-						<div class="planning-poker_current-userstory--content">
-							<span class="planning-poker_current-userstory--span">As</span> user
-						</div>
-						<div class="planning-poker_current-userstory--content">
-							<span class="planning-poker_current-userstory--span">I want</span> user
-						</div>
-						<div class="planning-poker_current-userstory--content">
-							<span class="planning-poker_current-userstory--span">So that</span> user
+				<div class="planning-poker_current-userstory" #expand>
+					@if (currentUserstoryBeingVoted) {
+						<img
+							src="../../../../../assets/expand-icon.svg"
+							class="planning-poker_current-userstory--expand"
+							(click)="setExpandToggle()"
+						/>
+						<button class="planning-poker_button" (click)="revealVotes()" matRipple>Reveal votes</button>
+						<div class="planning-poker_current-userstory--title">{{ currentUserstoryBeingVoted.title }}</div>
+						<div class="planning-poker_current-userstory--description">{{ currentUserstoryBeingVoted.description }}</div>
+
+						@if (expandToggle) {
+							<div class="hr"></div>
+							<div class="planning-poker_current-userstory--header">User story</div>
+							<div class="planning-poker_current-userstory--content">
+								<span class="planning-poker_current-userstory--span">As</span> {{ currentUserstoryBeingVoted.storyActor }}
+							</div>
+							<div class="planning-poker_current-userstory--content">
+								<span class="planning-poker_current-userstory--span">I want</span>
+								{{ currentUserstoryBeingVoted.storyObjective }}
+							</div>
+							<div class="planning-poker_current-userstory--content">
+								<span class="planning-poker_current-userstory--span">So that</span>
+								{{ currentUserstoryBeingVoted.storyJustification }}
+							</div>
+						}
+					} @else {
+						<div class="planning-poker_no-userstory">
+							<h2>There is no User Story being voted at the moment.</h2>
+							<p>Wait for your <span>Scrum Master</span> to pick a card.</p>
 						</div>
 					}
 				</div>
+
 				<div class="planning-poker_available-cards">
 					<div class="planning-poker_available-cards--header">Choose your card</div>
 					<div class="planning-poker_available-cards--content">
 						<button
 							class="planning-poker_available-cards--card"
-							*ngFor="let card of [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?']"
-							(click)="setActiveCard(card.toString())"
-							[ngClass]="{ active: activeCard === card.toString() }"
+							*ngFor="let card of [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, null]"
+							(click)="vote(card)"
+							[ngClass]="{ active: activeCard === card }"
 						>
-							<span>{{ card }}</span> {{ card }} <span>{{ card }}</span>
+							<span>{{ card ? card : "?" }}</span> {{ card ? card : "?" }} <span>{{ card ? card : "?" }}</span>
 						</button>
 					</div>
 				</div>
@@ -130,26 +142,30 @@
 						This is a queue of issues that you will judge. Pay attention to the current issue.
 					</p>
 				</div>
-				<div class="issues-list_issue">
-					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-					<p class="issues-list_issue--type">Issue</p>
-					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
-					<p class="issues-list_issue--status-now">Voting now...</p>
-				</div>
-				<div class="issues-list_issue">
-					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-					<p class="issues-list_issue--type">Issue</p>
-					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
-					<p class="issues-list_issue--status-waiting">Waiting...</p>
-				</div>
-				<div class="issues-list_issue">
-					<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-					<p class="issues-list_issue--type">Issue</p>
-					<h2 class="issues-list_issue--title">New Task Registration Menu</h2>
-					<p class="issues-list_issue--status-waiting">Waiting...</p>
-				</div>
 
-				<div class="issues-list_add-issue">+ Add another issue</div>
+				@for (userstory of currentSessionData.userstories; track $index) {
+					<div class="issues-list_issue">
+						<img
+							class="issues-list_issue--link"
+							(click)="navigateToCurrentUserStory(userstory.eid)"
+							src="../../../../../assets/link-icon.svg"
+						/>
+						<p class="issues-list_issue--type">User story</p>
+						<h2 class="issues-list_issue--title">{{ userstory.title }}</h2>
+						<p
+							[ngClass]="
+								userstory.eid === currentSessionData.selectedUserstoryEid
+									? 'issues-list_issue--status-now'
+									: 'issues-list_issue--status-waiting'
+							"
+						>
+							{{ userstory.eid === currentSessionData.selectedUserstoryEid ? "Voting now..." : "Waiting..." }}
+						</p>
+						<button class="issues-list_issue--status-waiting add-to" matRipple (click)="setUserStory(userstory.eid)">
+							+ Add to vote
+						</button>
+					</div>
+				}
 			</div>
 		</div>
 	}

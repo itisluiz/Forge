@@ -23,6 +23,17 @@ app-navbar {
 	}
 }
 
+.add-to {
+	position: absolute;
+	right: 24px;
+	bottom: 16px;
+
+	&:hover {
+		filter: brightness(0.8);
+		background-color: v.$background-grey;
+	}
+}
+
 .grey-button {
 	padding: 8px 14px 8px 14px;
 	background-color: v.$epics-light-grey-color;
@@ -154,6 +165,34 @@ app-navbar {
 	.planning-poker {
 		padding: 0 2.5em 4em 2.5em;
 		transition: all 0.5s ease-in-out;
+
+		&_no-userstory {
+			display: flex;
+			flex-direction: column;
+			margin: 0 auto;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			text-align: center;
+
+			h2 {
+				font-size: 20px;
+				margin-bottom: 10px;
+				font-weight: 500;
+				color: v.$grey-color;
+			}
+
+			p {
+				width: 90%;
+				font-size: v.$paragraph-font;
+				color: v.$grey-color;
+
+				span {
+					color: v.$green-color;
+					font-weight: 500;
+				}
+			}
+		}
 
 		&_participants-counter {
 			display: flex;
@@ -416,11 +455,12 @@ app-navbar {
 		&--status-waiting {
 			font-size: 10px;
 			color: v.$black-color;
-			font-weight: 400;
+			font-weight: 500;
 			padding: 4px 8px;
 			background-color: #56565620;
 			border-radius: 4px;
 			width: fit-content;
+			border: none;
 		}
 	}
 

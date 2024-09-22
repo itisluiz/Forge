@@ -42,6 +42,9 @@ import { SprintPeriodStatus } from "forge-shared/enum/sprintperiodstatus.enum";
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { PlanningpokerSelfComposite } from "forge-shared/dto/composite/planningpokerselfcomposite.dto";
 import { PlanningpokerResponse } from "forge-shared/dto/response/planningpokerresponse.dto";
+import { PlanningpokerSetuserstoryRequest } from "forge-shared/dto/request/planningpokersetuserstoryrequest.dto";
+import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
+import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -77,15 +80,18 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 
 	scoreToggle: boolean = false;
 	expandToggle: boolean = false;
-	activeCard: string | null = null;
+	activeCard!: number | null;
 
 	inSession: boolean = false;
 	sessionList: boolean = false;
+	userStorySetted: boolean = false;
 
 	allSessionList: PlanningpokerSelfComposite[] = [];
 
 	currentSession: string = "";
 	currentSessionData: PlanningpokerResponse = {} as PlanningpokerResponse;
+
+	currentUserstoryBeingVoted?: UserstoryResponse;
 
 	popUpCreateSession: boolean = false;
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
@@ -132,10 +138,9 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	createSession() {
-		/* 
 		const createRequest: PlanningpokerCreatesessionRequest = {
 			agenda: this.pokerSubject.value,
-			userstoryEids: this.allUserStories,
+			sprintEid: this.currentSprint.eid,
 		};
 
 		this.planningPokerService.createSession(createRequest, this.projectEid).subscribe({
@@ -143,8 +148,8 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				this.currentSession = result.sessionCode;
 				this.inSession = true;
 				this.popUpCreateSession = false;
-				this.pullSession();
 				this.router.navigate([`/planning-poker/${this.projectEid}/${result.sessionCode}`]);
+				this.pullSession();
 
 				this.sessionIntervalId = setInterval(() => {
 					this.pullSession();
@@ -154,7 +159,38 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				console.error(error);
 			},
 		});
-		*/
+	}
+
+	vote(userScore: number | null) {
+		this.setActiveCard(userScore);
+
+		const voteRequest: PlanningpokerVoteRequest = {
+			vote: userScore,
+		};
+
+		this.planningPokerService.setVote(voteRequest, this.projectEid, this.currentSession).subscribe({
+			next: (result) => {
+				console.log("score" + userScore);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	setUserStory(userStoryEid: string) {
+		const setUserstoryRequest: PlanningpokerSetuserstoryRequest = {
+			userstoryEid: userStoryEid,
+		};
+
+		this.planningPokerService.setUserstory(setUserstoryRequest, this.projectEid, this.currentSession).subscribe({
+			next: (result) => {
+				this.getEspecificUserstory(userStoryEid);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
 	}
 
 	loadSprintData() {
@@ -195,11 +231,44 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				console.log("Atualizando...");
 				console.log(result);
 				this.currentSessionData = result;
+				if (result.selectedUserstoryEid) {
+					this.getEspecificUserstory(result.selectedUserstoryEid!);
+				}
 			},
 			error: (error) => {
 				console.error(error);
 			},
 		});
+	}
+
+	saveResult() {
+		const voteRequest: PlanningpokerVoteRequest = {
+			vote: this.activeCard,
+		};
+
+		this.planningPokerService.saveResult(voteRequest, this.projectEid, this.currentSession).subscribe({
+			next: (result) => {
+				console.log("Saving result...");
+				console.log(this.currentSessionData);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	revealVotes() {
+		this.planningPokerService.revealVotes(this.projectEid, this.currentSession).subscribe({
+			next: (result) => {
+				console.log("Revealing votes...");
+				console.log(this.currentSessionData);
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+		this.setScoreToggle();
+		this.saveResult();
 	}
 
 	getCurrentSessionList() {
@@ -210,6 +279,17 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				}
 				console.log(result.pokerSessions);
 				this.allSessionList = result.pokerSessions;
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
+	}
+
+	getEspecificUserstory(userStoryEid: string): void {
+		this.userStoryApiService.get(this.projectEid, userStoryEid).subscribe({
+			next: (userStory) => {
+				this.currentUserstoryBeingVoted = userStory;
 			},
 			error: (error) => {
 				console.error(error);
@@ -235,8 +315,13 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		this.expandToggle = !this.expandToggle;
 	}
 
-	setActiveCard(cardValue: string) {
+	setActiveCard(cardValue: number | null) {
 		this.activeCard = cardValue;
+	}
+
+	navigateToCurrentUserStory(userStoryEid: string) {
+		const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.projectEid}/${userStoryEid}/user-story`]));
+		window.open(url, "_blank");
 	}
 
 	getProject(): Observable<ProjectResponse> {
