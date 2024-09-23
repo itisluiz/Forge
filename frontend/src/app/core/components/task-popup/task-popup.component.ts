@@ -115,7 +115,6 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 			responsibleEid: responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
-			status: TaskStatus.TODO,
 			type: parseInt(this.taskForm.get("type")?.value),
 			priority: parseInt(this.taskForm.get("priority")?.value),
 		};
@@ -130,7 +129,6 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 			responsibleEid: responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
-			status: TaskStatus.TODO,
 			type: parseInt(this.taskForm.get("type")?.value),
 			priority: parseInt(this.taskForm.get("priority")?.value),
 		};

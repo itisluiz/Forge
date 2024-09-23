@@ -23,10 +23,6 @@ export const taskNewRequestJsonSchema = {
 			maxLength: 256,
 			minLength: 1,
 		},
-		status: {
-			type: "integer",
-			minimum: 1,
-		},
 		type: {
 			type: "integer",
 			minimum: 1,
@@ -36,6 +32,6 @@ export const taskNewRequestJsonSchema = {
 			minimum: 1,
 		},
 	},
-	required: ["userstoryEid", "title", "description", "status", "type", "priority"],
+	required: ["userstoryEid", "title", "description", "type", "priority"],
 	additionalProperties: false,
 };

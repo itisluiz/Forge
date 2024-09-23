@@ -36,6 +36,9 @@ import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
  *         effortScore:
  *           type: number
  *           nullable: true
+ *         freeEffortScore:
+ *           type: number
+ *           nullable: true
  *         tasks:
  *           type: array
  *           items:
@@ -61,6 +64,7 @@ export interface UserstoryResponse {
 	storyObjective: string;
 	storyJustification: string;
 	effortScore?: number;
+	freeEffortScore?: number;
 	tasks: TaskSelfComposite[];
 	createdAt: string;
 	updatedAt: string;

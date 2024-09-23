@@ -3,6 +3,11 @@ import { mapTaskSelfComposite } from "../composite/taskselfcomposite.mapper.js";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 
 export function mapUserstoryResponse(userstory: any, projectCode: string): UserstoryResponse {
+	const totalEffortScore = userstory.dataValues.tasks.reduce(
+		(acc: number, task: any) => acc + task.dataValues.complexity,
+		0,
+	);
+
 	return {
 		eid: encryptPK("userstory", userstory.dataValues.id),
 		epicEid: encryptPK("epic", userstory.dataValues.epicId),
@@ -17,6 +22,7 @@ export function mapUserstoryResponse(userstory: any, projectCode: string): Users
 		storyObjective: userstory.dataValues.storyObjective,
 		storyJustification: userstory.dataValues.storyJustification,
 		effortScore: userstory.dataValues.effortScore,
+		freeEffortScore: userstory.dataValues.effortScore ? userstory.dataValues.effortScore - totalEffortScore : undefined,
 		tasks: userstory.dataValues.tasks.map((task: any) => mapTaskSelfComposite(task, projectCode)),
 		createdAt: userstory.dataValues.createdAt,
 		updatedAt: userstory.dataValues.updatedAt,
