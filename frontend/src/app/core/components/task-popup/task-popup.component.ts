@@ -64,7 +64,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 		});
 		this.taskForm = this.formBuilder.group({
 			title: ["", [Validators.required, Validators.minLength(3)]],
-			responsible: ["", Validators.required],
+			responsible: [""],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			type: ["", Validators.required],
 			priority: ["", Validators.required],
@@ -106,9 +106,13 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	}
 
 	private buildTaskNewRequest(): TaskNewRequest {
+		let responsibleEid = this.taskForm.get("responsible")?.value;
+		if (responsibleEid === "") {
+			responsibleEid = null;
+		}
 		return {
 			userstoryEid: this.userStoryEid,
-			responsibleEid: this.taskForm.get("responsible")?.value,
+			responsibleEid: responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
 			status: TaskStatus.TODO,
@@ -118,8 +122,12 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	}
 
 	private buildTaskUpdateRequest(): TaskUpdateRequest {
+		let responsibleEid = this.taskForm.get("responsible")?.value;
+		if (responsibleEid === "") {
+			responsibleEid = null;
+		}
 		return {
-			responsibleEid: this.taskForm.get("responsible")?.value,
+			responsibleEid: responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
 			status: TaskStatus.TODO,
