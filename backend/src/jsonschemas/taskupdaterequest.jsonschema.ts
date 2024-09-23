@@ -40,7 +40,7 @@ export const taskUpdateRequestJsonSchema = {
 		},
 		complexity: {
 			type: ["number", "null"],
-			exclusiveMinimum: 0,
+			minimum: 0,
 		},
 	},
 	required: [],

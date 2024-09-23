@@ -40,13 +40,13 @@ import { TaskType } from "../../enum/tasktype.enum";
  *           nullable: true
  */
 export interface TaskUpdateRequest {
-	responsibleEid?: string;
+	responsibleEid?: string | null;
 	title?: string;
 	description?: string;
 	status?: TaskStatus;
 	type?: TaskType;
 	priority?: Priority;
-	startedAt?: string;
-	completedAt?: string;
-	complexity?: number;
+	startedAt?: string | null;
+	completedAt?: string | null;
+	complexity?: number | null;
 }

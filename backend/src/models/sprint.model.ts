@@ -62,3 +62,19 @@ export function calculateBurndownForDate(this: any, date: Date) {
 
 	return effort;
 }
+
+export function capDate(this: any, date: Date) {
+	if (!date) {
+		return null;
+	}
+
+	if (date < this.dataValues.startsAt) {
+		return this.dataValues.startsAt;
+	}
+
+	if (date > this.dataValues.endsAt) {
+		return this.dataValues.endsAt;
+	}
+
+	return date;
+}
