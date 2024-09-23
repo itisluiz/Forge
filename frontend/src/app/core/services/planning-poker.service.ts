@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { PlanningpokerResponse } from "forge-shared/dto/response/planningpokerresponse.dto";
 import { PlanningpokerSelfResponse } from "forge-shared/dto/response/planningpokerselfresponse.dto";
 import { PlanningpokerCreatesessionRequest } from "forge-shared/dto/request/planningpokercreatesessionrequest.dto";
+import { PlanningpokerSetuserstoryRequest } from "forge-shared/dto/request/planningpokersetuserstoryrequest.dto";
 import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto";
 import { PlanningpokerCreatesessionResponse } from "forge-shared/dto/response/planningpokercreatesessionresponse.dto";
 
@@ -25,36 +26,40 @@ export class PlanningPokerService {
 		);
 	}
 
-	// public setTask(setTaskRequest: PlanningpokerSettaskRequest, projectEid: string): Observable<void> {
-	// 	return this.apiService.call<void, PlanningpokerSettaskRequest>(
-	// 		"POST",
-	// 		`planningpoker/${projectEid}/settask`,
-	// 		undefined,
-	// 		setTaskRequest,
-	// 	);
-	// }
+	public setUserstory(
+		setUserstoryRequest: PlanningpokerSetuserstoryRequest,
+		projectEid: string,
+		sessionCode: string,
+	): Observable<void> {
+		return this.apiService.call<void, PlanningpokerSetuserstoryRequest>(
+			"POST",
+			`planningpoker/${projectEid}/${sessionCode}/setuserstory`,
+			undefined,
+			setUserstoryRequest,
+		);
+	}
 
-	// public revealVotes(projectEid: string, sessionCode: string): Observable<void> {
-	// 	return this.apiService.call<void>("POST", `planningpoker/${projectEid}/${sessionCode}/revealvotes`);
-	// }
+	public revealVotes(projectEid: string, sessionCode: string): Observable<void> {
+		return this.apiService.call<void>("POST", `planningpoker/${projectEid}/${sessionCode}/revealvotes`);
+	}
 
-	// public saveResult(voteRequest: PlanningpokerVoteRequest, projectEid: string, sessionCode: string): Observable<void> {
-	// 	return this.apiService.call<void, PlanningpokerVoteRequest>(
-	// 		"POST",
-	// 		`planningpoker/${projectEid}/${sessionCode}/saveresult`,
-	// 		undefined,
-	// 		voteRequest,
-	// 	);
-	// }
+	public saveResult(voteRequest: PlanningpokerVoteRequest, projectEid: string, sessionCode: string): Observable<void> {
+		return this.apiService.call<void, PlanningpokerVoteRequest>(
+			"POST",
+			`planningpoker/${projectEid}/${sessionCode}/saveresult`,
+			undefined,
+			voteRequest,
+		);
+	}
 
-	// public setVote(voteRequest: PlanningpokerVoteRequest, projectEid: string, sessionCode: string): Observable<void> {
-	// 	return this.apiService.call<void, PlanningpokerVoteRequest>(
-	// 		"POST",
-	// 		`planningpoker/${projectEid}/${sessionCode}/vote`,
-	// 		undefined,
-	// 		voteRequest,
-	// 	);
-	// }
+	public setVote(voteRequest: PlanningpokerVoteRequest, projectEid: string, sessionCode: string): Observable<void> {
+		return this.apiService.call<void, PlanningpokerVoteRequest>(
+			"POST",
+			`planningpoker/${projectEid}/${sessionCode}/vote`,
+			undefined,
+			voteRequest,
+		);
+	}
 
 	public getSessions(projectEid: string): Observable<PlanningpokerSelfResponse> {
 		return this.apiService.call<PlanningpokerSelfResponse>("GET", `planningpoker/${projectEid}/sessions`);
