@@ -68,7 +68,7 @@
 					<div class="planning-poker_participants-counter--all">
 						{{ currentSessionData.participants.length }} Participants
 					</div>
-					<div class="planning-poker_participants-counter--voted">2 Voted</div>
+					<div class="planning-poker_participants-counter--voted">{{ votedCount }} Voted</div>
 				</div>
 				<div class="planning-poker_participants-display">
 					@for (person of currentSessionData.participants; track $index) {

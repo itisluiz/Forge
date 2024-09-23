@@ -87,6 +87,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	userStorySetted: boolean = false;
 
 	allSessionList: PlanningpokerSelfComposite[] = [];
+	votedCount: number = 0;
 
 	currentSession: string = "";
 	currentSessionData: PlanningpokerResponse = {} as PlanningpokerResponse;
@@ -230,7 +231,10 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 			next: (result) => {
 				console.log("Atualizando...");
 				console.log(result);
+
 				this.currentSessionData = result;
+				this.votedCount = this.currentSessionData.participants.filter((x) => x.vote !== undefined).length;
+
 				if (result.selectedUserstoryEid) {
 					this.getEspecificUserstory(result.selectedUserstoryEid!);
 				}
