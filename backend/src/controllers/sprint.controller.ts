@@ -218,6 +218,86 @@ router.get("/api/sprint/:projectEid/:sprintEid/get", authorize(), authorizeProje
 
 /**
  * @swagger
+ * /api/sprint/{projectEid}/{sprintEid}/burndown:
+ *   get:
+ *     summary: Gets the burndown metrics for the sprint.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: sprintEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The sprint's identifier.
+ *     tags:
+ *       - sprint
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BurndownResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/sprint/:projectEid/:sprintEid/burndown", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "burndown", req, res);
+});
+
+/**
+ * @swagger
+ * /api/sprint/{projectEid}/{sprintEid}/gantt:
+ *   get:
+ *     summary: Gets the gantt metrics for the sprint.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: sprintEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The sprint's identifier.
+ *     tags:
+ *       - sprint
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GanttResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.get("/api/sprint/:projectEid/:sprintEid/gantt", authorize(), authorizeProject(), async (req, res) => {
+	await handle("sprint", "gantt", req, res);
+});
+
+/**
+ * @swagger
  * /api/sprint/{projectEid}/{sprintEid}/delete:
  *   delete:
  *     summary: Delete a sprint by its identifier.

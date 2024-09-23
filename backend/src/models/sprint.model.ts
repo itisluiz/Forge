@@ -45,3 +45,20 @@ export function getPeriodStatus(this: any) {
 
 	return SprintPeriodStatus.ONGOING;
 }
+
+export function calculateBurndownForDate(this: any, date: Date) {
+	const tasks = this.dataValues.userstories.flatMap((userstory: any) => userstory.dataValues.tasks);
+
+	if (date < this.dataValues.startsAt || date > this.dataValues.endsAt) {
+		return null;
+	}
+
+	const effort = tasks.reduce((totalEffort: number, task: any) => {
+		if (task.dataValues.createdAt < date && (!task.dataValues.completedAt || task.dataValues.completedAt > date)) {
+			return totalEffort + task.dataValues.complexity;
+		}
+		return totalEffort;
+	}, 0) as number;
+
+	return effort;
+}
