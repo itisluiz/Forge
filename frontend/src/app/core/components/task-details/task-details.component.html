@@ -36,11 +36,16 @@
 		<div class="info assignee">
 			<p>Assignee:</p>
 			<div class="content">
-				<img [src]="responsible?.gravatar" />
-				<span>
-					{{ responsible?.name }}
-					{{ responsible?.surname }}
-				</span>
+				@if (getProjectMemberFromMap(task.responsibleEid) === null) {
+					<img src="../../../../../assets/unassigned-user.svg" />
+					<p>Unassigned</p>
+				} @else {
+					<img [src]="getProjectMemberFromMap(task.responsibleEid)?.gravatar" />
+					<p>
+						{{ getProjectMemberFromMap(task.responsibleEid)?.name }}
+						{{ getProjectMemberFromMap(task.responsibleEid)?.surname }}
+					</p>
+				}
 			</div>
 		</div>
 
@@ -67,11 +72,16 @@
 			<div class="comment">
 				<div class="user">
 					<div class="id">
-						<img [src]="responsible?.gravatar" />
-						<p>
-							{{ responsible?.name }}
-							{{ responsible?.surname }}
-						</p>
+						@if (responsible === null) {
+							<img src="../../../../../assets/unassigned-user.svg" />
+							<p>User</p>
+						} @else {
+							<img [src]="responsible.gravatar" />
+							<p>
+								{{ responsible.name }}
+								{{ responsible.surname }}
+							</p>
+						}
 						<span>1 hour ago</span>
 					</div>
 					<div class="actions">
@@ -84,7 +94,7 @@
 			</div>
 		</div>
 		<div class="input-comment">
-			<img src="../../../../../assets/image-fake.svg" />
+			<img src="../../../../../assets/unassigned-user.svg" />
 			<input type="text" placeholder="Add a comment.." />
 		</div>
 		<div class="hr"></div>

@@ -20,7 +20,7 @@
 			<div class="input-wrapper">
 				<label for="responsible">Responsible</label>
 				<select id="responsible" name="responsible" formControlName="responsible">
-					<option value="">Select the responsible for the task</option>
+					<option value="">Unassigned</option>
 					<option *ngFor="let member of projectMembers" [value]="member.eid">{{ member.name }} {{ member.surname }}</option>
 				</select>
 			</div>
