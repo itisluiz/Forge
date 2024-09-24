@@ -73,8 +73,8 @@
 				<div class="planning-poker_participants-display">
 					@for (person of currentSessionData.participants; track $index) {
 						<div class="planning-poker_participants-display_wrapper">
-							@if (scoreToggle) {
-								<div class="planning-poker_participants-display_score">{{ person.vote }}</div>
+							@if (person.vote !== undefined && currentSessionData.revealed) {
+								<div class="planning-poker_participants-display_score">{{ person.vote | pokerScore }}</div>
 							}
 							<img [src]="person.gravatar" class="planning-poker_participants-display_avatar" />
 							<div class="planning-poker_participants-display_name">{{ person.name }}</div>
@@ -89,9 +89,13 @@
 							class="planning-poker_current-userstory--expand"
 							(click)="setExpandToggle()"
 						/>
-						<button class="planning-poker_button" (click)="revealVotes()" matRipple>Reveal votes</button>
+						<button class="planning-poker_button" (click)="revealVotes()" [hidden]="currentSessionData.revealed" matRipple>
+							Reveal votes
+						</button>
 						<div class="planning-poker_current-userstory--title">{{ currentUserstoryBeingVoted.title }}</div>
-						<div class="planning-poker_current-userstory--description">{{ currentUserstoryBeingVoted.description }}</div>
+						<div class="planning-poker_current-userstory--description">
+							{{ currentUserstoryBeingVoted.description | maxLength: 86 }}
+						</div>
 
 						@if (expandToggle) {
 							<div class="hr"></div>
@@ -120,6 +124,8 @@
 					<div class="planning-poker_available-cards--header">Choose your card</div>
 					<div class="planning-poker_available-cards--content">
 						<button
+							[disabled]="currentSessionData.revealed || !currentSessionData.selectedUserstoryEid"
+							[class.clickable]="!currentSessionData.revealed && currentSessionData.selectedUserstoryEid"
 							class="planning-poker_available-cards--card"
 							*ngFor="let card of [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, null]"
 							(click)="vote(card)"

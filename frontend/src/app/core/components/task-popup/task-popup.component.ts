@@ -18,6 +18,9 @@ import { TaskApiService } from "../../services/task-api.service";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectApiService } from "../../services/project-api.service";
 import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
+import { UserstoryApiService } from "../../services/userstory-api.service";
+import { MatSliderModule } from "@angular/material/slider";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @Component({
 	selector: "app-task-popup",
@@ -33,6 +36,8 @@ import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dt
 		MatFormFieldModule,
 		MatInputModule,
 		MatButtonModule,
+		MatSliderModule,
+		MatProgressBarModule,
 	],
 	templateUrl: "./task-popup.component.html",
 	styleUrl: "./task-popup.component.scss",
@@ -45,20 +50,24 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() handleTaskAndClosePopupEmitter: EventEmitter<TaskResponse> = new EventEmitter();
 	@Output() handleEditedTaskAndClosePopupEmitter: EventEmitter<void> = new EventEmitter();
+	userStory: UserstoryResponse | null = null;
 	popUpActive: boolean = false;
 	taskForm!: FormGroup;
 	creationFailed: boolean = false;
 	formSubmitted: boolean = false;
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 	projectMembers: ProjectMemberComposite[] = [];
+	maxComplexity: number = 0;
 
 	constructor(
 		private formBuilder: FormBuilder,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
+		private userstoryApiService: UserstoryApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.loadUserStory();
 		this.getProject().subscribe((project) => {
 			this.projectMembers = project.members;
 		});
@@ -68,6 +77,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			type: ["", Validators.required],
 			priority: ["", Validators.required],
+			complexity: [undefined, this.isEditMode ? Validators.required : undefined],
 		});
 		if (this.isEditMode) {
 			this.taskForm.patchValue({
@@ -76,6 +86,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 				description: this.taskEditData.description,
 				type: this.taskEditData.type.toString(),
 				priority: this.taskEditData.priority.toString(),
+				complexity: this.taskEditData.complexity ?? 0,
 			});
 		}
 	}
@@ -89,6 +100,16 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	closePopUp() {
 		this.taskForm.reset();
 		this.closePopUpEmitter.emit();
+	}
+
+	loadUserStory() {
+		const userStoryEid = this.taskEditData?.userstoryEid || this.userStoryEid;
+		if (userStoryEid) {
+			this.userstoryApiService.get(this.projectEid, userStoryEid).subscribe((userStory) => {
+				this.userStory = userStory;
+				this.maxComplexity = (userStory.freeEffortScore ?? 0) + (this.taskEditData?.complexity ?? 0);
+			});
+		}
 	}
 
 	submitTaskForm() {
@@ -131,6 +152,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 			description: this.taskForm.get("description")?.value,
 			type: parseInt(this.taskForm.get("type")?.value),
 			priority: parseInt(this.taskForm.get("priority")?.value),
+			complexity: this.isEditMode ? parseInt(this.taskForm.get("complexity")?.value) : undefined,
 		};
 	}
 

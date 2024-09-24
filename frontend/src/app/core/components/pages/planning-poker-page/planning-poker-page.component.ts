@@ -45,6 +45,7 @@ import { PlanningpokerResponse } from "forge-shared/dto/response/planningpokerre
 import { PlanningpokerSetuserstoryRequest } from "forge-shared/dto/request/planningpokersetuserstoryrequest.dto";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto";
+import { PokerScorePipe } from "../../../pipes/pokerscore.pipe";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -68,6 +69,7 @@ import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpoker
 		PopupComponent,
 		InputComponent,
 		MatCheckboxModule,
+		PokerScorePipe,
 	],
 	templateUrl: "./planning-poker-page.component.html",
 	styleUrl: "./planning-poker-page.component.scss",
@@ -80,7 +82,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 
 	scoreToggle: boolean = false;
 	expandToggle: boolean = false;
-	activeCard!: number | null;
+	activeCard: number | null | undefined;
 
 	inSession: boolean = false;
 	sessionList: boolean = false;
@@ -175,6 +177,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 			},
 			error: (error) => {
 				console.error(error);
+				this.setActiveCard(undefined);
 			},
 		});
 	}
@@ -266,13 +269,13 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 			next: (result) => {
 				console.log("Revealing votes...");
 				console.log(this.currentSessionData);
+				this.saveResult();
 			},
 			error: (error) => {
 				console.error(error);
 			},
 		});
 		this.setScoreToggle();
-		this.saveResult();
 	}
 
 	getCurrentSessionList() {
@@ -319,7 +322,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		this.expandToggle = !this.expandToggle;
 	}
 
-	setActiveCard(cardValue: number | null) {
+	setActiveCard(cardValue: number | null | undefined) {
 		this.activeCard = cardValue;
 	}
 

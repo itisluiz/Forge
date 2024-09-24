@@ -54,6 +54,22 @@
 			<span>{{ task.createdAt | date }}</span>
 		</div>
 
+		<div class="info complexity" *ngIf="userStory">
+			<p>Effort score:</p>
+			@if (!userStory.effortScore) {
+				<span class="warning">The user story hasn't been evaluated!</span>
+			} @else if (task.complexity === null || task.complexity === undefined) {
+				<span class="warning">This task hasn't been evaluated!</span>
+			} @else {
+				<span class="effort-rating">
+					<b>{{ task.complexity }}</b>
+					<p>out of</p>
+					<b>{{ userStory.effortScore }}</b>
+					<mat-progress-bar mode="determinate" [value]="(task.complexity! / userStory.effortScore) * 100" />
+				</span>
+			}
+		</div>
+
 		<div class="info user-story-link" *ngIf="userStory">
 			<p>User story:</p>
 			<span (click)="navigateToUserStory(userStory.eid)">
@@ -61,6 +77,7 @@
 				<mat-icon>open_in_new</mat-icon>
 			</span>
 		</div>
+
 		<div class="buttons-wrapper">
 			<button id="button-edit-task" class="grey-button" (click)="openPopUpEditTask()">Edit Task</button>
 			<mat-icon (click)="openPopUpDeleteTask()">delete</mat-icon>

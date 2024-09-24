@@ -367,7 +367,7 @@ app-navbar {
 					}
 				}
 
-				&:hover {
+				&.clickable:hover {
 					background-color: v.$dark-green-color;
 					color: v.$white-color;
 					filter: none;
