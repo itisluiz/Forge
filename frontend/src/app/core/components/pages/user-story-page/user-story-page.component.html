@@ -23,7 +23,7 @@
 						</button>
 					</div>
 				</div>
-				<p>{{ userStory.description }}</p>
+				<p>{{ userStory.description | maxLength: 128 }}</p>
 				<hr />
 			</div>
 

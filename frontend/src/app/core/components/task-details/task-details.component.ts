@@ -12,11 +12,12 @@ import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
 import { TaskApiService } from "../../services/task-api.service";
 import { TaskPopupComponent } from "../task-popup/task-popup.component";
 import { ProjectApiService } from "../../services/project-api.service";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
 	selector: "app-task-details",
 	standalone: true,
-	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent, TaskPopupComponent],
+	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent, TaskPopupComponent, MatProgressBar],
 	templateUrl: "./task-details.component.html",
 	styleUrl: "./task-details.component.scss",
 })

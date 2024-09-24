@@ -74,6 +74,10 @@
 			position: relative;
 			margin-bottom: 15px;
 
+			& > .warning {
+				color: v.$alert-color;
+			}
+
 			& > p {
 				font-size: v.$paragraph-font;
 				color: v.$grey-color;
@@ -91,6 +95,21 @@
 
 				img {
 					margin-right: 7px;
+				}
+			}
+
+			& > .effort-rating {
+				& > b {
+					color: v.$dark-green-color;
+				}
+
+				& > p {
+					margin: 0 0.35em;
+				}
+
+				& > mat-progress-bar {
+					margin-left: 1em;
+					align-self: center;
 				}
 			}
 		}

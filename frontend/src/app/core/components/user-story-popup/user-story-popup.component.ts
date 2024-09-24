@@ -81,7 +81,7 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 			soThat: ["", Validators.required],
 			businessNarrative: ["", Validators.required],
 			premisses: ["", Validators.required],
-			priority: ["", Validators.required],
+			priority: ["1", Validators.required],
 		});
 		this.secondFormGroup = this.formBuilder.group({
 			acceptanceCriteria: this.formBuilder.array([this.initCriteria()]),

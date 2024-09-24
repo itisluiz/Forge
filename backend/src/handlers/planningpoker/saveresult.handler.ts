@@ -34,6 +34,18 @@ export default async function (req: Request, res: Response) {
 			{ transaction },
 		);
 
+		await sequelize.models["task"].update(
+			{
+				complexity: null,
+			},
+			{
+				where: {
+					userstoryId: userstory.dataValues.id,
+				},
+				transaction,
+			},
+		);
+
 		await userstory.save({ transaction });
 		await transaction.commit();
 	} catch (error) {

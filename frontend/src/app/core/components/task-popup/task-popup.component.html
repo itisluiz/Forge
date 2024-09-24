@@ -51,6 +51,26 @@
 					<option value="3">High</option>
 				</select>
 			</div>
+			@if (userStory && isEditMode) {
+				<div class="input-wrapper">
+					<label for="task-complexity">Effort Score</label>
+					@if (!userStory.effortScore) {
+						<div class="warning">The user story hasn't been evaluated!</div>
+						<div class="tip">Evaluate it via a <a href="/{{ projectEid }}/planning-poker">Planning Poker</a> session</div>
+					} @else {
+						<mat-slider min="0" step="1" [max]="maxComplexity" showTickMarks>
+							<input matSliderThumb id="task-complexity" name="task-complexity" formControlName="complexity" />
+						</mat-slider>
+						<span class="effort-rating">
+							<b>{{ taskForm.get("complexity")?.value }}</b>
+							<p>out of</p>
+							<b>{{ maxComplexity }}</b>
+						</span>
+					}
+				</div>
+			} @else if (!userStory && isEditMode) {
+				<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+			}
 		</div>
 		<div class="pop-up-footer">
 			<button type="submit" *ngIf="!isEditMode" [disabled]="taskForm.invalid">Create</button>
