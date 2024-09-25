@@ -16,6 +16,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.DATE,
 			allowNull: false,
 		},
+		targetVelocity: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+		},
 	});
 }
 

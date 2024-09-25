@@ -40,6 +40,7 @@ export default async function (req: Request, res: Response) {
 				startsAt: sprintNewRequest.startsAt,
 				endsAt: sprintNewRequest.endsAt,
 				esprintstatusId: sprintNewRequest.status,
+				targetVelocity: sprintNewRequest.targetVelocity,
 			},
 			{
 				transaction,

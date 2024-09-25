@@ -9,6 +9,7 @@ export function mapSprintResponse(sprint: any, projectCode: string): SprintRespo
 		endsAt: sprint.dataValues.endsAt,
 		status: sprint.dataValues.esprintstatusId,
 		periodStatus: sprint.getPeriodStatus(),
+		targetVelocity: sprint.dataValues.targetVelocity,
 		tasks: sprint.dataValues.userstories.flatMap((sprint: any) =>
 			sprint.dataValues.tasks.map((task: any) => mapTaskSelfComposite(task, projectCode)),
 		),

@@ -23,6 +23,9 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *           $ref: '#/components/schemas/SprintStatus'
  *         periodStatus:
  *           $ref: '#/components/schemas/SprintPeriodStatus'
+ *         targetVelocity:
+ *           type: number
+ *           nullable: true
  */
 export interface SprintSelfComposite {
 	eid: string;
@@ -31,4 +34,5 @@ export interface SprintSelfComposite {
 	endsAt: string;
 	status: SprintStatus;
 	periodStatus: SprintPeriodStatus;
+	targetVelocity?: number;
 }
