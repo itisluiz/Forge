@@ -54,6 +54,7 @@ app-navbar {
 			grid-template-rows: auto auto;
 			grid-template-areas:
 				"top right"
+				"middle right"
 				"bottom right";
 
 			.breadcrumber {
@@ -87,6 +88,31 @@ app-navbar {
 				}
 			}
 
+			p.user-story-priority {
+				grid-area: middle;
+				text-transform: capitalize;
+				font-size: 10px;
+				padding: 0 15px 0 15px;
+				border: 2px solid #d28614;
+				border-radius: 4px;
+				width: fit-content;
+				margin: 10px 0 5px 0;
+
+				&-low {
+					color: #72c800;
+					border-color: #72c800;
+				}
+
+				&-medium {
+					color: #d28614;
+				}
+
+				&-high {
+					color: #ae0505;
+					border-color: #ae0505;
+				}
+			}
+
 			h1 {
 				grid-area: bottom;
 				font-size: v.$title-font;
@@ -95,6 +121,7 @@ app-navbar {
 			}
 
 			.buttons-header {
+				margin-top: 40px;
 				grid-area: right;
 				align-self: center;
 				justify-self: end;

@@ -53,6 +53,7 @@ import { SprintPeriodStatusPipe } from "../../../pipes/sprint-periodstatus.pipe"
 import { SprintPeriodStatusClassPipe } from "../../../pipes/sprint-periodstatus-class.pipe";
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { MatMenuModule } from "@angular/material/menu";
+import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component";
 
 @Component({
 	selector: "app-backlog-page",
@@ -67,6 +68,7 @@ import { MatMenuModule } from "@angular/material/menu";
 		MaxLengthPipe,
 		TaskDetailsComponent,
 		TaskPopupComponent,
+		SprintPopupComponent,
 		DaysDifferencePipe,
 		SprintStatusPipe,
 		SprintStatusClassPipe,
@@ -153,6 +155,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				sprintSelfResponse.sprints.forEach((sprint) => {
 					this.loadDetailedSprint(sprint.eid);
 				});
+				this.loadBacklogData();
 			},
 		});
 	}
@@ -168,23 +171,46 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				this.userStoriesPerSprint[eid] = userStoryResponse.userstories;
 			},
 		});
-		this.loadBacklogData();
 	}
 
 	loadBacklogData() {
-		this.epicApiService
+		const allEpics$: Observable<EpicSelfComposite[]> = this.epicApiService
 			.getEpics(this.projectEid)
-			.pipe(switchMap((epicResponse) => this.epicApiService.getEpic(this.projectEid, epicResponse.epics[0].eid)))
-			.subscribe({
-				next: (epicResponse) => {
-					this.allUserStories = epicResponse.userstories;
-					this.userStoriesInBacklog = this.allUserStories.filter((userStory) => !userStory.sprintEid);
-					this.loadTasks();
-				},
-				error: (err) => {
-					console.error("Error loading backlog data", err);
-				},
-			});
+			.pipe(map((response: EpicSelfResponse) => response.epics));
+
+		const allUserStories$: Observable<UserstorySelfComposite[]> = allEpics$.pipe(
+			mergeMap((epics: EpicSelfComposite[]) => {
+				const userStoriesObservables = epics.map((epic) => this.getUserStories(epic.eid));
+				return forkJoin(userStoriesObservables).pipe(
+					map((userStoriesArray: UserstorySelfComposite[][]) => userStoriesArray.flat()),
+				);
+			}),
+		);
+
+		allUserStories$.subscribe({
+			next: (allUserStories) => {
+				this.allUserStories = this.sortUserStoriesByPriority(allUserStories);
+				this.userStoriesInBacklog = this.sortUserStoriesByPriority(
+					this.allUserStories.filter((userStory) => !userStory.sprintEid),
+				);
+				this.loadTasks();
+			},
+			error: (err) => {
+				console.error("Error loading backlog data", err);
+			},
+		});
+	}
+
+	sortUserStoriesByPriority(userStories: UserstorySelfComposite[]): UserstorySelfComposite[] {
+		return userStories.sort((a, b) => b.priority - a.priority);
+	}
+
+	getUserStories(epicEid: string): Observable<UserstorySelfComposite[]> {
+		return this.epicApiService.getEpic(this.projectEid, epicEid).pipe(
+			map((epicResponse: EpicResponse) => {
+				return epicResponse.userstories;
+			}),
+		);
 	}
 
 	loadTasks() {
@@ -212,12 +238,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	popUpAddToSprint: boolean = false;
 	popUpCreateTask: boolean = false;
 	popUpCreateSprint: boolean = false;
+	popUpUpdateSprint: boolean = false;
 
 	addToSprintForm!: FormGroup;
-	createSprintForm!: FormGroup;
 
 	eidSelectedUserStory: string = "";
 	selectedTask!: TaskResponse;
+	eidSelectedSprint: string = "";
 
 	isPanelDisabled: boolean = false;
 	toggleExpansionPanel() {
@@ -253,33 +280,18 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	openPopUpCreateSprint() {
 		this.popUpCreateSprint = true;
 		document.body.style.overflow = "hidden";
-		this.buildCreateSprintForm();
 	}
 
-	buildCreateSprintForm() {
-		this.createSprintForm = this.formBuilder.group({
-			startDate: [this.getCurrentDate(), Validators.required],
-			endDate: [this.getDateAfterDays(15), Validators.required],
-		});
+	openPopUpUpdateSprint(sprintEid: string) {
+		this.eidSelectedSprint = sprintEid;
+		this.popUpUpdateSprint = true;
+		document.body.style.overflow = "hidden";
 	}
 
 	openPopUpCreateTask(userStoryEid: string) {
 		this.eidSelectedUserStory = userStoryEid;
 		this.popUpCreateTask = true;
 		document.body.style.overflow = "hidden";
-	}
-
-	private getCurrentDate(): string {
-		const today = new Date();
-		today.setHours(today.getHours() - 3); // Brazil time
-		return today.toISOString().split("T")[0];
-	}
-
-	private getDateAfterDays(days: number): string {
-		const date = new Date();
-		date.setDate(date.getDate() + days);
-		date.setHours(date.getHours() - 3); // Brazil time
-		return date.toISOString().split("T")[0];
 	}
 
 	// Close Popups
@@ -315,7 +327,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		document.body.style.overflow = "auto";
 	}
 
-	// Submit Forms
+	closePopUpUpdateSprint() {
+		this.popUpUpdateSprint = false;
+		document.body.style.overflow = "auto";
+	}
+
+	// Submit Forms and Update Data
 
 	submitAddToSprintForm() {
 		const sprintEid = this.addToSprintForm.get("sprint");
@@ -333,39 +350,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			});
 	}
 
-	submitCreateSprintForm() {
-		const startDateValue = this.createSprintForm.get("startDate")?.value;
-		const endDateValue = this.createSprintForm.get("endDate")?.value;
-
-		const startDate = this.convertLocalToUTCISO(startDateValue);
-		const endDate = this.convertLocalToUTCISO(endDateValue);
-
-		const sprintNewRequest = {
-			startsAt: startDate,
-			endsAt: endDate,
-			status: SprintStatus.PLAN,
-		} as SprintNewRequest;
-
-		this.sprintApiService.newSprint(sprintNewRequest, this.projectEid).subscribe({
-			next: (sprint) => {
-				this.loadSprintData();
-				this.closePopUpCreateSprint();
-			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
-		});
-
-		this.closePopUpCreateSprint();
-	}
-
-	private convertLocalToUTCISO(date: string): string {
-		const localDate = new Date(date);
-		const localTimezoneOffset = localDate.getTimezoneOffset();
-		const localDateUTC = new Date(localDate.getTime() + localTimezoneOffset * 60000);
-		return localDateUTC.toISOString();
-	}
-
 	addNewTaskInDataSource(task: TaskResponse) {
 		const dataSource = this.getTasksDataSource(task.userstoryEid);
 		dataSource.data = [...dataSource.data, task];
@@ -378,6 +362,17 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		dataSource.data = dataSource.data.filter((t) => t.eid !== task.eid);
 		this.tasksDataSources[task.userstoryEid] = dataSource;
 		this.closePopUp();
+	}
+
+	getTasksDataSource(userStoryEid: string): MatTableDataSource<TaskSelfComposite> {
+		this.setStatusStyle();
+		return this.tasksDataSources[userStoryEid];
+	}
+
+	loadSprintDataAndClosePopUp() {
+		this.loadSprintData();
+		this.closePopUpCreateSprint();
+		this.closePopUpUpdateSprint();
 	}
 
 	// Styling
@@ -476,11 +471,6 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		}
 
 		return { color, background, textDecoration, fontWeight };
-	}
-
-	getTasksDataSource(userStoryEid: string): MatTableDataSource<TaskSelfComposite> {
-		this.setStatusStyle();
-		return this.tasksDataSources[userStoryEid];
 	}
 
 	typeParser(type: number): string {

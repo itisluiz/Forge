@@ -44,22 +44,6 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("The user story you specified does not exist in the project");
 		}
 
-		let startedAt: Date | null = null;
-		let completedAt: Date | null = null;
-
-		switch (taskNewRequest.status) {
-			case TaskStatus.INPROGRESS:
-			case TaskStatus.AVAILABLETOREVIEW:
-			case TaskStatus.REVIEWING:
-				startedAt = new Date();
-				break;
-			case TaskStatus.DONE:
-			case TaskStatus.CANCELLED:
-				completedAt = new Date();
-				startedAt = completedAt;
-				break;
-		}
-
 		task = await sequelize.models["task"].create(
 			{
 				userstoryId: userstoryId,
@@ -67,11 +51,9 @@ export default async function (req: Request, res: Response) {
 				index: authProject.project.dataValues.taskIndex,
 				title: taskNewRequest.title,
 				description: taskNewRequest.description,
-				etaskstatusId: taskNewRequest.status,
+				etaskstatusId: TaskStatus.TODO,
 				etasktypeId: taskNewRequest.type,
 				epriorityId: taskNewRequest.priority,
-				startedAt: startedAt,
-				completedAt: completedAt,
 			},
 			{ transaction },
 		);

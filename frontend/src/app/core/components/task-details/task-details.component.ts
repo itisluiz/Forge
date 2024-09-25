@@ -11,11 +11,13 @@ import { IconPipe } from "../../pipes/icon.pipe";
 import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
 import { TaskApiService } from "../../services/task-api.service";
 import { TaskPopupComponent } from "../task-popup/task-popup.component";
+import { ProjectApiService } from "../../services/project-api.service";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
 	selector: "app-task-details",
 	standalone: true,
-	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent, TaskPopupComponent],
+	imports: [CommonModule, MatIcon, PriorityPipe, IconPipe, DeletePopupComponent, TaskPopupComponent, MatProgressBar],
 	templateUrl: "./task-details.component.html",
 	styleUrl: "./task-details.component.scss",
 })
@@ -27,6 +29,7 @@ export class TaskDetailsComponent implements OnInit {
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() closePopUpEmitterDeletedTask = new EventEmitter<TaskResponse>();
 	@Output() closePopUpEmitterEditedTask = new EventEmitter<TaskResponse>();
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
 	popUpDeleteTask: boolean = false;
 	popUpEditTask: boolean = false;
@@ -38,10 +41,27 @@ export class TaskDetailsComponent implements OnInit {
 		private router: Router,
 		private userstoryApiService: UserstoryApiService,
 		private taskApiService: TaskApiService,
+		private projectApiService: ProjectApiService,
 	) {}
 
 	ngOnInit(): void {
 		this.loadUserStory();
+		this.loadMembersData();
+	}
+
+	loadMembersData() {
+		this.projectApiService.getEspecificProject(this.projectEid).subscribe({
+			next: (project) => {
+				project.members.forEach((member) => {
+					this.projectMembersMap[member.eid] = member;
+				});
+			},
+		});
+	}
+
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
+		return this.projectMembersMap[userEid] || null;
 	}
 
 	loadUserStory() {
@@ -55,6 +75,7 @@ export class TaskDetailsComponent implements OnInit {
 	loadEditedTask() {
 		this.taskApiService.getTask(this.projectEid, this.task.eid).subscribe((task) => {
 			this.task = task;
+			this.loadMembersData();
 			this.closePopUpEditTask();
 		});
 	}
