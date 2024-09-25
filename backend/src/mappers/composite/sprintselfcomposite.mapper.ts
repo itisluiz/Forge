@@ -9,5 +9,6 @@ export function mapSprintSelfComposite(sprint: any, index?: number): SprintSelfC
 		endsAt: sprint.dataValues.endsAt,
 		status: sprint.dataValues.esprintstatusId,
 		periodStatus: sprint.getPeriodStatus(),
+		targetVelocity: sprint.dataValues.targetVelocity,
 	};
 }

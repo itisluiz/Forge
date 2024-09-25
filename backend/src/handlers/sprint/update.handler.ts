@@ -35,6 +35,7 @@ export default async function (req: Request, res: Response) {
 				...(sprintUpdateRequest.startsAt && { startsAt: sprintUpdateRequest.startsAt }),
 				...(sprintUpdateRequest.endsAt && { endsAt: sprintUpdateRequest.endsAt }),
 				...(sprintUpdateRequest.status && { esprintstatusId: sprintUpdateRequest.status }),
+				...(sprintUpdateRequest.targetVelocity !== undefined && { targetVelocity: sprintUpdateRequest.targetVelocity }),
 			},
 			{ transaction },
 		);
