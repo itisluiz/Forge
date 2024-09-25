@@ -20,7 +20,7 @@
 			<div class="input-wrapper">
 				<label for="responsible">Responsible</label>
 				<select id="responsible" name="responsible" formControlName="responsible">
-					<option value="">Unassigned</option>
+					<option [value]="null">Unassigned</option>
 					<option *ngFor="let member of projectMembers" [value]="member.eid">{{ member.name }} {{ member.surname }}</option>
 				</select>
 			</div>
@@ -62,9 +62,13 @@
 							<input matSliderThumb id="task-complexity" name="task-complexity" formControlName="complexity" />
 						</mat-slider>
 						<span class="effort-rating">
-							<b>{{ taskForm.get("complexity")?.value }}</b>
-							<p>out of</p>
-							<b>{{ maxComplexity }}</b>
+							@if (taskForm.get("complexity")?.value !== null) {
+								<b>{{ taskForm.get("complexity")?.value }}</b>
+								<p>out of</p>
+								<b>{{ maxComplexity }}</b>
+							} @else {
+								<p class="warning">Task not yet evaluated!</p>
+							}
 						</span>
 					}
 				</div>
