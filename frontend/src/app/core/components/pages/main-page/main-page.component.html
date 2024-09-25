@@ -1,41 +1,69 @@
 <app-navbar></app-navbar>
 <div class="main-page-content">
-	<div class="grid-container">
-		<div class="agile-process-grid">
-			<div class="chart">
-				<app-agile-process></app-agile-process>
+	@if (currentSprint.eid) {
+		<div class="grid-container">
+			<div class="agile-process-grid">
+				<div class="chart">
+					<select name="" id="" (change)="setSprint($event)">
+						@for (sprint of currentAndFutureSprints; track $index) {
+							<option value="{{ sprint.eid }}" [selected]="sprint.index === currentSprint.index">
+								Sprint {{ sprint.index }}
+							</option>
+						}
+					</select>
+					<app-agile-process [sprintStatus]="selectedSprint.status"></app-agile-process>
 
-				<div class="right-content">
-					<div class="upper">
-						<h1>Agile process - Sprint 1</h1>
-						<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
-					</div>
-					<div class="lower">
-						<p>View your epic's process</p>
-						<img src="../../../../../assets/fake-slider.svg" alt="" />
+					<div class="right-content">
+						<div class="upper">
+							<h1>Agile process - Sprint {{ selectedSprint.index }}</h1>
+							<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
+						</div>
+						<div class="lower">
+							<p>View your epic's process</p>
+							<img src="../../../../../assets/fake-slider.svg" alt="" />
+						</div>
 					</div>
 				</div>
+				<div class="ai-feedback">
+					<hr />
+					<h3>Project Indicators Analysis</h3>
+					<p>
+						Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
+						Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
+					</p>
+				</div>
 			</div>
-			<div class="ai-feedback">
-				<hr />
-				<h3>Project Indicators Analysis</h3>
-				<p>
-					Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
-					Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
-				</p>
+			<div class="burndown-grid">
+				<h1>Burndown Chart - Sprint {{ currentSprint.index }}</h1>
+				<img class="fake-burn-down" src="../../../../../assets/fake-burn-down.svg" alt="" />
+			</div>
+			<div class="metrics-grid">
+				<h1>Metrics</h1>
+				<div class="lead-time-card">
+					<h2>Lead Time</h2>
+					<p>{{ leadTimeDaysAverage }} days</p>
+				</div>
+				<div class="sprint-velocity-card">
+					<h2>Sprint Velocity</h2>
+					<p>{{ sprintVelocity }} points</p>
+				</div>
+			</div>
+			<!-- <div class="activity-grid">
+				<h1>Recent activity</h1>
+				<img src="../../../../../assets/fake-recent-activity.svg" alt="" />
+			</div> -->
+			<div class="gantt-grid">
+				<h1>Gantt Chart - Sprint {{ currentSprint.index }}</h1>
+				<img src="../../../../../assets/fake-gantt.svg" alt="" />
 			</div>
 		</div>
-		<div class="burndown-grid">
-			<h1>Burndown Chart - Sprint 1</h1>
-			<img class="fake-burn-down" src="../../../../../assets/fake-burn-down.svg" alt="" />
+	} @else {
+		<div class="no-sprint">
+			<mat-icon>warning</mat-icon>
+			<p>No active sprint</p>
+			<p>
+				Please, <a [routerLink]="['/', projectEid, 'backlog']">go to the backlog page</a> and create a new sprint from there.
+			</p>
 		</div>
-		<div class="activity-grid">
-			<h1>Recent activity</h1>
-			<img src="../../../../../assets/fake-recent-activity.svg" alt="" />
-		</div>
-		<div class="gantt-grid">
-			<h1>Gantt Chart - Sprint 1</h1>
-			<img src="../../../../../assets/fake-gantt.svg" alt="" />
-		</div>
-	</div>
+	}
 </div>

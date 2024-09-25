@@ -112,10 +112,17 @@
 										<ng-container matColumnDef="assignee">
 											<th mat-header-cell *matHeaderCellDef>Responsible</th>
 											<td mat-cell *matCellDef="let element">
-												<div class="assignee-container">
-													<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
-													<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
-												</div>
+												@if (element.responsibleEid === null) {
+													<div class="assignee-container">
+														<img src="../../../../../assets/unassigned-user.svg" />
+														<p>Unassigned</p>
+													</div>
+												} @else {
+													<div class="assignee-container">
+														<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+														<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+													</div>
+												}
 											</td>
 										</ng-container>
 
@@ -221,10 +228,17 @@
 									<ng-container matColumnDef="assignee">
 										<th mat-header-cell *matHeaderCellDef>Responsible</th>
 										<td mat-cell *matCellDef="let element">
-											<div class="assignee-container">
-												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
-												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
-											</div>
+											@if (element.responsibleEid === null) {
+												<div class="assignee-container">
+													<img src="../../../../../assets/unassigned-user.svg" />
+													<p>Unassigned</p>
+												</div>
+											} @else {
+												<div class="assignee-container">
+													<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+													<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+												</div>
+											}
 										</td>
 									</ng-container>
 
@@ -399,10 +413,17 @@
 								<ng-container matColumnDef="assignee">
 									<th mat-header-cell *matHeaderCellDef>Responsible</th>
 									<td mat-cell *matCellDef="let element">
-										<div class="assignee-container">
-											<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
-											<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
-										</div>
+										@if (element.responsibleEid === null) {
+											<div class="assignee-container">
+												<img src="../../../../../assets/unassigned-user.svg" />
+												<p>Unassigned</p>
+											</div>
+										} @else {
+											<div class="assignee-container">
+												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+											</div>
+										}
 									</td>
 								</ng-container>
 
