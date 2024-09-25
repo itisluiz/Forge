@@ -73,11 +73,11 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 		});
 		this.taskForm = this.formBuilder.group({
 			title: ["", [Validators.required, Validators.minLength(3)]],
-			responsible: [""],
+			responsible: [null],
 			description: ["", [Validators.required, Validators.minLength(3)]],
 			type: ["", Validators.required],
 			priority: ["", Validators.required],
-			complexity: [undefined, this.isEditMode ? Validators.required : undefined],
+			complexity: [],
 		});
 		if (this.isEditMode) {
 			this.taskForm.patchValue({
@@ -86,7 +86,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 				description: this.taskEditData.description,
 				type: this.taskEditData.type.toString(),
 				priority: this.taskEditData.priority.toString(),
-				complexity: this.taskEditData.complexity ?? 0,
+				complexity: this.taskEditData.complexity,
 			});
 		}
 	}
@@ -127,13 +127,11 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	}
 
 	private buildTaskNewRequest(): TaskNewRequest {
-		let responsibleEid = this.taskForm.get("responsible")?.value;
-		if (responsibleEid === "") {
-			responsibleEid = null;
-		}
+		const responsibleEid = this.taskForm.get("responsible")?.value;
+
 		return {
 			userstoryEid: this.userStoryEid,
-			responsibleEid: responsibleEid,
+			responsibleEid: responsibleEid === "null" ? null : responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
 			type: parseInt(this.taskForm.get("type")?.value),
@@ -142,17 +140,16 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	}
 
 	private buildTaskUpdateRequest(): TaskUpdateRequest {
-		let responsibleEid = this.taskForm.get("responsible")?.value;
-		if (responsibleEid === "") {
-			responsibleEid = null;
-		}
+		const responsibleEid = this.taskForm.get("responsible")?.value;
+
 		return {
-			responsibleEid: responsibleEid,
+			responsibleEid: responsibleEid === "null" ? null : responsibleEid,
 			title: this.taskForm.get("title")?.value,
 			description: this.taskForm.get("description")?.value,
 			type: parseInt(this.taskForm.get("type")?.value),
 			priority: parseInt(this.taskForm.get("priority")?.value),
-			complexity: this.isEditMode ? parseInt(this.taskForm.get("complexity")?.value) : undefined,
+			complexity:
+				this.isEditMode && this.userStory?.effortScore ? parseInt(this.taskForm.get("complexity")?.value) : undefined,
 		};
 	}
 

@@ -27,5 +27,10 @@
 			color: v.$black-color;
 			margin: 0 0.35em;
 		}
+
+		& > .warning {
+			color: v.$alert-color;
+			font-weight: bold;
+		}
 	}
 }

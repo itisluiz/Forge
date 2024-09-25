@@ -51,8 +51,7 @@ export default async function (req: Request, res: Response) {
 						},
 						{
 							model: sequelize.models["task"],
-							where: { id: { [Op.not]: taskId } },
-							attributes: ["complexity"],
+							attributes: ["id", "complexity"],
 						},
 					],
 					attributes: ["effortScore"],
@@ -79,10 +78,9 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("The user story effort score must be specified before changing the task complexity");
 		}
 
-		const resTaskComplexity = userstory.dataValues.tasks.reduce(
-			(acc: number, t: any) => acc + (t.dataValues.complexity ?? 0),
-			resComplexity,
-		);
+		const resTaskComplexity = userstory.dataValues.tasks
+			.filter((t: any) => t.dataValues.id !== taskId)
+			.reduce((acc: number, t: any) => acc + (t.dataValues.complexity ?? 0), resComplexity);
 
 		if (resTaskComplexity > userstory.dataValues.effortScore) {
 			throw new BadRequestError("The sum of the task complexities cannot exceed the user story effort score");
