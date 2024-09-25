@@ -21,6 +21,9 @@ import { TaskSelfComposite } from "../composite/taskselfcomposite.dto";
  *           $ref: '#/components/schemas/SprintStatus'
  *         periodStatus:
  *           $ref: '#/components/schemas/SprintPeriodStatus'
+ *         targetVelocity:
+ *           type: number
+ *           nullable: true
  *         tasks:
  *           type: array
  *           items:
@@ -38,6 +41,7 @@ export interface SprintResponse {
 	endsAt: string;
 	status: SprintStatus;
 	periodStatus: SprintPeriodStatus;
+	targetVelocity?: number;
 	tasks: TaskSelfComposite[];
 	createdAt: string;
 	updatedAt: string;
