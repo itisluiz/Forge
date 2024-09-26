@@ -61,12 +61,17 @@
 				<mat-accordion multi>
 					@if (userStoriesPerSprint[currentSprint.eid]) {
 						@for (userstory of sortUserStoriesByPriority(userStoriesPerSprint[currentSprint.eid]); track $index) {
-							<mat-expansion-panel>
+							<mat-expansion-panel [disabled]="isPanelDisabled">
 								<mat-expansion-panel-header>
 									<mat-panel-title> <img [src]="priorityImageParser(userstory.priority)" /> </mat-panel-title>
 									<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 									<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 									<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
+									<mat-panel-description>
+										<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)">
+											Remove from sprint
+										</button>
+									</mat-panel-description>
 								</mat-expansion-panel-header>
 								@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 									<table
@@ -348,11 +353,9 @@
 							<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 							@if (buttonsAvailable) {
-								@if (currentSprint.eid || futureSprints.length > 0) {
-									<mat-panel-description>
-										<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Move to sprint</button>
-									</mat-panel-description>
-								}
+								<mat-panel-description>
+									<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)">Remove from sprint</button>
+								</mat-panel-description>
 							}
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
@@ -458,6 +461,18 @@
 			</div>
 		</form>
 	</div>
+}
+
+@if (popUpRemoveFromSprint) {
+	<div class="pop-up-background" (click)="closePopUpRemoveFromSprint()"></div>
+
+	<app-delete-popup
+		[title]="'Remove User Story from sprint'"
+		[description]="'Are you sure you want to remove the selected User Story from its current Sprint?'"
+		[confirmButtonLabel]="'Remove'"
+		(cancelEmitter)="closePopUpRemoveFromSprint()"
+		(confirmDeleteEmmiter)="onRemoveFromSprint()"
+	></app-delete-popup>
 }
 
 @if (popUpTask) {
