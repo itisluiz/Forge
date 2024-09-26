@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
@@ -9,14 +9,12 @@ import { ProjectApiService } from "../../../services/project-api.service";
 import { Router } from "@angular/router";
 import { ProjectNewRequest } from "forge-shared/dto/request/projectnewrequest.dto";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
-import { ProjectSelfResponse } from "forge-shared/dto/response/projectselfresponse.dto";
 import { ProjectSelfComposite } from "forge-shared/dto/composite/projectselfcomposite.dto";
 import { ProjectMakeInvitationRequest } from "forge-shared/dto/request/projectmakeinvitationrequest.dto";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 import { ProjectUseInvitationRequest } from "forge-shared/dto/request/projectuseinvitationrequest.dto";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ProjectUpdateMemberRequest } from "forge-shared/dto/request/projectupdatememberrequest.dto";
-import { UserApiService } from "../../../services/user-api.service";
 import { ProjectUpdateRequest } from "forge-shared/dto/request/projectupdaterequest.dto";
 import { ProjectKickRequest } from "forge-shared/dto/request/projectkickrequest.dto";
 import { SelectComponent } from "../../select-component/select-component";
@@ -66,8 +64,8 @@ export class SelectProjectPageComponent implements OnInit {
 	@ViewChild("popupUpdateMemberRef") popupUpdateMemberRef!: PopupComponent;
 	@ViewChild("popupJoinRef") popupJoinRef!: PopupComponent;
 
-	public dataSource!: ProjectSelfComposite[];
-	public completedDataSource: any[] = [];
+	allProjects: ProjectSelfComposite[] = [];
+	detailedProjects: { [key: string]: ProjectResponse } = {};
 
 	public popUpJoin: boolean = false;
 	public popUpCreateProject: boolean = false;
@@ -85,7 +83,6 @@ export class SelectProjectPageComponent implements OnInit {
 	public selectedProjectId: string | null = null;
 	public projectName = "";
 	public projectId = "";
-	public projectInfo!: ProjectResponse;
 
 	public currentMemberId: string = "";
 	public currentIsAdmin: boolean = false;
@@ -109,7 +106,7 @@ export class SelectProjectPageComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.getProjects();
+		this.loadProjects();
 		const urlParams = new URLSearchParams(window.location.search);
 
 		const inviteCode = urlParams.get("inviteCode");
@@ -120,6 +117,27 @@ export class SelectProjectPageComponent implements OnInit {
 
 			this.joinProject(inviteCode);
 		}
+	}
+
+	loadProjects() {
+		this.projectApiService.self().subscribe({
+			next: (response) => {
+				if (response.projects.length === 0) {
+					this.noProjects = true;
+				} else {
+					this.noProjects = false;
+				}
+
+				this.allProjects = response.projects;
+
+				response.projects.forEach((project) => {
+					this.getEspeficProject(project.eid);
+				});
+			},
+			error: (error) => {
+				console.error(error);
+			},
+		});
 	}
 
 	selectProject(projectId: string) {
@@ -139,8 +157,7 @@ export class SelectProjectPageComponent implements OnInit {
 	createProject(projectNewRequest: ProjectNewRequest) {
 		this.projectApiService.newProject(projectNewRequest).subscribe({
 			next: (result) => {
-				console.log(result);
-				this.getProjects();
+				this.loadProjects();
 				this.popUpCreateProject = false;
 			},
 			error: (error) => {
@@ -153,8 +170,7 @@ export class SelectProjectPageComponent implements OnInit {
 		this.projectApiService.leaveProject(projectId).subscribe({
 			next: (result) => {
 				this.popUpLeaveProject = false;
-				console.log(result);
-				this.getProjects();
+				this.loadProjects();
 			},
 			error: (error) => {
 				console.error(error);
@@ -165,9 +181,8 @@ export class SelectProjectPageComponent implements OnInit {
 	deleteProject(projectId: string) {
 		this.projectApiService.deleteProject(projectId).subscribe({
 			next: (result) => {
-				console.log("deletado", result);
 				this.popUpDeleteProject = false;
-				this.getProjects();
+				this.loadProjects();
 			},
 			error: (error) => {
 				console.error(error);
@@ -182,8 +197,7 @@ export class SelectProjectPageComponent implements OnInit {
 
 		this.projectApiService.joinProject(request).subscribe({
 			next: (result) => {
-				console.log(result);
-				this.getProjects();
+				this.loadProjects();
 				this.popupJoinRef.loading = false;
 				this.popUpJoin = false;
 			},
@@ -196,12 +210,8 @@ export class SelectProjectPageComponent implements OnInit {
 
 	editProject(projectId: string) {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
-			next: (response) => {
-				this.projectInfo = response;
-				console.log("editProject: ", response);
-			},
+			next: (response) => {},
 			error: (error) => {
-				console.log("editProject deu ruim");
 				console.error(error);
 			},
 		});
@@ -223,9 +233,8 @@ export class SelectProjectPageComponent implements OnInit {
 
 		this.projectApiService.updateProject(projectId, request).subscribe({
 			next: (result) => {
-				console.log("updateProject(): ", result);
 				this.projectUpdateError = "";
-				this.getProjects();
+				this.loadProjects();
 				this.loadingSaveProjectUpdate = false;
 				this.editMode = false;
 			},
@@ -237,38 +246,10 @@ export class SelectProjectPageComponent implements OnInit {
 		});
 	}
 
-	getProjects(): void {
-		this.projectApiService.getProjects().subscribe({
-			next: (response) => {
-				this.updateProjectList(response.projects);
-				if (response.projects.length === 0) {
-					this.noProjects = true;
-				} else {
-					this.noProjects = false;
-				}
-			},
-			error: (error) => {
-				console.error(error);
-			},
-		});
-	}
-
-	selfProject(): void {
-		this.projectApiService.self().subscribe({
-			next: (response) => {
-				console.log(response);
-			},
-			error: (error) => {
-				console.error(error);
-			},
-		});
-	}
-
 	getEspeficProject(projectId: string): void {
 		this.projectApiService.getEspecificProject(projectId).subscribe({
 			next: (response) => {
-				this.projectInfo = response;
-				this.completedDataSource.push(response);
+				this.detailedProjects[response.eid] = response;
 			},
 			error: (error) => {
 				console.error(error);
@@ -291,34 +272,21 @@ export class SelectProjectPageComponent implements OnInit {
 		});
 	}
 
-	checkDataSource(dataSource: any) {
-		if (dataSource.length > 3) {
+	checkAllProjects(allProjects: any) {
+		if (allProjects.length > 3) {
 			return "extend";
 		}
 		return "";
 	}
 
 	findProjectOwner(project: ProjectResponse) {
-		return project.members.find((member) => member.admin && member.role === 1)?.name;
-	}
-
-	updateAllProjectDetails() {
-		this.completedDataSource = [];
-		this.dataSource.forEach((project) => {
-			this.getEspeficProject(project.eid);
-		});
-		console.log("completedDataSource: ", this.completedDataSource);
-	}
-
-	updateProjectList(newList: ProjectSelfComposite[]) {
-		this.dataSource = newList;
-		this.updateAllProjectDetails();
+		let owner = project.members.find((member) => member.admin && member.role === 1);
+		return owner ? owner?.name : project.members.find((member) => member.admin)?.name;
 	}
 
 	updateMember(projectId: string, projectUpdateMemberRequest: ProjectUpdateMemberRequest) {
 		this.projectApiService.updateMember(projectId, projectUpdateMemberRequest).subscribe({
 			next: (result) => {
-				console.log(result);
 				this.popupUpdateMemberRef.loading = false;
 				this.popUpEditMember = false;
 				this.getEspeficProject(projectId);
@@ -337,7 +305,6 @@ export class SelectProjectPageComponent implements OnInit {
 
 		this.projectApiService.removeMember(projectId, memberResquest).subscribe({
 			next: (result) => {
-				console.log(result);
 				this.getEspeficProject(projectId);
 			},
 			error: (error) => {
@@ -377,7 +344,7 @@ export class SelectProjectPageComponent implements OnInit {
 		};
 
 		this.popupUpdateMemberRef.loading = true;
-		this.updateMember(this.projectInfo.eid, request);
+		this.updateMember(this.projectInformation.eid, request);
 	}
 
 	handleInviteProject() {
@@ -444,102 +411,64 @@ export class SelectProjectPageComponent implements OnInit {
 		if (popUp === "join") {
 			this.validProjectJoinForm = false;
 			this.popUpJoin = true;
-			console.log("Opening join pop-up, popUpJoin:", this.popUpJoin);
 			return;
 		}
 		if (popUp === "create") {
 			this.popUpCreateProject = true;
-			console.log("Opening create project pop-up, popUpCreateProject:", this.popUpCreateProject);
 			return;
 		}
 		if (popUp === "invite") {
 			this.popUpInvite = true;
 			this.projectName = projectTitle || "";
 			this.projectId = projectId || "";
-			console.log(
-				"Opening invite pop-up, popUpInvite:",
-				this.popUpInvite,
-				"projectName:",
-				this.projectName,
-				"projectId:",
-				this.projectId,
-			);
 			return;
 		}
 		if (popUp === "editMember") {
 			this.popUpEditMember = true;
 			this.currentMemberId = memberEid || "";
 			this.currentIsAdmin = isMemberAdmin || false;
-			console.log(
-				"Opening edit member pop-up, popUpEditMember:",
-				this.popUpEditMember,
-				"currentMemberId:",
-				this.currentMemberId,
-			);
 			return;
 		}
 		if (popUp === "deleteConfirm") {
 			this.popUpDeleteProject = true;
 			this.projectId = projectId || "";
-			console.log(
-				"Opening delete project pop-up, popUpDeleteProject:",
-				this.popUpDeleteProject,
-				"projectName:",
-				this.projectName,
-				"projectId:",
-				this.projectId,
-			);
 			return;
 		}
 		if (popUp === "leaveConfirm") {
 			this.popUpLeaveProject = true;
 			this.projectId = projectId || "";
-			console.log(
-				"Opening leave project pop-up, popUpLeaveProject:",
-				this.popUpLeaveProject,
-				"projectName:",
-				this.projectName,
-				"projectId:",
-				this.projectId,
-			);
+			return;
 		}
 	}
 
 	closePopUp(popUp: string) {
 		if (popUp === "join") {
 			this.popUpJoin = false;
-			console.log("Closing join pop-up, popUpJoin:", this.popUpJoin);
 			return;
 		}
 		if (popUp === "create") {
 			this.popUpCreateProject = false;
-			console.log("Closing create project pop-up, popUpCreateProject:", this.popUpCreateProject);
 			return;
 		}
 		if (popUp === "invite") {
 			this.popUpInvite = false;
-			console.log("Closing invite pop-up, popUpInvite:", this.popUpInvite);
 			return;
 		}
 		if (popUp === "editMember") {
 			this.popUpEditMember = false;
 			this.projectEditMemberError = "";
-			console.log("Closing edit member pop-up, popUpEditMember:", this.popUpEditMember);
 			return;
 		}
 		if (popUp === "inviteResult") {
 			this.popUpInviteResult = false;
-			console.log("Closing invite result pop-up, popUpInviteResult:", this.popUpInviteResult);
 			return;
 		}
 		if (popUp === "deleteConfirm") {
 			this.popUpDeleteProject = false;
-			console.log("Closing delete project pop-up, popUpDeleteProject:", this.popUpDeleteProject);
 			return;
 		}
 		if (popUp === "leaveConfirm") {
 			this.popUpLeaveProject = false;
-			console.log("Closing leave project pop-up, popUpLeaveProject:", this.popUpLeaveProject);
 		}
 	}
 
@@ -574,11 +503,12 @@ export class SelectProjectPageComponent implements OnInit {
 			});
 	}
 
+	get projectInformation() {
+		return this.detailedProjects[this.selectedProjectId!];
+	}
+
 	get enableNextButton(): boolean {
 		if (this.selectedProjectId === null) {
-			return true;
-		}
-		if (this.dataSource.length < 1) {
 			return true;
 		}
 		return false;

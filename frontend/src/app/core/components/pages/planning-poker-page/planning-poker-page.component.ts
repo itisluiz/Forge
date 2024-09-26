@@ -189,6 +189,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	vote(userScore: number | null) {
+		this.pullSession();
 		this.setActiveCard(userScore);
 
 		const voteRequest: PlanningpokerVoteRequest = {
@@ -207,6 +208,8 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	setUserStory(userStoryEid: string) {
+		this.pullSession();
+
 		const setUserstoryRequest: PlanningpokerSetuserstoryRequest = {
 			userstoryEid: userStoryEid,
 		};
@@ -280,6 +283,8 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	saveResult() {
+		this.pullSession();
+
 		const voteRequest: PlanningpokerVoteRequest = {
 			vote: this.activeCard,
 		};
@@ -296,6 +301,8 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	revealVotes() {
+		this.pullSession();
+
 		this.planningPokerService.revealVotes(this.projectEid, this.currentSession).subscribe({
 			next: (result) => {
 				console.log("Revealing votes...");

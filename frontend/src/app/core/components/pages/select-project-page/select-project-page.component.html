@@ -3,7 +3,7 @@
 		<div class="select-project-component">
 			<div class="title">
 				<div class="left-side">
-					<h1>{{ projectInfo.title }}'s information</h1>
+					<h1>{{ projectInformation.title }}'s information</h1>
 				</div>
 			</div>
 			<mat-tab-group class="tabs">
@@ -15,8 +15,8 @@
 							label="Code"
 							name="code"
 							type="text"
-							[placeholder]="projectInfo.code"
-							[innerHTML]="projectInfo.code"
+							[placeholder]="projectInformation.code"
+							[innerHTML]="projectInformation.code"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
 							[minLength]="3"
@@ -31,8 +31,8 @@
 							type="text"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
-							[placeholder]="projectInfo.title"
-							[innerHTML]="projectInfo.title"
+							[placeholder]="projectInformation.title"
+							[innerHTML]="projectInformation.title"
 						></app-input>
 
 						<app-input
@@ -43,8 +43,8 @@
 							type="text"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
-							[placeholder]="projectInfo.description"
-							[innerHTML]="projectInfo.description"
+							[placeholder]="projectInformation.description"
+							[innerHTML]="projectInformation.description"
 							[errorMessage]="projectUpdateError"
 						></app-input>
 					</div>
@@ -54,7 +54,7 @@
 							class="action-buttons_action action-buttons_button"
 							[disabled]="!validProjectUpdateForm || loadingSaveProjectUpdate"
 							[class.loading]="loadingSaveProjectUpdate"
-							(click)="updateProject(projectInfo.eid)"
+							(click)="updateProject(projectInformation.eid)"
 						>
 							{{ !loadingSaveProjectUpdate ? "Save changes" : "" }}
 							<span class="loading-spinner"></span>
@@ -70,7 +70,7 @@
 						<p>Actions</p>
 					</div>
 					<div class="body-members">
-						@for (member of projectInfo.members; track member) {
+						@for (member of projectInformation.members; track member) {
 							<div class="member">
 								@if (member.admin) {
 									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }} {{ member.surname }}</p>
@@ -88,7 +88,7 @@
 									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">
 										Edit permissions
 									</button>
-									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
+									<button mat-menu-item (click)="removeMember(projectInformation.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
 						}
@@ -120,7 +120,7 @@
 			</div>
 
 			<div class="projects">
-				<div class="header" [ngClass]="checkDataSource(dataSource)">
+				<div class="header" [ngClass]="checkAllProjects(allProjects)">
 					<span>Project</span>
 					<span>Owner</span>
 					<span>Contributors</span>
@@ -129,34 +129,38 @@
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of completedDataSource" (click)="selectProject(project.eid)">
-						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
+					<div *ngFor="let project of allProjects" (click)="selectProject(project.eid)">
+						<div
+							*ngIf="detailedProjects[project.eid]"
+							class="project-info"
+							[ngClass]="{ active: selectedProjectId === project.eid }"
+						>
 							<div class="name">
-								<p class="name_title">{{ project.title }}</p>
-								<p class="name_description">{{ project.description }}</p>
+								<p class="name_title">{{ detailedProjects[project.eid].title }}</p>
+								<p class="name_description">{{ detailedProjects[project.eid].description }}</p>
 							</div>
 
 							<div class="owner">
-								<p class="owner_name">{{ findProjectOwner(project) }}</p>
+								<p class="owner_name">{{ findProjectOwner(detailedProjects[project.eid]) }}</p>
 							</div>
 
 							<div class="contributors">
-								@if (project.members.length === 1) {
-									<img class="contributors_image" [src]="project.members[0].gravatar" />
+								@if (detailedProjects[project.eid].members.length === 1) {
+									<img class="contributors_image" [src]="detailedProjects[project.eid].members[0].gravatar" />
 								} @else {
-									@for (member of project.members.slice(0, 3); track member) {
+									@for (member of detailedProjects[project.eid].members.slice(0, 3); track member) {
 										<img class="contributors_image" [src]="member.gravatar" />
 									}
-									@if (project.members.length > 3) {
+									@if (detailedProjects[project.eid].members.length > 3) {
 										<div class="contributors_more">
-											<p class="count">+{{ project.members.length - 3 }}</p>
+											<p class="count">+{{ detailedProjects[project.eid].members.length - 3 }}</p>
 										</div>
 									}
 								}
 							</div>
 
 							<div class="created">
-								<p>{{ project.createdAt | date: "dd MMM yy" }}</p>
+								<p>{{ detailedProjects[project.eid].createdAt | date: "dd MMM yy" }}</p>
 							</div>
 
 							<div class="action">
@@ -166,19 +170,22 @@
 							</div>
 
 							<mat-menu #project_menu="matMenu">
-								@if (project.admin) {
-									<button mat-menu-item (click)="editProject(project.eid)">
+								@if (detailedProjects[project.eid].admin) {
+									<button mat-menu-item (click)="editProject(detailedProjects[project.eid].eid)">
 										<span>Edit information</span>
 									</button>
-									<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
+									<button
+										mat-menu-item
+										(click)="openPopUp('invite', detailedProjects[project.eid].title, detailedProjects[project.eid].eid)"
+									>
 										<span>Invite a person</span>
 									</button>
 								}
-								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, project.eid)">
+								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, detailedProjects[project.eid].eid)">
 									<span>Leave project</span>
 								</button>
-								@if (project.admin) {
-									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, project.eid)">
+								@if (detailedProjects[project.eid].admin) {
+									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, detailedProjects[project.eid].eid)">
 										<span>Delete project</span>
 									</button>
 								}
