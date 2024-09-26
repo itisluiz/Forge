@@ -36,7 +36,7 @@ import { Priority } from "../../enum/priority.enum";
  *           nullable: true
  */
 export interface UserstoryUpdateRequest {
-	sprintEid?: string;
+	sprintEid?: string | null;
 	title?: string;
 	description?: string;
 	narrative?: string;
