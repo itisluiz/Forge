@@ -89,6 +89,17 @@
 		color: v.$white-color;
 	}
 
+	.role {
+		font-size: 14px;
+		margin-right: 45px;
+		color: v.$white-color;
+		height: 55px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		transition: filter 0.3s;
+	}
+
 	span {
 		font-size: 14px;
 		margin-right: 45px;

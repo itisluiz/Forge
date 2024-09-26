@@ -17,6 +17,7 @@ import { ProjectApiService } from "../../services/project-api.service";
 import { UserApiService } from "../../services/user-api.service";
 import { DeletePopupComponent } from "../delete-popup/delete-popup.component";
 import { TokenService } from "../../services/token.service";
+import { RolePipe } from "../../pipes/role.pipe";
 
 export interface SearchBar {
 	name: string;
@@ -40,6 +41,7 @@ export interface SearchBar {
 		AsyncPipe,
 		MatMenuModule,
 		DeletePopupComponent,
+		RolePipe,
 	],
 	templateUrl: "./navbar.component.html",
 	styleUrl: "./navbar.component.scss",
@@ -48,6 +50,8 @@ export class NavbarComponent {
 	@ViewChild("audioPlayer") audioPlayer!: ElementRef<HTMLAudioElement>;
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 	userPhoto!: string;
+	userEid!: string;
+	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 	trollando: boolean = false;
 	popUpLeaveForge: boolean = false;
 	activeRoute: string = localStorage.getItem("activeRoute") || "";
@@ -65,6 +69,7 @@ export class NavbarComponent {
 		private route: ActivatedRoute,
 		private userApiService: UserApiService,
 		private tokenService: TokenService,
+		private projectApiService: ProjectApiService,
 	) {}
 
 	myControl = new FormControl<string | SearchBar>("");
@@ -88,12 +93,32 @@ export class NavbarComponent {
 			}),
 		);
 
+		this.getProject()
+			.pipe(
+				map((project) => {
+					project.members.forEach((member) => {
+						this.projectMembersMap[member.eid] = member;
+					});
+				}),
+			)
+			.subscribe();
+
 		this.setActiveRoute(this.activeRoute);
+	}
+
+	getProject(): Observable<ProjectResponse> {
+		return this.projectApiService.getEspecificProject(this.projectEid);
+	}
+
+	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
+		if (!userEid) return null;
+		return this.projectMembersMap[userEid] || null;
 	}
 
 	getUser() {
 		this.userApiService.self().subscribe((user) => {
 			this.userPhoto = user.gravatar;
+			this.userEid = user.eid;
 		});
 	}
 

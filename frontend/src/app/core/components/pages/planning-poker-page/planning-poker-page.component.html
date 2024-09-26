@@ -14,7 +14,7 @@
 
 				<div class="buttons-header">
 					@if (inSession) {
-						<button class="grey-button" matRipple>End session</button>
+						<button class="grey-button" matRipple (click)="quitSession()">Quit session</button>
 					} @else {
 						<button class="grey-button" matRipple (click)="openPopUp('createSession')">Start session</button>
 					}
@@ -26,7 +26,13 @@
 			}
 
 			@if (inSession) {
-				<p>{{ currentUserstoryBeingVoted ? "Current item: " + currentUserstoryBeingVoted!.title : "none" }}</p>
+				<p>
+					{{
+						currentUserstoryBeingVoted
+							? "Current item: " + currentUserstoryBeingVoted!.title
+							: "Waiting Scrum Master to pick a user story..."
+					}}
+				</p>
 			}
 			<div class="hr"></div>
 		</div>
@@ -73,25 +79,40 @@
 				<div class="planning-poker_participants-display">
 					@for (person of currentSessionData.participants; track $index) {
 						<div class="planning-poker_participants-display_wrapper">
+							@if (getProjectMemberFromMap(person.eid)?.role === 2) {
+								<img class="planning-poker_participants-display_host" src="../../../../../assets/host-indicator.svg" />
+							}
+
 							@if (person.vote !== undefined && currentSessionData.revealed) {
 								<div class="planning-poker_participants-display_score">{{ person.vote | pokerScore }}</div>
 							}
 							<img [src]="person.gravatar" class="planning-poker_participants-display_avatar" />
 							<div class="planning-poker_participants-display_name">{{ person.name }}</div>
+
+							@if (person.vote !== undefined && !currentSessionData.revealed) {
+								<div class="green-signal"></div>
+							}
 						</div>
 					}
 				</div>
 
 				<div class="planning-poker_current-userstory" #expand>
 					@if (currentUserstoryBeingVoted) {
+						@if (currentUserstoryBeingVoted.effortScore) {
+							<div class="planning-poker_current-userstory--average">
+								Average score: {{ currentUserstoryBeingVoted.effortScore }}
+							</div>
+						}
 						<img
 							src="../../../../../assets/expand-icon.svg"
 							class="planning-poker_current-userstory--expand"
 							(click)="setExpandToggle()"
 						/>
-						<button class="planning-poker_button" (click)="revealVotes()" [hidden]="currentSessionData.revealed" matRipple>
-							Reveal votes
-						</button>
+						@if (getProjectMemberFromMap(userEid)?.role === 2) {
+							<button class="planning-poker_button" (click)="revealVotes()" [hidden]="currentSessionData.revealed" matRipple>
+								Reveal votes
+							</button>
+						}
 						<div class="planning-poker_current-userstory--title">{{ currentUserstoryBeingVoted.title }}</div>
 						<div class="planning-poker_current-userstory--description">
 							{{ currentUserstoryBeingVoted.description | maxLength: 86 }}
@@ -158,18 +179,33 @@
 						/>
 						<p class="issues-list_issue--type">User story</p>
 						<h2 class="issues-list_issue--title">{{ userstory.title }}</h2>
-						<p
-							[ngClass]="
-								userstory.eid === currentSessionData.selectedUserstoryEid
-									? 'issues-list_issue--status-now'
-									: 'issues-list_issue--status-waiting'
-							"
-						>
-							{{ userstory.eid === currentSessionData.selectedUserstoryEid ? "Voting now..." : "Waiting..." }}
-						</p>
-						<button class="issues-list_issue--status-waiting add-to" matRipple (click)="setUserStory(userstory.eid)">
-							+ Add to vote
-						</button>
+
+						@if (userstory.effortScore && userstory.eid !== currentSessionData.selectedUserstoryEid) {
+							<p
+								[ngClass]="
+									userstory.eid === currentSessionData.selectedUserstoryEid
+										? 'issues-list_issue--status-now'
+										: 'issues-list_issue--status-waiting'
+								"
+							>
+								Average score: {{ userstory.effortScore }}
+							</p>
+						} @else {
+							<p
+								[ngClass]="
+									userstory.eid === currentSessionData.selectedUserstoryEid
+										? 'issues-list_issue--status-now'
+										: 'issues-list_issue--status-waiting'
+								"
+							>
+								{{ userstory.eid === currentSessionData.selectedUserstoryEid ? "Voting now..." : "Waiting..." }}
+							</p>
+						}
+						@if (getProjectMemberFromMap(userEid)?.role === 2) {
+							<button class="issues-list_issue--status-waiting add-to" matRipple (click)="setUserStory(userstory.eid)">
+								{{ userstory.effortScore != null ? "Click to vote again" : "+ Add to vote" }}
+							</button>
+						}
 					</div>
 				}
 			</div>
@@ -197,5 +233,13 @@
 			[required]="true"
 			[minLength]="3"
 		></app-input>
+
+		<label for="sprint">Select a sprint to vote</label>
+		<select name="sprint" id="sprint" [(ngModel)]="selectedSprintEid">
+			<option value="" disabled>Select a sprint</option>
+			@for (sprint of currentAndFutureSprints; track $index) {
+				<option value="{{ sprint.eid }}">Sprint {{ sprint.index }}</option>
+			}
+		</select>
 	</app-popup-component>
 }
