@@ -26,7 +26,7 @@ import { TaskApiService } from "../../../services/task-api.service";
 import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
-import { forkJoin, Observable } from "rxjs";
+import { forkJoin, map, Observable } from "rxjs";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { MatRippleModule } from "@angular/material/core";
 import { IconPipe } from "../../../pipes/icon.pipe";
@@ -46,6 +46,10 @@ import { PlanningpokerSetuserstoryRequest } from "forge-shared/dto/request/plann
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 import { PlanningpokerVoteRequest } from "forge-shared/dto/request/planningpokervoterequest.dto";
 import { PokerScorePipe } from "../../../pipes/pokerscore.pipe";
+import { SelectComponent } from "../../select-component/select-component";
+import { FormsModule } from "@angular/forms";
+import { RolePipe } from "../../../pipes/role.pipe";
+import { UserApiService } from "../../../services/user-api.service";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -70,6 +74,9 @@ import { PokerScorePipe } from "../../../pipes/pokerscore.pipe";
 		InputComponent,
 		MatCheckboxModule,
 		PokerScorePipe,
+		SelectComponent,
+		FormsModule,
+		RolePipe,
 	],
 	templateUrl: "./planning-poker-page.component.html",
 	styleUrl: "./planning-poker-page.component.scss",
@@ -77,19 +84,23 @@ import { PokerScorePipe } from "../../../pipes/pokerscore.pipe";
 export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	@ViewChildren("expand") expand!: QueryList<ElementRef>;
 	@ViewChild("pokerSubject") pokerSubject!: InputComponent;
+	@ViewChild("userStoriesSprint") userStoriesSprint!: SelectComponent;
 
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
 	scoreToggle: boolean = false;
-	expandToggle: boolean = false;
+	expandToggle: boolean = true;
 	activeCard: number | null | undefined;
 
 	inSession: boolean = false;
 	sessionList: boolean = false;
 	userStorySetted: boolean = false;
+	userEid!: string;
 
 	allSessionList: PlanningpokerSelfComposite[] = [];
 	votedCount: number = 0;
+
+	selectedSprintEid: string = "";
 
 	currentSession: string = "";
 	currentSessionData: PlanningpokerResponse = {} as PlanningpokerResponse;
@@ -101,6 +112,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	currentSprint: SprintSelfComposite = {} as SprintSelfComposite;
 	allSprints: SprintSelfComposite[] = [];
 	allUserStories: string[] = [];
+	currentAndFutureSprints: SprintSelfComposite[] = [];
 	detailedSprints: { [key: string]: SprintResponse } = {};
 	userStoriesPerSprint: { [key: string]: UserstorySelfComposite[] } = {};
 	private sessionIntervalId: any;
@@ -111,6 +123,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		private planningPokerService: PlanningPokerService,
 		private userStoryApiService: UserstoryApiService,
 		private sprintApiService: SprintApiService,
+		private userApiService: UserApiService,
 		private router: Router,
 	) {}
 
@@ -119,8 +132,19 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
+		this.getUser();
 		this.loadSprintData();
 		this.getCurrentSessionList();
+
+		this.getProject()
+			.pipe(
+				map((project) => {
+					project.members.forEach((member) => {
+						this.projectMembersMap[member.eid] = member;
+					});
+				}),
+			)
+			.subscribe();
 	}
 
 	ngOnDestroy(): void {
@@ -143,7 +167,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	createSession() {
 		const createRequest: PlanningpokerCreatesessionRequest = {
 			agenda: this.pokerSubject.value,
-			sprintEid: this.currentSprint.eid,
+			sprintEid: this.selectedSprintEid,
 		};
 
 		this.planningPokerService.createSession(createRequest, this.projectEid).subscribe({
@@ -189,6 +213,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 
 		this.planningPokerService.setUserstory(setUserstoryRequest, this.projectEid, this.currentSession).subscribe({
 			next: (result) => {
+				this.activeCard = undefined;
 				this.getEspecificUserstory(userStoryEid);
 			},
 			error: (error) => {
@@ -202,6 +227,12 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 			next: (sprintSelfResponse) => {
 				// Load all Sprints
 				this.allSprints = sprintSelfResponse.sprints;
+
+				// Load current and future Sprints
+				this.currentAndFutureSprints = this.allSprints.filter(
+					(sprint) =>
+						sprint.periodStatus === SprintPeriodStatus.ONGOING || sprint.periodStatus === SprintPeriodStatus.FUTURE,
+				);
 
 				// Load current Sprint
 				this.currentSprint =
@@ -338,6 +369,16 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
 		if (!userEid) return null;
 		return this.projectMembersMap[userEid] || null;
+	}
+
+	getUser() {
+		this.userApiService.self().subscribe((user) => {
+			this.userEid = user.eid;
+		});
+	}
+
+	quitSession() {
+		this.inSession = false;
 	}
 
 	openPopUp(popUp: string, projectTitle?: string, projectId?: string, memberEid?: string, isMemberAdmin?: boolean) {
