@@ -50,6 +50,7 @@ import { SelectComponent } from "../../select-component/select-component";
 import { FormsModule } from "@angular/forms";
 import { RolePipe } from "../../../pipes/role.pipe";
 import { UserApiService } from "../../../services/user-api.service";
+import { Priority } from "forge-shared/enum/priority.enum";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -270,6 +271,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				console.log(result);
 
 				this.currentSessionData = result;
+				this.currentSessionData.userstories.sort((a, b) => b.priority - a.priority);
 				this.votedCount = this.currentSessionData.participants.filter((x) => x.vote !== undefined).length;
 
 				if (result.selectedUserstoryEid) {
@@ -340,6 +342,27 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 				console.error(error);
 			},
 		});
+	}
+
+	priorityImageParser(priority: number) {
+		let pre = "../../../../../assets/";
+		let pos = ".svg";
+		let priorityName: string;
+
+		switch (priority) {
+			case Priority.LOW:
+				priorityName = "low";
+				break;
+			case Priority.MEDIUM:
+				priorityName = "medium";
+				break;
+			case Priority.HIGH:
+				priorityName = "high";
+				break;
+			default:
+				throw new Error("Invalid priority");
+		}
+		return pre + priorityName + pos;
 	}
 
 	setScoreToggle() {

@@ -49,9 +49,15 @@ app-navbar {
 	animation: gradientRise 0.3s ease-in-out forwards;
 }
 
-.add-to {
+.priority {
 	position: absolute;
 	right: 24px;
+	bottom: 23px;
+}
+
+.add-to {
+	position: absolute;
+	right: 52px;
 	bottom: 16px;
 
 	&:hover {

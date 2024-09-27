@@ -30,18 +30,15 @@
 			<source src="../../../../assets/omeutcc.mp3" type="audio/mp3" />
 		</audio>
 	</button>
-	<button mat-icon-button [matMenuTriggerFor]="menu">
-		<mat-icon>settings</mat-icon>
-	</button>
-	<mat-menu #menu="matMenu">
+	<mat-menu #menu="matMenu" xPosition="after">
 		<button mat-menu-item (click)="openPopUp('leaveConfirm')">
 			<span>Logout</span>
 		</button>
 	</mat-menu>
-	<button mat-icon-button>
+	<div class="user-role" [matMenuTriggerFor]="menu">
 		<mat-icon><img [src]="userPhoto" /></mat-icon>
-	</button>
-	<p class="role">{{ getProjectMemberFromMap(userEid)?.role | role }}</p>
+		<p class="role">{{ getProjectMemberFromMap(userEid)?.role | role }}</p>
+	</div>
 </mat-toolbar>
 
 @if (popUpLeaveForge) {
