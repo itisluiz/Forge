@@ -13,6 +13,26 @@
 	align-items: center;
 }
 
+.user-role {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: filter 0.3s;
+	margin-left: 8px;
+
+	img {
+		border-radius: 50%;
+		object-fit: cover;
+		height: 23px;
+		max-width: 23px;
+		cursor: pointer;
+	}
+
+	&:hover {
+		filter: brightness(0.8);
+	}
+}
+
 #menu-bar {
 	height: 55px;
 	background-color: v.$dark-color;

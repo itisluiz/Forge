@@ -113,7 +113,9 @@
 								Reveal votes
 							</button>
 						}
-						<div class="planning-poker_current-userstory--title">{{ currentUserstoryBeingVoted.title }}</div>
+						<div class="planning-poker_current-userstory--title">
+							<img [src]="priorityImageParser(currentUserstoryBeingVoted.priority)" /> {{ currentUserstoryBeingVoted.title }}
+						</div>
 						<div class="planning-poker_current-userstory--description">
 							{{ currentUserstoryBeingVoted.description | maxLength: 86 }}
 						</div>
@@ -206,6 +208,7 @@
 								{{ userstory.effortScore != null ? "Click to vote again" : "+ Add to vote" }}
 							</button>
 						}
+						<img class="priority" [src]="priorityImageParser(userstory.priority)" />
 					</div>
 				}
 			</div>
