@@ -41,6 +41,7 @@
 	<button mat-icon-button>
 		<mat-icon><img [src]="userPhoto" /></mat-icon>
 	</button>
+	<p class="role">{{ getProjectMemberFromMap(userEid)?.role | role }}</p>
 </mat-toolbar>
 
 @if (popUpLeaveForge) {

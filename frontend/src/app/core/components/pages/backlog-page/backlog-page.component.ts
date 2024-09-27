@@ -54,6 +54,7 @@ import { SprintPeriodStatusClassPipe } from "../../../pipes/sprint-periodstatus-
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { MatMenuModule } from "@angular/material/menu";
 import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component";
+import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 
 @Component({
 	selector: "app-backlog-page",
@@ -76,6 +77,7 @@ import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component"
 		SprintPeriodStatusClassPipe,
 		MatMenuModule,
 		RouterModule,
+		DeletePopupComponent,
 	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
@@ -236,6 +238,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 
 	popUpTask: boolean = false;
 	popUpAddToSprint: boolean = false;
+	popUpRemoveFromSprint: boolean = false;
 	popUpCreateTask: boolean = false;
 	popUpCreateSprint: boolean = false;
 	popUpUpdateSprint: boolean = false;
@@ -275,6 +278,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.addToSprintForm = this.formBuilder.group({
 			sprint: ["", Validators.required],
 		});
+	}
+
+	openPopUpRemoveFromSprint(userStoryEid: string) {
+		this.eidSelectedUserStory = userStoryEid;
+		this.popUpRemoveFromSprint = true;
+		this.toggleExpansionPanel();
+		document.body.style.overflow = "hidden";
 	}
 
 	openPopUpCreateSprint() {
@@ -317,6 +327,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.toggleExpansionPanel();
 	}
 
+	closePopUpRemoveFromSprint() {
+		this.popUpRemoveFromSprint = false;
+		document.body.style.overflow = "auto";
+		this.toggleExpansionPanel();
+	}
+
 	closePopUpCreateTask() {
 		this.popUpCreateTask = false;
 		document.body.style.overflow = "auto";
@@ -346,6 +362,20 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				},
 				error: (error) => {
 					console.log(error.error.message);
+				},
+			});
+	}
+
+	onRemoveFromSprint() {
+		const userStoryUpdateRequest = {
+			sprintEid: null,
+		};
+		this.userstoryApiService
+			.updateUserstories(this.projectEid, this.eidSelectedUserStory, userStoryUpdateRequest)
+			.subscribe({
+				next: () => {
+					this.closePopUpRemoveFromSprint();
+					this.loadSprintData();
 				},
 			});
 	}

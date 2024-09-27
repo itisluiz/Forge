@@ -9,6 +9,22 @@ app-navbar {
 	z-index: 10;
 }
 
+#sprint {
+	height: 40px;
+	padding: 0px 0px 0px 20px;
+	background-color: #f2f2f2;
+	border: none;
+	border-radius: 2px;
+	margin-bottom: 16px;
+	width: 100%;
+
+	&:focus {
+		outline: none;
+		padding: 9px 9px 9px 19px;
+		border: 1px solid v.$green-color;
+	}
+}
+
 .planning-poker-content {
 	margin-top: 40px;
 	display: flex;
@@ -21,6 +37,16 @@ app-navbar {
 		margin: 1em 1em 0 0;
 		max-width: fit-content;
 	}
+}
+
+.green-signal {
+	background: linear-gradient(to top, #289e0b, transparent);
+	position: absolute;
+	top: 0;
+	border-radius: 50%;
+	height: 50px;
+	width: 50px;
+	animation: gradientRise 0.3s ease-in-out forwards;
 }
 
 .add-to {
@@ -223,6 +249,13 @@ app-navbar {
 			gap: 8px;
 			margin-bottom: 40px;
 
+			&_host {
+				position: absolute;
+				bottom: 7px;
+				scale: 0.9;
+				z-index: 8;
+			}
+
 			&_wrapper {
 				display: flex;
 				flex-direction: column;
@@ -273,12 +306,26 @@ app-navbar {
 			padding: 32px 0;
 			border-radius: 12px;
 			position: relative;
-			height: 160px;
+			height: 285px;
+
+			&--average {
+				position: absolute;
+				top: 16px;
+				left: 16px;
+				background-color: #289e0b;
+				padding: 0 16px;
+				border-radius: 12px;
+				color: white;
+				animation: appear 0.2s forwards ease-in;
+				max-height: 21px;
+				font-size: 13px;
+			}
 
 			&--expand {
 				position: absolute;
-				right: 24px;
-				top: 24px;
+				right: 16px;
+				top: 16px;
+				width: 16px;
 				cursor: pointer;
 			}
 
@@ -611,5 +658,27 @@ app-navbar {
 	}
 	to {
 		width: 100px;
+	}
+}
+
+@keyframes gradientRise {
+	from {
+		background-position: bottom;
+		opacity: 0;
+	}
+	to {
+		background-position: top;
+		opacity: 1;
+	}
+}
+
+@keyframes appear {
+	from {
+		margin-left: -16px;
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		margin-left: 0;
 	}
 }

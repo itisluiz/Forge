@@ -57,8 +57,11 @@ export function calculateBurndownForDate(this: any, date: Date) {
 		return null;
 	}
 
+	const dateEnd = new Date(date);
+	dateEnd.setDate(dateEnd.getDate() + 1);
+
 	const effort = tasks.reduce((totalEffort: number, task: any) => {
-		if (task.dataValues.createdAt < date && (!task.dataValues.completedAt || task.dataValues.completedAt > date)) {
+		if (task.dataValues.createdAt < dateEnd && (!task.dataValues.completedAt || task.dataValues.completedAt > date)) {
 			return totalEffort + task.dataValues.complexity;
 		}
 		return totalEffort;
