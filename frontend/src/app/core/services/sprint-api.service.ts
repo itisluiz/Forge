@@ -6,6 +6,7 @@ import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
 import { SprintUpdateRequest } from "forge-shared/dto/request/sprintupdaterequest.dto";
 import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse.dto";
+import { BurndownResponse } from "forge-shared/dto/response/burndownresponse.dto";
 
 @Injectable({
 	providedIn: "root",
@@ -45,5 +46,9 @@ export class SprintApiService {
 
 	public deleteSprint(projectEid: string, sprintEid: string): Observable<void> {
 		return this.apiService.call<void>("DELETE", `sprint/${projectEid}/${sprintEid}/delete`);
+	}
+
+	public getBurndownData(projectEid: string, sprintEid: string): Observable<BurndownResponse> {
+		return this.apiService.call<BurndownResponse>("GET", `sprint/${projectEid}/${sprintEid}/burndown`);
 	}
 }

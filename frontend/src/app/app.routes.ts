@@ -11,7 +11,7 @@ import { UserStoryPopupComponent } from "./core/components/user-story-popup/user
 import { PlanningPokerPageComponent } from "./core/components/pages/planning-poker-page/planning-poker-page.component";
 
 export const routes: Routes = [
-	//{ path: "", component: MainPageComponent },
+	{ path: ":projectEid/sprint-details", component: MainPageComponent },
 	{ path: "login", component: LoginPageComponent },
 	{ path: ":projectEid/kanban", component: KanbanPageComponent },
 	{ path: ":projectEid/epics", component: EpicsPageComponent },

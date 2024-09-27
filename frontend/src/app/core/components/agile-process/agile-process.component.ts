@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
+import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 
 @Component({
 	selector: "app-agile-process",
@@ -9,12 +10,35 @@ import { Component, OnInit } from "@angular/core";
 	styleUrl: "./agile-process.component.scss",
 })
 export class AgileProcessComponent implements OnInit {
-	status: string = "";
+	@Input() sprintStatus!: SprintStatus;
 	active: boolean = true;
 
 	ngOnInit(): void {
-		this.status = "launch";
-		this.setFilter(this.status);
+		this.applyFilter();
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		// When the sprint status changes in the sprint details page, apply the filter again
+		if (changes["sprintStatus"] && !changes["sprintStatus"].isFirstChange()) {
+			this.applyFilter();
+		}
+	}
+
+	private applyFilter(): void {
+		const statusMap: Record<SprintStatus, string> = {
+			[SprintStatus.PLAN]: "plan",
+			[SprintStatus.DESIGN]: "design",
+			[SprintStatus.DEVELOP]: "develop",
+			[SprintStatus.TEST]: "test",
+			[SprintStatus.DEPLOY]: "deploy",
+			[SprintStatus.REVIEW]: "review",
+			[SprintStatus.LAUNCH]: "launch",
+		};
+
+		const status = this.sprintStatus ? statusMap[this.sprintStatus] : null;
+		if (status) {
+			this.setFilter(status);
+		}
 	}
 
 	setFilter(status: string): boolean {
