@@ -9,11 +9,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
+import { BurndownChartComponent } from "../../burndown-chart/burndown-chart.component";
 
 @Component({
 	selector: "app-main-page",
 	standalone: true,
-	imports: [AgileProcessComponent, NavbarComponent, MatIconModule, RouterModule],
+	imports: [AgileProcessComponent, NavbarComponent, MatIconModule, RouterModule, BurndownChartComponent],
 	templateUrl: "./main-page.component.html",
 	styleUrl: "./main-page.component.scss",
 })
@@ -88,11 +89,5 @@ export class MainPageComponent {
 
 		this.leadTimeDaysAverage = leadTimeAverage / (1000 * 60 * 60 * 24);
 		console.log(this.leadTimeDaysAverage);
-	}
-
-	calculateSprintVelocity(tasks: TaskSelfComposite[]) {
-		const completedTasks = tasks.filter((task) => task.status === TaskStatus.DONE);
-		const totalComplexity = completedTasks.reduce((acc, task) => acc + task.complexity!, 0);
-		this.sprintVelocity = totalComplexity / this.leadTimeDaysAverage;
 	}
 }

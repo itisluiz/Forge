@@ -125,7 +125,8 @@ export class KanbanPageComponent implements OnInit {
 		return `${user.name} ${user.surname}`;
 	}
 
-	getUser(userEid: string): ProjectMemberComposite {
+	getUser(userEid: string): ProjectMemberComposite | null {
+		if (!userEid) return null;
 		const member = this.project!.members.find((member) => member.eid === userEid);
 		if (!member) {
 			throw new Error(`Member with eid ${userEid} not found`);

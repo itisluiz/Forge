@@ -34,11 +34,12 @@
 				</div>
 			</div>
 			<div class="burndown-grid">
-				<h1>Burndown Chart - Sprint {{ currentSprint.index }}</h1>
-				<img class="fake-burn-down" src="../../../../../assets/fake-burn-down.svg" alt="" />
+				<h1>Burndown Chart - Sprint {{ selectedSprint.index }}</h1>
+				<app-burndown-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-burndown-chart>
 			</div>
 			<div class="metrics-grid">
 				<h1>Metrics</h1>
+				<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
 				<div class="lead-time-card">
 					<h2>Lead Time</h2>
 					<p>{{ leadTimeDaysAverage }} days</p>
@@ -53,7 +54,7 @@
 				<img src="../../../../../assets/fake-recent-activity.svg" alt="" />
 			</div> -->
 			<div class="gantt-grid">
-				<h1>Gantt Chart - Sprint {{ currentSprint.index }}</h1>
+				<h1>Gantt Chart - Sprint {{ selectedSprint.index }}</h1>
 				<img src="../../../../../assets/fake-gantt.svg" alt="" />
 			</div>
 		</div>
