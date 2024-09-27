@@ -47,7 +47,7 @@ export class SprintPopupComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.sprintForm = this.formBuilder.group({
-			startDate: [this.getCurrentDate(), Validators.required],
+			startDate: [this.getDateAfterDays(0), Validators.required],
 			endDate: [this.getDateAfterDays(15), Validators.required],
 		});
 		if (this.isEditMode) {
@@ -62,17 +62,10 @@ export class SprintPopupComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private getCurrentDate(): string {
-		const today = new Date();
-		today.setHours(today.getHours() - 3); // Brazil time
-		return today.toISOString().split("T")[0];
-	}
-
 	private getDateAfterDays(days: number): string {
 		const date = new Date();
 		date.setDate(date.getDate() + days);
-		date.setHours(date.getHours() - 3); // Brazil time
-		return date.toISOString().split("T")[0];
+		return date.toLocaleDateString("en-CA");
 	}
 
 	ngOnDestroy(): void {}
@@ -112,9 +105,8 @@ export class SprintPopupComponent implements OnInit, OnDestroy {
 
 	private convertLocalToUTCISO(date: string): string {
 		const localDate = new Date(date);
-		const localTimezoneOffset = localDate.getTimezoneOffset();
-		const localDateUTC = new Date(localDate.getTime() + localTimezoneOffset * 60000);
-		return localDateUTC.toISOString();
+		const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+		return utcDate.toISOString();
 	}
 
 	private createSprint(sprintNewRequest: SprintNewRequest) {
