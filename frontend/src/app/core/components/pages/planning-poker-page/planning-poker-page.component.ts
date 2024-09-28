@@ -1,14 +1,4 @@
-import {
-	Component,
-	computed,
-	ElementRef,
-	OnDestroy,
-	OnInit,
-	QueryList,
-	signal,
-	ViewChild,
-	ViewChildren,
-} from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -17,13 +7,11 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
 import { TestCasePopupComponent } from "../../test-case-popup/test-case-popup.component";
-import { ActivatedRoute, Route, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 import { PriorityPipe } from "../../../pipes/priority.pipe";
-import { TaskApiService } from "../../../services/task-api.service";
-import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 import { forkJoin, map, Observable } from "rxjs";
@@ -51,6 +39,7 @@ import { FormsModule } from "@angular/forms";
 import { RolePipe } from "../../../pipes/role.pipe";
 import { UserApiService } from "../../../services/user-api.service";
 import { Priority } from "forge-shared/enum/priority.enum";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -78,6 +67,8 @@ import { Priority } from "forge-shared/enum/priority.enum";
 		SelectComponent,
 		FormsModule,
 		RolePipe,
+		MatTooltipModule,
+		MatRippleModule,
 	],
 	templateUrl: "./planning-poker-page.component.html",
 	styleUrl: "./planning-poker-page.component.scss",
@@ -110,6 +101,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 
 	popUpCreateSession: boolean = false;
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
+	projectCode: string = "";
 	currentSprint: SprintSelfComposite = {} as SprintSelfComposite;
 	allSprints: SprintSelfComposite[] = [];
 	allUserStories: string[] = [];
@@ -140,6 +132,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		this.getProject()
 			.pipe(
 				map((project) => {
+					this.projectCode = project.code;
 					project.members.forEach((member) => {
 						this.projectMembersMap[member.eid] = member;
 					});
