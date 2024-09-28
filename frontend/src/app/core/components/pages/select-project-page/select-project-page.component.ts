@@ -279,6 +279,19 @@ export class SelectProjectPageComponent implements OnInit {
 		return "";
 	}
 
+	checkAllMembers(members: any) {
+		if (members.length > 3) {
+			return "extend";
+		}
+		return "";
+	}
+
+	getLastName(fullLastName: string): string {
+		let nameParts = fullLastName.split(" ");
+
+		return nameParts[nameParts.length - 1];
+	}
+
 	findProjectOwner(project: ProjectResponse) {
 		let owner = project.members.find((member) => member.admin && member.role === 1);
 		return owner ? owner?.name : project.members.find((member) => member.admin)?.name;
