@@ -4,9 +4,9 @@
 		<div class="header-grid">
 			<div class="breadcrump-story-wrapper">
 				<ul class="breadcrumber">
-					<li><a href="">Squad BES</a></li>
-					<div class="spacer">></div>
-					<li><a href="">TCC 1</a></li>
+					<li>
+						<a>{{ projectCode }}</a>
+					</li>
 					<div class="spacer">></div>
 					<li><a href="/user-story">Planning Poker</a></li>
 				</ul>
@@ -16,13 +16,15 @@
 					@if (inSession) {
 						<button class="grey-button" matRipple (click)="quitSession()">Quit session</button>
 					} @else {
-						<button class="grey-button" matRipple (click)="openPopUp('createSession')">Start session</button>
+						<button class="green-button .start-button" matRipple (click)="openPopUp('createSession')">Start session</button>
 					}
 				</div>
 			</div>
 
-			@if (sessionList && !inSession) {
-				<p>Create a personal poker room to estimate a complexity to your tasks. Your team mates can join.</p>
+			@if (!inSession) {
+				<p class="header-grid_desc">
+					Create a personal poker room to estimate a complexity to your tasks. Your team mates can join.
+				</p>
 			}
 
 			@if (inSession) {
@@ -40,9 +42,8 @@
 		@if (!inSession && !sessionList) {
 			<div class="warning">
 				<mat-icon>warning</mat-icon>
-				<p class="warning_label">
-					There is no active Planning Poker session at the moment. You can create one by clicking the button below.
-				</p>
+				<h3 class="warning_title">There is no active Planning Poker session at the moment.</h3>
+				<p class="warning_label">You can create one by clicking the button below.</p>
 				<button class="green-button" matRipple (click)="openPopUp('createSession')">Start a new session</button>
 			</div>
 		}

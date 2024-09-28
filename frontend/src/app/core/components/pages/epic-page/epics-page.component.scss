@@ -12,6 +12,22 @@ app-navbar {
 	margin-top: 67px;
 }
 
+.info-tooltip {
+	color: v.$label-background-dark-grey;
+	opacity: 0.6;
+	font-size: 13px;
+	height: fit-content;
+	width: fit-content;
+	margin: 0 10px 0 4px;
+	cursor: help;
+	transition: 0.3s;
+
+	&:hover {
+		opacity: 1;
+		filter: brightness(0.8);
+	}
+}
+
 .grid-container {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -37,7 +53,6 @@ app-navbar {
 				h2 {
 					font-size: v.$h2-font;
 					font-weight: 500;
-					margin-right: 11px;
 				}
 
 				.items {
@@ -45,12 +60,13 @@ app-navbar {
 					align-items: center;
 					gap: 2px;
 					background-color: v.$purple-color;
-					padding: 1px 2.5px;
-					border-radius: 3px;
+					padding: 1px 4px;
+					border-radius: 4px;
 					height: fit-content;
 
 					span {
 						font-size: 9px;
+						font-weight: 500;
 						color: v.$white-color;
 					}
 				}
@@ -158,17 +174,18 @@ app-navbar {
 			color: v.$grey-color;
 
 			h3 {
-				margin-bottom: 10px;
+				font-size: 20px;
 				font-weight: 500;
 			}
 
 			.green-button {
-				color: white;
-				background-color: v.$green-color;
-				border-radius: 2px;
-				margin: unset;
+				color: #fff;
+				background-color: #6dc955;
+				border-radius: 4px;
+				display: flex;
+				margin: 10px auto 0;
 				border: none;
-				padding: 10px 20px;
+				padding: 6px 12px;
 
 				&:disabled {
 					background-color: v.$disabled-background-color;
@@ -391,6 +408,20 @@ app-navbar {
 @media only screen and (max-width: 1500px) {
 	.kanban-page-content {
 		margin: 67px 3em 0 3em;
+	}
+}
+
+@media only screen and (min-width: 1500px) {
+	.kanban-page-content {
+		.grid-container {
+			& > .header-grid {
+				padding: 2em 1.5em;
+			}
+
+			& > .epics-grid {
+				padding: 1em 1.5em;
+			}
+		}
 	}
 }
 

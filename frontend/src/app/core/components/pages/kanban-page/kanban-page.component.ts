@@ -13,10 +13,10 @@ import {
 	DragDropModule,
 	CdkDragPlaceholder,
 } from "@angular/cdk/drag-drop";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { SprintApiService } from "../../../services/sprint-api.service";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
 import { SprintPeriodStatusPipe } from "../../../pipes/sprint-periodstatus.pipe";
 import { SprintPeriodStatusClassPipe } from "../../../pipes/sprint-periodstatus-class.pipe";
@@ -33,10 +33,11 @@ import { DaysDifferencePipe } from "../../../pipes/days-difference.pipe";
 import { SprintStatusPipe } from "../../../pipes/sprint-status.pipe";
 import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
-import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRippleModule } from "@angular/material/core";
 
 @Component({
 	selector: "app-kanban-page",
@@ -62,6 +63,9 @@ import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmember
 		SprintStatusClassPipe,
 		MaxLengthPipe,
 		TaskDetailsComponent,
+		MatTooltipModule,
+		MatRippleModule,
+		RouterModule,
 	],
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",
