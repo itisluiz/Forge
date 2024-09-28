@@ -226,6 +226,16 @@ app-navbar {
 	}
 }
 
+@media only screen and (min-width: 1500px) {
+	.kanban-page-content {
+		.grid-container {
+			& > div {
+				padding: 1em 1.5em;
+			}
+		}
+	}
+}
+
 @media only screen and (min-width: 1400px) {
 	.kanban-page-content {
 		.grid-container {

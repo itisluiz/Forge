@@ -35,35 +35,46 @@
 							: "Waiting Scrum Master to pick a user story..."
 					}}
 				</p>
+				<div class="hr"></div>
 			}
-			<div class="hr"></div>
 		</div>
 
-		@if (!inSession && !sessionList) {
-			<div class="warning">
-				<mat-icon>warning</mat-icon>
-				<h3 class="warning_title">There is no active Planning Poker session at the moment.</h3>
-				<p class="warning_label">You can create one by clicking the button below.</p>
-				<button class="green-button" matRipple (click)="openPopUp('createSession')">Start a new session</button>
-			</div>
-		}
+		@if (!inSession) {
+			<div class="body-grid">
+				@if (!inSession && !sessionList) {
+					<div class="warning">
+						<mat-icon>warning</mat-icon>
+						<h3 class="warning_title">There is no active Planning Poker session at the moment.</h3>
+						<p class="warning_label">You can create one by clicking the button below.</p>
+						<button class="green-button" matRipple (click)="openPopUp('createSession')">Start a new session</button>
+					</div>
+				}
 
-		@if (sessionList && !inSession) {
-			<div class="session_title">
-				<h3>Available sessions</h3>
-				<p>Click in a room to enter</p>
-			</div>
-			<div class="session">
-				<div class="session_header">
-					<p class="session_header--th">Room</p>
-					<p class="session_header--th">Participants</p>
-					<p class="session_header--th">Issues to vote</p>
-				</div>
-				@for (session of allSessionList; track $index) {
-					<div class="session_body" (click)="enterSession(session.sessionCode)">
-						<p class="session_body--td"><mat-icon>circle</mat-icon> {{ session.agenda }}</p>
-						<p class="session_body--td">{{ session.participantCount }}</p>
-						<p class="session_body--td">{{ session.userstoryCount }}</p>
+				@if (sessionList && !inSession) {
+					<div class="session_title">
+						<div class="session_title--first">
+							<h2>Available sessions</h2>
+							<mat-icon
+								class="info-tooltip"
+								matTooltip="The list below is a Planning Poker session used to reach a consensus on the complexity of the user stories."
+								>info</mat-icon
+							>
+						</div>
+						<p>Find below the current list of planning poker room. You can click to enter.</p>
+					</div>
+					<div class="session">
+						<div class="session_header">
+							<p class="session_header--th">Room</p>
+							<p class="session_header--th">Participants</p>
+							<p class="session_header--th">Issues to vote</p>
+						</div>
+						@for (session of allSessionList; track $index) {
+							<div class="session_body" (click)="enterSession(session.sessionCode)">
+								<p class="session_body--td"><mat-icon>circle</mat-icon> {{ session.agenda }}</p>
+								<p class="session_body--td">{{ session.participantCount }}</p>
+								<p class="session_body--td">{{ session.userstoryCount }}</p>
+							</div>
+						}
 					</div>
 				}
 			</div>

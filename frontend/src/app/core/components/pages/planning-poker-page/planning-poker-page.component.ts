@@ -39,6 +39,7 @@ import { FormsModule } from "@angular/forms";
 import { RolePipe } from "../../../pipes/role.pipe";
 import { UserApiService } from "../../../services/user-api.service";
 import { Priority } from "forge-shared/enum/priority.enum";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
 	selector: "app-planning-poker-page",
@@ -66,6 +67,8 @@ import { Priority } from "forge-shared/enum/priority.enum";
 		SelectComponent,
 		FormsModule,
 		RolePipe,
+		MatTooltipModule,
+		MatRippleModule,
 	],
 	templateUrl: "./planning-poker-page.component.html",
 	styleUrl: "./planning-poker-page.component.scss",
