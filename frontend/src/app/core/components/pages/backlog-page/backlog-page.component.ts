@@ -1,23 +1,13 @@
-import {
-	Component,
-	ViewChild,
-	ViewChildren,
-	QueryList,
-	ElementRef,
-	AfterViewInit,
-	Renderer2,
-	OnInit,
-	Inject,
-} from "@angular/core";
+import { Component, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, OnInit, Inject } from "@angular/core";
 import { MatIcon } from "@angular/material/icon";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTable, MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
-import { Observable, combineLatest, forkJoin, of, throwError } from "rxjs";
-import { catchError, filter, map, mergeMap, shareReplay, switchMap, tap } from "rxjs/operators";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { Observable, forkJoin } from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
@@ -27,22 +17,14 @@ import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.
 import { TaskApiService } from "../../../services/task-api.service";
 import { TaskSelfResponse } from "forge-shared/dto/response/taskselfresponse.dto";
 import { Priority } from "forge-shared/enum/priority.enum";
-import { UserApiService } from "../../../services/user-api.service";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
-import { UserSelfResponse } from "forge-shared/dto/response/userselfresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
-import { TaskNewRequest } from "forge-shared/dto/request/tasknewrequest.dto";
-import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 import { SprintApiService } from "../../../services/sprint-api.service";
 import { SprintPeriodStatus } from "forge-shared/enum/sprintperiodstatus.enum";
-import { SprintSelfResponse } from "forge-shared/dto/response/sprintselfresponse.dto";
 import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
-import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
-import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
-import { SprintStatus } from "forge-shared/enum/sprintstatus.enum";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
 import { TaskPopupComponent } from "../../task-popup/task-popup.component";
@@ -55,6 +37,8 @@ import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { MatMenuModule } from "@angular/material/menu";
 import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component";
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRippleModule } from "@angular/material/core";
 
 @Component({
 	selector: "app-backlog-page",
@@ -78,6 +62,8 @@ import { DeletePopupComponent } from "../../delete-popup/delete-popup.component"
 		MatMenuModule,
 		RouterModule,
 		DeletePopupComponent,
+		MatTooltipModule,
+		MatRippleModule,
 	],
 	templateUrl: "./backlog-page.component.html",
 	styleUrl: "./backlog-page.component.scss",
@@ -97,6 +83,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	tasksPerUserStory: { [userStoryEid: string]: TaskSelfComposite[] } = {};
 	tasksDataSources: { [userStoryEid: string]: MatTableDataSource<TaskSelfComposite> } = {};
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
+	projectName: string = "";
 
 	@ViewChildren("itemCell")
 	itemCell!: QueryList<ElementRef>;
@@ -123,6 +110,7 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		this.getProject()
 			.pipe(
 				map((project) => {
+					this.projectName = project.code;
 					project.members.forEach((member) => {
 						this.projectMembersMap[member.eid] = member;
 					});
