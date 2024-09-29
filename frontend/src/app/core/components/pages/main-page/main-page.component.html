@@ -5,7 +5,7 @@
 			<div class="agile-process-grid">
 				<div class="chart">
 					<select name="" id="" (change)="setSprint($event)">
-						@for (sprint of currentAndFutureSprints; track $index) {
+						@for (sprint of pastAndCurrentSprints; track $index) {
 							<option value="{{ sprint.eid }}" [selected]="sprint.index === currentSprint.index">
 								Sprint {{ sprint.index }}
 							</option>
@@ -38,15 +38,33 @@
 				<app-burndown-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-burndown-chart>
 			</div>
 			<div class="metrics-grid">
-				<h1>Metrics</h1>
-				<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
-				<div class="lead-time-card">
-					<h2>Lead Time</h2>
-					<p>{{ leadTimeDaysAverage }} days</p>
-				</div>
-				<div class="sprint-velocity-card">
-					<h2>Sprint Velocity</h2>
-					<p>{{ sprintVelocity }} points</p>
+				<div class="metrics-content-wrapper">
+					<h1>Metrics</h1>
+					<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
+					<div class="metric-cards-wrapper">
+						<div class="metric-card">
+							<h2>Lead Time</h2>
+							<span class="value-for-metric"
+								><img [src]="leadTimeMetricImageUrl" *ngIf="sprintLeadTime != '-'" /><span
+									>{{ sprintLeadTime }} days</span
+								></span
+							>
+							<p *ngIf="pastSprints.length > 0" class="average-for-metric">
+								Average for the project: <span class="average-value">{{ averageSprintsLeadTime }}</span> days
+							</p>
+						</div>
+						<div class="metric-card">
+							<h2>Sprint Velocity</h2>
+							<span class="value-for-metric"
+								><img [src]="velocityMetricImageUrl" *ngIf="sprintVelocity != '-'" /><span
+									>{{ sprintVelocity }} points</span
+								></span
+							>
+							<p *ngIf="pastSprints.length > 0" class="average-for-metric">
+								Average for the project: <span class="average-value">{{ averageSprintsVelocity }}</span> points
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- <div class="activity-grid">
