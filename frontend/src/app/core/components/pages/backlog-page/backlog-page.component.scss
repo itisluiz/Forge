@@ -29,6 +29,22 @@ app-navbar {
 	border-left: 3px solid v.$blue-color !important;
 }
 
+.info-tooltip {
+	color: v.$label-background-dark-grey;
+	opacity: 0.6;
+	font-size: 13px;
+	height: fit-content;
+	width: fit-content;
+	margin: 0 10px 0 4px;
+	cursor: help;
+	transition: 0.3s;
+
+	&:hover {
+		opacity: 1;
+		filter: brightness(0.8);
+	}
+}
+
 .grid-container {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -45,19 +61,21 @@ app-navbar {
 
 	& > .backlog-grid {
 		.grey-button {
-			padding: 8px 14px 8px 14px;
+			padding: 6px 12px;
 			background-color: v.$epics-light-grey-color;
 			border: none;
 			border-radius: 4px;
+			display: flex;
+			margin: 0 auto;
 		}
 		.green-button {
 			color: white;
 			background-color: v.$green-color;
-			border-radius: 2px;
-			margin: unset;
+			border-radius: 4px;
+			display: flex;
+			margin: 0 auto;
 			border: none;
-			width: 114px;
-			height: 30px;
+			padding: 6px 12px;
 
 			&:disabled {
 				background-color: v.$disabled-background-color;
@@ -67,7 +85,7 @@ app-navbar {
 		}
 		.title {
 			display: flex;
-			align-items: baseline;
+			align-items: center;
 			justify-content: space-between;
 			margin-bottom: 25px;
 
@@ -82,20 +100,20 @@ app-navbar {
 					h2 {
 						font-size: v.$h2-font;
 						font-weight: 500;
-						margin-right: 11px;
 					}
 
 					.tag {
 						display: flex;
 						align-items: center;
 						gap: 2px;
-						padding: 1px 2.5px;
-						border-radius: 3px;
+						padding: 1px 4px;
+						border-radius: 4px;
 						height: fit-content;
-						margin-right: 0.1em;
+						margin-right: 4px;
 
 						span {
 							font-size: 9px;
+							font-weight: 500;
 							color: v.$white-color;
 						}
 
@@ -149,12 +167,13 @@ app-navbar {
 						align-items: center;
 						gap: 2px;
 						background-color: v.$lemon-color;
-						padding: 1px 2.5px;
-						border-radius: 3px;
+						padding: 1px 4px;
+						border-radius: 4px;
 						height: fit-content;
 
 						span {
 							font-size: 9px;
+							font-weight: 500;
 							color: v.$white-color;
 						}
 					}
@@ -165,15 +184,23 @@ app-navbar {
 				display: flex;
 				flex-direction: column;
 				align-items: end;
+				height: 58px;
 
 				button {
-					height: 24px;
-					background-color: transparent;
+					height: 27px;
 					border: none;
-					margin-bottom: 7px;
+					width: 27px;
+					border-radius: 50%;
+					display: flex;
+					justify-content: center;
+					background-color: transparent;
+
+					&:hover {
+						background-color: #f8f8f845;
+					}
 
 					mat-icon {
-						transform: translateY(5px);
+						transform: translateY(2px);
 					}
 				}
 			}
@@ -242,19 +269,19 @@ app-navbar {
 		color: v.$grey-color;
 
 		h3 {
-			margin-bottom: 10px;
+			font-size: 20px;
 			font-weight: 500;
 		}
 
 		.green-button {
 			color: white;
 			background-color: v.$green-color;
-			border-radius: 2px;
-			margin: unset;
+			border-radius: 4px;
+			display: flex;
+			margin: 0 auto;
 			border: none;
-			padding: 10px 20px;
-			width: initial;
-			height: initial;
+			padding: 6px 12px;
+			margin-top: 10px;
 
 			&:disabled {
 				background-color: v.$disabled-background-color;
@@ -309,7 +336,7 @@ app-navbar {
 		h1 {
 			font-size: v.$title-font;
 			font-weight: 500;
-			margin-bottom: 19px;
+			margin-bottom: 12px;
 		}
 
 		p {
@@ -332,19 +359,19 @@ app-navbar {
 				font-size: v.$h2-font;
 				font-weight: 500;
 				margin-bottom: 0;
-				margin-right: 11px;
 			}
 			.items {
 				display: flex;
 				align-items: center;
 				gap: 2px;
 				background-color: v.$lemon-color;
-				padding: 1px 2.5px;
-				border-radius: 3px;
+				padding: 1px 4px;
+				border-radius: 4px;
 				height: fit-content;
 
 				span {
 					font-size: 9px;
+					font-weight: 500;
 					color: v.$white-color;
 				}
 			}
@@ -428,6 +455,20 @@ app-navbar {
 @media only screen and (max-width: 1500px) {
 	.backlog-page-content {
 		margin: 67px 3em 0 3em;
+	}
+}
+
+@media only screen and (min-width: 1500px) {
+	.backlog-page-content {
+		.grid-container {
+			& > .header-grid {
+				padding: 2em 1.5em;
+			}
+
+			& > .backlog-grid {
+				padding: 1em 1.5em;
+			}
+		}
 	}
 }
 

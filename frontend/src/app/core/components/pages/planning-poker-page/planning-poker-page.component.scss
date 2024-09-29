@@ -9,6 +9,30 @@ app-navbar {
 	z-index: 10;
 }
 
+.info-tooltip {
+	color: v.$label-background-dark-grey;
+	opacity: 0.6;
+	font-size: 13px;
+	height: fit-content;
+	width: fit-content;
+	margin: 0 10px 0 4px;
+	cursor: help;
+	transition: 0.3s;
+
+	&:hover {
+		opacity: 1;
+		filter: brightness(0.8);
+	}
+}
+
+.body-grid {
+	padding: 1em 1em 1.5em 1em !important;
+}
+
+.start-button {
+	transform: translateY(10px);
+}
+
 #sprint {
 	height: 40px;
 	padding: 0px 0px 0px 20px;
@@ -49,9 +73,15 @@ app-navbar {
 	animation: gradientRise 0.3s ease-in-out forwards;
 }
 
-.add-to {
+.priority {
 	position: absolute;
 	right: 24px;
+	bottom: 23px;
+}
+
+.add-to {
+	position: absolute;
+	right: 52px;
 	bottom: 16px;
 
 	&:hover {
@@ -61,18 +91,21 @@ app-navbar {
 }
 
 .grey-button {
-	padding: 8px 14px 8px 14px;
+	height: 31px;
+	padding: 0 12px;
 	background-color: v.$epics-light-grey-color;
 	border: none;
 	border-radius: 4px;
+	transform: translateY(-25px);
 }
 
 .green-button {
-	padding: 8px 14px 8px 14px;
-	background-color: v.$green-color;
-	color: v.$white-color;
+	height: 31px;
+	color: white;
+	background-color: #6dc955;
 	border: none;
 	border-radius: 4px;
+	padding: 0 12px;
 }
 
 .content-wrapper {
@@ -82,7 +115,7 @@ app-navbar {
 		align-items: center;
 		justify-content: center;
 		color: v.$grey-color;
-		padding: 10em 0 20em 0;
+		padding: 6em 0 20em 0;
 
 		> mat-icon {
 			width: 44px;
@@ -91,28 +124,41 @@ app-navbar {
 			margin-bottom: 12px;
 		}
 
+		&_title {
+			font-size: v.$h2-font;
+			font-weight: 500;
+		}
+
 		&_label {
 			max-width: 480px;
 			text-align: center;
-			margin-bottom: 36px;
+			font-size: v.$paragraph-font;
+			margin-top: 10px;
+			margin-bottom: 24px;
 		}
 	}
 
 	.session {
-		padding: 0.5em 2.5em 0 2.5em;
+		padding: 2em 0.5em 0 0.5em;
 
 		&_title {
-			padding: 1em 2.5em 0 2.5em;
+			padding: 0 0.5em 0 0.5em;
 
-			& > h3 {
-				font-weight: 600;
-				font-size: v.$sub-title-font;
+			&--first {
+				display: flex;
+				align-items: center;
+
+				& > h2 {
+					font-size: 18px;
+					font-weight: 500;
+				}
 			}
 
 			& > p {
 				font-size: v.$paragraph-font;
 				color: v.$grey-color;
 				font-weight: 400;
+				margin-top: 10px;
 			}
 		}
 
@@ -191,6 +237,9 @@ app-navbar {
 	.planning-poker {
 		padding: 0 2.5em 4em 2.5em;
 		transition: all 0.5s ease-in-out;
+		transform: translateY(-24px);
+		border-top-right-radius: 0;
+		border-top-left-radius: 0;
 
 		&_no-userstory {
 			display: flex;
@@ -435,6 +484,7 @@ app-navbar {
 
 .issues-list {
 	width: min-content;
+	background-color: v.$white-color;
 
 	&_content {
 		max-width: 360px;
@@ -521,13 +571,11 @@ app-navbar {
 }
 
 .grid-container {
-	background-color: v.$white-color;
 	display: flex;
 	flex: auto;
 	flex-direction: column;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto auto;
-	gap: 12px;
 	min-height: 90vh;
 
 	border-radius: 12px 12px 0 0;
@@ -536,7 +584,11 @@ app-navbar {
 		grid-column: auto;
 		grid-row: 1;
 		z-index: 0;
-		padding: 2em 2.5em 0 2.5em;
+		padding: 2em 2.5em 2em 2.5em;
+
+		.header-grid_desc {
+			font-size: v.$sub-title-font;
+		}
 
 		.breadcrump-story-wrapper {
 			display: grid;
@@ -586,12 +638,12 @@ app-navbar {
 
 			.buttons-header {
 				grid-area: right;
-				align-self: center;
+				align-self: end;
 				justify-self: end;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-				transform: translateY(95%);
+				transform: translateY(45px);
 
 				.mat-icon-button {
 					display: flex;
@@ -634,6 +686,16 @@ app-navbar {
 @media only screen and (max-width: 1500px) {
 	.planning-poker-content {
 		margin: 51px 3em 0 3em;
+	}
+}
+
+@media only screen and (min-width: 1500px) {
+	.planning-poker-content {
+		.grid-container {
+			& > .header-grid {
+				padding: 2em 1.5em 2em 1.5em;
+			}
+		}
 	}
 }
 

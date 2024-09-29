@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { EpicApiService } from "../../../services/epic-api.service";
 import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
 import { EpicSelfComposite } from "forge-shared/dto/composite/epicselfcomposite.dto";
-import { catchError, combineLatest, Observable, of, shareReplay, switchMap, throwError } from "rxjs";
+import { catchError, combineLatest, Observable, of, shareReplay, switchMap } from "rxjs";
 import { map } from "rxjs";
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 import { EpicNewRequest } from "forge-shared/dto/request/epicnewrequest.dto";
@@ -22,6 +22,10 @@ import { EpicResponse } from "forge-shared/dto/response/epicresponse.dto";
 import { Priority } from "forge-shared/enum/priority.enum";
 import { UserstoryResponse } from "forge-shared/dto/response/userstoryresponse.dto";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRippleModule } from "@angular/material/core";
+import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
+import { ProjectApiService } from "../../../services/project-api.service";
 
 @Component({
 	selector: "app-kanban-page",
@@ -39,12 +43,15 @@ import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 		UserStoryPopupComponent,
 		DeletePopupComponent,
 		MaxLengthPipe,
+		MatTooltipModule,
+		MatRippleModule,
 	],
 	templateUrl: "./epics-page.component.html",
 	styleUrl: "./epics-page.component.scss",
 })
 export class EpicsPageComponent implements OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
+	projectCode!: string;
 
 	epics$: Observable<EpicSelfComposite[]> = this.epicApiService.getEpics(this.projectEid).pipe(
 		map((response: EpicSelfResponse) => {
@@ -73,9 +80,11 @@ export class EpicsPageComponent implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 		private epicApiService: EpicApiService,
+		private projectApiService: ProjectApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.getProject();
 		this.userStoriesMap$ = this.epics$.pipe(
 			switchMap((epics) => {
 				const userStoriesObservables = epics.map((epic) =>
@@ -294,6 +303,17 @@ export class EpicsPageComponent implements OnInit {
 		dataSource.data = [...dataSource.data, userStory];
 		this.userStoriesDataSources[userStory.epicEid] = dataSource;
 		this.closePopUpIssue();
+	}
+
+	getProject() {
+		this.projectApiService.getEspecificProject(this.projectEid).subscribe({
+			next: (projectResponse) => {
+				this.projectCode = projectResponse.code;
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
 	}
 
 	navigateToUserStory(userStoryEid: string) {

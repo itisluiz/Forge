@@ -4,15 +4,15 @@
 		<div class="header-grid">
 			<div class="breadcrump-epics-wrapper">
 				<ul class="breadcrumber">
-					<li><a href="">Squad BES</a></li>
+					<li>
+						<a>{{ projectName }}</a>
+					</li>
 					<div class="spacer">></div>
-					<li><a href="">TCC 1</a></li>
-					<div class="spacer">></div>
-					<li><a href="/backlog">Backlog</a></li>
+					<li><a>Backlog</a></li>
 				</ul>
 				<h1>Backlog</h1>
 				<div class="buttons-header">
-					<button id="button-create-epic" (click)="openPopUpCreateSprint()">Create new Sprint</button>
+					<button id="button-create-epic" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
 					<button mat-icon-button class="mat-icon-button">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -29,6 +29,11 @@
 					<div class="left">
 						<div class="left-content">
 							<h2>Sprint {{ currentSprint.index }}</h2>
+							<mat-icon
+								class="info-tooltip"
+								matTooltip="A sprint is a short, fixed time in Scrum to complete specific tasks, usually lasting 1-4 weeks."
+								>info</mat-icon
+							>
 							<div class="tag {{ currentSprint.status | sprintStatusClass }}">
 								<span>{{ currentSprint.status | sprintStatus }}</span>
 							</div>
@@ -39,11 +44,11 @@
 								</div>
 							}
 						</div>
-						<p class="desc">Current Sprint</p>
+						<p class="desc">Find below the current sprint of the project.</p>
 					</div>
 
 					<div class="right">
-						<button mat-icon-button [matMenuTriggerFor]="menu">
+						<button mat-icon-button [matMenuTriggerFor]="menu" matRipple>
 							<mat-icon>more_horiz</mat-icon>
 						</button>
 						<mat-menu #menu="matMenu">
@@ -53,7 +58,7 @@
 						</mat-menu>
 						<p class="sprint-date">
 							Started at {{ currentSprint.startsAt | date: "dd/MM/YYYY" }} with
-							{{ currentSprint.endsAt | daysDifference }} day(s) left {{ currentSprint.endsAt | date: "dd/MM/YYYY" }}
+							{{ currentSprint.endsAt | daysDifference }} day(s) left
 						</p>
 					</div>
 				</div>
@@ -68,7 +73,7 @@
 									<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 									<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 									<mat-panel-description>
-										<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)">
+										<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)" matRipple>
 											Remove from sprint
 										</button>
 									</mat-panel-description>
@@ -156,7 +161,7 @@
 			} @else {
 				<div class="no-sprint">
 					<h3>No current sprint available. Please create a new sprint.</h3>
-					<button class="green-button" (click)="openPopUpCreateSprint()">Create new Sprint</button>
+					<button class="green-button" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
 				</div>
 			}
 		</div>
@@ -167,6 +172,11 @@
 				<div class="left">
 					<div class="left-content">
 						<h2>Backlog</h2>
+						<mat-icon
+							class="info-tooltip"
+							matTooltip="The backlog is a prioritized list of tasks or user stories. Users can click 'Add to sprint' to move a story to the current sprint if it exists."
+							>info</mat-icon
+						>
 						<div class="items">
 							<span>{{ userStoriesInBacklog.length }}</span>
 							<span>items</span>
@@ -187,7 +197,9 @@
 								<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 								@if (currentSprint.eid || futureSprints.length > 0) {
 									<mat-panel-description>
-										<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
+										<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)" matRipple>
+											Add to a sprint
+										</button>
 									</mat-panel-description>
 								}
 							</mat-expansion-panel-header>
@@ -284,6 +296,9 @@
 			<div class="backlog-grid sprint-group-title">
 				<div class="sprint-title-and-items-wrapper">
 					<h2>Future Sprints</h2>
+					<mat-icon class="info-tooltip" matTooltip="The list displays future sprints that are being planned."
+						>info</mat-icon
+					>
 					<div class="tag items">
 						<span>{{ futureSprints.length }}</span>
 						<span>items</span>
@@ -309,6 +324,7 @@
 			<div class="backlog-grid sprint-group-title">
 				<div class="sprint-title-and-items-wrapper">
 					<h2>Past Sprints</h2>
+					<mat-icon class="info-tooltip" matTooltip="The list shows completed sprints.">info</mat-icon>
 					<div class="tag items">
 						<span>{{ pastSprints.length }}</span>
 						<span>items</span>
@@ -347,7 +363,7 @@
 					<p class="desc">Period {{ sprint.startsAt | date: "dd/MM/YYYY" }} - {{ sprint.endsAt | date: "dd/MM/YYYY" }}</p>
 				</div>
 				<div class="right">
-					<button mat-icon-button [matMenuTriggerFor]="menu">
+					<button mat-icon-button [matMenuTriggerFor]="menu" matRipple>
 						<mat-icon>more_horiz</mat-icon>
 					</button>
 					<mat-menu #menu="matMenu">
@@ -368,7 +384,9 @@
 							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 							@if (buttonsAvailable) {
 								<mat-panel-description>
-									<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)">Remove from sprint</button>
+									<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)" matRipple>
+										Remove from sprint
+									</button>
 								</mat-panel-description>
 							}
 						</mat-expansion-panel-header>
@@ -477,8 +495,8 @@
 				</div>
 			</div>
 			<div class="pop-up-footer">
-				<button type="submit" [disabled]="addToSprintForm.invalid">Submit</button>
-				<button class="cancel-epic" (click)="closePopUpAddToSprint()">Cancel</button>
+				<button type="submit" [disabled]="addToSprintForm.invalid" matRipple>Submit</button>
+				<button class="cancel-epic" (click)="closePopUpAddToSprint()" matRipple>Cancel</button>
 			</div>
 		</form>
 	</div>

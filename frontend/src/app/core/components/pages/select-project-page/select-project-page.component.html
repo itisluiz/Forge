@@ -63,25 +63,39 @@
 					</div>
 				</mat-tab>
 				<mat-tab label="Members">
-					<div class="header-members">
+					<div class="header-members" [ngClass]="checkAllMembers(projectInformation.members)">
 						<p>Name</p>
-						<p>Role</p>
 						<p>Email</p>
-						<p>Actions</p>
+						<p>Role</p>
+						<p>Action</p>
 					</div>
 					<div class="body-members">
 						@for (member of projectInformation.members; track member) {
 							<div class="member">
 								@if (member.admin) {
-									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }} {{ member.surname }}</p>
+									<div class="adm">
+										<img [src]="member.gravatar" />
+										<div class="identity">
+											<span>Admin</span>
+											<p>{{ member.name }} {{ getLastName(member.surname) }}</p>
+										</div>
+									</div>
 								} @else {
-									<p>{{ member.name }} {{ member.surname }}</p>
+									<div class="normal-member">
+										<img [src]="member.gravatar" />
+										<p>{{ member.name }} {{ getLastName(member.surname) }}</p>
+									</div>
 								}
 
-								<p>{{ member.role | projectRole }}</p>
-								<p>{{ member.email }}</p>
+								<p class="member-email">{{ member.email }}</p>
+								<p class="member-role">{{ member.role | projectRole }}</p>
 
-								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+								<button
+									class="member-action"
+									mat-icon-button
+									[matMenuTriggerFor]="member_menu"
+									#menuTrigger="matMenuTrigger"
+								>
 									<mat-icon>more_vert</mat-icon>
 								</button>
 								<mat-menu #member_menu="matMenu">

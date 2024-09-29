@@ -58,6 +58,15 @@ mat-accordion {
 		top: 0;
 		bottom: 0;
 	}
+
+	& > mat-icon {
+		opacity: 0.3;
+		transition: 0.3s;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
 }
 
 .group-list {
