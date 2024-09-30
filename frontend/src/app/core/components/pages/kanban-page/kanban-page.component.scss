@@ -153,6 +153,10 @@ app-navbar {
 			font-weight: 400;
 			margin-top: 10px;
 		}
+
+		app-kanban-column {
+			flex: 1;
+		}
 	}
 
 	& > .header-grid {
@@ -202,21 +206,6 @@ app-navbar {
 			color: v.$grey-color;
 			max-width: 550px;
 		}
-	}
-}
-
-.responsible {
-	display: flex;
-	align-items: center;
-	gap: 0.5em;
-	p {
-		margin-top: 1em !important;
-		font-size: 0.8em !important;
-	}
-	.priority {
-		margin-top: 1em;
-		margin-right: 0.5em;
-		margin-left: auto;
 	}
 }
 

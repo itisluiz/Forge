@@ -86,210 +86,17 @@
 										<mat-panel-description> {{ userstory.description | maxLength: 60 }} </mat-panel-description>
 									</mat-expansion-panel-header>
 
-									<div cdkDropListGroup class="group-list">
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>To do</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 1).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-											<div cdkDropList id="taskstatus-1" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 1); track task) {
-													<div
-														class="container-item"
-														cdkDrag
-														id="task-{{ sprint.eid }}-{{ task.eid }}"
-														(click)="openTaskPopUp(task.eid)"
-													>
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>In progress</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 2).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-2" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 2); track task) {
-													<div
-														class="container-item"
-														cdkDrag
-														id="task-{{ sprint.eid }}-{{ task.eid }}"
-														(click)="openTaskPopUp(task.eid)"
-													>
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Available to review</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 3).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-3" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 3); track task) {
-													<div
-														class="container-item"
-														cdkDrag
-														id="task-{{ sprint.eid }}-{{ task.eid }}"
-														(click)="openTaskPopUp(task.eid)"
-													>
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Reviewing</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 4).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-4" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 4); track task) {
-													<div
-														class="container-item"
-														cdkDrag
-														id="task-{{ sprint.eid }}-{{ task.eid }}"
-														(click)="openTaskPopUp(task.eid)"
-													>
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Done</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 5).length }}</span>
-													<span>completed</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-5" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 5); track task) {
-													<div
-														class="container-item"
-														cdkDrag
-														id="task-{{ sprint.eid }}-{{ task.eid }}"
-														(click)="openTaskPopUp(task.eid)"
-													>
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
+									<div class="group-list">
+										@for (taskStatus of [1, 2, 3, 4, 5]; track taskStatus) {
+											<app-kanban-column
+												[dropCallback]="onCdkDropEvent.bind(this)"
+												[taskClickCallback]="openTaskPopUp.bind(this)"
+												[status]="taskStatus"
+												[members]="project!.members"
+												[sprint]="this.detailedSprints[sprint.eid]"
+												[dropListIds]="sprintDropListIds[sprint.eid]"
+											/>
+										}
 									</div>
 								</mat-expansion-panel>
 							}
@@ -314,7 +121,7 @@
 	<div class="pop-up-background" (click)="closePopUpTask()"></div>
 	<app-task-details
 		[task]="selectedTask"
-		[responsible]="getUser(selectedTask.responsibleEid!)"
+		[responsible]="getResponsible(selectedTask.responsibleEid!)"
 		[projectEid]="projectEid"
 		(closePopUpEmitter)="closePopUpTask()"
 		(closePopUpEmitterDeletedTask)="loadSprintData()"

@@ -89,7 +89,7 @@
 			<div class="comment">
 				<div class="user">
 					<div class="id">
-						@if (responsible === null) {
+						@if (!responsible) {
 							<img src="../../../../../assets/unassigned-user.svg" />
 							<p>User</p>
 						} @else {

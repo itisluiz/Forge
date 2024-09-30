@@ -277,9 +277,10 @@ export class UserStoryPageComponent implements OnInit {
 		return this.projectApiService.getEspecificProject(this.projectEid);
 	}
 
-	getProjectMemberFromMap(userEid: string | undefined): ProjectMemberComposite | null {
-		if (!userEid) return null;
-		return this.projectMembersMap[userEid] || null;
+	getProjectMemberFromMap(userEid: string | undefined) {
+		if (userEid) return this.projectMembersMap[userEid];
+
+		return undefined;
 	}
 
 	statusParser(status: number): string {
