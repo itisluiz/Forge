@@ -7,7 +7,11 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		description: {
+		action: {
+			type: DataTypes.STRING(256),
+			allowNull: false,
+		},
+		expectedBehavior: {
 			type: DataTypes.STRING(256),
 			allowNull: false,
 		},
