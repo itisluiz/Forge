@@ -1,0 +1,49 @@
+<div class="title">
+	<h2>{{ status | taskStatus }}</h2>
+	<div class="count">
+		<span>{{ getStatusTasks().length }}</span>
+		<span>left</span>
+	</div>
+</div>
+
+<div
+	cdkDropList
+	[cdkDropListConnectedTo]="dropListIds"
+	[cdkDropListData]="status"
+	(cdkDropListDropped)="dropCallback($event)"
+	id="kanban-{{ sprint.eid }}-{{ status }}"
+	#dropList
+>
+	@for (task of getStatusTasks(); track task) {
+		<div
+			cdkDrag
+			class="container-item"
+			[cdkDragData]="task"
+			[cdkDragDisabled]="taskEffortUnset(task)"
+			(click)="taskClickCallback(task.eid)"
+		>
+			<div class="content">
+				<div [class]="task.type | taskTypeClass"></div>
+				<span class="effortScore {{ task.type | taskTypeClass }}" [class.unset]="taskEffortUnset(task)">
+					@if (taskEffortUnset(task)) {
+						<mat-icon>warning</mat-icon>
+						No effort score
+					} @else {
+						Effort score {{ task.complexity }}
+					}
+				</span>
+				<h3>{{ task.title }}</h3>
+				<p class="desc">{{ task.description }}</p>
+				<span class="responsible">
+					@if (task.responsibleEid) {
+						<img class="avatar" [src]="getResponsible(task).gravatar" />
+						<p>{{ getResponsibleFullName(task) }}</p>
+					} @else {
+						<p>Not assigned</p>
+					}
+					<img class="priority" src="{{ task.priority | priority | icon }}" alt="{{ task.priority }} priority" />
+				</span>
+			</div>
+		</div>
+	}
+</div>

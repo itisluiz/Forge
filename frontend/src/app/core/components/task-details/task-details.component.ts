@@ -23,12 +23,13 @@ import { MatProgressBar } from "@angular/material/progress-bar";
 })
 export class TaskDetailsComponent implements OnInit {
 	@Input() task!: TaskResponse;
-	@Input() responsible!: ProjectMemberComposite | null;
+	@Input() responsible?: ProjectMemberComposite;
 	@Input() projectEid!: string;
-	userStory: UserstoryResponse | null = null;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() closePopUpEmitterDeletedTask = new EventEmitter<TaskResponse>();
 	@Output() closePopUpEmitterEditedTask = new EventEmitter<TaskResponse>();
+
+	userStory?: UserstoryResponse;
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
 	popUpDeleteTask: boolean = false;
