@@ -11,11 +11,20 @@ import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
 import { BurndownChartComponent } from "../../burndown-chart/burndown-chart.component";
 import { CommonModule } from "@angular/common";
+import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
 
 @Component({
 	selector: "app-main-page",
 	standalone: true,
-	imports: [AgileProcessComponent, NavbarComponent, MatIconModule, RouterModule, BurndownChartComponent, CommonModule],
+	imports: [
+		AgileProcessComponent,
+		NavbarComponent,
+		MatIconModule,
+		RouterModule,
+		BurndownChartComponent,
+		CommonModule,
+		GanttChartComponent,
+	],
 	templateUrl: "./main-page.component.html",
 	styleUrl: "./main-page.component.scss",
 })
