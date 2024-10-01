@@ -73,7 +73,7 @@
 			</div> -->
 			<div class="gantt-grid">
 				<h1>Gantt Chart - Sprint {{ selectedSprint.index }}</h1>
-				<img src="../../../../../assets/fake-gantt.svg" alt="" />
+				<app-gantt-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
 			</div>
 		</div>
 	} @else {

@@ -19,15 +19,25 @@ export class BurndownChartComponent implements OnInit {
 	@ViewChild("burndownChart")
 	burndownChart!: ElementRef;
 
+	chart: any;
+
 	constructor(private sprintApiService: SprintApiService) {}
 
 	ngOnInit(): void {
 		this.loadData();
 	}
 
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes["sprintEid"]) {
+			this.sprintEid = changes["sprintEid"].currentValue;
+			this.loadData();
+		}
+	}
+
 	loadData() {
 		this.sprintApiService.getBurndownData(this.projectEid, this.sprintEid).subscribe({
 			next: (burndownResponse) => {
+				console.log("Burndown Response");
 				console.log(burndownResponse);
 				this.processBurndownData(burndownResponse);
 			},
@@ -39,7 +49,10 @@ export class BurndownChartComponent implements OnInit {
 		const daysArray = Array.from({ length: numberOfDays }, (_, i) => `Day ${i + 1}`);
 		const data = burndownResponse.days.map((day) => day.effort);
 		const plannedData = this.getPlannedData(burndownResponse, numberOfDays);
-		new Chart(this.burndownChart.nativeElement, {
+		if (this.chart) {
+			this.chart.destroy();
+		}
+		this.chart = new Chart(this.burndownChart.nativeElement, {
 			type: "line",
 			data: {
 				labels: daysArray,
