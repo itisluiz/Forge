@@ -1,12 +1,60 @@
-import { testcaseNewRequestJsonSchema } from "../jsonschemas/testcasenewrequest.jsonschema.js";
-import { testcaseUpdateRequestJsonSchema } from "../jsonschemas/testcaseupdaterequest.jsonschema.js";
 import { authorize } from "../middleware/auth.middleware.js";
 import { authorizeProject } from "../middleware/authproject.middleware.js";
 import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { Router } from "express";
+import { testcaseNewRequestJsonSchema } from "../jsonschemas/testcasenewrequest.jsonschema.js";
+import { testcaseSuggestionRequestJsonSchema } from "../jsonschemas/testcasesuggestionrequest.jsonschema.js";
+import { testcaseUpdateRequestJsonSchema } from "../jsonschemas/testcaseupdaterequest.jsonschema.js";
 
 const router = Router();
+
+/**
+ * @swagger
+ * /api/testcase/{projectEid}/suggestion:
+ *   post:
+ *     summary: Get a test case AI generated suggestion with an optional prompt.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *     tags:
+ *       - testcase
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TestcaseSuggestionRequest'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TestcaseSuggestionResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.post(
+	"/api/testcase/:projectEid/suggestion",
+	authorize(),
+	authorizeProject(),
+	jsonBody(),
+	jsonBodySchema(testcaseSuggestionRequestJsonSchema),
+	async (req, res) => {
+		await handle("testcase", "suggestion", req, res);
+	},
+);
 
 /**
  * @swagger
