@@ -1,10 +1,11 @@
 <mat-toolbar id="menu-bar">
 	<img src="../../../../assets/logo.svg" />
 
-	<span (click)="navigateTo(options[2].route)" [ngClass]="{ active: activeRoute == 'sprint' }">Sprint board</span>
+	<span (click)="navigateTo(options[4].route)" [ngClass]="{ active: activeRoute == 'home' }">Home</span>
 	<span (click)="navigateTo(options[0].route)" [ngClass]="{ active: activeRoute == 'epics' }">Epics</span>
 	<span (click)="navigateTo(options[1].route)" [ngClass]="{ active: activeRoute == 'backlog' }">Backlog</span>
 	<span (click)="navigateTo(options[3].route)" [ngClass]="{ active: activeRoute == 'planning-poker' }">Planning poker</span>
+	<span (click)="navigateTo(options[2].route)" [ngClass]="{ active: activeRoute == 'sprint' }">Sprint board</span>
 
 	<!-- <input id="search-bar" placeholder="Search here..." /> -->
 
@@ -31,6 +32,9 @@
 		</audio>
 	</button>
 	<mat-menu #menu="matMenu" xPosition="after">
+		<button mat-menu-item (click)="leaveProject()">
+			<span>Leave Project</span>
+		</button>
 		<button mat-menu-item (click)="openPopUp('leaveConfirm')">
 			<span>Logout</span>
 		</button>

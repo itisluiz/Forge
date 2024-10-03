@@ -12,6 +12,7 @@ import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
 import { BurndownChartComponent } from "../../burndown-chart/burndown-chart.component";
 import { CommonModule } from "@angular/common";
 import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
 	selector: "app-main-page",
@@ -24,6 +25,7 @@ import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
 		BurndownChartComponent,
 		CommonModule,
 		GanttChartComponent,
+		MatTooltipModule,
 	],
 	templateUrl: "./main-page.component.html",
 	styleUrl: "./main-page.component.scss",

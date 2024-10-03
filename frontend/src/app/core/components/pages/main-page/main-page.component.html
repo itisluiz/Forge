@@ -4,7 +4,7 @@
 		<div class="grid-container">
 			<div class="agile-process-grid">
 				<div class="chart">
-					<select name="" id="" (change)="setSprint($event)">
+					<select name="" id="" class="select-sprint" (change)="setSprint($event)">
 						@for (sprint of pastAndCurrentSprints; track $index) {
 							<option value="{{ sprint.eid }}" [selected]="sprint.index === currentSprint.index">
 								Sprint {{ sprint.index }}
@@ -26,7 +26,14 @@
 				</div>
 				<div class="ai-feedback">
 					<hr />
-					<h3>Project Indicators Analysis</h3>
+					<div class="feedback-title">
+						<h3>Project Indicators Analysis</h3>
+						<mat-icon
+							class="info-tooltip"
+							matTooltip="The text below provides a brief summary of the project, emphasizing key points and areas that require attention."
+							>info</mat-icon
+						>
+					</div>
 					<p>
 						Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
 						Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
@@ -39,7 +46,7 @@
 			</div>
 			<div class="metrics-grid">
 				<div class="metrics-content-wrapper">
-					<h1>Metrics</h1>
+					<h1>Team metrics</h1>
 					<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
 					<div class="metric-cards-wrapper">
 						<div class="metric-card">
@@ -73,7 +80,7 @@
 			</div> -->
 			<div class="gantt-grid">
 				<h1>Gantt Chart - Sprint {{ selectedSprint.index }}</h1>
-				<app-gantt-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
+				<app-gantt-chart class="gantt-wrapper" [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
 			</div>
 		</div>
 	} @else {
