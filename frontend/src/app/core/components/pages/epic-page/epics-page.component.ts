@@ -75,6 +75,8 @@ export class EpicsPageComponent implements OnInit {
 	isPanelDisabled: boolean = false;
 	eidSelectedEpic: string = "";
 
+	disableButtonDuringRequest: boolean = false;
+
 	constructor(
 		private formBuilder: FormBuilder,
 		private route: ActivatedRoute,
@@ -213,6 +215,7 @@ export class EpicsPageComponent implements OnInit {
 	}
 
 	submitForm() {
+		this.disableButtonDuringRequest = true;
 		const name = this.createEpicForm.get("name");
 		const description = this.createEpicForm.get("description");
 
@@ -234,6 +237,7 @@ export class EpicsPageComponent implements OnInit {
 	createEpic(epicNewRequest: EpicNewRequest) {
 		this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
 			next: (result) => {
+				this.disableButtonDuringRequest = false;
 				this.setUpdatedEpics();
 				// TODO: Toaster success
 			},

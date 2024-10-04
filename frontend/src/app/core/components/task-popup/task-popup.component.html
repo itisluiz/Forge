@@ -77,8 +77,10 @@
 			}
 		</div>
 		<div class="pop-up-footer">
-			<button type="submit" *ngIf="!isEditMode" [disabled]="taskForm.invalid">Create</button>
-			<button type="submit" *ngIf="isEditMode" [disabled]="taskForm.invalid">Submit Modifications</button>
+			<button type="submit" *ngIf="!isEditMode" [disabled]="taskForm.invalid || disableButtonDuringRequest">Create</button>
+			<button type="submit" *ngIf="isEditMode" [disabled]="taskForm.invalid || disableButtonDuringRequest">
+				Submit Modifications
+			</button>
 			<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
 		</div>
 	</form>

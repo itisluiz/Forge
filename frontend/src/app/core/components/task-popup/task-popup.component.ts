@@ -59,6 +59,8 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	projectMembers: ProjectMemberComposite[] = [];
 	maxComplexity: number = 0;
 
+	disableButtonDuringRequest: boolean = false;
+
 	constructor(
 		private formBuilder: FormBuilder,
 		private taskApiService: TaskApiService,
@@ -113,6 +115,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	}
 
 	submitTaskForm() {
+		this.disableButtonDuringRequest = true;
 		this.formSubmitted = true;
 
 		if (this.taskForm.valid) {
@@ -155,12 +158,14 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 
 	private createTask(taskNewRequest: TaskNewRequest) {
 		this.taskApiService.newTask(taskNewRequest, this.projectEid).subscribe((taskResponse: TaskResponse) => {
+			this.disableButtonDuringRequest = false;
 			this.handleTaskAndClosePopupEmitter.emit(taskResponse);
 		});
 	}
 
 	private updateTask(taskUpdateRequest: TaskUpdateRequest) {
 		this.taskApiService.updateTask(taskUpdateRequest, this.projectEid, this.taskEditData.eid).subscribe(() => {
+			this.disableButtonDuringRequest = false;
 			this.handleEditedTaskAndClosePopupEmitter.emit();
 		});
 	}
