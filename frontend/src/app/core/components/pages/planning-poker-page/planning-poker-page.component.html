@@ -8,7 +8,7 @@
 						<a>{{ projectCode }}</a>
 					</li>
 					<div class="spacer">></div>
-					<li><a href="/user-story">Planning Poker</a></li>
+					<li><a>Planning Poker</a></li>
 				</ul>
 				<h1 id="user-story-title">Planning poker</h1>
 
@@ -110,9 +110,9 @@
 
 				<div class="planning-poker_current-userstory" #expand>
 					@if (currentUserstoryBeingVoted) {
-						@if (currentUserstoryBeingVoted.effortScore) {
+						@if (currentSessionData.voteClosestFibonacci) {
 							<div class="planning-poker_current-userstory--average">
-								Average score: {{ currentUserstoryBeingVoted.effortScore }}
+								Average score: {{ currentSessionData.voteClosestFibonacci }}
 							</div>
 						}
 						<img

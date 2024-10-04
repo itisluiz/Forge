@@ -236,10 +236,10 @@ app-navbar {
 
 			.metric-cards-wrapper {
 				display: flex;
-				margin: 0 0 0 12px;
+				margin: 0 12px 0 12px;
 
 				.metric-card {
-					width: 182px;
+					flex: 1;
 					height: 99px;
 					padding: 12px 12px 0 12px;
 					border-radius: 6px;

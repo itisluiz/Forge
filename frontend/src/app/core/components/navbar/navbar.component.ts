@@ -54,7 +54,7 @@ export class NavbarComponent {
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 	trollando: boolean = false;
 	popUpLeaveForge: boolean = false;
-	activeRoute: string = "home";
+	activeRoute: string = localStorage.getItem("activeRoute") || "";
 
 	playAudio() {
 		if ((this.trollando = !this.trollando)) {

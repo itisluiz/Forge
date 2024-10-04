@@ -1,5 +1,5 @@
 <mat-toolbar id="menu-bar">
-	<img src="../../../../assets/logo.svg" />
+	<img (click)="navigateTo(options[4].route)" src="../../../../assets/logo.svg" />
 
 	<span (click)="navigateTo(options[4].route)" [ngClass]="{ active: activeRoute == 'home' }">Home</span>
 	<span (click)="navigateTo(options[0].route)" [ngClass]="{ active: activeRoute == 'epics' }">Epics</span>
