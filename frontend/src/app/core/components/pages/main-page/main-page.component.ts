@@ -13,6 +13,7 @@ import { BurndownChartComponent } from "../../burndown-chart/burndown-chart.comp
 import { CommonModule } from "@angular/common";
 import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @Component({
 	selector: "app-main-page",
@@ -26,6 +27,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 		CommonModule,
 		GanttChartComponent,
 		MatTooltipModule,
+		MatProgressBarModule,
 	],
 	templateUrl: "./main-page.component.html",
 	styleUrl: "./main-page.component.scss",

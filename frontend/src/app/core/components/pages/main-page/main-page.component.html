@@ -19,8 +19,32 @@
 							<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
 						</div>
 						<div class="lower">
-							<p>View your epic's process</p>
-							<img src="../../../../../assets/fake-slider.svg" alt="" />
+							<div class="lower_title">
+								<p>Track Your Workflows</p>
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="Monitor the progress of user stories and tasks in real time. Keep track of each phase, from planning to completion, ensuring smooth project execution."
+									>info</mat-icon
+								>
+							</div>
+							<div class="workflow-cards">
+								<div class="metric-card">
+									<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+									<h2>Userstories</h2>
+									<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+									<p class="average-for-metric">
+										You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+									</p>
+								</div>
+								<div class="metric-card">
+									<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+									<h2>Tasks</h2>
+									<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+									<p class="average-for-metric">
+										You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+									</p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
