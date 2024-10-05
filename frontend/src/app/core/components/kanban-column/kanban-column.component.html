@@ -11,7 +11,7 @@
 	[cdkDropListConnectedTo]="dropListIds"
 	[cdkDropListData]="status"
 	(cdkDropListDropped)="dropCallback($event)"
-	id="kanban-{{ sprint.eid }}-{{ status }}"
+	id="kanban-{{ userstory.eid }}-{{ status }}"
 	#dropList
 >
 	@for (task of getStatusTasks(); track task) {

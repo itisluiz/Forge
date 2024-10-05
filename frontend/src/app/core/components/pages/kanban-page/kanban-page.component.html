@@ -99,7 +99,7 @@
 					<mat-accordion multi>
 						@if (userStoriesPerSprint[sprint.eid].length > 0) {
 							@for (userstory of userStoriesPerSprint[sprint.eid]; track userstory) {
-								<mat-expansion-panel>
+								<mat-expansion-panel [(expanded)]="userstoryExpanded[userstory.eid]">
 									<mat-expansion-panel-header>
 										<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 										<mat-panel-title> {{ userstory.title | maxLength: 35 }} </mat-panel-title>
@@ -114,7 +114,8 @@
 												[status]="taskStatus"
 												[members]="project!.members"
 												[sprint]="this.detailedSprints[sprint.eid]"
-												[dropListIds]="sprintDropListIds[sprint.eid]"
+												[userstory]="userstory"
+												[dropListIds]="userstoryDropListIds[userstory.eid]"
 											/>
 										}
 									</div>

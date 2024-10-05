@@ -129,7 +129,7 @@
 					*ngIf="!isEditMode"
 					mat-button
 					matStepperNext
-					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid || disableButtonDuringRequest"
 				>
 					Create user story
 				</button>

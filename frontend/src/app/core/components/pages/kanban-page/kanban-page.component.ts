@@ -78,7 +78,8 @@ export class KanbanPageComponent implements OnInit {
 	sprints: SprintSelfComposite[] = [];
 	detailedSprints: { [key: string]: SprintResponse } = {};
 	userStoriesPerSprint: { [key: string]: UserstorySelfComposite[] } = {};
-	sprintDropListIds: { [key: string]: string[] } = {};
+	userstoryDropListIds: { [key: string]: string[] } = {};
+	userstoryExpanded: { [key: string]: string[] } = {};
 	project?: ProjectResponse;
 	popUpTask: boolean = false;
 	selectedTask!: TaskResponse;
@@ -100,6 +101,11 @@ export class KanbanPageComponent implements OnInit {
 		this.sprintApiService.getSprint(this.projectEid, eid).subscribe({
 			next: (sprintResponse) => {
 				this.detailedSprints[sprintResponse.eid] = sprintResponse;
+
+				const userstoryEids = [...new Set(sprintResponse.tasks.map((task) => task.userstoryEid))];
+				userstoryEids.forEach((userstoryEid) => {
+					this.userstoryDropListIds[userstoryEid] = [];
+				});
 			},
 		});
 
@@ -115,7 +121,6 @@ export class KanbanPageComponent implements OnInit {
 			next: (sprintSelfResponse) => {
 				this.sprints = sprintSelfResponse.sprints;
 				this.sprints.forEach((sprint) => {
-					this.sprintDropListIds[sprint.eid] = [];
 					this.loadDetailedSprint(sprint.eid);
 				});
 			},

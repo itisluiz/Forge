@@ -147,7 +147,7 @@
 				</div>
 			</div>
 			<div class="pop-up-footer">
-				<button type="submit" [disabled]="createEpicForm.invalid" matRipple>Create</button>
+				<button type="submit" [disabled]="createEpicForm.invalid || disableButtonDuringRequest" matRipple>Create</button>
 				<button class="cancel-epic" (click)="closePopUpCreateEpic()" matRipple>Cancel</button>
 			</div>
 		</form>
