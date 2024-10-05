@@ -45,11 +45,13 @@ export class GanttChartComponent implements OnInit {
 	}
 
 	processGanttData(ganttResponse: GanttResponse) {
-		const taskLabels = ganttResponse.tasks.map((task) => task.taskCode);
-		const taskTimeline = ganttResponse.tasks.map((task) => [task.startedAt?.split("T")[0], task.completedAt?.split("T")[0]]);
+		const taskLabels = this.getTaskLabels(ganttResponse.tasks);
+		const taskTimelines = this.getTaskTimelines(ganttResponse.tasks);
+
 		if (this.chart) {
 			this.chart.destroy();
 		}
+
 		this.chart = new Chart(this.ganttChart.nativeElement, {
 			type: "bar",
 			data: {
@@ -57,7 +59,7 @@ export class GanttChartComponent implements OnInit {
 				datasets: [
 					{
 						label: "Task Timeline",
-						data: taskTimeline,
+						data: taskTimelines,
 						backgroundColor: "rgb(81, 206, 60)",
 						borderColor: "rgb(81, 206, 60)",
 						barThickness: 15,
@@ -80,7 +82,48 @@ export class GanttChartComponent implements OnInit {
 						beginAtZero: true,
 					},
 				},
+				plugins: {
+					tooltip: {
+						callbacks: {
+							label: function (this, tooltipItem) {
+								const task = this.chart.data.datasets[tooltipItem.datasetIndex].data[tooltipItem.dataIndex] as
+									| [string, string]
+									| null;
+								if (task) {
+									return `Início: ${task[0]}, Fim: ${task[1]}`;
+								}
+								return "";
+							},
+						},
+					},
+				},
 			},
 		});
+	}
+
+	getTaskLabels(tasks: any[]): string[] {
+		// Sort tasks order in Y axis by startedAt date
+		return tasks
+			.sort((a, b) => {
+				const dateA = a.startedAt ? new Date(a.startedAt).getTime() : Infinity;
+				const dateB = b.startedAt ? new Date(b.startedAt).getTime() : Infinity;
+				return dateA - dateB;
+			})
+			.map((task) => task.taskCode);
+	}
+
+	getTaskTimelines(tasks: any[]): string | null[][] {
+		// Sort tasks timelines in axis X by startedAt date
+		return tasks
+			.sort((a, b) => {
+				const dateA = a.startedAt ? new Date(a.startedAt).getTime() : Infinity;
+				const dateB = b.startedAt ? new Date(b.startedAt).getTime() : Infinity;
+				return dateA - dateB;
+			})
+			.map((task) => [
+				task.startedAt ? task.startedAt.split("T")[0] : null,
+				task.completedAt ? task.completedAt.split("T")[0] : null,
+			])
+			.filter((task) => task[0] && task[1]);
 	}
 }

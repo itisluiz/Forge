@@ -63,7 +63,6 @@ export class BurndownChartComponent implements OnInit {
 						backgroundColor: "rgb(81, 206, 60)",
 						borderColor: "rgb(81, 206, 60)",
 						pointBackgroundColor: "rgb(81, 206, 60)",
-						tension: 0.1,
 					},
 					{
 						data: plannedData,
@@ -71,7 +70,6 @@ export class BurndownChartComponent implements OnInit {
 						backgroundColor: "rgb(142, 142, 142)",
 						borderColor: "rgb(142, 142, 142)",
 						pointBackgroundColor: "rgb(142, 142, 142)",
-						tension: 0.1,
 					},
 				],
 			},
@@ -97,7 +95,7 @@ export class BurndownChartComponent implements OnInit {
 			if (i === numberOfDays - 1) {
 				return 0;
 			} else {
-				return Math.floor(burndownResponse.maxEffort - (burndownResponse.maxEffort / (numberOfDays - 1)) * i);
+				return burndownResponse.maxEffort - (burndownResponse.maxEffort / (numberOfDays - 1)) * i;
 			}
 		});
 	}
