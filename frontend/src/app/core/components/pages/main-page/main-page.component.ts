@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { AgileProcessComponent } from "../../agile-process/agile-process.component";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -31,6 +31,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 	],
 	templateUrl: "./main-page.component.html",
 	styleUrl: "./main-page.component.scss",
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MainPageComponent {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
@@ -48,6 +49,11 @@ export class MainPageComponent {
 
 	leadTimeMetricImageUrl: string = "";
 	velocityMetricImageUrl: string = "";
+
+	navigationOptions = {
+		nextEl: ".swiper-button-next",
+		prevEl: ".swiper-button-prev",
+	};
 
 	constructor(
 		private route: ActivatedRoute,
