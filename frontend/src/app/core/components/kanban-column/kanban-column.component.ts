@@ -1,6 +1,7 @@
 import { CdkDropList, DragDropModule } from "@angular/cdk/drag-drop";
 import { Component, Input, ViewChild } from "@angular/core";
 import { IconPipe } from "../../pipes/icon.pipe";
+import { MatIcon } from "@angular/material/icon";
 import { PriorityPipe } from "../../pipes/priority.pipe";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
@@ -8,7 +9,7 @@ import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum";
 import { TaskStatusPipe } from "../../pipes/task-status.pipe";
 import { TaskTypeClassPipe } from "../../pipes/task-type-class.pipe";
-import { MatIcon } from "@angular/material/icon";
+import { UserstorySelfComposite } from "forge-shared/dto/composite/userstoryselfcomposite.dto";
 
 @Component({
 	selector: "app-kanban-column",
@@ -22,6 +23,7 @@ export class KanbanColumnComponent {
 
 	@Input() status!: TaskStatus;
 	@Input() sprint!: SprintResponse;
+	@Input() userstory!: UserstorySelfComposite;
 	@Input() members!: ProjectMemberComposite[];
 	@Input() dropListIds!: string[];
 	@Input() dropCallback!: (event: any) => void;
@@ -36,7 +38,7 @@ export class KanbanColumnComponent {
 	}
 
 	getStatusTasks(): TaskSelfComposite[] {
-		return this.sprint.tasks.filter((task) => task.status == this.status);
+		return this.sprint.tasks.filter((task) => task.userstoryEid === this.userstory.eid && task.status === this.status);
 	}
 
 	getResponsible(task: TaskSelfComposite): ProjectMemberComposite {
