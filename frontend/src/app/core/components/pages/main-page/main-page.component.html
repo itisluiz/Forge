@@ -4,7 +4,7 @@
 		<div class="grid-container">
 			<div class="agile-process-grid">
 				<div class="chart">
-					<select name="" id="" (change)="setSprint($event)">
+					<select name="" id="" class="select-sprint" (change)="setSprint($event)">
 						@for (sprint of pastAndCurrentSprints; track $index) {
 							<option value="{{ sprint.eid }}" [selected]="sprint.index === currentSprint.index">
 								Sprint {{ sprint.index }}
@@ -19,14 +19,75 @@
 							<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
 						</div>
 						<div class="lower">
-							<p>View your epic's process</p>
-							<img src="../../../../../assets/fake-slider.svg" alt="" />
+							<div class="lower_title">
+								<p>Track Your Workflows</p>
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="Monitor the progress of user stories and tasks in real time. Keep track of each phase, from planning to completion, ensuring smooth project execution."
+									>info</mat-icon
+								>
+							</div>
+							<swiper-container
+								class="swiper-slide"
+								navigation="true"
+								slides-per-view="2"
+								space-between="10"
+								style="--swiper-navigation-color: #000; --swiper-navigation-size: 20px"
+							>
+								<swiper-slide>
+									<div class="metric-card">
+										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+										<h2>Userstories</h2>
+										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+										<p class="average-for-metric">
+											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+										</p>
+									</div>
+								</swiper-slide>
+								<swiper-slide>
+									<div class="metric-card">
+										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+										<h2>Backog</h2>
+										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+										<p class="average-for-metric">
+											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+										</p>
+									</div>
+								</swiper-slide>
+								<swiper-slide>
+									<div class="metric-card">
+										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+										<h2>Userstories</h2>
+										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+										<p class="average-for-metric">
+											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+										</p>
+									</div>
+								</swiper-slide>
+								<swiper-slide>
+									<div class="metric-card">
+										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
+										<h2>Userstories</h2>
+										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+										<p class="average-for-metric">
+											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
+										</p>
+									</div>
+								</swiper-slide>
+							</swiper-container>
 						</div>
 					</div>
 				</div>
 				<div class="ai-feedback">
 					<hr />
-					<h3>Project Indicators Analysis</h3>
+					<div class="feedback-title">
+						<h3>Project Indicators Analysis</h3>
+						<mat-icon
+							class="info-tooltip"
+							matTooltip="The text below provides a brief summary of the project, emphasizing key points and areas that require attention."
+							>info</mat-icon
+						>
+					</div>
 					<p>
 						Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
 						Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
@@ -39,7 +100,7 @@
 			</div>
 			<div class="metrics-grid">
 				<div class="metrics-content-wrapper">
-					<h1>Metrics</h1>
+					<h1>Team metrics</h1>
 					<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
 					<div class="metric-cards-wrapper">
 						<div class="metric-card">
@@ -73,7 +134,7 @@
 			</div> -->
 			<div class="gantt-grid">
 				<h1>Gantt Chart - Sprint {{ selectedSprint.index }}</h1>
-				<app-gantt-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
+				<app-gantt-chart class="gantt-wrapper" [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
 			</div>
 		</div>
 	} @else {

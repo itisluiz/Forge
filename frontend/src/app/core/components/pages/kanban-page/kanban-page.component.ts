@@ -13,7 +13,7 @@ import {
 	DragDropModule,
 	CdkDragPlaceholder,
 } from "@angular/cdk/drag-drop";
-import { ActivatedRoute, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { SprintApiService } from "../../../services/sprint-api.service";
 import { CommonModule } from "@angular/common";
@@ -86,6 +86,7 @@ export class KanbanPageComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private userStoryApiService: UserstoryApiService,
 		private sprintApiService: SprintApiService,
 		private taskApiService: TaskApiService,
@@ -161,6 +162,10 @@ export class KanbanPageComponent implements OnInit {
 				this.popUpTask = true;
 			},
 		});
+	}
+
+	navigateTo(path: string) {
+		this.router.navigate([path]);
 	}
 
 	closePopUpTask() {

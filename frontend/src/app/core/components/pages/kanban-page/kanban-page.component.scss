@@ -13,6 +13,36 @@ app-navbar {
 	margin-top: 67px;
 }
 
+.no-sprints {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	height: 100px;
+	font-size: v.$h2-font;
+	color: v.$grey-color;
+
+	h3 {
+		font-size: 20px;
+		font-weight: 500;
+	}
+
+	.green-button {
+		color: #fff;
+		background-color: #6dc955;
+		border-radius: 4px;
+		display: flex;
+		margin: 10px auto 0;
+		border: none;
+		padding: 6px 12px;
+
+		&:disabled {
+			background-color: v.$disabled-background-color;
+			color: v.$disabled-color;
+			cursor: not-allowed;
+		}
+	}
+}
+
 .no-userstory {
 	text-align: center;
 	color: v.$grey-color;
@@ -49,6 +79,10 @@ app-navbar {
 	}
 
 	& > .kanban-grid {
+		.no-margin {
+			margin-bottom: 0 !important;
+		}
+
 		.title {
 			display: flex;
 			align-items: baseline;

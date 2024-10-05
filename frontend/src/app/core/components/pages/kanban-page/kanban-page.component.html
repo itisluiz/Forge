@@ -13,6 +13,26 @@
 			<p>Quadro Kanban para Gerenciamento de Features Disponíveis e Prontas para o Início do Desenvolvimento de Projetos.</p>
 		</div>
 
+		@if (sprints.length == 0) {
+			<div class="kanban-grid">
+				<div class="title no-margin">
+					<div class="left">
+						<div class="left-content">
+							<h2>Sprint's list</h2>
+							<mat-icon class="info-tooltip" matTooltip="This is a list of Kanban board that exists in the project."
+								>info</mat-icon
+							>
+						</div>
+					</div>
+				</div>
+				<p class="desc-title">Find below the list of sprints in your project.</p>
+				<div class="no-sprints">
+					<h3>There is no sprint active. Please create a new one.</h3>
+					<button class="green-button" (click)="navigateTo(projectEid + '/backlog')" matRipple>Go to backlog page</button>
+				</div>
+			</div>
+		}
+
 		@for (sprint of sprints; track $index) {
 			<div class="kanban-grid">
 				<div class="title">

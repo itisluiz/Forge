@@ -330,6 +330,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		this.userStoryApiService.get(this.projectEid, userStoryEid).subscribe({
 			next: (userStory) => {
 				this.currentUserstoryBeingVoted = userStory;
+				console.log(this.currentUserstoryBeingVoted);
 			},
 			error: (error) => {
 				console.error(error);

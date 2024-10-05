@@ -498,6 +498,9 @@ export class SelectProjectPageComponent implements OnInit {
 	}
 
 	navigateTo(route: string) {
+		if (route === this.selectedProjectId + "/sprint-details") {
+			localStorage.setItem("activeRoute", "home");
+		}
 		this.router.navigate([route]);
 	}
 

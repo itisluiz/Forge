@@ -78,6 +78,7 @@ export class NavbarComponent {
 		{ name: "Project Backlog", route: `/${this.projectEid}/backlog` },
 		{ name: "Sprint Board", route: `/${this.projectEid}/kanban` },
 		{ name: "Planning Poker", route: `/${this.projectEid}/planning-poker` },
+		{ name: "Home", route: `/${this.projectEid}/sprint-details` },
 	];
 
 	filteredOptions!: Observable<SearchBar[]>;
@@ -139,6 +140,9 @@ export class NavbarComponent {
 		if (route === this.options[3].route) {
 			this.activeRoute = "planning-poker";
 		}
+		if (route === this.options[4].route) {
+			this.activeRoute = "home";
+		}
 		localStorage.setItem("activeRoute", this.activeRoute);
 		this.activeRoute = localStorage.getItem("activeRoute") || this.activeRoute;
 	}
@@ -163,6 +167,10 @@ export class NavbarComponent {
 		if (popUp === "leaveConfirm") {
 			this.popUpLeaveForge = false;
 		}
+	}
+
+	leaveProject() {
+		this.router.navigate(["/select-project"]);
 	}
 
 	leaveForge() {
