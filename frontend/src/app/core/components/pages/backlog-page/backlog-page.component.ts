@@ -39,6 +39,7 @@ import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component"
 import { DeletePopupComponent } from "../../delete-popup/delete-popup.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
+import { UserApiService } from "../../../services/user-api.service";
 
 @Component({
 	selector: "app-backlog-page",
@@ -94,6 +95,8 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatTable)
 	table!: MatTable<History>;
 
+	userRole: string = "";
+
 	constructor(
 		private route: ActivatedRoute,
 		private epicApiService: EpicApiService,
@@ -103,9 +106,11 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		private sprintApiService: SprintApiService,
 		private userstoryApiService: UserstoryApiService,
 		@Inject(DOCUMENT) private document: Document,
+		private userApiService: UserApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.getUserRole();
 		this.loadSprintData();
 		this.getProject()
 			.pipe(
@@ -117,6 +122,14 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 				}),
 			)
 			.subscribe();
+	}
+
+	getUserRole() {
+		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
+			next: (role) => {
+				this.userRole = role!.toLowerCase();
+			},
+		});
 	}
 
 	loadSprintData() {

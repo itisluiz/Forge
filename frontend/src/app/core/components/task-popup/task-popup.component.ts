@@ -47,6 +47,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	@Input() projectEid: string = "";
 	@Input() userStoryEid: string = "";
 	@Input() taskEditData!: TaskResponse;
+	@Input() userRole!: string;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() handleTaskAndClosePopupEmitter: EventEmitter<TaskResponse> = new EventEmitter();
 	@Output() handleEditedTaskAndClosePopupEmitter: EventEmitter<void> = new EventEmitter();

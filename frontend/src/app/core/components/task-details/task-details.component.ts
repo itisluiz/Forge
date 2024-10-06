@@ -13,6 +13,7 @@ import { TaskApiService } from "../../services/task-api.service";
 import { TaskPopupComponent } from "../task-popup/task-popup.component";
 import { ProjectApiService } from "../../services/project-api.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { UserApiService } from "../../services/user-api.service";
 
 @Component({
 	selector: "app-task-details",
@@ -38,16 +39,31 @@ export class TaskDetailsComponent implements OnInit {
 	@ViewChildren("statusPopUp")
 	statusPopUp?: QueryList<ElementRef>;
 
+	userRole: string = "";
+
 	constructor(
 		private router: Router,
 		private userstoryApiService: UserstoryApiService,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
+		private userApiService: UserApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.getUserRole();
 		this.loadUserStory();
 		this.loadMembersData();
+	}
+
+	getUserRole() {
+		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
+			next: (role) => {
+				this.userRole = role!.toLowerCase();
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
 	}
 
 	loadMembersData() {

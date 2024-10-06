@@ -26,6 +26,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectApiService } from "../../../services/project-api.service";
+import { UserApiService } from "../../../services/user-api.service";
 
 @Component({
 	selector: "app-kanban-page",
@@ -77,15 +78,19 @@ export class EpicsPageComponent implements OnInit {
 
 	disableButtonDuringRequest: boolean = false;
 
+	userRole: string = "";
+
 	constructor(
 		private formBuilder: FormBuilder,
 		private route: ActivatedRoute,
 		private router: Router,
 		private epicApiService: EpicApiService,
 		private projectApiService: ProjectApiService,
+		private userApiService: UserApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.getUserRole();
 		this.getProject();
 		this.userStoriesMap$ = this.epics$.pipe(
 			switchMap((epics) => {
@@ -307,6 +312,17 @@ export class EpicsPageComponent implements OnInit {
 		dataSource.data = [...dataSource.data, userStory];
 		this.userStoriesDataSources[userStory.epicEid] = dataSource;
 		this.closePopUpIssue();
+	}
+
+	getUserRole() {
+		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
+			next: (role) => {
+				this.userRole = role!.toLowerCase();
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
 	}
 
 	getProject() {
