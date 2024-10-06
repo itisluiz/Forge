@@ -12,7 +12,9 @@
 				</ul>
 				<h1>Backlog</h1>
 				<div class="buttons-header">
-					<button id="button-create-epic" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
+					@if (userRole === "scrum master" || userRole === "product owner") {
+						<button id="button-create-epic" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
+					}
 					<button mat-icon-button class="mat-icon-button">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -72,11 +74,13 @@
 									<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 									<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 									<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
-									<mat-panel-description>
-										<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)" matRipple>
-											Remove from sprint
-										</button>
-									</mat-panel-description>
+									@if (userRole === "scrum master") {
+										<mat-panel-description>
+											<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)" matRipple>
+												Remove from sprint
+											</button>
+										</mat-panel-description>
+									}
 								</mat-expansion-panel-header>
 								@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 									<table
@@ -161,7 +165,9 @@
 			} @else {
 				<div class="no-sprint">
 					<h3>No current sprint available. Please create a new sprint.</h3>
-					<button class="green-button" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
+					@if (userRole === "scrum master" || userRole === "product owner") {
+						<button class="green-button" (click)="openPopUpCreateSprint()" matRipple>Create new Sprint</button>
+					}
 				</div>
 			}
 		</div>
@@ -382,7 +388,7 @@
 							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 							<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
-							@if (buttonsAvailable) {
+							@if (buttonsAvailable && userRole === "scrum master") {
 								<mat-panel-description>
 									<button class="grey-button" (click)="openPopUpRemoveFromSprint(userstory.eid)" matRipple>
 										Remove from sprint

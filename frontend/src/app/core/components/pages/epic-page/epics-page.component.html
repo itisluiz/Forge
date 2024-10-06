@@ -12,7 +12,9 @@
 				</ul>
 				<h1>Epics</h1>
 				<div class="buttons-header">
-					<button id="button-create-epic" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					@if (userRole === "scrum master") {
+						<button id="button-create-epic" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					}
 					<button mat-icon-button class="mat-icon-button">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -46,10 +48,10 @@
 								<mat-panel-title> {{ epic.code }} </mat-panel-title>
 								<mat-panel-title> {{ epic.title | maxLength: 40 }} </mat-panel-title>
 								<mat-panel-description> {{ epic.description | maxLength: 50 }} </mat-panel-description>
-								<mat-panel-description>
+								<mat-panel-description *ngIf="userRole === 'scrum master'" class="epic-action">
 									<mat-icon (click)="openPopUpEditEpic(epic.eid)">edit</mat-icon>
 								</mat-panel-description>
-								<mat-panel-description>
+								<mat-panel-description *ngIf="userRole === 'scrum master'" class="epic-action">
 									<mat-icon (click)="openPopUpDeleteEpic(epic.eid)">delete</mat-icon>
 								</mat-panel-description>
 							</mat-expansion-panel-header>
@@ -85,14 +87,18 @@
 									<tr class="type-color" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 								</table>
 							}
-							<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
+							@if (userRole === "scrum master") {
+								<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
+							}
 						</mat-expansion-panel>
 					}
 				</mat-accordion>
 			} @else {
 				<div class="no-epics">
-					<h3>No epics available. Please create a new epic.</h3>
-					<button class="green-button" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					<h3>No epics available.</h3>
+					@if (userRole === "scrum master") {
+						<button class="green-button" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					}
 				</div>
 			}
 		</div>
