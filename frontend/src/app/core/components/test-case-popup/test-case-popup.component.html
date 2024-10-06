@@ -17,10 +17,8 @@
 					<option value="">-- Select a criteria --</option>
 					<!-- Opção vazia -->
 
-					@for (criteria of acceptanceCriteria; track criteria) {
-						<option>
-							{{ criteria }}
-						</option>
+					@for (criteria of acceptanceCriteria.acceptanceCriteria; track criteria) {
+						<option [value]="criteria.eid">{{ criteria.given }} {{ criteria.when }} {{ criteria.then }}</option>
 					}
 				</select>
 				<span *ngIf="isControlInvalid('acceptanceCriteria')"> {{ criteriaErrorMessage }} </span>

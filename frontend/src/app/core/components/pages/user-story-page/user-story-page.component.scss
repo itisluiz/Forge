@@ -10,7 +10,7 @@ app-navbar {
 }
 
 .user-story-page-content {
-	margin-top: 87px;
+	margin-top: 67px;
 }
 
 .ai-button {
@@ -24,16 +24,27 @@ app-navbar {
 	}
 }
 
+.mat-mdc-header-cell {
+	border-bottom: none;
+}
+
 .grey-button {
-	padding: 10px 14px 10px 14px;
-	background-color: v.$epics-light-grey-color;
-	border: none;
+	color: #fff;
+	background-color: #6dc955;
 	border-radius: 4px;
+	display: flex;
+	border: none;
+	padding: 6px 12px;
 	margin-right: 12px;
+
+	&:disabled {
+		background-color: v.$disabled-background-color;
+		color: v.$disabled-color;
+		cursor: not-allowed;
+	}
 }
 
 .grid-container {
-	background-color: v.$white-color;
 	display: flex;
 	flex-direction: column;
 	grid-template-columns: 1fr;
@@ -42,11 +53,15 @@ app-navbar {
 	margin: 1em 1em 0 1em;
 	border-radius: 12px 12px 0 0;
 
+	& > div {
+		margin-bottom: 0;
+	}
+
 	& > .header-grid {
 		grid-column: auto;
 		grid-row: 1;
 		z-index: 0;
-		padding: 2em 2.5em;
+		padding: 2em 1em;
 
 		.breadcrump-story-wrapper {
 			display: grid;
@@ -91,12 +106,13 @@ app-navbar {
 			p.user-story-priority {
 				grid-area: middle;
 				text-transform: capitalize;
-				font-size: 10px;
+				font-size: 12px;
 				padding: 0 15px 0 15px;
 				border: 2px solid #d28614;
 				border-radius: 4px;
 				width: fit-content;
 				margin: 10px 0 5px 0;
+				font-weight: 500;
 
 				&-low {
 					color: #72c800;
@@ -121,7 +137,6 @@ app-navbar {
 			}
 
 			.buttons-header {
-				margin-top: 40px;
 				grid-area: right;
 				align-self: center;
 				justify-self: end;
@@ -149,7 +164,7 @@ app-navbar {
 		}
 	}
 	.user-story-container {
-		padding: 0 2.5em;
+		padding: 1em 1.5em;
 
 		.story-topic {
 			margin-bottom: 50px;
@@ -198,7 +213,6 @@ app-navbar {
 			// THERE ARE TEST CASES AVAILABLE
 
 			.test-case-table {
-				all: initial;
 				width: auto;
 				border-spacing: 0px 1.5px;
 
@@ -281,12 +295,20 @@ app-navbar {
 
 @media only screen and (max-width: 1500px) {
 	.user-story-page-content {
-		margin: 87px 3em 0 3em;
+		margin: 67px 3em 0 3em;
+	}
+}
+
+@media screen and (min-width: 1500px) {
+	.grid-container {
+		& > .header-grid {
+			padding: 2em 1.5em;
+		}
 	}
 }
 
 @media only screen and (min-width: 1800px) {
 	.user-story-page-content {
-		margin: 87px 5em 0 5em;
+		margin: 67px 5em 0 5em;
 	}
 }

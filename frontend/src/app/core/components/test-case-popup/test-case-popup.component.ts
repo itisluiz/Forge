@@ -4,6 +4,12 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Va
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatTabsModule } from "@angular/material/tabs";
+import { TestCaseService } from "../../services/test-case.service";
+import { ActivatedRoute } from "@angular/router";
+import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepcomposite.dto";
+import { TestcaseNewRequest } from "forge-shared/dto/request/testcasenewrequest.dto";
+import { AcceptanceCriteriaSelfComposite } from "forge-shared/dto/composite/acceptancecriteriaselfcomposite.dto";
+import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
 
 // TODO [TestCaseStep] - Remover isso quando DTO for criado
 export interface testCaseStep {
@@ -20,7 +26,7 @@ export interface testCaseStep {
 	styleUrl: "./test-case-popup.component.scss",
 })
 export class TestCasePopupComponent implements OnInit {
-	@Input() acceptanceCriteria: string[] = [];
+	@Input() acceptanceCriteria!: AcceptanceCriteriaSelfResponse;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 
 	testCaseSteps: testCaseStep[] = [
@@ -28,6 +34,14 @@ export class TestCasePopupComponent implements OnInit {
 		{ title: "Step 2", action: "", expected: "" },
 		{ title: "Step 3", action: "", expected: "" },
 	];
+
+	stepsTestCase: TestcaseStepComposite[] = [
+		{ action: "", expectedBehavior: "" },
+		{ action: "", expectedBehavior: "" },
+		{ action: "", expectedBehavior: "" },
+	];
+
+	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 
 	selected = new FormControl(0);
 
@@ -38,7 +52,11 @@ export class TestCasePopupComponent implements OnInit {
 	creationFailed: boolean = false;
 	formSubmitted: boolean = false;
 
-	constructor(private formBuilder: FormBuilder) {}
+	constructor(
+		private route: ActivatedRoute,
+		private formBuilder: FormBuilder,
+		private testCaseService: TestCaseService,
+	) {}
 
 	ngOnInit(): void {
 		this.testCaseForm = this.formBuilder.group({
@@ -107,9 +125,14 @@ export class TestCasePopupComponent implements OnInit {
 	}
 
 	createTestCase() {
-		const acceptanceCriteria = this.testCaseForm.get("acceptanceCriteria");
-		const description = this.testCaseForm.get("description");
-		const preCondition = this.testCaseForm.get("preCondition");
+		const newTestCaseRequest: TestcaseNewRequest = {
+			acceptancecriteriaEid: this.testCaseForm.get("acceptanceCriteria")?.value,
+			description: this.testCaseForm.get("description")?.value,
+			precondition: this.testCaseForm.get("preCondition")?.value,
+			steps: this.testCaseForm.get("steps")?.value,
+		};
+
+		console.log("Criando Test Case com as informações: ", newTestCaseRequest);
 
 		this.formSubmitted = true;
 		if (this.testCaseForm.invalid) {
@@ -119,6 +142,14 @@ export class TestCasePopupComponent implements OnInit {
 		if (this.testCaseForm.valid) {
 			// TODO: Implementar lógica para criar o test case
 			// Se a criação falhar, defina creationFailed como verdadeiro
+			this.testCaseService.createTestCase(newTestCaseRequest, this.projectEid).subscribe({
+				next: (data) => {
+					console.log(data);
+				},
+				error: (error) => {
+					console.error(error);
+				},
+			});
 			console.log("Test case created");
 			this.closePopUp();
 			this.creationFailed = true;

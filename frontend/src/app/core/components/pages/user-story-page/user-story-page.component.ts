@@ -22,36 +22,14 @@ import { IconPipe } from "../../../pipes/icon.pipe";
 import { TaskDetailsComponent } from "../../task-details/task-details.component";
 import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
 import { TaskPopupComponent } from "../../task-popup/task-popup.component";
-
-export interface testCaseDisplay {
-	key: string;
-	description: string;
-	link: string;
-}
-
-// TODO: Remove when backend is connected
-const TEST_CASES_DATA: testCaseDisplay[] = [
-	{
-		key: "FEA-001",
-		description: "Guest user can create an account from the homepage",
-		link: "undefinedUrl",
-	},
-	{
-		key: "FEA-002",
-		description: "Guest user can create an account from the homepage",
-		link: "undefinedUrl",
-	},
-	{
-		key: "FEA-003",
-		description: "Guest user can create an account from the homepage",
-		link: "undefinedUrl",
-	},
-	{
-		key: "FEA-004",
-		description: "Guest user can create an account from the homepage",
-		link: "undefinedUrl",
-	},
-];
+import { MatRippleModule } from "@angular/material/core";
+import { TestCaseService } from "../../../services/test-case.service";
+import { TestcaseSelfResponse } from "forge-shared/dto/response/testcaseselfresponse.dto";
+import { TestcaseNewRequest } from "forge-shared/dto/request/testcasenewrequest.dto";
+import { Action } from "rxjs/internal/scheduler/Action";
+import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepcomposite.dto";
+import { AcceptanceCriteriaService } from "../../../services/acceptance-criteria.service";
+import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
 
 @Component({
 	selector: "app-user-story-page",
@@ -73,6 +51,7 @@ const TEST_CASES_DATA: testCaseDisplay[] = [
 		IconPipe,
 		TaskDetailsComponent,
 		TaskPopupComponent,
+		MatRippleModule,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
@@ -80,19 +59,11 @@ const TEST_CASES_DATA: testCaseDisplay[] = [
 export class UserStoryPageComponent implements OnInit {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 	userstoryEid: string = this.route.snapshot.paramMap.get("userstoryEid")!;
+	projectCode!: string;
 
-	displayedColumnsTestCases: string[] = ["key", "description", "link"];
+	displayedColumnsTestCases: string[] = ["index", "description", "precondition"];
 
 	displayedColumnsTasks: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
-
-	acceptanceCriteria: string[] = [
-		"Guest users can click the profile icon in the home page and create an account.",
-		"Guest users can proceed to the cart page and create an account.",
-		"Guest users can click the wishlist icon against the product to display the wishlist overlay and create an account.",
-		"An error message will display if the user enters an existing or invalid email address and other details.",
-		"All fields cannot be blank. An error message will display if the user registers with a blank field.",
-	];
-	testCases = [...TEST_CASES_DATA];
 
 	popUpTestCase: boolean = false;
 	popUpEditUserStory: boolean = false;
@@ -102,12 +73,15 @@ export class UserStoryPageComponent implements OnInit {
 	userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
 
 	tasks?: TaskSelfResponse;
+	testCasesREAL!: TestcaseSelfResponse;
+	acceptanceCriteriaEidList: any[] = [];
 
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 
 	@ViewChildren("statusContainer")
 	statusContainer!: QueryList<ElementRef>;
 
+	acceptanceCriteria!: AcceptanceCriteriaSelfResponse;
 	acceptanceCriteria$ = this.userstoryApiService.getAcceptanceCriteria(this.projectEid, this.userstoryEid);
 	selectedTask!: TaskResponse;
 
@@ -118,10 +92,14 @@ export class UserStoryPageComponent implements OnInit {
 		private userstoryApiService: UserstoryApiService,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
+		private testCaseService: TestCaseService,
+		private acceptanceCriteriaService: AcceptanceCriteriaService,
 	) {}
 
 	ngOnInit(): void {
+		this.getProject();
 		this.loadMembersData();
+		this.loadAllAcceptanceCriteria();
 		this.loadTasksData();
 	}
 
@@ -145,6 +123,45 @@ export class UserStoryPageComponent implements OnInit {
 		});
 		this.subscriptions.add(membersSub);
 	}
+
+	loadTestCases(acceptanceCriteriaEid: string) {
+		const testCaseSub = this.testCaseService.getAllTestCases(this.projectEid, acceptanceCriteriaEid).subscribe({
+			next: (testCases) => {
+				this.testCasesREAL = testCases;
+				console.log("testCasesREAL", this.testCasesREAL);
+				this.closePopUpTestCase();
+			},
+		});
+		this.subscriptions.add(testCaseSub);
+	}
+
+	loadAllAcceptanceCriteria() {
+		this.acceptanceCriteriaService.getAllAcceptanceCriteria(this.projectEid, this.userstoryEid).subscribe({
+			next: (acceptanceCriteria) => {
+				this.acceptanceCriteria = acceptanceCriteria;
+				console.log(this.acceptanceCriteria);
+
+				this.acceptanceCriteria.acceptanceCriteria.forEach((ac) => {
+					this.acceptanceCriteriaEidList.push(ac.eid);
+					this.loadTestCases(ac.eid);
+				});
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	// getEspecificTestCase(testcaseEid: string) {
+	// 	this.testCaseService.getEspcificTestCase(this.projectEid, testcaseEid).subscribe({
+	// 		next: (testcase) => {
+	// 			this.testCasesREAL.push(testcase);
+	// 		},
+	// 		error: (error) => {
+	// 			console.log(error.error.message);
+	// 		},
+	// 	});
+	// }
 
 	setStatusStyle() {
 		this.statusContainer.forEach((cell) => {
@@ -189,6 +206,11 @@ export class UserStoryPageComponent implements OnInit {
 		}
 
 		return { color, background, textDecoration, fontWeight };
+	}
+
+	handleFormSubmit(formData: any) {
+		console.log("Form data received:", formData);
+		// Utilize os dados do formulário aqui
 	}
 
 	openPopUpTestCase() {
@@ -273,8 +295,15 @@ export class UserStoryPageComponent implements OnInit {
 		}
 	}
 
-	getProject(): Observable<ProjectResponse> {
-		return this.projectApiService.getEspecificProject(this.projectEid);
+	getProject() {
+		this.projectApiService.getEspecificProject(this.projectEid).subscribe({
+			next: (projectResponse) => {
+				this.projectCode = projectResponse.code;
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
 	}
 
 	getProjectMemberFromMap(userEid: string | undefined) {

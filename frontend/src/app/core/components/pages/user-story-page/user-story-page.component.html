@@ -5,9 +5,9 @@
 			<div class="header-grid">
 				<div class="breadcrump-story-wrapper">
 					<ul class="breadcrumber">
-						<li><a href="">Squad BES</a></li>
-						<div class="spacer">></div>
-						<li><a href="">TCC 1</a></li>
+						<li>
+							<a>{{ projectCode }}</a>
+						</li>
 						<div class="spacer">></div>
 						<li><a href="/user-story">User Story</a></li>
 					</ul>
@@ -17,14 +17,15 @@
 					<h1 id="user-story-title">[{{ userStory.code }}] {{ userStory.title }}</h1>
 
 					<div class="buttons-header">
-						<button id="button-edit-page" class="grey-button" (click)="openPopUpEditUserStory()">Edit User Story</button>
+						<button id="button-edit-page" class="grey-button" (click)="openPopUpEditUserStory()" matRipple>
+							Edit User Story
+						</button>
 						<button mat-icon-button class="mat-icon-button">
 							<mat-icon>more_vert</mat-icon>
 						</button>
 					</div>
 				</div>
 				<p>{{ userStory.description | maxLength: 128 }}</p>
-				<hr />
 			</div>
 
 			<div class="user-story-container">
@@ -62,31 +63,28 @@
 
 				<div class="test-cases story-topic">
 					<h4>TEST CASES</h4>
-					@if (testCases.length > 0) {
-						<table mat-table [dataSource]="testCases" matSort class="mat-elevation-z8 test-case-table">
-							<ng-container matColumnDef="key">
+					@if (testCasesREAL) {
+						<table mat-table [dataSource]="testCasesREAL!.testcases" matSort class="mat-elevation-z8 test-case-table">
+							<ng-container matColumnDef="index">
 								<th mat-header-cell *matHeaderCellDef>Key</th>
-								<td class="item-cell" mat-cell *matCellDef="let element">{{ element.key }}</td>
+								<td mat-cell *matCellDef="let element; let i = index">{{ projectCode }}-TC-{{ i + 1 }}</td>
 							</ng-container>
 
 							<ng-container matColumnDef="description">
+								<th mat-header-cell *matHeaderCellDef>Description</th>
+								<td class="item-cell" mat-cell *matCellDef="let element">{{ element.description }}</td>
+							</ng-container>
+
+							<ng-container matColumnDef="precondition">
 								<th mat-header-cell *matHeaderCellDef>Subject</th>
-								<td mat-cell *matCellDef="let element">{{ element.description }}</td>
+								<td mat-cell *matCellDef="let element">{{ element.precondition }}</td>
 							</ng-container>
 
-							<ng-container matColumnDef="link">
-								<th mat-header-cell *matHeaderCellDef>Link</th>
-								<td mat-cell *matCellDef="let element">
-									<a href="/user-story">
-										<img src="../../../../../assets/link-icon.svg" />
-									</a>
-								</td>
-							</ng-container>
-
+							<tr mat-header-row *matHeaderRowDef="displayedColumnsTestCases"></tr>
 							<tr mat-row *matRowDef="let row; columns: displayedColumnsTestCases"></tr>
 						</table>
 						<div class="test-case-buttons">
-							<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+							<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple>
 								Create test case
 							</button>
 						</div>
@@ -98,7 +96,7 @@
 							</p>
 
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()">
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple>
 									Create test case
 								</button>
 							</div>
@@ -178,7 +176,7 @@
 								<tr mat-row *matRowDef="let row; columns: displayedColumnsTasks" (click)="openTaskPopUp(row)"></tr>
 							</table>
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()">
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()" matRipple>
 									Create task
 								</button>
 							</div>
@@ -187,7 +185,7 @@
 								<p>It seems that you have not created any Tasks. To create one, click the button below.</p>
 
 								<div class="test-case-buttons">
-									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()">
+									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()" matRipple>
 										Create task
 									</button>
 								</div>
