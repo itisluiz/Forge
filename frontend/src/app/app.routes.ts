@@ -9,6 +9,7 @@ import { SelectProjectPageComponent } from "./core/components/pages/select-proje
 import { UserStoryPageComponent } from "./core/components/pages/user-story-page/user-story-page.component";
 import { UserStoryPopupComponent } from "./core/components/user-story-popup/user-story-popup.component";
 import { PlanningPokerPageComponent } from "./core/components/pages/planning-poker-page/planning-poker-page.component";
+import { TestCasePageComponent } from "./core/components/pages/test-case-page/test-case-page.component";
 
 export const routes: Routes = [
 	{ path: ":projectEid/sprint-details", component: MainPageComponent },
@@ -22,5 +23,6 @@ export const routes: Routes = [
 	{ path: "user-story-popup", component: UserStoryPopupComponent },
 	{ path: ":projectEid/planning-poker", component: PlanningPokerPageComponent },
 	{ path: "planning-poker/:projectEid/:session", component: PlanningPokerPageComponent },
+	{ path: ":projectEid/:testcaseEid/testcase", component: TestCasePageComponent },
 	{ path: "**", redirectTo: "/select-project" },
 ];

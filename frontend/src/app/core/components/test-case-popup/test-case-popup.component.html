@@ -1,28 +1,40 @@
 <div class="test-case-pop-up-header">
-	<h2>Create a new test case</h2>
-	<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
+	@if (isEditMode) {
+		<h2>Edit Test Case</h2>
+		<p>Update the fields as needed.</p>
+	} @else {
+		<h2>Create a new test case</h2>
+		<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
+	}
 	<button id="button-create-test-ai" class="grey-button ai-button" (click)="generateWithAI()">
 		<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
 		Generate test cases with AI
 	</button>
 </div>
 
-<form [formGroup]="testCaseForm" class="pop-up-form" (ngSubmit)="createTestCase()">
+<form [formGroup]="testCaseForm" class="pop-up-form" (ngSubmit)="isEditMode ? updateTestCase() : createTestCase()">
 	<div class="pop-up-form-content">
 		<!-- LEFT SIDE OF THE POP-UP -->
 		<div class="form-content-left">
 			<div class="input-wrapper">
 				<label for="acceptance-criteria">Select your acceptance criteria</label>
-				<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria">
-					<option value="">-- Select a criteria --</option>
-					<!-- Opção vazia -->
 
-					@for (criteria of acceptanceCriteria; track criteria) {
-						<option>
-							{{ criteria }}
-						</option>
-					}
-				</select>
+				@if (isEditMode) {
+					<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria" [disabled]="true">
+						<option [value]="testCaseEditData.acceptancecriteriaEid">{{ testCaseEditData.acceptancecriteriaEid }}</option>
+					</select>
+				}
+
+				@if (!isEditMode) {
+					<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria">
+						<option value="">-- Select a criteria --</option>
+						<!-- Opção vazia -->
+
+						@for (criteria of acceptanceCriteria.acceptanceCriteria; track criteria) {
+							<option [value]="criteria.eid">{{ criteria.given }} {{ criteria.when }} {{ criteria.then }}</option>
+						}
+					</select>
+				}
 				<span *ngIf="isControlInvalid('acceptanceCriteria')"> {{ criteriaErrorMessage }} </span>
 			</div>
 
@@ -92,7 +104,14 @@
 	</div>
 
 	<div class="pop-up-footer">
-		<span (click)="closePopUp()">Cancel</span>
-		<button type="submit" class="grey-button" [disabled]="testCaseForm.invalid">Create test case</button>
+		@if (!isEditMode) {
+			<span (click)="closePopUp()">Cancel</span>
+			<button type="submit" class="grey-button" [disabled]="testCaseForm.invalid">Create test case</button>
+		}
+
+		@if (isEditMode) {
+			<span (click)="closePopUp()">Cancel</span>
+			<button type="submit" class="grey-button">Update test case</button>
+		}
 	</div>
 </form>
