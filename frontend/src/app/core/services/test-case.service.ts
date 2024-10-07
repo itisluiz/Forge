@@ -52,7 +52,7 @@ export class TestCaseService {
 		return this.apiService.call<TestcaseSelfResponse>("GET", `testcase/${projectEid}/${acceptancecriteriaEid}/self`);
 	}
 
-	public getEspcificTestCase(projectEid: string, testcaseEid: string): Observable<TestcaseResponse> {
+	public getEspecificTestCase(projectEid: string, testcaseEid: string): Observable<TestcaseResponse> {
 		return this.apiService.call<TestcaseResponse>("GET", `testcase/${projectEid}/${testcaseEid}/get`);
 	}
 

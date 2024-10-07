@@ -7,7 +7,7 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
 import { TestCasePopupComponent } from "../../test-case-popup/test-case-popup.component";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
@@ -61,7 +61,7 @@ export class UserStoryPageComponent implements OnInit {
 	userstoryEid: string = this.route.snapshot.paramMap.get("userstoryEid")!;
 	projectCode!: string;
 
-	displayedColumnsTestCases: string[] = ["index", "description", "precondition"];
+	displayedColumnsTestCases: string[] = ["index", "description", "precondition", "stepCount"];
 
 	displayedColumnsTasks: string[] = ["type", "key", "subject", "status", "assignee", "priority", "created"];
 
@@ -89,6 +89,7 @@ export class UserStoryPageComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private userstoryApiService: UserstoryApiService,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
@@ -151,17 +152,6 @@ export class UserStoryPageComponent implements OnInit {
 			},
 		});
 	}
-
-	// getEspecificTestCase(testcaseEid: string) {
-	// 	this.testCaseService.getEspcificTestCase(this.projectEid, testcaseEid).subscribe({
-	// 		next: (testcase) => {
-	// 			this.testCasesREAL.push(testcase);
-	// 		},
-	// 		error: (error) => {
-	// 			console.log(error.error.message);
-	// 		},
-	// 	});
-	// }
 
 	setStatusStyle() {
 		this.statusContainer.forEach((cell) => {
@@ -329,6 +319,10 @@ export class UserStoryPageComponent implements OnInit {
 			default:
 				return "";
 		}
+	}
+
+	navigateToTestCase(testcaseEid: string) {
+		this.router.navigate([`${this.projectEid}/${testcaseEid}/testcase`]);
 	}
 
 	ngOnDestroy() {

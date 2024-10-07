@@ -10,6 +10,9 @@ import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepco
 import { TestcaseNewRequest } from "forge-shared/dto/request/testcasenewrequest.dto";
 import { AcceptanceCriteriaSelfComposite } from "forge-shared/dto/composite/acceptancecriteriaselfcomposite.dto";
 import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
+import { TestcaseResponse } from "forge-shared/dto/response/testcaseresponse.dto";
+import { AcceptanceCriteriaService } from "../../services/acceptance-criteria.service";
+import { TestcaseUpdateRequest } from "forge-shared/dto/request/testcaseupdaterequest.dto";
 
 // TODO [TestCaseStep] - Remover isso quando DTO for criado
 export interface testCaseStep {
@@ -27,6 +30,8 @@ export interface testCaseStep {
 })
 export class TestCasePopupComponent implements OnInit {
 	@Input() acceptanceCriteria!: AcceptanceCriteriaSelfResponse;
+	@Input() testCaseEditData!: TestcaseResponse;
+	@Input() isEditMode: boolean = false;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 
 	testCaseSteps: testCaseStep[] = [
@@ -42,6 +47,7 @@ export class TestCasePopupComponent implements OnInit {
 	];
 
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
+	testcaseEid: string = this.route.snapshot.paramMap.get("testcaseEid")!;
 
 	selected = new FormControl(0);
 
@@ -50,12 +56,14 @@ export class TestCasePopupComponent implements OnInit {
 	testCaseForm!: FormGroup;
 
 	creationFailed: boolean = false;
+	updateFailed: boolean = false;
 	formSubmitted: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
 		private formBuilder: FormBuilder,
 		private testCaseService: TestCaseService,
+		private acceptanceCriteriaService: AcceptanceCriteriaService,
 	) {}
 
 	ngOnInit(): void {
@@ -66,15 +74,32 @@ export class TestCasePopupComponent implements OnInit {
 			steps: this.formBuilder.array([]),
 			selectedIndex: 0,
 		});
+		if (this.isEditMode) {
+			this.testCaseForm.patchValue({
+				acceptanceCriteria: this.testCaseEditData.acceptancecriteriaEid,
+				description: this.testCaseEditData.description,
+				preCondition: this.testCaseEditData.precondition,
+			});
+			this.testCaseEditData.steps.forEach((step: TestcaseStepComposite) => {
+				this.steps.push(
+					this.formBuilder.group({
+						action: [step.action, [Validators.required, Validators.minLength(3)]],
+						expectedBehavior: [step.expectedBehavior, [Validators.required, Validators.minLength(3)]],
+					}),
+				);
+			});
+		}
 
-		this.testCaseSteps.forEach((testCaseStep) => {
-			this.steps.push(
-				this.formBuilder.group({
-					action: [testCaseStep.action, [Validators.required, , Validators.minLength(3)]],
-					expectedBehavior: [testCaseStep.expected, [Validators.required, , Validators.minLength(3)]],
-				}),
-			);
-		});
+		if (!this.isEditMode) {
+			this.testCaseSteps.forEach((testCaseStep) => {
+				this.steps.push(
+					this.formBuilder.group({
+						action: [testCaseStep.action, [Validators.required, , Validators.minLength(3)]],
+						expectedBehavior: [testCaseStep.expected, [Validators.required, , Validators.minLength(3)]],
+					}),
+				);
+			});
+		}
 	}
 
 	isControlInvalid(field: string, index?: number): boolean {
@@ -153,6 +178,37 @@ export class TestCasePopupComponent implements OnInit {
 			console.log("Test case created");
 			this.closePopUp();
 			this.creationFailed = true;
+		}
+	}
+
+	updateTestCase() {
+		const updateTestCaseRequest: TestcaseUpdateRequest = {
+			description: this.testCaseForm.get("description")?.value,
+			precondition: this.testCaseForm.get("preCondition")?.value,
+			steps: this.testCaseForm.get("steps")?.value,
+		};
+
+		console.log("Criando Test Case com as informações: ", updateTestCaseRequest);
+
+		this.formSubmitted = true;
+		if (this.testCaseForm.invalid) {
+			console.log("Invalid form");
+			return;
+		}
+		if (this.testCaseForm.valid) {
+			// TODO: Implementar lógica para criar o test case
+			// Se a criação falhar, defina creationFailed como verdadeiro
+			this.testCaseService.updateTestCase(updateTestCaseRequest, this.projectEid, this.testcaseEid).subscribe({
+				next: (data) => {
+					console.log(data);
+				},
+				error: (error) => {
+					console.error(error);
+				},
+			});
+			console.log("Test case created");
+			this.closePopUp();
+			this.updateFailed = true;
 		}
 	}
 
