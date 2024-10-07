@@ -17,9 +17,14 @@
 
 					<div class="buttons-header">
 						<button id="button-edit-page" class="grey-button" (click)="openPopUpTestCase()" matRipple>Edit Test Case</button>
-						<button mat-icon-button class="mat-icon-button">
+						<button mat-icon-button class="mat-icon-button" matRipple [matMenuTriggerFor]="menu">
 							<mat-icon>more_vert</mat-icon>
 						</button>
+						<mat-menu #menu="matMenu" xPosition="after">
+							<button mat-menu-item (click)="deleteTestCase()">
+								<span>Delete test case</span>
+							</button>
+						</mat-menu>
 					</div>
 				</div>
 				<p>Created at {{ testCase.createdAt | date }}</p>

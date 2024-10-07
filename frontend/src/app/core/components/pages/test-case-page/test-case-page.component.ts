@@ -7,7 +7,7 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
 import { TestCasePopupComponent } from "../../test-case-popup/test-case-popup.component";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { UserStoryPopupComponent } from "../../user-story-popup/user-story-popup.component";
 import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
@@ -31,6 +31,7 @@ import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepco
 import { AcceptanceCriteriaService } from "../../../services/acceptance-criteria.service";
 import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
 import { TestcaseResponse } from "forge-shared/dto/response/testcaseresponse.dto";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
 	selector: "app-test-case-page",
@@ -53,6 +54,7 @@ import { TestcaseResponse } from "forge-shared/dto/response/testcaseresponse.dto
 		TaskDetailsComponent,
 		TaskPopupComponent,
 		MatRippleModule,
+		MatMenuModule,
 	],
 	templateUrl: "./test-case-page.component.html",
 	styleUrl: "./test-case-page.component.scss",
@@ -62,6 +64,7 @@ export class TestCasePageComponent implements OnInit {
 	testcaseEid: string = this.route.snapshot.paramMap.get("testcaseEid")!;
 
 	userstoryEid: string = this.route.snapshot.paramMap.get("userstoryEid")!;
+	userstoryEidDelete!: string;
 	projectCode!: string;
 
 	displayedColumnsTestCases: string[] = ["step", "action", "expectedResult"];
@@ -92,6 +95,7 @@ export class TestCasePageComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private userstoryApiService: UserstoryApiService,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
@@ -131,8 +135,6 @@ export class TestCasePageComponent implements OnInit {
 		const testCaseSub = this.testCaseService.getAllTestCases(this.projectEid, acceptanceCriteriaEid).subscribe({
 			next: (testCases) => {
 				this.testCasesREAL = testCases;
-				console.log("testCasesREAL", this.testCasesREAL);
-				this.closePopUpTestCase();
 			},
 		});
 		this.subscriptions.add(testCaseSub);
@@ -142,7 +144,6 @@ export class TestCasePageComponent implements OnInit {
 		this.acceptanceCriteriaService.getAllAcceptanceCriteria(this.projectEid, this.userstoryEid).subscribe({
 			next: (acceptanceCriteria) => {
 				this.acceptanceCriteria = acceptanceCriteria;
-				console.log(this.acceptanceCriteria);
 
 				this.acceptanceCriteria.acceptanceCriteria.forEach((ac) => {
 					this.acceptanceCriteriaEidList.push(ac.eid);
@@ -155,11 +156,35 @@ export class TestCasePageComponent implements OnInit {
 		});
 	}
 
+	loadEspecificAcceptanceCriteria(acceptanceCriteriaEid: string) {
+		this.acceptanceCriteriaService.getEspcificAcceptanceCriteria(this.projectEid, acceptanceCriteriaEid).subscribe({
+			next: (acceptanceCriteria) => {
+				this.userstoryEidDelete = acceptanceCriteria.userstoryEid;
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+	}
+
+	deleteTestCase() {
+		this.testCaseService.deleteTestCase(this.projectEid, this.testcaseEid).subscribe({
+			next: (response) => {
+				this.router.navigate([`/${this.projectEid}/${this.userstoryEidDelete}/user-story`]);
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
+	}
+
 	getEspecificTestCase() {
 		this.testCaseService.getEspecificTestCase(this.projectEid, this.testcaseEid).subscribe({
 			next: (testcase) => {
-				this.testCaseSpecs.push(testcase);
-				console.log("bom", this.testCaseSpecs);
+				this.testCaseSpecs = [];
+				this.testCaseSpecs = [testcase];
+				console.log("testcase", testcase);
+				this.loadEspecificAcceptanceCriteria(testcase.acceptancecriteriaEid);
 			},
 			error: (error) => {
 				console.log(error.error.message);
@@ -218,6 +243,7 @@ export class TestCasePageComponent implements OnInit {
 	}
 
 	openPopUpTestCase() {
+		this.getEspecificTestCase();
 		this.popUpTestCase = true;
 		document.body.style.overflow = "hidden";
 	}
@@ -238,6 +264,8 @@ export class TestCasePageComponent implements OnInit {
 	}
 
 	closePopUpTestCase() {
+		this.testCase$ = this.testCaseService.getEspecificTestCase(this.projectEid, this.testcaseEid);
+		this.getEspecificTestCase();
 		this.popUpTestCase = false;
 		document.body.style.overflow = "auto";
 	}
@@ -266,11 +294,6 @@ export class TestCasePageComponent implements OnInit {
 		this.popUpCreateTask = false;
 		document.body.style.overflow = "auto";
 	}
-
-	// setUpdatedUserStory() {
-	// 	this.userStory$ = this.userstoryApiService.get(this.projectEid, this.userstoryEid);
-	// 	this.closePopUpEditUserStory();
-	// }
 
 	getTaskTypeClass(type: number): string {
 		this.setStatusStyle();

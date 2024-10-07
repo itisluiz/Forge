@@ -14,6 +14,7 @@ import { CommonModule } from "@angular/common";
 import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { TaskType } from "forge-shared/enum/tasktype.enum";
 
 @Component({
 	selector: "app-main-page",
@@ -41,6 +42,16 @@ export class MainPageComponent {
 	pastSprints: SprintSelfComposite[] = [];
 	selectedSprint: SprintSelfComposite = {} as SprintSelfComposite;
 	tasksFromSelectedSprint: TaskSelfComposite[] = [];
+
+	bugTaskTotal: number = 0;
+	bugTaskDoneTotal: number = 0;
+	bugTaskDonePercentage: number = 0;
+	testTaskTotal: number = 0;
+	testTaskDoneTotal: number = 0;
+	testTaskDonePercentage: number = 0;
+	featureTotal: number = 0;
+	featureDoneTotal: number = 0;
+	featureDonePercentage: number = 0;
 
 	sprintLeadTime: string = "-";
 	averageSprintsLeadTime: string = "-";
@@ -90,11 +101,31 @@ export class MainPageComponent {
 	loadMetrics() {
 		this.sprintApiService.getSprint(this.projectEid, this.selectedSprint.eid).subscribe({
 			next: (sprintResponse) => {
+				// Lead time and velocity
 				this.tasksFromSelectedSprint = sprintResponse.tasks;
 				this.calculateLeadTime(this.tasksFromSelectedSprint);
 				this.calculateSprintVelocity(this.tasksFromSelectedSprint);
 				this.calculateAverageSprintsLeadTime();
 				this.calculateAverageSprintsVelocity();
+
+				// Task type metrics
+				this.bugTaskTotal = this.tasksFromSelectedSprint.filter((task) => task.type === TaskType.BUG).length;
+				this.bugTaskDoneTotal = this.tasksFromSelectedSprint.filter(
+					(task) => task.type === TaskType.BUG && task.status === TaskStatus.DONE,
+				).length;
+				this.bugTaskDonePercentage = this.bugTaskTotal === 0 ? 0 : (this.bugTaskDoneTotal / this.bugTaskTotal) * 100;
+
+				this.testTaskTotal = this.tasksFromSelectedSprint.filter((task) => task.type === TaskType.TEST).length;
+				this.testTaskDoneTotal = this.tasksFromSelectedSprint.filter(
+					(task) => task.type === TaskType.TEST && task.status === TaskStatus.DONE,
+				).length;
+				this.testTaskDonePercentage = this.testTaskTotal === 0 ? 0 : (this.testTaskDoneTotal / this.testTaskTotal) * 100;
+
+				this.featureTotal = this.tasksFromSelectedSprint.filter((task) => task.type === TaskType.TASK).length;
+				this.featureDoneTotal = this.tasksFromSelectedSprint.filter(
+					(task) => task.type === TaskType.TASK && task.status === TaskStatus.DONE,
+				).length;
+				this.featureDonePercentage = (this.featureDoneTotal / this.featureTotal) * 100;
 			},
 		});
 	}

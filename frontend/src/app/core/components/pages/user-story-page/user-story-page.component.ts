@@ -130,7 +130,6 @@ export class UserStoryPageComponent implements OnInit {
 			next: (testCases) => {
 				this.testCasesREAL = testCases;
 				console.log("testCasesREAL", this.testCasesREAL);
-				this.closePopUpTestCase();
 			},
 		});
 		this.subscriptions.add(testCaseSub);
@@ -224,6 +223,7 @@ export class UserStoryPageComponent implements OnInit {
 	}
 
 	closePopUpTestCase() {
+		this.loadAllAcceptanceCriteria();
 		this.popUpTestCase = false;
 		document.body.style.overflow = "auto";
 	}

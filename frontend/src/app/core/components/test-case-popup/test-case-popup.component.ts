@@ -13,6 +13,7 @@ import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/accept
 import { TestcaseResponse } from "forge-shared/dto/response/testcaseresponse.dto";
 import { AcceptanceCriteriaService } from "../../services/acceptance-criteria.service";
 import { TestcaseUpdateRequest } from "forge-shared/dto/request/testcaseupdaterequest.dto";
+import { TestcaseSuggestionRequest } from "forge-shared/dto/request/testcasesuggestionrequest.dto";
 
 // TODO [TestCaseStep] - Remover isso quando DTO for criado
 export interface testCaseStep {
@@ -33,6 +34,7 @@ export class TestCasePopupComponent implements OnInit {
 	@Input() testCaseEditData!: TestcaseResponse;
 	@Input() isEditMode: boolean = false;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
+	@Output() updateTestCaseEmitter = new EventEmitter<void>();
 
 	testCaseSteps: testCaseStep[] = [
 		{ title: "Step 1", action: "", expected: "" },
@@ -74,21 +76,8 @@ export class TestCasePopupComponent implements OnInit {
 			steps: this.formBuilder.array([]),
 			selectedIndex: 0,
 		});
-		if (this.isEditMode) {
-			this.testCaseForm.patchValue({
-				acceptanceCriteria: this.testCaseEditData.acceptancecriteriaEid,
-				description: this.testCaseEditData.description,
-				preCondition: this.testCaseEditData.precondition,
-			});
-			this.testCaseEditData.steps.forEach((step: TestcaseStepComposite) => {
-				this.steps.push(
-					this.formBuilder.group({
-						action: [step.action, [Validators.required, Validators.minLength(3)]],
-						expectedBehavior: [step.expectedBehavior, [Validators.required, Validators.minLength(3)]],
-					}),
-				);
-			});
-		}
+
+		this.updateValuesPopUp();
 
 		if (!this.isEditMode) {
 			this.testCaseSteps.forEach((testCaseStep) => {
@@ -110,6 +99,24 @@ export class TestCasePopupComponent implements OnInit {
 			control = this.testCaseForm.get(field);
 		}
 		return control ? control.invalid && (control.dirty || control.touched) : false;
+	}
+
+	updateValuesPopUp() {
+		if (this.isEditMode) {
+			this.testCaseForm.patchValue({
+				acceptanceCriteria: this.testCaseEditData.acceptancecriteriaEid,
+				description: this.testCaseEditData.description,
+				preCondition: this.testCaseEditData.precondition,
+			});
+			this.testCaseEditData.steps.forEach((step: TestcaseStepComposite) => {
+				this.steps.push(
+					this.formBuilder.group({
+						action: [step.action, [Validators.required, Validators.minLength(3)]],
+						expectedBehavior: [step.expectedBehavior, [Validators.required, Validators.minLength(3)]],
+					}),
+				);
+			});
+		}
 	}
 
 	closePopUp() {
@@ -170,6 +177,7 @@ export class TestCasePopupComponent implements OnInit {
 			this.testCaseService.createTestCase(newTestCaseRequest, this.projectEid).subscribe({
 				next: (data) => {
 					console.log(data);
+					this.closePopUpEmitter.emit();
 				},
 				error: (error) => {
 					console.error(error);
@@ -201,6 +209,7 @@ export class TestCasePopupComponent implements OnInit {
 			this.testCaseService.updateTestCase(updateTestCaseRequest, this.projectEid, this.testcaseEid).subscribe({
 				next: (data) => {
 					console.log(data);
+					this.closePopUpEmitter.emit();
 				},
 				error: (error) => {
 					console.error(error);
@@ -234,8 +243,27 @@ export class TestCasePopupComponent implements OnInit {
 	}
 
 	generateWithAI() {
-		console.log("Generating test case with AI");
-		// TODO - Implementar lógica para gerar test case com AI
-		// Obs: Excluir as tabs de testCaseStep default e adicionar as tabs geradas
+		let suggestionRequest: TestcaseSuggestionRequest = {
+			acceptancecriteriaEid: this.testCaseForm.get("acceptanceCriteria")?.value,
+			prompt: undefined,
+		};
+		this.testCaseService.getSuggestion(suggestionRequest, this.projectEid).subscribe({
+			next: (data) => {
+				console.log(data);
+				this.testCaseForm.patchValue({
+					description: data.description,
+					preCondition: data.precondition,
+				});
+				for (let i = 0; i < data.steps.length; i++) {
+					this.steps.at(i).patchValue({
+						action: data.steps[i].action,
+						expectedBehavior: data.steps[i].expectedBehavior,
+					});
+				}
+			},
+			error: (error) => {
+				console.error;
+			},
+		});
 	}
 }
