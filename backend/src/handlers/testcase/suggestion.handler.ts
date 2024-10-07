@@ -1,34 +1,69 @@
+import { decryptPK } from "../../util/encryption.js";
 import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
+import { NotFoundError } from "../../error/externalhandling.error.js";
 import { Request, Response } from "express";
-import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepcomposite.dto.js";
 import { TestcaseSuggestionRequest } from "forge-shared/dto/request/testcasesuggestionrequest.dto";
-import { TestcaseSuggestionResponse } from "forge-shared/dto/response/testcasesuggestionresponse.dto";
+import { promptAITestcase } from "../../ai/prompts/testcase.prompt.js";
+import { ExternalServiceError } from "../../error/internalhandling.error.js";
 
 export default async function (req: Request, res: Response) {
 	const testcaseSuggestionRequest = req.body as TestcaseSuggestionRequest;
 	const sequelize = await getSequelize();
 	const transaction = await sequelize.transaction();
 	const authProject = getProjectData(req);
+	const acceptancecriteriaId = decryptPK("acceptancecriteria", testcaseSuggestionRequest.acceptancecriteriaEid);
+
+	let acceptancecriteria: any;
 
 	try {
+		acceptancecriteria = await sequelize.models["acceptancecriteria"].findByPk(acceptancecriteriaId, {
+			attributes: ["criteriaGiven", "criteriaWhen", "criteriaThen"],
+			include: [
+				{
+					model: sequelize.models["userstory"],
+					attributes: ["title", "description", "narrative", "storyActor", "storyObjective", "storyJustification"],
+					include: [
+						{
+							model: sequelize.models["epic"],
+							attributes: ["title", "description"],
+							include: [
+								{
+									model: sequelize.models["project"],
+									attributes: ["id", "title", "description"],
+								},
+							],
+						},
+						{
+							model: sequelize.models["task"],
+							attributes: ["title"],
+						},
+					],
+				},
+				{
+					model: sequelize.models["testcase"],
+					attributes: ["description"],
+				},
+			],
+		});
+
+		if (
+			acceptancecriteria?.dataValues.userstory.dataValues.epic.dataValues.project.dataValues.id !==
+			authProject.project.dataValues.id
+		) {
+			throw new NotFoundError("Acceptance criteria not found or does not belong to the project");
+		}
+
 		await transaction.commit();
 	} catch (error) {
 		await transaction.rollback();
 		throw error;
 	}
 
-	const steps: TestcaseStepComposite[] = Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (_, i) => ({
-		action: `Sample action #${i + 1}`,
-		expectedBehavior: `Sample expected behavior #${i + 1}`,
-	}));
+	const result = await promptAITestcase(acceptancecriteria);
+	if (!result) {
+		throw new ExternalServiceError("Failed to get suggestion from AI service");
+	}
 
-	const response: TestcaseSuggestionResponse = {
-		description: testcaseSuggestionRequest.prompt
-			? `Your prompt was '${testcaseSuggestionRequest.prompt}'`
-			: "No prompt was provided",
-		precondition: `This test case has ${steps.length} step(s) for the acceptance criteria of eid ${testcaseSuggestionRequest.acceptancecriteriaEid}`,
-		steps: steps,
-	};
-	res.status(200).send(response);
+	res.status(200).send(result);
 }
