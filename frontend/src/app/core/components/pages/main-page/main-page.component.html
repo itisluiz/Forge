@@ -36,42 +36,39 @@
 							>
 								<swiper-slide>
 									<div class="metric-card">
-										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-										<h2>Userstories</h2>
-										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-										<p class="average-for-metric">
-											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
-										</p>
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+										<h2>Tasks</h2>
+										<mat-progress-bar mode="determinate" [value]="featureDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ featureDoneTotal }} of {{ featureTotal }}</p>
 									</div>
 								</swiper-slide>
 								<swiper-slide>
 									<div class="metric-card">
-										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-										<h2>Backog</h2>
-										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-										<p class="average-for-metric">
-											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
-										</p>
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+
+										<h2>Bugs</h2>
+										<mat-progress-bar mode="determinate" [value]="bugTaskDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ bugTaskDoneTotal }} of {{ bugTaskTotal }}</p>
 									</div>
 								</swiper-slide>
 								<swiper-slide>
 									<div class="metric-card">
-										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-										<h2>Userstories</h2>
-										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-										<p class="average-for-metric">
-											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
-										</p>
-									</div>
-								</swiper-slide>
-								<swiper-slide>
-									<div class="metric-card">
-										<img class="issues-list_issue--link" src="../../../../../assets/link-icon.svg" />
-										<h2>Userstories</h2>
-										<mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-										<p class="average-for-metric">
-											You have completed {{ averageSprintsLeadTime }} of {{ averageSprintsLeadTime }}
-										</p>
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+										<h2>Tests</h2>
+										<mat-progress-bar mode="determinate" [value]="testTaskDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ testTaskDoneTotal }} of {{ testTaskTotal }}</p>
 									</div>
 								</swiper-slide>
 							</swiper-container>
