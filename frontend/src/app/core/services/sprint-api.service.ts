@@ -1,7 +1,8 @@
 import { ApiService } from "./api.service";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { EpicSelfResponse } from "forge-shared/dto/response/epicselfresponse.dto";
+import { SprintOverviewResponse } from "forge-shared/dto/response/sprintoverviewresponse.dto";
+import { SprintOverviewRequest } from "forge-shared/dto/request/sprintoverviewrequest.dto";
 import { SprintResponse } from "forge-shared/dto/response/sprintresponse.dto";
 import { SprintNewRequest } from "forge-shared/dto/request/sprintnewrequest.dto";
 import { SprintUpdateRequest } from "forge-shared/dto/request/sprintupdaterequest.dto";
@@ -34,6 +35,15 @@ export class SprintApiService {
 			`sprint/${projectEid}/${sprintEid}/update`,
 			undefined,
 			sprintUpdateRequest,
+		);
+	}
+
+	public overview(projectEid: string, sprintEid: string, forceRegenerate = false): Observable<SprintOverviewResponse> {
+		return this.apiService.call<SprintOverviewResponse, SprintOverviewRequest>(
+			"POST",
+			`sprint/${projectEid}/${sprintEid}/overview`,
+			undefined,
+			{ forceRegenerate },
 		);
 	}
 

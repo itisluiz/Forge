@@ -84,12 +84,24 @@
 							matTooltip="The text below provides a brief summary of the project, emphasizing key points and areas that require attention."
 							>info</mat-icon
 						>
-						<mat-icon class="force-refresh">refresh</mat-icon>
+						<button
+							matTooltip="Force the generation of a new AI analysis"
+							class="force-refresh"
+							(click)="loadSprintOverview(true)"
+							[hidden]="loadingSprintOverview"
+						>
+							<mat-icon>refresh</mat-icon>
+						</button>
 					</div>
-					<p>
-						Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
-						Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
-					</p>
+					@if (this.loadingSprintOverview) {
+						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+					} @else if (currentSprintOverview) {
+						<p>
+							{{ currentSprintOverview.sprintOverview }}
+						</p>
+					} @else {
+						<p>No feedback available</p>
+					}
 				</div>
 			</div>
 			<div class="burndown-grid">
