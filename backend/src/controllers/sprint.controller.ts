@@ -4,6 +4,7 @@ import { handle } from "../util/handle.js";
 import { jsonBody, jsonBodySchema } from "../middleware/json.middleware.js";
 import { Router } from "express";
 import { sprintNewRequestJsonSchema } from "../jsonschemas/sprintnewrequest.jsonschema.js";
+import { sprintOverviewRequestJsonSchema } from "../jsonschemas/sprintoverviewrequest.jsonschema.js";
 import { sprintUpdateRequestJsonSchema } from "../jsonschemas/sprintupdaterequest.jsonschema.js";
 
 const router = Router();
@@ -52,6 +53,59 @@ router.post(
 	jsonBodySchema(sprintNewRequestJsonSchema),
 	async (req, res) => {
 		await handle("sprint", "new", req, res);
+	},
+);
+
+/**
+ * @swagger
+ * /api/sprint/{projectEid}/{sprintEid}/overview:
+ *   post:
+ *     summary: Get an AI generated overview of the sprint.
+ *     parameters:
+ *       - in: path
+ *         name: projectEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The project's identifier.
+ *       - in: path
+ *         name: sprintEid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The sprint's identifier.
+ *     tags:
+ *       - sprint
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SprintOverviewRequest'
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SprintOverviewResponse'
+ *       Others:
+ *         description: Failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FailureResponse'
+ */
+router.post(
+	"/api/sprint/:projectEid/:sprintEid/overview",
+	authorize(),
+	authorizeProject(),
+	jsonBody(),
+	jsonBodySchema(sprintOverviewRequestJsonSchema),
+	async (req, res) => {
+		await handle("sprint", "overview", req, res);
 	},
 );
 
