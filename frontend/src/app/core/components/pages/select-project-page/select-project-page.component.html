@@ -3,7 +3,7 @@
 		<div class="select-project-component">
 			<div class="title">
 				<div class="left-side">
-					<h1>{{ projectInfo.title }}'s information</h1>
+					<h1>{{ projectInformation.title }}'s information</h1>
 				</div>
 			</div>
 			<mat-tab-group class="tabs">
@@ -15,8 +15,8 @@
 							label="Code"
 							name="code"
 							type="text"
-							[placeholder]="projectInfo.code"
-							[innerHTML]="projectInfo.code"
+							[placeholder]="projectInformation.code"
+							[innerHTML]="projectInformation.code"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
 							[minLength]="3"
@@ -31,8 +31,8 @@
 							type="text"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
-							[placeholder]="projectInfo.title"
-							[innerHTML]="projectInfo.title"
+							[placeholder]="projectInformation.title"
+							[innerHTML]="projectInformation.title"
 						></app-input>
 
 						<app-input
@@ -43,8 +43,8 @@
 							type="text"
 							(input)="revalidateProjectUpdateForm()"
 							[required]="true"
-							[placeholder]="projectInfo.description"
-							[innerHTML]="projectInfo.description"
+							[placeholder]="projectInformation.description"
+							[innerHTML]="projectInformation.description"
 							[errorMessage]="projectUpdateError"
 						></app-input>
 					</div>
@@ -54,7 +54,7 @@
 							class="action-buttons_action action-buttons_button"
 							[disabled]="!validProjectUpdateForm || loadingSaveProjectUpdate"
 							[class.loading]="loadingSaveProjectUpdate"
-							(click)="updateProject(projectInfo.eid)"
+							(click)="updateProject(projectInformation.eid)"
 						>
 							{{ !loadingSaveProjectUpdate ? "Save changes" : "" }}
 							<span class="loading-spinner"></span>
@@ -63,32 +63,46 @@
 					</div>
 				</mat-tab>
 				<mat-tab label="Members">
-					<div class="header-members">
+					<div class="header-members" [ngClass]="checkAllMembers(projectInformation.members)">
 						<p>Name</p>
-						<p>Role</p>
 						<p>Email</p>
-						<p>Actions</p>
+						<p>Role</p>
+						<p>Action</p>
 					</div>
 					<div class="body-members">
-						@for (member of projectInfo.members; track member) {
+						@for (member of projectInformation.members; track member) {
 							<div class="member">
 								@if (member.admin) {
-									<p class="adm"><mat-icon>admin_panel_settings</mat-icon> {{ member.name }} {{ member.surname }}</p>
+									<div class="adm">
+										<img [src]="member.gravatar" />
+										<div class="identity">
+											<span>Admin</span>
+											<p>{{ member.name }} {{ getLastName(member.surname) }}</p>
+										</div>
+									</div>
 								} @else {
-									<p>{{ member.name }} {{ member.surname }}</p>
+									<div class="normal-member">
+										<img [src]="member.gravatar" />
+										<p>{{ member.name }} {{ getLastName(member.surname) }}</p>
+									</div>
 								}
 
-								<p>{{ member.role | projectRole }}</p>
-								<p>{{ member.email }}</p>
+								<p class="member-email">{{ member.email }}</p>
+								<p class="member-role">{{ member.role | projectRole }}</p>
 
-								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="member_menu" #menuTrigger="matMenuTrigger">
+								<button
+									class="member-action"
+									mat-icon-button
+									[matMenuTriggerFor]="member_menu"
+									#menuTrigger="matMenuTrigger"
+								>
 									<mat-icon>more_vert</mat-icon>
 								</button>
 								<mat-menu #member_menu="matMenu">
 									<button mat-menu-item (click)="openPopUp('editMember', undefined, undefined, member.eid, member.admin)">
 										Edit permissions
 									</button>
-									<button mat-menu-item (click)="removeMember(projectInfo.eid, member.eid)">Remove member</button>
+									<button mat-menu-item (click)="removeMember(projectInformation.eid, member.eid)">Remove member</button>
 								</mat-menu>
 							</div>
 						}
@@ -107,7 +121,7 @@
 				</div>
 
 				<div class="right-side">
-					<button id="join" (click)="openPopUp('join')">Join</button>
+					<button id="join" (click)="openPopUp('join')" matRipple>Join</button>
 					<button mat-icon-button [matMenuTriggerFor]="menu">
 						<mat-icon>more_vert</mat-icon>
 					</button>
@@ -120,34 +134,72 @@
 			</div>
 
 			<div class="projects">
-				<div class="header">
-					<span>Projects</span>
-					<span>Total: {{ dataSource.length }}</span>
+				<div class="header" [ngClass]="checkAllProjects(allProjects)">
+					<span>Project</span>
+					<span>Owner</span>
+					<span>Contributors</span>
+					<span>Created at</span>
+					<span>Action</span>
 				</div>
 
 				<div class="list">
-					<div *ngFor="let project of dataSource" (click)="selectProject(project.eid)">
-						<div class="project-info" [ngClass]="{ active: selectedProjectId === project.eid }">
-							<p>{{ project.code }}</p>
-							<span>{{ project.title }}</span>
+					<div *ngFor="let project of allProjects" (click)="selectProject(project.eid)">
+						<div
+							*ngIf="detailedProjects[project.eid]"
+							class="project-info"
+							[ngClass]="{ active: selectedProjectId === project.eid }"
+						>
+							<div class="name">
+								<p class="name_title">{{ detailedProjects[project.eid].title }}</p>
+								<p class="name_description">{{ detailedProjects[project.eid].description }}</p>
+							</div>
 
-							<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
-								<mat-icon>more_vert</mat-icon>
-							</button>
+							<div class="owner">
+								<p class="owner_name">{{ findProjectOwner(detailedProjects[project.eid]) }}</p>
+							</div>
+
+							<div class="contributors">
+								@if (detailedProjects[project.eid].members.length === 1) {
+									<img class="contributors_image" [src]="detailedProjects[project.eid].members[0].gravatar" />
+								} @else {
+									@for (member of detailedProjects[project.eid].members.slice(0, 3); track member) {
+										<img class="contributors_image" [src]="member.gravatar" />
+									}
+									@if (detailedProjects[project.eid].members.length > 3) {
+										<div class="contributors_more">
+											<p class="count">+{{ detailedProjects[project.eid].members.length - 3 }}</p>
+										</div>
+									}
+								}
+							</div>
+
+							<div class="created">
+								<p>{{ detailedProjects[project.eid].createdAt | date: "dd MMM yy" }}</p>
+							</div>
+
+							<div class="action">
+								<button class="button-icon" mat-icon-button [matMenuTriggerFor]="project_menu" #menuTrigger="matMenuTrigger">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+							</div>
+
 							<mat-menu #project_menu="matMenu">
-								@if (project.admin) {
-									<button mat-menu-item (click)="editProject(project.eid)">
+								@if (detailedProjects[project.eid].admin) {
+									<button mat-menu-item (click)="editProject(detailedProjects[project.eid].eid)">
 										<span>Edit information</span>
 									</button>
-									<button mat-menu-item (click)="openPopUp('invite', project.title, project.eid)">
+									<button
+										mat-menu-item
+										(click)="openPopUp('invite', detailedProjects[project.eid].title, detailedProjects[project.eid].eid)"
+									>
 										<span>Invite a person</span>
 									</button>
 								}
-								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, project.eid)">
+								<button mat-menu-item (click)="openPopUp('leaveConfirm', undefined, detailedProjects[project.eid].eid)">
 									<span>Leave project</span>
 								</button>
-								@if (project.admin) {
-									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, project.eid)">
+								@if (detailedProjects[project.eid].admin) {
+									<button mat-menu-item (click)="openPopUp('deleteConfirm', undefined, detailedProjects[project.eid].eid)">
 										<span>Delete project</span>
 									</button>
 								}
@@ -159,11 +211,11 @@
 
 			@if (!editMode && noProjects) {
 				<div class="no-project">
-					<h2>Not part of any project?</h2>
-					<p>You can quickly create one or join an existing one by clicking the button below.</p>
+					<h2>No project available.</h2>
+					<p>You can quickly <span>create one</span> or <span>join</span> an existing one by clicking the button below.</p>
 					<div class="buttons">
 						<button class="buttons_cancel buttons_button" (click)="openPopUp('join')">Join</button>
-						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create</button>
+						<button class="buttons_action buttons_button" (click)="openPopUp('create')">Create new project</button>
 					</div>
 				</div>
 			}
@@ -173,7 +225,7 @@
 					class="footer-next"
 					disabled="true"
 					[disabled]="enableNextButton"
-					(click)="navigateTo(this.selectedProjectId + '/epics')"
+					(click)="navigateTo(this.selectedProjectId + '/sprint-details')"
 				>
 					Next
 				</button>
@@ -302,7 +354,7 @@
 				{ value: 1, label: 'Product Owner' },
 				{ value: 2, label: 'Scrum Master' },
 				{ value: 3, label: 'Developer' },
-				{ value: 4, label: 'Tester' }
+				{ value: 4, label: 'Tester' },
 			]"
 		></app-select>
 	</app-popup-component>
@@ -340,7 +392,7 @@
 				{ value: 1, label: 'Product Owner' },
 				{ value: 2, label: 'Scrum Master' },
 				{ value: 3, label: 'Developer' },
-				{ value: 4, label: 'Tester' }
+				{ value: 4, label: 'Tester' },
 			]"
 		></app-select>
 
@@ -352,7 +404,7 @@
 			type="boolean"
 			[options]="[
 				{ value: true, label: 'Yes' },
-				{ value: false, label: 'No' }
+				{ value: false, label: 'No' },
 			]"
 			[dontChangeOption]="true"
 			[errorMessage]="projectEditMemberError"

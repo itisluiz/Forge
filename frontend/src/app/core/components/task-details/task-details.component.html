@@ -1,0 +1,143 @@
+<div class="history-pop-up">
+	<img class="close" src="../../../../../assets/double-arrow.svg" (click)="closePopUp()" />
+	<div class="history-pop-up-header">
+		<h2>{{ task.title }}</h2>
+		<p class="history-desc">{{ task.description }}</p>
+	</div>
+	<div class="pop-up-content">
+		<div class="info key">
+			<p>Key:</p>
+			<span>{{ task.code }}</span>
+		</div>
+		<div class="info status">
+			<p>Status:</p>
+			<div class="status-wrapper">
+				<div id="container-status-pop" #statusPopUp>
+					<span>
+						{{ statusParser(task.status) }}
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="info priority">
+			<p>Priority:</p>
+			<div class="content">
+				<img [src]="task.priority | priority | icon" />
+				<span>{{ task.priority | priority }}</span>
+			</div>
+		</div>
+
+		<div class="info type">
+			<p>Type:</p>
+			<span>{{ typeParser(task.type) }}</span>
+		</div>
+
+		<div class="info assignee">
+			<p>Assignee:</p>
+			<div class="content">
+				@if (getProjectMemberFromMap(task.responsibleEid) === null) {
+					<img src="../../../../../assets/unassigned-user.svg" />
+					<p>Unassigned</p>
+				} @else {
+					<img [src]="getProjectMemberFromMap(task.responsibleEid)?.gravatar" />
+					<p>
+						{{ getProjectMemberFromMap(task.responsibleEid)?.name }}
+						{{ getProjectMemberFromMap(task.responsibleEid)?.surname }}
+					</p>
+				}
+			</div>
+		</div>
+
+		<div class="info created">
+			<p>Created:</p>
+			<span>{{ task.createdAt | date }}</span>
+		</div>
+
+		<div class="info complexity" *ngIf="userStory">
+			<p>Effort score:</p>
+			@if (!userStory.effortScore) {
+				<span class="warning">The user story hasn't been evaluated!</span>
+			} @else if (task.complexity === null || task.complexity === undefined) {
+				<span class="warning">This task hasn't been evaluated!</span>
+			} @else {
+				<span class="effort-rating">
+					<b>{{ task.complexity }}</b>
+					<p>out of</p>
+					<b>{{ userStory.effortScore }}</b>
+					<mat-progress-bar mode="determinate" [value]="(task.complexity! / userStory.effortScore) * 100" />
+				</span>
+			}
+		</div>
+
+		<div class="info user-story-link" *ngIf="userStory">
+			<p>User story:</p>
+			<span (click)="navigateToUserStory(userStory.eid)">
+				{{ userStory.title }}
+				<mat-icon>open_in_new</mat-icon>
+			</span>
+		</div>
+
+		<div class="buttons-wrapper">
+			<button id="button-edit-task" class="grey-button" (click)="openPopUpEditTask()">Edit Task</button>
+			<mat-icon (click)="openPopUpDeleteTask()">delete</mat-icon>
+		</div>
+	</div>
+	<div class="pop-up-footer">
+		<div class="hr"></div>
+		<div class="comments-container">
+			<div class="comment">
+				<div class="user">
+					<div class="id">
+						@if (!responsible) {
+							<img src="../../../../../assets/unassigned-user.svg" />
+							<p>User</p>
+						} @else {
+							<img [src]="responsible.gravatar" />
+							<p>
+								{{ responsible.name }}
+								{{ responsible.surname }}
+							</p>
+						}
+						<span>1 hour ago</span>
+					</div>
+					<div class="actions">
+						<button mat-icon-button>
+							<mat-icon>more_horiz</mat-icon>
+						</button>
+					</div>
+				</div>
+				<div class="message">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa omnis fugit eligendi.</div>
+			</div>
+		</div>
+		<div class="input-comment">
+			<img src="../../../../../assets/unassigned-user.svg" />
+			<input type="text" placeholder="Add a comment.." />
+		</div>
+		<div class="hr"></div>
+	</div>
+</div>
+
+@if (popUpEditTask) {
+	<div class="pop-up-background" (click)="closePopUpEditTask()"></div>
+
+	<app-task-popup
+		[isEditMode]="true"
+		[projectEid]="projectEid"
+		[taskEditData]="task"
+		[userRole]="userRole"
+		(handleEditedTaskAndClosePopupEmitter)="loadEditedTask()"
+		(closePopUpEmitter)="closePopUpEditTask()"
+	></app-task-popup>
+}
+
+@if (popUpDeleteTask) {
+	<div class="pop-up-background" (click)="closePopUpCancelled()"></div>
+
+	<app-delete-popup
+		[title]="'Delete Task'"
+		[description]="'Are you sure you want to delete this task? You cannot go back on this action.'"
+		(cancelEmitter)="closePopUpCancelled()"
+		(confirmDeleteEmmiter)="onDeleteTask()"
+	></app-delete-popup>
+}

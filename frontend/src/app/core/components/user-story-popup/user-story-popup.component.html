@@ -36,17 +36,17 @@
 					<label for="gherkin">User Stories</label>
 					<div class="input-wrapper--user-stories">
 						<label for="as-a">As a</label>
-						<input id="as-a" name="as-a" formControlName="asA" placeholder="User" required />
+						<input id="as-a" name="as-a" formControlName="asA" placeholder="Actor" required />
 					</div>
 
 					<div class="input-wrapper--user-stories">
 						<label for="i-want">I want to</label>
-						<input id="i-want" name="i-want" formControlName="iWant" placeholder="do eat protein" required />
+						<input id="i-want" name="i-want" formControlName="iWant" placeholder="Objective" required />
 					</div>
 
 					<div class="input-wrapper--user-stories">
 						<label for="so-that">So that</label>
-						<input id="so-that" name="so-that" formControlName="soThat" placeholder="I can build muscle" required />
+						<input id="so-that" name="so-that" formControlName="soThat" placeholder="Reasoning" required />
 					</div>
 				</div>
 			</div>
@@ -74,7 +74,7 @@
 				<div class="input-wrapper">
 					<label for="priority">Priority</label>
 					<select id="priority" name="priority" formControlName="priority">
-						<option value="1">Low</option>
+						<option value="1" selected>Low</option>
 						<option value="2">Medium</option>
 						<option value="3">High</option>
 					</select>
@@ -129,7 +129,7 @@
 					*ngIf="!isEditMode"
 					mat-button
 					matStepperNext
-					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid"
+					[disabled]="firstFormGroup.invalid || secondFormGroup.invalid || disableButtonDuringRequest"
 				>
 					Create user story
 				</button>

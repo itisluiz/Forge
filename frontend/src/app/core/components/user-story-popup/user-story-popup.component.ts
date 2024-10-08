@@ -67,6 +67,8 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 
 	userStoryEid: string = "";
 
+	disableButtonDuringRequest: boolean = false;
+
 	constructor(
 		private formBuilder: FormBuilder,
 		private userstoryApiService: UserstoryApiService,
@@ -81,7 +83,7 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 			soThat: ["", Validators.required],
 			businessNarrative: ["", Validators.required],
 			premisses: ["", Validators.required],
-			priority: ["", Validators.required],
+			priority: ["1", Validators.required],
 		});
 		this.secondFormGroup = this.formBuilder.group({
 			acceptanceCriteria: this.formBuilder.array([this.initCriteria()]),
@@ -145,6 +147,7 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 	}
 
 	submitSecondForm() {
+		this.disableButtonDuringRequest = true;
 		this.formSubmitted = true;
 
 		if (this.secondFormGroup.valid && this.firstFormGroup.valid) {
@@ -187,6 +190,7 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 
 	private handleCreateUserStory(userstoryNewRequest: UserstoryNewRequest) {
 		this.createUserStory(userstoryNewRequest).subscribe((userStoryResponse: UserstoryResponse) => {
+			this.disableButtonDuringRequest = false;
 			this.processAcceptanceCriteria(userStoryResponse.eid);
 			this.handleUserStoryAndClosePopupEmitter.emit(userStoryResponse);
 		});

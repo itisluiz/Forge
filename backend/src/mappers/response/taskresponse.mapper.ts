@@ -14,6 +14,7 @@ export function mapTaskResponse(task: any, projectCode: string): TaskResponse {
 		priority: task.dataValues.epriorityId,
 		startedAt: task.dataValues.startedAt,
 		completedAt: task.dataValues.completedAt,
+		complexity: task.dataValues.complexity,
 		createdAt: task.dataValues.createdAt,
 		updatedAt: task.dataValues.updatedAt,
 	};

@@ -27,12 +27,26 @@ import { TaskType } from "../../enum/tasktype.enum";
  *         priority:
  *           $ref: '#/components/schemas/Priority'
  *           nullable: true
+ *         startedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         completedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         complexity:
+ *           type: number
+ *           nullable: true
  */
 export interface TaskUpdateRequest {
-	responsibleEid?: string;
+	responsibleEid?: string | null;
 	title?: string;
 	description?: string;
 	status?: TaskStatus;
 	type?: TaskType;
 	priority?: Priority;
+	startedAt?: string | null;
+	completedAt?: string | null;
+	complexity?: number | null;
 }

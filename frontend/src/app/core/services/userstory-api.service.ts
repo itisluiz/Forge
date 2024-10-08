@@ -46,12 +46,12 @@ export class UserstoryApiService {
 
 	public updateAcceptanceCriteria(
 		projectEid: string,
-		acceptanceCriteriaEid: string,
+		acceptancecriteriaEid: string,
 		acceptanceCriteriaUpdateRequest: AcceptanceCriteriaUpdateRequest,
 	): Observable<AcceptanceCriteriaResponse> {
 		return this.apiService.call<AcceptanceCriteriaResponse, AcceptanceCriteriaUpdateRequest>(
 			"PATCH",
-			`acceptancecriteria/${projectEid}/${acceptanceCriteriaEid}/update`,
+			`acceptancecriteria/${projectEid}/${acceptancecriteriaEid}/update`,
 			undefined,
 			acceptanceCriteriaUpdateRequest,
 		);

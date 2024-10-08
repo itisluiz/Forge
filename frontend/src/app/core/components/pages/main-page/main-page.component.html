@@ -1,41 +1,159 @@
 <app-navbar></app-navbar>
 <div class="main-page-content">
-	<div class="grid-container">
-		<div class="agile-process-grid">
-			<div class="chart">
-				<app-agile-process></app-agile-process>
+	@if (currentSprint.eid) {
+		<div class="grid-container">
+			<div class="agile-process-grid">
+				<div class="chart">
+					<select name="" id="" class="select-sprint" (change)="setSprint($event)">
+						@for (sprint of pastAndCurrentSprints; track $index) {
+							<option value="{{ sprint.eid }}" [selected]="sprint.index === currentSprint.index">
+								Sprint {{ sprint.index }}
+							</option>
+						}
+					</select>
+					<app-agile-process [sprintStatus]="selectedSprint.status"></app-agile-process>
 
-				<div class="right-content">
-					<div class="upper">
-						<h1>Agile process - Sprint 1</h1>
-						<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
+					<div class="right-content">
+						<div class="upper">
+							<h1>Agile process - Sprint {{ selectedSprint.index }}</h1>
+							<p>A visual display of the development status, aiding in improved planning and task coordination.</p>
+						</div>
+						<div class="lower">
+							<div class="lower_title">
+								<p>Track Your Workflows</p>
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="Monitor the progress of user stories and tasks in real time. Keep track of each phase, from planning to completion, ensuring smooth project execution."
+									>info</mat-icon
+								>
+							</div>
+							<swiper-container
+								class="swiper-slide"
+								navigation="true"
+								slides-per-view="2"
+								space-between="10"
+								style="--swiper-navigation-color: #000; --swiper-navigation-size: 20px"
+							>
+								<swiper-slide>
+									<div class="metric-card">
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+										<h2>Tasks</h2>
+										<mat-progress-bar mode="determinate" [value]="featureDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ featureDoneTotal }} of {{ featureTotal }}</p>
+									</div>
+								</swiper-slide>
+								<swiper-slide>
+									<div class="metric-card">
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+
+										<h2>Bugs</h2>
+										<mat-progress-bar mode="determinate" [value]="bugTaskDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ bugTaskDoneTotal }} of {{ bugTaskTotal }}</p>
+									</div>
+								</swiper-slide>
+								<swiper-slide>
+									<div class="metric-card">
+										<img
+											class="issues-list_issue--link"
+											src="../../../../../assets/link-icon.svg"
+											[routerLink]="['/', projectEid, 'backlog']"
+										/>
+										<h2>Tests</h2>
+										<mat-progress-bar mode="determinate" [value]="testTaskDonePercentage"></mat-progress-bar>
+										<p class="average-for-metric">You have completed {{ testTaskDoneTotal }} of {{ testTaskTotal }}</p>
+									</div>
+								</swiper-slide>
+							</swiper-container>
+						</div>
 					</div>
-					<div class="lower">
-						<p>View your epic's process</p>
-						<img src="../../../../../assets/fake-slider.svg" alt="" />
+				</div>
+				<div class="ai-feedback">
+					<hr />
+					<div class="feedback-title">
+						<h3>Project Indicators Analysis</h3>
+						<mat-icon
+							class="info-tooltip"
+							matTooltip="The text below provides a brief summary of the project, emphasizing key points and areas that require attention."
+							>info</mat-icon
+						>
+						<button
+							matTooltip="Force the generation of a new AI analysis"
+							class="force-refresh"
+							(click)="loadSprintOverview(true)"
+							[hidden]="loadingSprintOverview"
+						>
+							<mat-icon>refresh</mat-icon>
+						</button>
+					</div>
+					@if (this.loadingSprintOverview) {
+						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+					} @else if (currentSprintOverview) {
+						<p>
+							{{ currentSprintOverview.sprintOverview }}
+						</p>
+					} @else {
+						<p>No feedback available</p>
+					}
+				</div>
+			</div>
+			<div class="burndown-grid">
+				<h1>Burndown Chart - Sprint {{ selectedSprint.index }}</h1>
+				<app-burndown-chart [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-burndown-chart>
+			</div>
+			<div class="metrics-grid">
+				<div class="metrics-content-wrapper">
+					<h1>Team metrics</h1>
+					<p>Below, you will find the team's metrics related to delivery lead time and sprint velocity.</p>
+					<div class="metric-cards-wrapper">
+						<div class="metric-card">
+							<h2>Lead Time</h2>
+							<span class="value-for-metric"
+								><img [src]="leadTimeMetricImageUrl" *ngIf="sprintLeadTime != '-'" /><span
+									>{{ sprintLeadTime }} days</span
+								></span
+							>
+							<p *ngIf="pastSprints.length > 0" class="average-for-metric">
+								Average for the project: <span class="average-value">{{ averageSprintsLeadTime }}</span> days
+							</p>
+						</div>
+						<div class="metric-card">
+							<h2>Sprint Velocity</h2>
+							<span class="value-for-metric"
+								><img [src]="velocityMetricImageUrl" *ngIf="sprintVelocity != '-'" /><span
+									>{{ sprintVelocity }} points</span
+								></span
+							>
+							<p *ngIf="pastSprints.length > 0" class="average-for-metric">
+								Average for the project: <span class="average-value">{{ averageSprintsVelocity }}</span> points
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="ai-feedback">
-				<hr />
-				<h3>Project Indicators Analysis</h3>
-				<p>
-					Efficient communication, but better task coordination needed. Deadlines met, but underestimated completion times.
-					Improved code quality, more testing required. Positive feedback reception crucial for project evolution.
-				</p>
+			<!-- <div class="activity-grid">
+				<h1>Recent activity</h1>
+				<img src="../../../../../assets/fake-recent-activity.svg" alt="" />
+			</div> -->
+			<div class="gantt-grid">
+				<h1>Gantt Chart - Sprint {{ selectedSprint.index }}</h1>
+				<app-gantt-chart class="gantt-wrapper" [sprintEid]="selectedSprint.eid" [projectEid]="projectEid"> </app-gantt-chart>
 			</div>
 		</div>
-		<div class="burndown-grid">
-			<h1>Burndown Chart - Sprint 1</h1>
-			<img class="fake-burn-down" src="../../../../../assets/fake-burn-down.svg" alt="" />
+	} @else {
+		<div class="no-sprint">
+			<mat-icon>warning</mat-icon>
+			<p>No active sprint</p>
+			<p>
+				Please, <a [routerLink]="['/', projectEid, 'backlog']">go to the backlog page</a> and create a new sprint from there.
+			</p>
 		</div>
-		<div class="activity-grid">
-			<h1>Recent activity</h1>
-			<img src="../../../../../assets/fake-recent-activity.svg" alt="" />
-		</div>
-		<div class="gantt-grid">
-			<h1>Gantt Chart - Sprint 1</h1>
-			<img src="../../../../../assets/fake-gantt.svg" alt="" />
-		</div>
-	</div>
+	}
 </div>

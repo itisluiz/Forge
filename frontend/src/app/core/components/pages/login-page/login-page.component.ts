@@ -19,6 +19,7 @@ export class LoginPageComponent implements OnInit {
 	loginFailed: boolean = false;
 	formSubmitted: boolean = false;
 	public loginLoading: boolean = false;
+	passwordFieldType: string = "password";
 
 	constructor(
 		private userApiService: UserApiService,
@@ -57,6 +58,10 @@ export class LoginPageComponent implements OnInit {
 				},
 			});
 		}
+	}
+
+	togglePasswordVisibility(): void {
+		this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
 	}
 
 	navigateTo(route: string) {

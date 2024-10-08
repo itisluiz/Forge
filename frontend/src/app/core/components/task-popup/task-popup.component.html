@@ -1,0 +1,89 @@
+<div class="epic-pop-up">
+	<div class="epic-pop-up-header">
+		<h2 *ngIf="!isEditMode">Create a Task</h2>
+		<h2 *ngIf="isEditMode">Edit Task</h2>
+		<p *ngIf="!isEditMode">Fill in the necessary information to create a task.</p>
+		<p *ngIf="isEditMode">Update the fields as needed.</p>
+	</div>
+	<form [formGroup]="taskForm" class="pop-up-form" (ngSubmit)="submitTaskForm()">
+		<div class="pop-up-form-content">
+			<div class="input-wrapper">
+				<label for="task-title">Task's Title</label>
+				<input
+					type="text"
+					id="task-title"
+					name="task-title"
+					formControlName="title"
+					placeholder="Insert the title of the task"
+				/>
+			</div>
+			<div class="input-wrapper">
+				<label for="responsible">Responsible</label>
+				<select id="responsible" name="responsible" formControlName="responsible">
+					<option [value]="null">Unassigned</option>
+					<option *ngFor="let member of projectMembers" [value]="member.eid">{{ member.name }} {{ member.surname }}</option>
+				</select>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-description">Description</label>
+				<textarea
+					id="task-description"
+					name="task-description"
+					formControlName="description"
+					placeholder="Insert a description"
+				></textarea>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-type">Type</label>
+				<select id="task-type" name="task-type" formControlName="type">
+					<option value="">Select a type</option>
+					<option value="1">Task</option>
+					<option value="2">Bug</option>
+					<option value="3">Test</option>
+				</select>
+			</div>
+			<div class="input-wrapper">
+				<label for="task-priority">Priority</label>
+				<select id="task-priority" name="task-priority" formControlName="priority">
+					<option value="">Select a priority</option>
+					<option value="1">Low</option>
+					<option value="2">Medium</option>
+					<option value="3">High</option>
+				</select>
+			</div>
+			@if (userRole !== "product owner") {
+				@if (userStory && isEditMode) {
+					<div class="input-wrapper">
+						<label for="task-complexity">Effort Score</label>
+						@if (!userStory.effortScore) {
+							<div class="warning">The user story hasn't been evaluated!</div>
+							<div class="tip">Evaluate it via a <a href="/{{ projectEid }}/planning-poker">Planning Poker</a> session</div>
+						} @else {
+							<mat-slider min="0" step="1" [max]="maxComplexity" showTickMarks>
+								<input matSliderThumb id="task-complexity" name="task-complexity" formControlName="complexity" />
+							</mat-slider>
+							<span class="effort-rating">
+								@if (taskForm.get("complexity")?.value !== null) {
+									<b>{{ taskForm.get("complexity")?.value }}</b>
+									<p>out of</p>
+									<b>{{ maxComplexity }}</b>
+								} @else {
+									<p class="warning">Task not yet evaluated!</p>
+								}
+							</span>
+						}
+					</div>
+				} @else if (!userStory && isEditMode) {
+					<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+				}
+			}
+		</div>
+		<div class="pop-up-footer">
+			<button type="submit" *ngIf="!isEditMode" [disabled]="taskForm.invalid || disableButtonDuringRequest">Create</button>
+			<button type="submit" *ngIf="isEditMode" [disabled]="taskForm.invalid || disableButtonDuringRequest">
+				Submit Modifications
+			</button>
+			<button class="cancel-epic" (click)="closePopUp()">Cancel</button>
+		</div>
+	</form>
+</div>

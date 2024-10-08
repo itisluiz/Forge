@@ -2,78 +2,289 @@
 <div class="backlog-page-content">
 	<div class="grid-container">
 		<div class="header-grid">
-			<ul class="breadcrumber">
-				<li><a href="">Squad BES</a></li>
-				<div class="spacer">></div>
-				<li><a href="">TCC 1</a></li>
-				<div class="spacer">></div>
-				<li><a href="/backlog">Backlog</a></li>
-			</ul>
-			<h1>Backlog</h1>
+			<div class="breadcrump-epics-wrapper">
+				<ul class="breadcrumber">
+					<li>
+						<a>{{ projectName }}</a>
+					</li>
+					<div class="spacer">></div>
+					<li><a>Backlog</a></li>
+				</ul>
+				<h1>Backlog</h1>
+				<div class="buttons-header">
+					@if (userRole !== "") {
+						<button
+							id="button-create-epic"
+							(click)="openPopUpCreateSprint()"
+							matRipple
+							[disabled]="userRole !== 'scrum master' && userRole !== 'product owner'"
+							[matTooltip]="
+								userRole !== 'scrum master' && userRole !== 'product owner'
+									? 'Only a Scrum Master or PO can do this action!'
+									: ''
+							"
+						>
+							Create new Sprint
+						</button>
+					}
+					<button mat-icon-button class="mat-icon-button">
+						<mat-icon>more_vert</mat-icon>
+					</button>
+				</div>
+			</div>
+
 			<p>This board will manage your features that are available to start development.</p>
 		</div>
 
+		<!-- Current Sprint -->
 		<div class="backlog-grid sprint">
-			<ng-container *ngIf="currentSprint$ | async as currentSprint; else noCurrentSprint">
+			@if (currentSprint.eid) {
 				<div class="title">
 					<div class="left">
 						<div class="left-content">
 							<h2>Sprint {{ currentSprint.index }}</h2>
-
-							<div class="items">
-								<span>{{ (userStoriesInCurrentSprint$ | async)?.length }}</span>
-								<span>items</span>
+							<mat-icon
+								class="info-tooltip"
+								matTooltip="A sprint is a short, fixed time in Scrum to complete specific tasks, usually lasting 1-4 weeks."
+								>info</mat-icon
+							>
+							<div class="tag {{ currentSprint.status | sprintStatusClass }}">
+								<span>{{ currentSprint.status | sprintStatus }}</span>
 							</div>
+							@if (userStoriesPerSprint[currentSprint.eid]) {
+								<div class="tag items">
+									<span>{{ userStoriesPerSprint[currentSprint.eid].length }}</span>
+									<span>items</span>
+								</div>
+							}
 						</div>
-						<p class="desc">Current Sprint</p>
-						<p>Status: {{ sprintStatusParser(currentSprint.status) }}</p>
+						<p class="desc">Find below the current sprint of the project.</p>
 					</div>
 
 					<div class="right">
-						<button mat-icon-button>
+						<button mat-icon-button [matMenuTriggerFor]="menu" matRipple>
 							<mat-icon>more_horiz</mat-icon>
 						</button>
-						<p class="sprint-date">Start of sprint: {{ currentSprint.startsAt | date }}</p>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item (click)="openPopUpUpdateSprint(currentSprint.eid)">
+								<span>Update sprint</span>
+							</button>
+						</mat-menu>
+						<p class="sprint-date">
+							Started at {{ currentSprint.startsAt | date: "dd/MM/YYYY" }} with
+							{{ currentSprint.endsAt | daysDifference }} day(s) left
+						</p>
 					</div>
 				</div>
 
 				<mat-accordion multi>
-					@for (userstory of userStoriesInCurrentSprint$ | async; track $index) {
-						<mat-expansion-panel>
+					@if (userStoriesPerSprint[currentSprint.eid]) {
+						@for (userstory of sortUserStoriesByPriority(userStoriesPerSprint[currentSprint.eid]); track $index) {
+							<mat-expansion-panel [disabled]="isPanelDisabled">
+								<mat-expansion-panel-header>
+									<mat-panel-title> <img [src]="priorityImageParser(userstory.priority)" /> </mat-panel-title>
+									<mat-panel-title> {{ userstory.code }} </mat-panel-title>
+									<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
+									<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
+									@if (userRole !== "") {
+										<mat-panel-description>
+											<button
+												class="grey-button"
+												(click)="openPopUpRemoveFromSprint(userstory.eid)"
+												matRipple
+												[disabled]="userRole !== 'scrum master'"
+												[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+											>
+												Remove from sprint
+											</button>
+										</mat-panel-description>
+									}
+								</mat-expansion-panel-header>
+								@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
+									<table
+										mat-table
+										[dataSource]="getTasksDataSource(userstory.eid)"
+										matSort
+										class="mat-elevation-z8 tasks-table sprint-history"
+									>
+										<ng-container matColumnDef="type">
+											<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+											<td
+												[ngClass]="getTaskTypeClass(element.type)"
+												#itemCell
+												mat-cell
+												*matCellDef="let element"
+												(click)="openTaskPopUp(element.eid)"
+											>
+												{{ typeParser(element.type) }}
+											</td>
+										</ng-container>
+
+										<ng-container matColumnDef="key">
+											<th mat-header-cell *matHeaderCellDef>Key</th>
+											<td mat-cell *matCellDef="let element">{{ element.code }}</td>
+										</ng-container>
+
+										<ng-container matColumnDef="subject">
+											<th mat-header-cell *matHeaderCellDef>Subject</th>
+											<td mat-cell *matCellDef="let element">
+												{{ element.description | maxLength: 45 }}
+											</td>
+										</ng-container>
+
+										<ng-container matColumnDef="status">
+											<th mat-header-cell *matHeaderCellDef>Status</th>
+											<td mat-cell *matCellDef="let element">
+												<div #statusContainer class="status-container">
+													{{ statusParser(element.status) | maxLength: 11 }}
+												</div>
+											</td>
+										</ng-container>
+
+										<ng-container matColumnDef="assignee">
+											<th mat-header-cell *matHeaderCellDef>Responsible</th>
+											<td mat-cell *matCellDef="let element">
+												@if (element.responsibleEid === null) {
+													<div class="assignee-container">
+														<img src="../../../../../assets/unassigned-user.svg" />
+														<p>Unassigned</p>
+													</div>
+												} @else {
+													<div class="assignee-container">
+														<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+														<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+													</div>
+												}
+											</td>
+										</ng-container>
+
+										<ng-container matColumnDef="priority">
+											<th mat-header-cell *matHeaderCellDef>Priority</th>
+											<td mat-cell *matCellDef="let element">
+												<img [src]="priorityImageParser(element.priority)" />
+											</td>
+										</ng-container>
+
+										<ng-container matColumnDef="created">
+											<th mat-header-cell *matHeaderCellDef>Created</th>
+											<td mat-cell *matCellDef="let element">
+												{{ element.createdAt | date }}
+											</td>
+										</ng-container>
+										<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+										<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
+									</table>
+								}
+								<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Create new Task</div>
+							</mat-expansion-panel>
+						}
+					}
+				</mat-accordion>
+			} @else {
+				<div class="no-sprint">
+					<h3>No current sprint available. Please create a new sprint.</h3>
+					@if (userRole !== "") {
+						<button
+							class="green-button"
+							(click)="openPopUpCreateSprint()"
+							matRipple
+							[disabled]="userRole !== 'scrum master' && userRole !== 'product owner'"
+							[matTooltip]="
+								userRole !== 'scrum master' && userRole !== 'product owner'
+									? 'Only a Scrum Master or PO can do this action!'
+									: ''
+							"
+						>
+							Create new Sprint
+						</button>
+					}
+				</div>
+			}
+		</div>
+
+		<!-- Backlog -->
+		<div class="backlog-grid">
+			<div class="title">
+				<div class="left">
+					<div class="left-content">
+						<h2>Backlog</h2>
+						<mat-icon
+							class="info-tooltip"
+							matTooltip="The backlog is a prioritized list of tasks or user stories. Users can click 'Add to sprint' to move a story to the current sprint if it exists."
+							>info</mat-icon
+						>
+						<div class="items">
+							<span>{{ userStoriesInBacklog.length }}</span>
+							<span>items</span>
+						</div>
+					</div>
+					<p class="desc">Find below the list of UserStories in the backlog.</p>
+				</div>
+			</div>
+
+			@if (userStoriesInBacklog.length > 0) {
+				<mat-accordion multi>
+					@for (userstory of sortUserStoriesByPriority(userStoriesInBacklog); track $index) {
+						<mat-expansion-panel [disabled]="isPanelDisabled">
 							<mat-expansion-panel-header>
+								<mat-panel-title> <img [src]="priorityImageParser(userstory.priority)" /> </mat-panel-title>
 								<mat-panel-title> {{ userstory.code }} </mat-panel-title>
-								<mat-panel-title> {{ userstory.title }} </mat-panel-title>
-								<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+								<mat-panel-title> {{ userstory.title | maxLength: 35 }} </mat-panel-title>
+								<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
+								@if (currentSprint.eid || futureSprints.length > 0) {
+									@if (userRole !== "") {
+										<mat-panel-description>
+											<button
+												class="green-button"
+												(click)="openPopUpAddToSprint(userstory.eid)"
+												matRipple
+												[disabled]="userRole !== 'scrum master'"
+												[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+											>
+												Add to a sprint
+											</button>
+										</mat-panel-description>
+									}
+									<!-- <mat-panel-description>
+										<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)" matRipple>
+											Add to a sprint
+										</button>
+									</mat-panel-description> -->
+								}
 							</mat-expansion-panel-header>
 							@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 								<table
 									mat-table
 									[dataSource]="getTasksDataSource(userstory.eid)"
 									matSort
-									class="mat-elevation-z8 history-table"
+									class="mat-elevation-z8 tasks-table"
 								>
 									<ng-container matColumnDef="type">
 										<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-										<td #itemCell mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td
+											#itemCell
+											[ngClass]="getTaskTypeClass(element.type)"
+											mat-cell
+											*matCellDef="let element"
+											(click)="openTaskPopUp(element.eid)"
+										>
 											{{ typeParser(element.type) }}
 										</td>
 									</ng-container>
 
 									<ng-container matColumnDef="key">
 										<th mat-header-cell *matHeaderCellDef>Key</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.code }}</td>
+										<td mat-cell *matCellDef="let element">{{ element.code }}</td>
 									</ng-container>
 
 									<ng-container matColumnDef="subject">
 										<th mat-header-cell *matHeaderCellDef>Subject</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
-											{{ element.description }}
-										</td>
+										<td mat-cell *matCellDef="let element">{{ element.description }}</td>
 									</ng-container>
 
 									<ng-container matColumnDef="status">
 										<th mat-header-cell *matHeaderCellDef>Status</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											<div #statusContainer class="status-container">
 												{{ statusParser(element.status) }}
 											</div>
@@ -82,142 +293,244 @@
 
 									<ng-container matColumnDef="assignee">
 										<th mat-header-cell *matHeaderCellDef>Responsible</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
-											<div class="assignee-container">
-												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
-												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
-											</div>
+										<td mat-cell *matCellDef="let element">
+											@if (element.responsibleEid === null) {
+												<div class="assignee-container">
+													<img src="../../../../../assets/unassigned-user.svg" />
+													<p>Unassigned</p>
+												</div>
+											} @else {
+												<div class="assignee-container">
+													<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+													<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+												</div>
+											}
 										</td>
 									</ng-container>
 
 									<ng-container matColumnDef="priority">
 										<th mat-header-cell *matHeaderCellDef>Priority</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											<img [src]="priorityImageParser(element.priority)" />
 										</td>
 									</ng-container>
 
 									<ng-container matColumnDef="created">
 										<th mat-header-cell *matHeaderCellDef>Created</th>
-										<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+										<td mat-cell *matCellDef="let element">
 											{{ element.createdAt | date }}
 										</td>
 									</ng-container>
 									<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-									<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+									<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
 								</table>
 							}
-							<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
+							<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Create new Task</div>
 						</mat-expansion-panel>
 					}
 				</mat-accordion>
-			</ng-container>
-			<ng-template #noCurrentSprint>
+			} @else {
 				<div class="no-sprint">
-					<h3>No current sprint available. Please create a new sprint.</h3>
-					<button class="green-button" (click)="openPopUpCreateSprint()">Create new Sprint</button>
+					<h3>No user stories available in the backlog.</h3>
+					<p>
+						If you want to create a User Story, <a [routerLink]="['/', projectEid, 'epics']">go to the epics page</a> and
+						create a new one inside one of the Epics.
+					</p>
 				</div>
-			</ng-template>
+			}
 		</div>
 
-		<div class="backlog-grid">
+		<!-- Future Sprints -->
+		@if (futureSprints.length > 0) {
+			<div class="backlog-grid sprint-group-title">
+				<div class="sprint-title-and-items-wrapper">
+					<h2>Future Sprints</h2>
+					<mat-icon class="info-tooltip" matTooltip="The list displays future sprints that are being planned."
+						>info</mat-icon
+					>
+					<div class="tag items">
+						<span>{{ futureSprints.length }}</span>
+						<span>items</span>
+					</div>
+				</div>
+
+				<p>Find below the list of future sprints.</p>
+			</div>
+			@for (sprint of allSprints; track $index) {
+				@if (detailedSprints[sprint.eid] && sprint.periodStatus === 3) {
+					<ng-container
+						*ngTemplateOutlet="
+							sprintTemplate;
+							context: { sprint: sprint, userStoriesPerSprint: userStoriesPerSprint, buttonsAvailable: true }
+						"
+					></ng-container>
+				}
+			}
+		}
+
+		<!-- Past Sprints -->
+		@if (pastSprints.length > 0) {
+			<div class="backlog-grid sprint-group-title">
+				<div class="sprint-title-and-items-wrapper">
+					<h2>Past Sprints</h2>
+					<mat-icon class="info-tooltip" matTooltip="The list shows completed sprints.">info</mat-icon>
+					<div class="tag items">
+						<span>{{ pastSprints.length }}</span>
+						<span>items</span>
+					</div>
+				</div>
+				<p>Find below the list of past sprints.</p>
+			</div>
+			@for (sprint of allSprints; track $index) {
+				@if (detailedSprints[sprint.eid] && sprint.periodStatus === 1) {
+					<ng-container
+						*ngTemplateOutlet="
+							sprintTemplate;
+							context: { sprint: sprint, userStoriesPerSprint: userStoriesPerSprint, buttonsAvailable: false }
+						"
+					></ng-container>
+				}
+			}
+		}
+	</div>
+</div>
+
+<!-- Template used to display future and past sprints -->
+<ng-template
+	#sprintTemplate
+	let-sprint="sprint"
+	let-userStoriesPerSprint="userStoriesPerSprint"
+	let-buttonsAvailable="buttonsAvailable"
+>
+	<div class="backlog-grid sprint {{ sprint.periodStatus | sprintPeriodStatusClass }}-sprint">
+		<div class="sprint-round-container">
 			<div class="title">
 				<div class="left">
 					<div class="left-content">
-						<h2>Backlog</h2>
-						<div class="items">
-							<span>{{ (userStoriesInBacklog$ | async)?.length }}</span>
-							<span>items</span>
-						</div>
+						<h2>Sprint {{ sprint.index }}</h2>
 					</div>
-					<p class="desc">Find below the list of all User Stories</p>
+					<p class="desc">Period {{ sprint.startsAt | date: "dd/MM/YYYY" }} - {{ sprint.endsAt | date: "dd/MM/YYYY" }}</p>
 				</div>
-
 				<div class="right">
-					<button mat-icon-button>
+					<button mat-icon-button [matMenuTriggerFor]="menu" matRipple>
 						<mat-icon>more_horiz</mat-icon>
 					</button>
+					<mat-menu #menu="matMenu">
+						<button mat-menu-item (click)="openPopUpUpdateSprint(sprint.eid)">
+							<span>Update sprint</span>
+						</button>
+					</mat-menu>
 				</div>
 			</div>
 
 			<mat-accordion multi>
-				@for (userstory of userStoriesInBacklog$ | async; track $index) {
+				@for (userstory of sortUserStoriesByPriority(userStoriesPerSprint[sprint.eid]); track $index) {
 					<mat-expansion-panel [disabled]="isPanelDisabled">
 						<mat-expansion-panel-header>
+							<mat-panel-title> <img [src]="priorityImageParser(userstory.priority)" /> </mat-panel-title>
 							<mat-panel-title> {{ userstory.code }} </mat-panel-title>
-							<mat-panel-title> {{ userstory.title }} </mat-panel-title>
-							<mat-panel-description> {{ userstory.description }} </mat-panel-description>
-							<mat-panel-description>
-								<button class="green-button" (click)="openPopUpAddToSprint(userstory.eid)">Add to a sprint</button>
-							</mat-panel-description>
+							<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
+							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
+							@if (buttonsAvailable) {
+								<mat-panel-description>
+									@if (userRole !== "") {
+										<button
+											class="grey-button"
+											(click)="openPopUpRemoveFromSprint(userstory.eid)"
+											matRipple
+											[disabled]="userRole !== 'scrum master'"
+											[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+										>
+											Remove from sprint
+										</button>
+									}
+								</mat-panel-description>
+							}
 						</mat-expansion-panel-header>
 						@if (getTasksDataSource(userstory.eid) && getTasksDataSource(userstory.eid).data.length > 0) {
 							<table
 								mat-table
 								[dataSource]="getTasksDataSource(userstory.eid)"
 								matSort
-								class="mat-elevation-z8 history-table"
+								class="mat-elevation-z8 tasks-table sprint-history"
 							>
 								<ng-container matColumnDef="type">
 									<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-									<td #itemCell mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td
+										[ngClass]="getTaskTypeClass(element.type)"
+										#itemCell
+										mat-cell
+										*matCellDef="let element"
+										(click)="openTaskPopUp(element.eid)"
+									>
 										{{ typeParser(element.type) }}
 									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="key">
 									<th mat-header-cell *matHeaderCellDef>Key</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.code }}</td>
+									<td mat-cell *matCellDef="let element">{{ element.code }}</td>
 								</ng-container>
 
 								<ng-container matColumnDef="subject">
 									<th mat-header-cell *matHeaderCellDef>Subject</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">{{ element.description }}</td>
+									<td mat-cell *matCellDef="let element">
+										{{ element.description | maxLength: 45 }}
+									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="status">
 									<th mat-header-cell *matHeaderCellDef>Status</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										<div #statusContainer class="status-container">
-											{{ statusParser(element.status) }}
+											{{ statusParser(element.status) | maxLength: 11 }}
 										</div>
 									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="assignee">
 									<th mat-header-cell *matHeaderCellDef>Responsible</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
-										<div class="assignee-container">
-											<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
-											<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
-										</div>
+									<td mat-cell *matCellDef="let element">
+										@if (element.responsibleEid === null) {
+											<div class="assignee-container">
+												<img src="../../../../../assets/unassigned-user.svg" />
+												<p>Unassigned</p>
+											</div>
+										} @else {
+											<div class="assignee-container">
+												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+											</div>
+										}
 									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="priority">
 									<th mat-header-cell *matHeaderCellDef>Priority</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										<img [src]="priorityImageParser(element.priority)" />
 									</td>
 								</ng-container>
 
 								<ng-container matColumnDef="created">
 									<th mat-header-cell *matHeaderCellDef>Created</th>
-									<td mat-cell *matCellDef="let element" (click)="openTaskPopUp(element.eid)">
+									<td mat-cell *matCellDef="let element">
 										{{ element.createdAt | date }}
 									</td>
 								</ng-container>
 								<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-								<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+								<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openTaskPopUp(row)"></tr>
 							</table>
 						}
-						<div class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">+ Add another task</div>
+						<div *ngIf="buttonsAvailable" class="add-issue" (click)="openPopUpCreateTask(userstory.eid)">
+							+ Create new task
+						</div>
 					</mat-expansion-panel>
 				}
 			</mat-accordion>
 		</div>
 	</div>
-</div>
+</ng-template>
 
 @if (popUpAddToSprint) {
 	<div class="pop-up-background" (click)="closePopUpAddToSprint()"></div>
@@ -231,214 +544,73 @@
 				<div class="input-wrapper">
 					<label for="sprint">Sprint</label>
 					<select name="sprint" id="sprint" formControlName="sprint">
-						<option value="">-- Select a sprint --</option>
-						@for (sprint of currentAndFutureSprints$ | async; track $index) {
+						<option value="">Select a sprint</option>
+						@for (sprint of currentAndFutureSprints; track $index) {
 							<option value="{{ sprint.eid }}">Sprint {{ sprint.index }}</option>
 						}
 					</select>
 				</div>
 			</div>
 			<div class="pop-up-footer">
-				<button type="submit" [disabled]="addToSprintForm.invalid">Submit</button>
-				<button class="cancel-epic" (click)="closePopUpAddToSprint()">Cancel</button>
+				<button type="submit" [disabled]="addToSprintForm.invalid" matRipple>Submit</button>
+				<button class="cancel-epic" (click)="closePopUpAddToSprint()" matRipple>Cancel</button>
 			</div>
 		</form>
 	</div>
 }
 
+@if (popUpRemoveFromSprint) {
+	<div class="pop-up-background" (click)="closePopUpRemoveFromSprint()"></div>
+
+	<app-delete-popup
+		[title]="'Remove User Story from sprint'"
+		[description]="'Are you sure you want to remove the selected User Story from its current Sprint?'"
+		[confirmButtonLabel]="'Remove'"
+		(cancelEmitter)="closePopUpRemoveFromSprint()"
+		(confirmDeleteEmmiter)="onRemoveFromSprint()"
+	></app-delete-popup>
+}
+
 @if (popUpTask) {
-	<ng-container *ngIf="selectedTask$ | async as selectedTask">
-		<div class="pop-up-background" (click)="closePopUp()"></div>
-
-		<div class="history-pop-up">
-			<img class="close" src="../../../../../assets/double-arrow.svg" (click)="closePopUp()" />
-			<div class="history-pop-up-header">
-				<h2>{{ selectedTask.title }}</h2>
-				<p class="history-desc">{{ selectedTask.description }}</p>
-			</div>
-			<div class="pop-up-content">
-				<div class="info key">
-					<p>Key:</p>
-					<span>{{ selectedTask.code }}</span>
-				</div>
-				<div class="info status">
-					<p>Status:</p>
-					<div class="status-wrapper">
-						<div id="container-status-pop" #statusPopUp>
-							<span>
-								{{ statusParser(selectedTask.status) }}
-							</span>
-						</div>
-					</div>
-				</div>
-
-				<div class="info priority">
-					<p>Priority:</p>
-					<div class="content">
-						<img [src]="priorityImageParser(selectedTask.priority)" />
-						<span>{{ priorityTextParser(selectedTask.priority) }}</span>
-					</div>
-				</div>
-
-				<div class="info type">
-					<p>Type:</p>
-					<span>{{ typeParser(selectedTask.type) }}</span>
-				</div>
-
-				<div class="info assignee">
-					<p>Assignee:</p>
-					<div class="content">
-						<img [src]="getProjectMemberFromMap(selectedTask.responsibleEid)?.gravatar" />
-						<span>
-							{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.name }}
-							{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.surname }}
-						</span>
-					</div>
-				</div>
-
-				<div class="info created">
-					<p>Created:</p>
-					<span>{{ selectedTask.createdAt | date }}</span>
-				</div>
-
-				<div class="info user-story-link" *ngIf="userStory$ | async as userStory">
-					<p>User story:</p>
-					<span (click)="navigateToUserStory(userStory?.eid)">
-						{{ userStory?.title }}
-						<mat-icon>open_in_new</mat-icon>
-					</span>
-				</div>
-			</div>
-			<div class="pop-up-footer">
-				<div class="hr"></div>
-				<div class="comments-container">
-					<div class="comment">
-						<div class="user">
-							<div class="id">
-								<img [src]="getProjectMemberFromMap(selectedTask.responsibleEid)?.gravatar" />
-								<p>
-									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.name }}
-									{{ getProjectMemberFromMap(selectedTask.responsibleEid)?.surname }}
-								</p>
-								<span>1 hour ago</span>
-							</div>
-							<div class="actions">
-								<button mat-icon-button>
-									<mat-icon>more_horiz</mat-icon>
-								</button>
-							</div>
-						</div>
-						<div class="message">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa omnis fugit eligendi.</div>
-					</div>
-				</div>
-				<div class="input-comment">
-					<img src="../../../../../assets/image-fake.svg" />
-					<input type="text" placeholder="Add a comment.." />
-				</div>
-				<div class="hr"></div>
-			</div>
-		</div>
-	</ng-container>
+	<div class="pop-up-background" (click)="closePopUp()"></div>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUp()"
+		(closePopUpEmitterDeletedTask)="removeTaskFromDataSource($event)"
+		(closePopUpEmitterEditedTask)="loadTasks()"
+	></app-task-details>
 }
 
 @if (popUpCreateTask) {
 	<div class="pop-up-background" (click)="closePopUpCreateTask()"></div>
-	<div class="epic-pop-up">
-		<div class="epic-pop-up-header">
-			<h2>Create a Task</h2>
-			<p>Fill in the necessary information to create a task.</p>
-		</div>
-		<form [formGroup]="createTaskForm" class="pop-up-form" (ngSubmit)="submitCreateTaskForm()">
-			<div class="pop-up-form-content">
-				<div class="input-wrapper">
-					<label for="task-title">Task's Title</label>
-					<input
-						type="text"
-						id="task-title"
-						name="task-title"
-						formControlName="title"
-						placeholder="Insert the title of the task"
-					/>
-				</div>
-				<div class="input-wrapper">
-					<label for="responsible">Responsible</label>
-					<select id="responsible" name="responsible" formControlName="responsible">
-						<option value="">Select the responsible for the task</option>
-						<option *ngFor="let member of getAllProjectMembers()" [value]="member.eid">
-							{{ member.name }} {{ member.surname }}
-						</option>
-					</select>
-				</div>
-				<div class="input-wrapper">
-					<label for="task-description">Description</label>
-					<textarea
-						id="task-description"
-						name="task-description"
-						formControlName="description"
-						placeholder="Insert a description"
-					></textarea>
-				</div>
-				<div class="input-wrapper">
-					<label for="task-type">Type</label>
-					<select id="task-type" name="task-type" formControlName="type">
-						<option value="">Select a type</option>
-						<option value="1">Task</option>
-						<option value="2">Bug</option>
-						<option value="3">Test</option>
-					</select>
-				</div>
-				<div class="input-wrapper">
-					<label for="task-priority">Priority</label>
-					<select id="task-priority" name="task-priority" formControlName="priority">
-						<option value="">Select a priority</option>
-						<option value="1">Low</option>
-						<option value="2">Medium</option>
-						<option value="3">High</option>
-					</select>
-				</div>
-			</div>
-			<div class="pop-up-footer">
-				<button type="submit" [disabled]="createTaskForm.invalid">Create</button>
-				<button class="cancel-epic" (click)="closePopUpCreateTask()">Cancel</button>
-			</div>
-		</form>
-	</div>
+	<app-task-popup
+		[isEditMode]="false"
+		[projectEid]="projectEid"
+		[userStoryEid]="eidSelectedUserStory"
+		(handleTaskAndClosePopupEmitter)="addNewTaskInDataSource($event)"
+		(closePopUpEmitter)="closePopUpCreateTask()"
+	></app-task-popup>
 }
 
 @if (popUpCreateSprint) {
 	<div class="pop-up-background" (click)="closePopUpCreateSprint()"></div>
-	<div class="epic-pop-up">
-		<div class="epic-pop-up-header">
-			<h2>Create a Sprint</h2>
-			<p>Fill in the necessary information to create a sprint.</p>
-		</div>
-		<form [formGroup]="createSprintForm" class="pop-up-form" (ngSubmit)="submitCreateSprintForm()">
-			<div class="pop-up-form-content">
-				<div class="input-wrapper">
-					<label for="sprint-starts-at">Starts at</label>
-					<input
-						type="date"
-						id="sprint-starts-at"
-						name="sprint-starts-at"
-						formControlName="startDate"
-						placeholder="Insert the start date of the sprint"
-					/>
-				</div>
-				<div class="input-wrapper">
-					<label for="sprint-ends-at">Ends at</label>
-					<input
-						type="date"
-						id="sprint-ends-at"
-						name="sprint-ends-at"
-						formControlName="endDate"
-						placeholder="Insert the end date of the sprint"
-					/>
-				</div>
-			</div>
-			<div class="pop-up-footer">
-				<button type="submit" [disabled]="createSprintForm.invalid">Create</button>
-				<button class="cancel-epic" (click)="closePopUpCreateSprint()">Cancel</button>
-			</div>
-		</form>
-	</div>
+	<app-sprint-popup
+		[isEditMode]="false"
+		[projectEid]="projectEid"
+		(handleSprintAndClosePopupEmitter)="loadSprintDataAndClosePopUp()"
+		(closePopUpEmitter)="closePopUpCreateSprint()"
+	></app-sprint-popup>
+}
+
+@if (popUpUpdateSprint) {
+	<div class="pop-up-background" (click)="closePopUpUpdateSprint()"></div>
+	<app-sprint-popup
+		[isEditMode]="true"
+		[projectEid]="projectEid"
+		[sprintEid]="eidSelectedSprint"
+		(handleEditedSprintAndClosePopupEmitter)="loadSprintDataAndClosePopUp()"
+		(closePopUpEmitter)="closePopUpUpdateSprint()"
+	></app-sprint-popup>
 }

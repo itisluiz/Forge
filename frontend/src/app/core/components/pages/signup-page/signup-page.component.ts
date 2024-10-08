@@ -6,6 +6,7 @@ import { UserApiService } from "../../../services/user-api.service";
 import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dto";
 import { ApiErrorResponse } from "../../../services/api.service";
 import { Router } from "@angular/router";
+import { noSequentialNumbersValidator } from "../../../utils/sequencial-number-validator";
 
 @Component({
 	selector: "app-signup-page",
@@ -21,6 +22,7 @@ export class SignupPageComponent implements OnInit {
 	regexName: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
 	regexPassword: RegExp = /^(?=.*[!@#$%^&*]).{7,}$/;
 	public signupLoading: boolean = false;
+	passwordFieldType: string = "password";
 
 	constructor(
 		private userApiService: UserApiService,
@@ -34,7 +36,15 @@ export class SignupPageComponent implements OnInit {
 				name: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
 				lastName: ["", [Validators.required, Validators.minLength(3), Validators.pattern(this.regexName)]],
 				email: ["", [Validators.required, Validators.email]],
-				password: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
+				password: [
+					"",
+					[
+						Validators.required,
+						Validators.minLength(7),
+						Validators.pattern(this.regexPassword),
+						noSequentialNumbersValidator(),
+					],
+				],
 				passwordConfirm: ["", [Validators.required, Validators.minLength(7), Validators.pattern(this.regexPassword)]],
 			},
 			{ validator: this.checkPasswords },
@@ -85,6 +95,10 @@ export class SignupPageComponent implements OnInit {
 		const confirmPassword = signupForm.get("passwordConfirm")?.value;
 
 		return password === confirmPassword;
+	}
+
+	togglePasswordVisibility(): void {
+		this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
 	}
 
 	signup() {
@@ -142,13 +156,14 @@ export class SignupPageComponent implements OnInit {
 	}
 
 	get passwordErrorMessage(): string {
-		if (
-			this.signupForm.get("password")!.errors?.["pattern"] ||
-			this.signupForm.get("passwordConfirm")!.errors?.["pattern"]
-		) {
+		const passwordControl = this.signupForm.get("password");
+		if (passwordControl!.errors?.["pattern"]) {
 			return "Password must have 7 characters and 1 special character.";
 		}
-		return "";
+		if (passwordControl!.errors?.["sequentialNumbers"]) {
+			return "Password cannot contain sequential numbers.";
+		}
+		return "Password must have 7 characters and 1 special character.";
 	}
 
 	get overallErrorMessage(): string {

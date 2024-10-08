@@ -7,8 +7,12 @@ export function define(modelName: string, sequelize: Sequelize) {
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		title: {
-			type: DataTypes.STRING(64),
+		description: {
+			type: DataTypes.STRING(256),
+			allowNull: false,
+		},
+		precondition: {
+			type: DataTypes.STRING(256),
 			allowNull: false,
 		},
 	});

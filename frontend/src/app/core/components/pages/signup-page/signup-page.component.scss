@@ -85,6 +85,23 @@
 				}
 			}
 
+			.password-confirm-input,
+			.password-input {
+				.password-icon {
+					position: absolute;
+					right: 20px;
+					bottom: 0;
+					height: 45px;
+
+					mat-icon {
+						opacity: 0.7;
+						color: v.$grey-color;
+						cursor: pointer;
+						font-size: 22px;
+					}
+				}
+			}
+
 			.email-input,
 			.name-input > .left,
 			.name-input > .right,

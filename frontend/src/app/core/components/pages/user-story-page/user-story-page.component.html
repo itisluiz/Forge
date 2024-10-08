@@ -5,24 +5,27 @@
 			<div class="header-grid">
 				<div class="breadcrump-story-wrapper">
 					<ul class="breadcrumber">
-						<li><a href="">Squad BES</a></li>
+						<li>
+							<a>{{ projectCode }}</a>
+						</li>
 						<div class="spacer">></div>
-						<li><a href="">TCC 1</a></li>
-						<div class="spacer">></div>
-						<li><a href="/user-story">User Story</a></li>
+						<li><a>User Story</a></li>
 					</ul>
+					<p class="user-story-priority user-story-priority-{{ userStory.priority | priority }}">
+						{{ userStory.priority | priority }}
+					</p>
 					<h1 id="user-story-title">[{{ userStory.code }}] {{ userStory.title }}</h1>
 
 					<div class="buttons-header">
-						<button id="button-edit-page" class="grey-button" (click)="openPopUpEditUserStory()">Edit User Story</button>
+						<button id="button-edit-page" class="grey-button" (click)="openPopUpEditUserStory()" matRipple>
+							Edit User Story
+						</button>
 						<button mat-icon-button class="mat-icon-button">
 							<mat-icon>more_vert</mat-icon>
 						</button>
 					</div>
 				</div>
-
-				<p>{{ userStory.description }}</p>
-				<hr />
+				<p>{{ userStory.description | maxLength: 128 }}</p>
 			</div>
 
 			<div class="user-story-container">
@@ -42,19 +45,6 @@
 				<div class="premises story-topic">
 					<h4>PREMISES</h4>
 					{{ userStory.premisse }}
-
-					<!-- <div class="premise">
-						<p>
-							<span class="premise-title">Usability Testing:</span> Rigorous testing will be conducted to validate the menu's
-							usability and effectiveness before deployment.
-						</p>
-					</div>
-					<div class="premise">
-						<p>
-							<span class="premise-title">Continuous Improvement:</span> Feedback mechanisms will be implemented post-launch
-							for iterative improvements based on user input and preferences.
-						</p>
-					</div> -->
 				</div>
 
 				<ng-container *ngIf="acceptanceCriteria$ | async as acceptanceCriteria">
@@ -73,43 +63,154 @@
 
 				<div class="test-cases story-topic">
 					<h4>TEST CASES</h4>
-					@if (testCases.length > 0) {
-						<table mat-table [dataSource]="testCases" matSort class="mat-elevation-z8 test-case-table">
-							<ng-container matColumnDef="key">
-								<th mat-header-cell *matHeaderCellDef>Key</th>
-								<td class="item-cell" mat-cell *matCellDef="let element">{{ element.key }}</td>
-							</ng-container>
+					@if (testCasesREAL) {
+						@if (testCasesREAL.testcases.length > 0) {
+							<table mat-table [dataSource]="testCasesREAL!.testcases" matSort class="mat-elevation-z8 test-case-table">
+								<ng-container matColumnDef="index">
+									<th mat-header-cell *matHeaderCellDef>Key</th>
+									<td class="item-cell" mat-cell *matCellDef="let element">{{ element.eid }}</td>
+								</ng-container>
 
-							<ng-container matColumnDef="description">
-								<th mat-header-cell *matHeaderCellDef>Subject</th>
-								<td mat-cell *matCellDef="let element">{{ element.description }}</td>
-							</ng-container>
+								<ng-container matColumnDef="description">
+									<th mat-header-cell *matHeaderCellDef>Description</th>
+									<td mat-cell *matCellDef="let element">{{ element.description }}</td>
+								</ng-container>
 
-							<ng-container matColumnDef="link">
-								<th mat-header-cell *matHeaderCellDef>Link</th>
-								<td mat-cell *matCellDef="let element">
-									<a href="/user-story">
-										<img src="../../../../../assets/link-icon.svg" />
-									</a>
-								</td>
-							</ng-container>
+								<ng-container matColumnDef="precondition">
+									<th mat-header-cell *matHeaderCellDef>Precondition</th>
+									<td mat-cell *matCellDef="let element">{{ element.precondition }}</td>
+								</ng-container>
 
-							<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-						</table>
-						<div class="test-case-buttons">
-							<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
-						</div>
-					} @else {
-						<div class="no-test-cases-available">
-							<p>
-								It seems that you have not created any test cases. To generate them manually or automatically, click the
-								button below.
-							</p>
+								<ng-container matColumnDef="stepCount">
+									<th mat-header-cell *matHeaderCellDef>Step Count</th>
+									<td mat-cell *matCellDef="let element">{{ element.stepCount }}</td>
+								</ng-container>
 
+								<tr mat-header-row *matHeaderRowDef="displayedColumnsTestCases"></tr>
+								<tr
+									(click)="navigateToTestCase(row.eid)"
+									mat-row
+									*matRowDef="let row; columns: displayedColumnsTestCases"
+								></tr>
+							</table>
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUp()">Create test case</button>
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple>
+									Create test case
+								</button>
 							</div>
-						</div>
+						} @else {
+							<div class="no-test-cases-available">
+								<p>
+									It seems that you have not created any test cases. To generate them manually or automatically, click the
+									button below.
+								</p>
+
+								<div class="test-case-buttons">
+									@if (userRole !== "") {
+										<button
+											id="button-create-test-manually"
+											class="grey-button"
+											(click)="openPopUpTestCase()"
+											matRipple
+											[disabled]="userRole !== 'tester'"
+											[matTooltip]="userRole !== 'tester' ? 'Only a Tester can do this action!' : ''"
+										>
+											Create test case
+										</button>
+									}
+								</div>
+							</div>
+						}
+					}
+				</div>
+				<div class="test-cases story-topic">
+					<h4>TASKS</h4>
+					@if (tasks) {
+						@if (tasks.tasks.length > 0) {
+							<table mat-table [dataSource]="tasks!.tasks" matSort class="mat-elevation-z8 tasks-table">
+								<ng-container matColumnDef="type">
+									<th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+									<td
+										[ngClass]="getTaskTypeClass(element.type)"
+										#itemCell
+										mat-cell
+										*matCellDef="let element"
+										(click)="openTaskPopUp(element)"
+									>
+										{{ typeParser(element.type) }}
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="key">
+									<th mat-header-cell *matHeaderCellDef>Key</th>
+									<td mat-cell *matCellDef="let element">{{ element.code }}</td>
+								</ng-container>
+
+								<ng-container matColumnDef="subject">
+									<th mat-header-cell *matHeaderCellDef>Subject</th>
+									<td mat-cell *matCellDef="let element">
+										{{ element.description | maxLength: 45 }}
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="status">
+									<th mat-header-cell *matHeaderCellDef>Status</th>
+									<td mat-cell *matCellDef="let element">
+										<div #statusContainer class="status-container">
+											{{ statusParser(element.status) | maxLength: 11 }}
+										</div>
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="assignee">
+									<th mat-header-cell *matHeaderCellDef>Responsible</th>
+									<td mat-cell *matCellDef="let element">
+										@if (element.responsibleEid === null) {
+											<div class="assignee-container">
+												<img src="../../../../../assets/unassigned-user.svg" />
+												<p>Unassigned</p>
+											</div>
+										} @else {
+											<div class="assignee-container">
+												<img src="{{ getProjectMemberFromMap(element.responsibleEid)?.gravatar }}" />
+												<p>{{ getProjectMemberFromMap(element.responsibleEid)?.name }}</p>
+											</div>
+										}
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="priority">
+									<th mat-header-cell *matHeaderCellDef>Priority</th>
+									<td mat-cell *matCellDef="let element">
+										<img [src]="element.priority | priority | icon" />
+									</td>
+								</ng-container>
+
+								<ng-container matColumnDef="created">
+									<th mat-header-cell *matHeaderCellDef>Created</th>
+									<td mat-cell *matCellDef="let element">
+										{{ element.createdAt | date }}
+									</td>
+								</ng-container>
+								<tr mat-header-row *matHeaderRowDef="displayedColumnsTasks"></tr>
+								<tr mat-row *matRowDef="let row; columns: displayedColumnsTasks" (click)="openTaskPopUp(row)"></tr>
+							</table>
+							<div class="test-case-buttons">
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()" matRipple>
+									Create task
+								</button>
+							</div>
+						} @else {
+							<div class="no-test-cases-available">
+								<p>It seems that you have not created any Tasks. To create one, click the button below.</p>
+
+								<div class="test-case-buttons">
+									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpCreateTask()" matRipple>
+										Create task
+									</button>
+								</div>
+							</div>
+						}
 					}
 				</div>
 			</div>
@@ -117,10 +218,11 @@
 	</ng-container>
 </div>
 
-@if (popUpActive) {
-	<div class="pop-up-background" (click)="closePopUp()"></div>
+@if (popUpTestCase) {
+	<div class="pop-up-background" (click)="closePopUpTestCase()"></div>
 
-	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUp()"> </app-test-case-popup>
+	<app-test-case-popup [acceptanceCriteria]="acceptanceCriteria" (closePopUpEmitter)="closePopUpTestCase()">
+	</app-test-case-popup>
 }
 
 @if (popUpEditUserStory) {
@@ -135,4 +237,27 @@
 		[criteriaEditData$]="acceptanceCriteria$"
 	>
 	</app-user-story-popup>
+}
+
+@if (popUpTask) {
+	<div class="pop-up-background" (click)="closePopUpTask()"></div>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getProjectMemberFromMap(selectedTask.responsibleEid)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUpTask()"
+		(closePopUpEmitterDeletedTask)="loadTasksData()"
+		(closePopUpEmitterEditedTask)="loadTasksData()"
+	></app-task-details>
+}
+
+@if (popUpCreateTask) {
+	<div class="pop-up-background" (click)="closePopUpCreateTask()"></div>
+	<app-task-popup
+		[isEditMode]="false"
+		[projectEid]="projectEid"
+		[userStoryEid]="userstoryEid"
+		(handleTaskAndClosePopupEmitter)="loadTasksData()"
+		(closePopUpEmitter)="closePopUpCreateTask()"
+	></app-task-popup>
 }

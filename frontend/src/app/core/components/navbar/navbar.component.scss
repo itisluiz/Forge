@@ -1,5 +1,51 @@
 @use "../../../../assets/variables.scss" as v;
 
+.pop-up-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: v.$pop-up-background-color;
+	z-index: 50;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.user-role {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: filter 0.3s;
+	margin-left: 8px;
+	position: relative;
+
+	.name {
+		font-size: 14px;
+		margin-right: 45px;
+		color: v.$white-color;
+		height: 55px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		transition: filter 0.3s;
+		margin-top: 9px;
+	}
+
+	img {
+		border-radius: 50%;
+		object-fit: cover;
+		height: 23px;
+		max-width: 23px;
+		cursor: pointer;
+	}
+
+	&:hover {
+		filter: brightness(0.8);
+	}
+}
+
 #menu-bar {
 	height: 55px;
 	background-color: v.$dark-color;
@@ -72,10 +118,30 @@
 		margin-right: 45px;
 	}
 
+	.active {
+		color: v.$white-color;
+	}
+
+	.role {
+		font-size: 14px;
+		margin-right: 45px;
+		color: v.$green-color;
+		height: 55px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		transition: filter 0.3s;
+		margin-top: 7px;
+		position: absolute;
+		top: -10px;
+		font-size: 8px !important;
+		left: 31.5px;
+	}
+
 	span {
 		font-size: 14px;
 		margin-right: 45px;
-		color: #fff;
+		color: v.$hover-color;
 		height: 55px;
 		cursor: pointer;
 		display: flex;
@@ -83,7 +149,7 @@
 		transition: filter 0.3s;
 
 		&:hover {
-			filter: brightness(0.85);
+			filter: brightness(1.5);
 		}
 	}
 

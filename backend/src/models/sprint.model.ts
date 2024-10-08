@@ -16,6 +16,10 @@ export function define(modelName: string, sequelize: Sequelize) {
 			type: DataTypes.DATE,
 			allowNull: false,
 		},
+		targetVelocity: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+		},
 	});
 }
 
@@ -44,4 +48,40 @@ export function getPeriodStatus(this: any) {
 	}
 
 	return SprintPeriodStatus.ONGOING;
+}
+
+export function calculateBurndownForDate(this: any, date: Date) {
+	const tasks = this.dataValues.userstories.flatMap((userstory: any) => userstory.dataValues.tasks);
+
+	if (date < this.dataValues.startsAt || date > this.dataValues.endsAt) {
+		return null;
+	}
+
+	const dateEnd = new Date(date);
+	dateEnd.setDate(dateEnd.getDate() + 1);
+
+	const effort = tasks.reduce((totalEffort: number, task: any) => {
+		if (task.dataValues.createdAt < dateEnd && (!task.dataValues.completedAt || task.dataValues.completedAt > date)) {
+			return totalEffort + task.dataValues.complexity;
+		}
+		return totalEffort;
+	}, 0) as number;
+
+	return effort;
+}
+
+export function capDate(this: any, date: Date) {
+	if (!date) {
+		return null;
+	}
+
+	if (date < this.dataValues.startsAt) {
+		return this.dataValues.startsAt;
+	}
+
+	if (date > this.dataValues.endsAt) {
+		return this.dataValues.endsAt;
+	}
+
+	return date;
 }

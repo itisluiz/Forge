@@ -15,6 +15,10 @@ export const sprintUpdateRequestJsonSchema = {
 			type: "integer",
 			minimum: 1,
 		},
+		targetVelocity: {
+			type: ["null", "integer"],
+			minimum: 1,
+		},
 	},
 	required: [],
 	additionalProperties: false,

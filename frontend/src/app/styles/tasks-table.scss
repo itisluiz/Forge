@@ -1,0 +1,97 @@
+@use "../../assets/variables.scss" as v;
+
+.tasks-table {
+	width: 100%;
+	border-spacing: 0px 1.5px;
+
+	.mat-mdc-header-cell {
+		border: none;
+
+		&:nth-child(4) {
+			text-align: center;
+		}
+
+		&:nth-child(6) {
+			text-align: center;
+		}
+	}
+
+	.mat-mdc-cell {
+		border: none;
+
+		&:nth-child(1) {
+			width: 100px;
+		}
+
+		&:nth-child(2) {
+			color: v.$dark-green-color;
+			font-weight: 500;
+			width: 160px;
+		}
+
+		&:nth-child(3) {
+			flex: auto;
+		}
+
+		&:nth-child(4) {
+			width: 190px;
+		}
+
+		&:nth-child(5),
+		&:nth-child(7) {
+			width: 150px;
+		}
+
+		&:nth-child(6) {
+			text-align: center;
+			width: 130px;
+		}
+
+		&:nth-child(5) {
+			.assignee-container {
+				display: flex;
+				align-items: center;
+
+				& > img {
+					margin-right: 6px;
+					border-radius: 50%;
+					width: 16px;
+				}
+
+				& > p {
+					margin: 0;
+					margin-top: 0 !important;
+				}
+			}
+		}
+
+		&:nth-child(4) {
+			text-align: center;
+			align-items: center;
+			justify-content: center;
+			padding: 10px;
+
+			.status-container {
+				background-color: red;
+				border-radius: 2px;
+				font-weight: 500;
+				width: 100px;
+				margin: 0 auto;
+			}
+		}
+	}
+
+	.mat-mdc-row {
+		height: 40px;
+		background-color: v.$white-color;
+
+		&:hover {
+			cursor: pointer;
+			filter: brightness(0.9);
+		}
+
+		&:nth-child(odd) {
+			background-color: v.$background-grey;
+		}
+	}
+}

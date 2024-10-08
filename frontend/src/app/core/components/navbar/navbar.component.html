@@ -1,9 +1,11 @@
 <mat-toolbar id="menu-bar">
-	<img src="../../../../assets/logo.svg" />
+	<img (click)="navigateTo(options[4].route)" src="../../../../assets/logo.svg" />
 
-	<span (click)="navigateTo(options[2].route)">Sprint board</span>
-	<span (click)="navigateTo(options[0].route)">Epics</span>
-	<span (click)="navigateTo(options[1].route)">Backlog</span>
+	<span (click)="navigateTo(options[4].route)" [ngClass]="{ active: activeRoute == 'home' }">Home</span>
+	<span (click)="navigateTo(options[0].route)" [ngClass]="{ active: activeRoute == 'epics' }">Epics</span>
+	<span (click)="navigateTo(options[1].route)" [ngClass]="{ active: activeRoute == 'backlog' }">Backlog</span>
+	<span (click)="navigateTo(options[3].route)" [ngClass]="{ active: activeRoute == 'planning-poker' }">Planning poker</span>
+	<span (click)="navigateTo(options[2].route)" [ngClass]="{ active: activeRoute == 'sprint' }">Sprint board</span>
 
 	<!-- <input id="search-bar" placeholder="Search here..." /> -->
 
@@ -29,10 +31,29 @@
 			<source src="../../../../assets/omeutcc.mp3" type="audio/mp3" />
 		</audio>
 	</button>
-	<button mat-icon-button>
-		<mat-icon>settings</mat-icon>
-	</button>
-	<button mat-icon-button>
+	<mat-menu #menu="matMenu" xPosition="after">
+		<button mat-menu-item (click)="leaveProject()">
+			<span>View Projects</span>
+		</button>
+		<button mat-menu-item (click)="openPopUp('leaveConfirm')">
+			<span>Logout</span>
+		</button>
+	</mat-menu>
+	<div class="user-role" [matMenuTriggerFor]="menu">
 		<mat-icon><img [src]="userPhoto" /></mat-icon>
-	</button>
+		<p class="role">{{ getProjectMemberFromMap(userEid)?.role | role }}</p>
+		<p class="name">{{ userName }}</p>
+	</div>
 </mat-toolbar>
+
+@if (popUpLeaveForge) {
+	<div class="pop-up-background" (click)="closePopUp('leaveConfirm')"></div>
+
+	<app-delete-popup
+		[title]="'Logout'"
+		[description]="'Are you sure you want to logout? You cannot go back on this action.'"
+		confirmButtonLabel="Confirm"
+		(cancelEmitter)="closePopUp('leaveConfirm')"
+		(confirmDeleteEmmiter)="leaveForge()"
+	></app-delete-popup>
+}

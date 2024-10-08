@@ -1,0 +1,36 @@
+@use "../../../../../src/assets/variables.scss" as v;
+@use "../pages/user-story-page/user-story-page.component.scss";
+
+.input-wrapper {
+	& > .warning {
+		color: v.$alert-color;
+	}
+
+	& > .tip {
+		color: v.$grey-color;
+		font-size: 0.9em;
+
+		& > a {
+			color: v.$green-color;
+			text-decoration: none;
+		}
+	}
+
+	& > .effort-rating {
+		align-self: center;
+
+		& > b {
+			color: v.$dark-green-color;
+		}
+
+		& > p {
+			color: v.$black-color;
+			margin: 0 0.35em;
+		}
+
+		& > .warning {
+			color: v.$alert-color;
+			font-weight: bold;
+		}
+	}
+}

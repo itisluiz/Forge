@@ -12,6 +12,7 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *           type: string
  *         index:
  *           type: integer
+ *           nullable: true
  *         startsAt:
  *           type: string
  *           format: date-time
@@ -22,12 +23,16 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *           $ref: '#/components/schemas/SprintStatus'
  *         periodStatus:
  *           $ref: '#/components/schemas/SprintPeriodStatus'
+ *         targetVelocity:
+ *           type: number
+ *           nullable: true
  */
 export interface SprintSelfComposite {
 	eid: string;
-	index: number;
+	index?: number;
 	startsAt: string;
 	endsAt: string;
 	status: SprintStatus;
 	periodStatus: SprintPeriodStatus;
+	targetVelocity?: number;
 }

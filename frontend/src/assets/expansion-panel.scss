@@ -30,14 +30,43 @@ mat-accordion {
 
 	&:nth-of-type(1) {
 		flex-grow: 0.5;
+		max-width: 110px;
+		width: 100%;
 		font-weight: 500;
 		color: v.$dark-green-color;
+	}
+
+	&:nth-of-type(2) {
+		max-width: 400px;
 	}
 }
 
 .mat-expansion-panel-header-description {
 	color: v.$grey-color;
 	margin: 10px 0;
+	max-width: 500px;
+	position: relative;
+
+	&:nth-of-type(3) {
+		position: absolute;
+		right: 48px;
+	}
+
+	&:nth-of-type(2) {
+		position: absolute;
+		right: 80px;
+		top: 0;
+		bottom: 0;
+	}
+
+	& > mat-icon {
+		opacity: 0.3;
+		transition: 0.3s;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
 }
 
 .group-list {
@@ -88,16 +117,6 @@ mat-accordion {
 			border-bottom-right-radius: 15px;
 		}
 	}
-}
-
-// Placeholder
-.kanban-list {
-	overflow: hidden;
-	height: 95%;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	cursor: move;
-	min-width: 190px;
 }
 
 .container-item {

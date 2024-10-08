@@ -1,12 +1,12 @@
 import { BadRequestError } from "../../error/externalhandling.error.js";
 import { decryptPK } from "../../util/encryption.js";
-import { ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, Op } from "sequelize";
 import { getProjectData } from "../../util/requestmeta.js";
 import { getSequelize } from "../../util/sequelize.js";
 import { mapTaskResponse } from "../../mappers/response/taskresponse.mapper.js";
 import { Request, Response } from "express";
-import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum.js";
+import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dto";
 
 export default async function (req: Request, res: Response) {
 	const taskUpdateRequest = req.body as TaskUpdateRequest;
@@ -45,8 +45,16 @@ export default async function (req: Request, res: Response) {
 							where: { projectId: authProject.project.dataValues.id },
 							attributes: ["projectId"],
 						},
+						{
+							model: sequelize.models["sprint"],
+							attributes: ["startsAt", "endsAt"],
+						},
+						{
+							model: sequelize.models["task"],
+							attributes: ["id", "complexity"],
+						},
 					],
-					attributes: ["epicId"],
+					attributes: ["effortScore"],
 				},
 			],
 			transaction,
@@ -56,31 +64,61 @@ export default async function (req: Request, res: Response) {
 			throw new BadRequestError("Task not found in the project");
 		}
 
-		let startedAt: Date | null | undefined = undefined;
-		let completedAt: Date | null | undefined = undefined;
+		const userstory = task.dataValues.userstory;
+		const sprint = userstory.dataValues.sprint;
 
-		switch (taskUpdateRequest.status) {
+		const resStatus = taskUpdateRequest.status || (task.dataValues.etaskstatusId as TaskStatus);
+		const resComplexity = taskUpdateRequest.complexity || (task.dataValues.complexity as number | null);
+
+		if (resStatus !== TaskStatus.TODO && resComplexity === null) {
+			throw new BadRequestError("The complexity of the task must be specified before changing the status");
+		}
+
+		if (!userstory.dataValues.effortScore && resComplexity !== null) {
+			throw new BadRequestError("The user story effort score must be specified before changing the task complexity");
+		}
+
+		const resTaskComplexity = userstory.dataValues.tasks
+			.filter((t: any) => t.dataValues.id !== taskId)
+			.reduce((acc: number, t: any) => acc + (t.dataValues.complexity ?? 0), resComplexity);
+
+		if (resTaskComplexity > userstory.dataValues.effortScore) {
+			throw new BadRequestError("The sum of the task complexities cannot exceed the user story effort score");
+		}
+
+		let resStartedAt =
+			(taskUpdateRequest.startedAt ? new Date(taskUpdateRequest.startedAt) : null) ||
+			(task.dataValues.startedAt as Date | null);
+
+		let resCompletedAt =
+			(taskUpdateRequest.completedAt ? new Date(taskUpdateRequest.completedAt) : null) ||
+			(task.dataValues.completedAt as Date | null);
+
+		switch (resStatus) {
 			case TaskStatus.TODO:
-				startedAt = null;
-				completedAt = null;
+				resStartedAt = null;
+				resCompletedAt = null;
 				break;
 			case TaskStatus.INPROGRESS:
 			case TaskStatus.AVAILABLETOREVIEW:
 			case TaskStatus.REVIEWING:
-				completedAt = null;
-				if (!task.dataValues.startedAt) {
-					startedAt = new Date();
-				}
+				resCompletedAt = null;
+				resStartedAt ??= new Date();
 				break;
 			case TaskStatus.DONE:
 			case TaskStatus.CANCELLED:
-				if (!task.dataValues.completedAt) {
-					completedAt = new Date();
-				}
-				if (!task.dataValues.startedAt) {
-					startedAt = completedAt;
-				}
+				resCompletedAt ??= new Date();
+				resStartedAt ??= resCompletedAt;
 				break;
+		}
+
+		if (sprint) {
+			resStartedAt = sprint.capDate(resStartedAt);
+			resCompletedAt = sprint.capDate(resCompletedAt);
+		}
+
+		if (resStartedAt && resCompletedAt && resStartedAt > resCompletedAt) {
+			throw new BadRequestError("The completion date must be later than the start date");
 		}
 
 		task.set(
@@ -91,8 +129,9 @@ export default async function (req: Request, res: Response) {
 				...(taskUpdateRequest.status && { etaskstatusId: taskUpdateRequest.status }),
 				...(taskUpdateRequest.type && { etasktypeId: taskUpdateRequest.type }),
 				...(taskUpdateRequest.priority && { epriorityId: taskUpdateRequest.priority }),
-				...(startedAt !== undefined && { startedAt: startedAt }),
-				...(completedAt !== undefined && { completedAt: completedAt }),
+				...(taskUpdateRequest.complexity !== undefined && { complexity: taskUpdateRequest.complexity }),
+				startedAt: resStartedAt,
+				completedAt: resCompletedAt,
 			},
 			{ transaction },
 		);

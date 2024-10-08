@@ -5,6 +5,8 @@
  *     AuthToken:
  *       type: object
  *       properties:
+ *         token:
+ *           type: string
  *         iss:
  *           type: string
  *         sub:
@@ -15,6 +17,7 @@
  *           type: number
  */
 export interface AuthToken {
+	token: string;
 	iss: string;
 	sub: string;
 	iat: number;

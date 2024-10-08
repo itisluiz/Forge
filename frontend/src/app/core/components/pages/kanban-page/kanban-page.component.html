@@ -3,15 +3,35 @@
 	<div class="grid-container">
 		<div class="header-grid">
 			<ul class="breadcrumber">
-				<li><a href="">Squad BES</a></li>
+				<li>
+					<a>{{ project?.code }}</a>
+				</li>
 				<div class="spacer">></div>
-				<li><a href="">TCC 1</a></li>
-				<div class="spacer">></div>
-				<li><a href="/kanban">Kanban board</a></li>
+				<li><a>Kanban board</a></li>
 			</ul>
 			<h1>Kanban board</h1>
 			<p>Quadro Kanban para Gerenciamento de Features Disponíveis e Prontas para o Início do Desenvolvimento de Projetos.</p>
 		</div>
+
+		@if (sprints.length == 0) {
+			<div class="kanban-grid">
+				<div class="title no-margin">
+					<div class="left">
+						<div class="left-content">
+							<h2>Sprint's list</h2>
+							<mat-icon class="info-tooltip" matTooltip="This is a list of Kanban board that exists in the project."
+								>info</mat-icon
+							>
+						</div>
+					</div>
+				</div>
+				<p class="desc-title">Find below the list of sprints in your project.</p>
+				<div class="no-sprints">
+					<h3>There is no sprint active. Please create a new one.</h3>
+					<button class="green-button" (click)="navigateTo(projectEid + '/backlog')" matRipple>Go to backlog page</button>
+				</div>
+			</div>
+		}
 
 		@for (sprint of sprints; track $index) {
 			<div class="kanban-grid">
@@ -19,6 +39,30 @@
 					<div class="left">
 						<div class="left-content">
 							<h2>Sprint {{ sprint.index }}</h2>
+							@if (sprint.periodStatus == 1) {
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="This is the Kanban board for the PAST sprint, where tasks are managed and tracked as they progress through different stages."
+									>info</mat-icon
+								>
+							}
+
+							@if (sprint.periodStatus == 2) {
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="This is the Kanban board for the CURRENT sprint, where tasks are managed and tracked as they progress through different stages."
+									>info</mat-icon
+								>
+							}
+
+							@if (sprint.periodStatus == 3) {
+								<mat-icon
+									class="info-tooltip"
+									matTooltip="This is the Kanban board for the FUTURE sprint, where tasks are managed and tracked as they progress through different stages."
+									>info</mat-icon
+								>
+							}
+
 							<div class="tag {{ sprint.status | sprintStatusClass }}">
 								<span>{{ sprint.status | sprintStatus }}</span>
 							</div>
@@ -33,9 +77,21 @@
 							<mat-icon>more_horiz</mat-icon>
 						</button>
 
-						<p class="sprint-date">
-							Started at {{ sprint.startsAt | date: "dd/MM/YYYY" }} with {{ sprint.endsAt | daysDifference }} day(s) left
-						</p>
+						@if (sprint.periodStatus == 1) {
+							<p class="sprint-date">
+								Period {{ sprint.startsAt | date: "dd/MM/YYYY" }} - {{ sprint.endsAt | date: "dd/MM/YYYY" }}
+							</p>
+						}
+
+						@if (sprint.periodStatus == 2) {
+							<p class="sprint-date">
+								Started at {{ sprint.startsAt | date: "dd/MM/YYYY" }} with {{ sprint.endsAt | daysDifference }} day(s) left
+							</p>
+						}
+
+						@if (sprint.periodStatus == 3) {
+							<p class="sprint-date">Will start at {{ sprint.startsAt | date: "dd/MM/YYYY" }}</p>
+						}
 					</div>
 				</div>
 
@@ -43,205 +99,53 @@
 					<mat-accordion multi>
 						@if (userStoriesPerSprint[sprint.eid].length > 0) {
 							@for (userstory of userStoriesPerSprint[sprint.eid]; track userstory) {
-								<mat-expansion-panel>
+								<mat-expansion-panel [(expanded)]="userstoryExpanded[userstory.eid]">
 									<mat-expansion-panel-header>
 										<mat-panel-title> {{ userstory.code }} </mat-panel-title>
-										<mat-panel-title> {{ userstory.title }} </mat-panel-title>
-										<mat-panel-description> {{ userstory.description }} </mat-panel-description>
+										<mat-panel-title> {{ userstory.title | maxLength: 35 }} </mat-panel-title>
+										<mat-panel-description> {{ userstory.description | maxLength: 60 }} </mat-panel-description>
 									</mat-expansion-panel-header>
 
-									<div cdkDropListGroup class="group-list">
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>To do</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 1).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-											<div cdkDropList id="taskstatus-1" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 1); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>In progress</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 2).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-2" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 2); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Available to review</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 3).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-3" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 3); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Reviewing</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 4).length }}</span>
-													<span>left</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-4" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 4); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
-
-										<div class="kanban-wrapper">
-											<div class="title">
-												<h2>Done</h2>
-												<div class="count">
-													<span>{{ getTasksOfStatus(sprint.eid, userstory.eid, 5).length }}</span>
-													<span>completed</span>
-												</div>
-											</div>
-
-											<div cdkDropList id="taskstatus-5" class="kanban-list" (cdkDropListDropped)="drop($event)">
-												@for (task of getTasksOfStatus(sprint.eid, userstory.eid, 5); track task) {
-													<div class="container-item" cdkDrag id="task-{{ sprint.eid }}-{{ task.eid }}">
-														<div class="placeholder" *cdkDragPlaceholder></div>
-														<div class="content">
-															<div [class]="task.type | taskTypeClass"></div>
-															<h3>{{ task.title }}</h3>
-															<p class="desc">{{ task.description }}</p>
-															<span class="responsible">
-																@if (task.responsibleEid) {
-																	<img [src]="getGravatarUrl(task.responsibleEid)" />
-																	<p>{{ getUsername(task.responsibleEid) }}</p>
-																} @else {
-																	<p>Not assigned</p>
-																}
-																<img
-																	class="nonavatar priority"
-																	src="{{ task.priority | priority | icon }}"
-																	alt="{{ task.priority }} priority"
-																/>
-															</span>
-														</div>
-													</div>
-												}
-											</div>
-										</div>
+									<div class="group-list">
+										@for (taskStatus of [1, 2, 3, 4, 5]; track taskStatus) {
+											<app-kanban-column
+												[dropCallback]="onCdkDropEvent.bind(this)"
+												[taskClickCallback]="openTaskPopUp.bind(this)"
+												[status]="taskStatus"
+												[members]="project!.members"
+												[sprint]="this.detailedSprints[sprint.eid]"
+												[userstory]="userstory"
+												[dropListIds]="userstoryDropListIds[userstory.eid]"
+											/>
+										}
 									</div>
 								</mat-expansion-panel>
 							}
 						} @else {
-							<p>This sprint has no user stories</p>
+							<div class="no-userstory">
+								<h3>This sprint has no user stories.</h3>
+								<p>You can create a user story on the <a [routerLink]="['/', projectEid, 'epics']">Epic page</a>.</p>
+							</div>
 						}
 					</mat-accordion>
 				} @else {
 					<div class="spinner">
-						<mat-progress-bar mode="buffer"></mat-progress-bar>
+						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 					</div>
 				}
 			</div>
 		}
 	</div>
 </div>
+
+@if (popUpTask) {
+	<div class="pop-up-background" (click)="closePopUpTask()"></div>
+	<app-task-details
+		[task]="selectedTask"
+		[responsible]="getResponsible(selectedTask.responsibleEid!)"
+		[projectEid]="projectEid"
+		(closePopUpEmitter)="closePopUpTask()"
+		(closePopUpEmitterDeletedTask)="loadSprintData()"
+		(closePopUpEmitterEditedTask)="loadSprintData()"
+	></app-task-details>
+}

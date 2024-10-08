@@ -18,9 +18,13 @@ import { SprintStatus } from "../../enum/sprintstatus.enum";
  *         status:
  *           $ref: '#/components/schemas/SprintStatus'
  *           nullable: true
+ *         targetVelocity:
+ *           type: number
+ *           nullable: true
  */
 export interface SprintUpdateRequest {
 	startsAt?: string;
 	endsAt?: string;
 	status?: SprintStatus;
+	targetVelocity?: number | null;
 }

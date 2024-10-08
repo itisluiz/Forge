@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { MatIcon } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -13,10 +13,10 @@ import {
 	DragDropModule,
 	CdkDragPlaceholder,
 } from "@angular/cdk/drag-drop";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { UserstoryApiService } from "../../../services/userstory-api.service";
 import { SprintApiService } from "../../../services/sprint-api.service";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { SprintSelfComposite } from "forge-shared/dto/composite/sprintselfcomposite.dto";
 import { SprintPeriodStatusPipe } from "../../../pipes/sprint-periodstatus.pipe";
 import { SprintPeriodStatusClassPipe } from "../../../pipes/sprint-periodstatus-class.pipe";
@@ -32,6 +32,14 @@ import { IconPipe } from "../../../pipes/icon.pipe";
 import { DaysDifferencePipe } from "../../../pipes/days-difference.pipe";
 import { SprintStatusPipe } from "../../../pipes/sprint-status.pipe";
 import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
+import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
+import { TaskDetailsComponent } from "../../task-details/task-details.component";
+import { TaskResponse } from "forge-shared/dto/response/taskresponse.dto";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRippleModule } from "@angular/material/core";
+import { KanbanColumnComponent } from "../../kanban-column/kanban-column.component";
+import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
 
 @Component({
 	selector: "app-kanban-page",
@@ -55,6 +63,12 @@ import { SprintStatusClassPipe } from "../../../pipes/sprint-status-class.pipe";
 		DaysDifferencePipe,
 		SprintStatusPipe,
 		SprintStatusClassPipe,
+		MaxLengthPipe,
+		TaskDetailsComponent,
+		MatTooltipModule,
+		MatRippleModule,
+		RouterModule,
+		KanbanColumnComponent,
 	],
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",
@@ -64,20 +78,34 @@ export class KanbanPageComponent implements OnInit {
 	sprints: SprintSelfComposite[] = [];
 	detailedSprints: { [key: string]: SprintResponse } = {};
 	userStoriesPerSprint: { [key: string]: UserstorySelfComposite[] } = {};
+	userstoryDropListIds: { [key: string]: string[] } = {};
+	userstoryExpanded: { [key: string]: string[] } = {};
 	project?: ProjectResponse;
+	popUpTask: boolean = false;
+	selectedTask!: TaskResponse;
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private userStoryApiService: UserstoryApiService,
 		private sprintApiService: SprintApiService,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
 	) {}
 
+	ngOnInit(): void {
+		this.loadSprintData();
+	}
+
 	loadDetailedSprint(eid: string) {
 		this.sprintApiService.getSprint(this.projectEid, eid).subscribe({
 			next: (sprintResponse) => {
 				this.detailedSprints[sprintResponse.eid] = sprintResponse;
+
+				const userstoryEids = [...new Set(sprintResponse.tasks.map((task) => task.userstoryEid))];
+				userstoryEids.forEach((userstoryEid) => {
+					this.userstoryDropListIds[userstoryEid] = [];
+				});
 			},
 		});
 
@@ -105,41 +133,53 @@ export class KanbanPageComponent implements OnInit {
 		});
 	}
 
-	getGravatarUrl(userEid: string) {
-		return this.project?.members.find((member) => member.eid === userEid)?.gravatar;
+	getResponsible(userEid: string) {
+		return this.project!.members.find((member) => member.eid === userEid);
 	}
 
-	getUsername(userEid: string) {
-		const user = this.project?.members.find((member) => member.eid === userEid);
-		if (!user) return;
-
-		return `${user.name} ${user.surname}`;
-	}
-
-	getTasksOfStatus(sprintEid: string, userstoryEid: string, status: TaskStatus) {
-		return this.detailedSprints[sprintEid]?.tasks.filter(
-			(task) => task.userstoryEid === userstoryEid && task.status === status,
-		);
-	}
-
-	ngOnInit(): void {
-		this.loadSprintData();
-	}
-
-	drop(event: CdkDragDrop<string[]>) {
-		if (event.previousContainer.id === event.container.id) {
+	onCdkDropEvent(event: CdkDragDrop<TaskSelfComposite>) {
+		if (event.previousContainer === event.container) {
 			return;
 		}
 
-		const sprintEid = event.item.element.nativeElement.id.split("-")[1];
-		const taskEid = event.item.element.nativeElement.id.split("-")[2];
-		const newStatus = Number(event.container.id.split("-")[1]) as TaskStatus;
+		const task: TaskSelfComposite = event.item.data;
+		const status = event.container.data as any as TaskStatus;
 
-		this.detailedSprints[sprintEid].tasks.find((task) => task.eid === taskEid)!.status = newStatus;
-		this.taskApiService.updateTask({ status: newStatus }, this.projectEid, taskEid).subscribe({
+		// Optimistic update
+		task.status = status;
+
+		this.taskApiService.updateTask({ status }, this.projectEid, task.eid).subscribe({
 			error: () => {
 				this.loadSprintData();
 			},
 		});
+	}
+
+	openTaskPopUp(taskEid: string) {
+		this.taskApiService.getTask(this.projectEid, taskEid).subscribe({
+			next: (task) => {
+				this.selectedTask = task;
+				this.popUpTask = true;
+			},
+		});
+	}
+
+	navigateTo(path: string) {
+		this.router.navigate([path]);
+	}
+
+	closePopUpTask() {
+		let backgroundPopUp = document.querySelector(".pop-up-background");
+		if (backgroundPopUp) {
+			backgroundPopUp.classList.add("fade-opacity");
+		}
+
+		let popUp = document.querySelector(".history-pop-up");
+		if (popUp) {
+			popUp.classList.add("fade-out");
+		}
+		setTimeout(() => {
+			this.popUpTask = false;
+		}, 200);
 	}
 }
