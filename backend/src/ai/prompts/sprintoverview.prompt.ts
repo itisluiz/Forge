@@ -1,13 +1,13 @@
 import { boilerplateMessages, replacePlaceholders } from "../promptgen.js";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Model } from "sequelize";
+import { Priority } from "forge-shared/enum/priority.enum.js";
 import { promptAIText } from "../../util/ai.js";
 import { SprintPeriodStatus } from "forge-shared/enum/sprintperiodstatus.enum.js";
 import { SprintStatus } from "forge-shared/enum/sprintstatus.enum.js";
 import { TaskStatus } from "forge-shared/enum/taskstatus.enum.js";
-import logging from "../../util/logging.js";
 import { TaskType } from "forge-shared/enum/tasktype.enum.js";
-import { Priority } from "forge-shared/enum/priority.enum.js";
+import logging from "../../util/logging.js";
 
 const basePrompt = `You must generate a helpful overview for the current state of my Agile sprint for the project "[project]". Today is "[now]", the sprint
 started at "[sprintstart]" and will end/ended at "[sprintend]". The sprint user given status is "[sprintstatus]" and going by the dates, you can tell it is
@@ -16,7 +16,8 @@ a "[sprintperiodstatus]" sprint. Here's an overview of the userstories and tasks
 
 Provide an overview of the sprint that is clear and concise, in the same language as the data inside the work items. Your response should be clear text,
 without any markdown, line breaks, or special formatting. Use no more than 512 characters, do not return entire dates, instead, prefer using relative terms,
-like "today", "tomorrow", "yesterday", "in N days", etc, but in the same language as the data inside the work items/quoted items in this prompt.`;
+like "today", "tomorrow", "yesterday", "in N days", etc, but in the same language as the data inside the work items/quoted items in this prompt. Do not put
+the data between quotes everywhere as seen in this prompt, just use the data as is, in natural language.`;
 
 const userstoryPrompt = `# The userstory "[userstory]" with the effort score of "[effortscore]" is in the sprint with the following tasks:
 [tasks]`;

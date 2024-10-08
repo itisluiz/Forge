@@ -27,15 +27,8 @@
 		<!-- LEFT SIDE OF THE POP-UP -->
 		<div class="form-content-left">
 			<div class="input-wrapper">
-				<label for="acceptance-criteria">Select your acceptance criteria</label>
-
-				@if (isEditMode) {
-					<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria" [disabled]="true">
-						<option [value]="testCaseEditData.acceptancecriteriaEid">{{ testCaseEditData.acceptancecriteriaEid }}</option>
-					</select>
-				}
-
 				@if (!isEditMode) {
+					<label for="acceptance-criteria">Select your acceptance criteria</label>
 					<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria">
 						<option value="" disabled>Select a criteria</option>
 						<!-- Opção vazia -->

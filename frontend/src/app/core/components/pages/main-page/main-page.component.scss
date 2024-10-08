@@ -59,18 +59,11 @@ app-navbar {
 }
 
 .force-refresh {
-	color: v.$black-color;
-	font-size: 16px;
-	height: fit-content;
-	width: fit-content;
-	cursor: pointer;
-	font-weight: 600;
-	transition: 0.3s;
-	transform: translate(-3px, 2.4px);
-
-	&:hover {
-		filter: brightness(0.8);
-	}
+	background-color: transparent;
+	border: none;
+	color: #686868;
+	align-self: center;
+	margin: -0.3em 0 0 -0.6em;
 }
 
 .info-tooltip {

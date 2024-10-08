@@ -15,6 +15,8 @@ import { GanttChartComponent } from "../../gantt-chart/gantt-chart.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { TaskType } from "forge-shared/enum/tasktype.enum";
+import { SprintOverviewResponse } from "forge-shared/dto/response/sprintoverviewresponse.dto";
+import { finalize } from "rxjs";
 
 @Component({
 	selector: "app-main-page",
@@ -42,6 +44,9 @@ export class MainPageComponent {
 	pastSprints: SprintSelfComposite[] = [];
 	selectedSprint: SprintSelfComposite = {} as SprintSelfComposite;
 	tasksFromSelectedSprint: TaskSelfComposite[] = [];
+
+	currentSprintOverview?: SprintOverviewResponse;
+	loadingSprintOverview = false;
 
 	bugTaskTotal: number = 0;
 	bugTaskDoneTotal: number = 0;
@@ -82,12 +87,18 @@ export class MainPageComponent {
 				this.pastAndCurrentSprints = sprintSelfResponse.sprints.filter(
 					(sprint) => sprint.periodStatus === SprintPeriodStatus.PAST || sprint.periodStatus === SprintPeriodStatus.ONGOING,
 				);
-				this.currentSprint =
-					this.pastAndCurrentSprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING) ||
-					({} as SprintSelfComposite);
+
+				const curSprint = this.pastAndCurrentSprints.find((sprint) => sprint.periodStatus === SprintPeriodStatus.ONGOING);
+				if (!curSprint) {
+					return;
+				}
+
+				this.currentSprint = curSprint;
+
 				this.selectedSprint = this.currentSprint;
 				this.pastSprints = sprintSelfResponse.sprints.filter((sprint) => sprint.periodStatus === SprintPeriodStatus.PAST);
 				this.loadMetrics();
+				this.loadSprintOverview();
 			},
 		});
 	}
@@ -128,6 +139,22 @@ export class MainPageComponent {
 				this.featureDonePercentage = (this.featureDoneTotal / this.featureTotal) * 100;
 			},
 		});
+	}
+
+	loadSprintOverview(forceRegenerate = false) {
+		if (!this.selectedSprint?.eid || this.loadingSprintOverview) {
+			return;
+		}
+
+		this.loadingSprintOverview = true;
+		this.sprintApiService
+			.overview(this.projectEid, this.selectedSprint.eid, forceRegenerate)
+			.pipe(finalize(() => (this.loadingSprintOverview = false)))
+			.subscribe({
+				next: (sprintOverviewResponse) => {
+					this.currentSprintOverview = sprintOverviewResponse;
+				},
+			});
 	}
 
 	calculateLeadTime(tasks: TaskSelfComposite[]) {
