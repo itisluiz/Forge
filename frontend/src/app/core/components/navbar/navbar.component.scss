@@ -19,6 +19,19 @@
 	gap: 8px;
 	transition: filter 0.3s;
 	margin-left: 8px;
+	position: relative;
+
+	.name {
+		font-size: 14px;
+		margin-right: 45px;
+		color: v.$white-color;
+		height: 55px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		transition: filter 0.3s;
+		margin-top: 9px;
+	}
 
 	img {
 		border-radius: 50%;
@@ -112,12 +125,17 @@
 	.role {
 		font-size: 14px;
 		margin-right: 45px;
-		color: v.$white-color;
+		color: v.$green-color;
 		height: 55px;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		transition: filter 0.3s;
+		margin-top: 7px;
+		position: absolute;
+		top: -10px;
+		font-size: 8px !important;
+		left: 31.5px;
 	}
 
 	span {

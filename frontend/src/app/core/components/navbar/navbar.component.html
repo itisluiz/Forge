@@ -42,6 +42,7 @@
 	<div class="user-role" [matMenuTriggerFor]="menu">
 		<mat-icon><img [src]="userPhoto" /></mat-icon>
 		<p class="role">{{ getProjectMemberFromMap(userEid)?.role | role }}</p>
+		<p class="name">{{ userName }}</p>
 	</div>
 </mat-toolbar>
 

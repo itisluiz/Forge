@@ -6,8 +6,18 @@
 		<h2>Create a new test case</h2>
 		<p>Para criar um novo caso de teste, preencha as informações abaixo.</p>
 	}
-	<button id="button-create-test-ai" class="grey-button ai-button" (click)="generateWithAI()">
-		<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
+	<button
+		id="button-create-test-ai"
+		class="grey-button ai-button"
+		(click)="generateWithAI()"
+		[disabled]="isAIThinking || !testCaseForm.get('acceptanceCriteria')?.value"
+		[class.loading]="isAIThinking"
+	>
+		@if (isAIThinking) {
+			<span class="loading-spinner"></span>
+		} @else {
+			<img src="../../../../../assets/ia-magic-icon.svg" alt="" />
+		}
 		Generate test cases with AI
 	</button>
 </div>
@@ -27,7 +37,7 @@
 
 				@if (!isEditMode) {
 					<select id="acceptance-criteria" name="acceptance-criteria" formControlName="acceptanceCriteria">
-						<option value="">-- Select a criteria --</option>
+						<option value="" disabled>Select a criteria</option>
 						<!-- Opção vazia -->
 
 						@for (criteria of acceptanceCriteria.acceptanceCriteria; track criteria) {

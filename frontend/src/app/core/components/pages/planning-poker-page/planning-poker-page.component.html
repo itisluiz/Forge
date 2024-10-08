@@ -234,6 +234,7 @@
 		description="Fill the needed information to be able to create your epic."
 		buttonName="Create planning poker"
 		buttonCancelName="Cancel"
+		[loading]="isLoading"
 		[cancelButton]="true"
 		(closePopUpEmitter)="closePopUp('createSession')"
 		(onButtonClick)="createSession()"
