@@ -19,8 +19,20 @@ app-navbar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 8px;
 	&:hover {
 		filter: brightness(1.15);
+	}
+
+	&:disabled {
+		background-color: #ccc !important;
+		color: #888 !important;
+		cursor: not-allowed;
+		background: linear-gradient(90deg, #289e0b00 0%, #00000000 37%, #72c80000 100%);
+
+		img {
+			filter: brightness(0.5);
+		}
 	}
 }
 

@@ -14,6 +14,7 @@ import { TestcaseResponse } from "forge-shared/dto/response/testcaseresponse.dto
 import { AcceptanceCriteriaService } from "../../services/acceptance-criteria.service";
 import { TestcaseUpdateRequest } from "forge-shared/dto/request/testcaseupdaterequest.dto";
 import { TestcaseSuggestionRequest } from "forge-shared/dto/request/testcasesuggestionrequest.dto";
+import { finalize } from "rxjs";
 
 // TODO [TestCaseStep] - Remover isso quando DTO for criado
 export interface testCaseStep {
@@ -36,16 +37,12 @@ export class TestCasePopupComponent implements OnInit {
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() updateTestCaseEmitter = new EventEmitter<void>();
 
+	isAIThinking: boolean = false;
+
 	testCaseSteps: testCaseStep[] = [
 		{ title: "Step 1", action: "", expected: "" },
 		{ title: "Step 2", action: "", expected: "" },
 		{ title: "Step 3", action: "", expected: "" },
-	];
-
-	stepsTestCase: TestcaseStepComposite[] = [
-		{ action: "", expectedBehavior: "" },
-		{ action: "", expectedBehavior: "" },
-		{ action: "", expectedBehavior: "" },
 	];
 
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
@@ -232,6 +229,7 @@ export class TestCasePopupComponent implements OnInit {
 	}
 
 	deleteTab() {
+		console.log("deleting");
 		if (this.testCaseSteps.length === 1) {
 			return;
 		}
@@ -243,27 +241,50 @@ export class TestCasePopupComponent implements OnInit {
 	}
 
 	generateWithAI() {
+		this.isAIThinking = true;
+
 		let suggestionRequest: TestcaseSuggestionRequest = {
 			acceptancecriteriaEid: this.testCaseForm.get("acceptanceCriteria")?.value,
 			prompt: undefined,
 		};
-		this.testCaseService.getSuggestion(suggestionRequest, this.projectEid).subscribe({
-			next: (data) => {
-				console.log(data);
-				this.testCaseForm.patchValue({
-					description: data.description,
-					preCondition: data.precondition,
-				});
-				for (let i = 0; i < data.steps.length; i++) {
-					this.steps.at(i).patchValue({
-						action: data.steps[i].action,
-						expectedBehavior: data.steps[i].expectedBehavior,
+
+		this.testCaseService
+			.getSuggestion(suggestionRequest, this.projectEid)
+			.pipe(
+				finalize(() => {
+					this.isAIThinking = false;
+				}),
+			)
+			.subscribe({
+				next: (data) => {
+					console.log(data);
+
+					this.testCaseForm.patchValue({
+						description: data.description,
+						preCondition: data.precondition,
 					});
-				}
-			},
-			error: (error) => {
-				console.error;
-			},
-		});
+
+					this.testCaseForm.setControl("steps", this.formBuilder.array([]));
+					data.steps.forEach((step: TestcaseStepComposite) => {
+						this.steps.push(
+							this.formBuilder.group({
+								action: [step.action],
+								expectedBehavior: [step.expectedBehavior],
+							}),
+						);
+					});
+
+					this.testCaseSteps = data.steps.map((step: TestcaseStepComposite, index: number) => {
+						return {
+							title: "Step " + (index + 1),
+							action: step.action,
+							expected: step.expectedBehavior,
+						};
+					});
+				},
+				error: (error) => {
+					console.error;
+				},
+			});
 	}
 }

@@ -51,6 +51,7 @@ export class NavbarComponent {
 	projectEid: string = this.route.snapshot.paramMap.get("projectEid")!;
 	userPhoto!: string;
 	userEid!: string;
+	userName!: string;
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 	trollando: boolean = false;
 	popUpLeaveForge: boolean = false;
@@ -120,6 +121,7 @@ export class NavbarComponent {
 		this.userApiService.self().subscribe((user) => {
 			this.userPhoto = user.gravatar;
 			this.userEid = user.eid;
+			this.userName = user.name;
 		});
 	}
 

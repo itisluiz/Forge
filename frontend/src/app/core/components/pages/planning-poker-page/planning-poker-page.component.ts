@@ -14,7 +14,7 @@ import { MaxLengthPipe } from "../../../pipes/max-length.pipe";
 import { PriorityPipe } from "../../../pipes/priority.pipe";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
-import { forkJoin, map, Observable } from "rxjs";
+import { finalize, forkJoin, map, Observable } from "rxjs";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { MatRippleModule } from "@angular/material/core";
 import { IconPipe } from "../../../pipes/icon.pipe";
@@ -83,6 +83,8 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	scoreToggle: boolean = false;
 	expandToggle: boolean = true;
 	activeCard: number | null | undefined;
+
+	isLoading: boolean = false;
 
 	inSession: boolean = false;
 	sessionList: boolean = false;
@@ -159,27 +161,36 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 	}
 
 	createSession() {
+		this.isLoading = true;
+
 		const createRequest: PlanningpokerCreatesessionRequest = {
 			agenda: this.pokerSubject.value,
 			sprintEid: this.selectedSprintEid,
 		};
 
-		this.planningPokerService.createSession(createRequest, this.projectEid).subscribe({
-			next: (result) => {
-				this.currentSession = result.sessionCode;
-				this.inSession = true;
-				this.popUpCreateSession = false;
-				this.router.navigate([`/planning-poker/${this.projectEid}/${result.sessionCode}`]);
-				this.pullSession();
-
-				this.sessionIntervalId = setInterval(() => {
+		this.planningPokerService
+			.createSession(createRequest, this.projectEid)
+			.pipe(
+				finalize(() => {
+					this.isLoading = false;
+				}),
+			)
+			.subscribe({
+				next: (result) => {
+					this.currentSession = result.sessionCode;
+					this.inSession = true;
+					this.popUpCreateSession = false;
+					this.router.navigate([`/planning-poker/${this.projectEid}/${result.sessionCode}`]);
 					this.pullSession();
-				}, 2000);
-			},
-			error: (error) => {
-				console.error(error);
-			},
-		});
+
+					this.sessionIntervalId = setInterval(() => {
+						this.pullSession();
+					}, 2000);
+				},
+				error: (error) => {
+					console.error(error);
+				},
+			});
 	}
 
 	vote(userScore: number | null) {
@@ -281,7 +292,7 @@ export class PlanningPokerPageComponent implements OnInit, OnDestroy {
 		this.pullSession();
 
 		const voteRequest: PlanningpokerVoteRequest = {
-			vote: this.activeCard,
+			vote: undefined,
 		};
 
 		this.planningPokerService.saveResult(voteRequest, this.projectEid, this.currentSession).subscribe({
