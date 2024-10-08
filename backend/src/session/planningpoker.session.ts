@@ -4,7 +4,12 @@ import NodeCache from "node-cache";
 
 const sessionTTL = 300;
 const participantTTL = 30;
-const planningpokerSessions = new NodeCache({ stdTTL: sessionTTL, checkperiod: 300, useClones: false });
+const planningpokerSessions = new NodeCache({
+	stdTTL: sessionTTL,
+	checkperiod: 300,
+	useClones: false,
+	deleteOnExpire: true,
+});
 
 export interface PlanningpokerParticipant {
 	lastHeartbeat: Date;

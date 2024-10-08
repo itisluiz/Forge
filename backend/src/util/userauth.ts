@@ -34,7 +34,7 @@ export function decodeUserJWT(jwt: string): AuthToken | null {
 
 // Methods below may throw and are less generic
 // User cache, mainly created for the planning poker polling
-const userCache = new NodeCache({ stdTTL: 43200, checkperiod: 600 });
+const userCache = new NodeCache({ stdTTL: 43200, checkperiod: 600, deleteOnExpire: true });
 
 export function getAuthTokenFromRequest(req: Request) {
 	const authorization = req.headers.authorization;
