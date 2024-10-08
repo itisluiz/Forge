@@ -263,6 +263,12 @@ app-navbar {
 					border-radius: 4px;
 					margin-right: 12px;
 					padding: 0 12px;
+
+					&:disabled {
+						background-color: v.$disabled-background-color;
+						color: v.$disabled-color;
+						cursor: not-allowed;
+					}
 				}
 
 				.mat-icon-button {

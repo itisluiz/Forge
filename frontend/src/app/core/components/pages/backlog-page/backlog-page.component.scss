@@ -67,6 +67,12 @@ app-navbar {
 			border-radius: 4px;
 			display: flex;
 			margin: 0 auto;
+
+			&:disabled {
+				background-color: v.$disabled-background-color;
+				color: v.$disabled-color;
+				cursor: not-allowed;
+			}
 		}
 		.green-button {
 			color: white;

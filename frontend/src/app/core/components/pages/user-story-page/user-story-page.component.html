@@ -106,9 +106,18 @@
 								</p>
 
 								<div class="test-case-buttons">
-									<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple>
-										Create test case
-									</button>
+									@if (userRole !== "") {
+										<button
+											id="button-create-test-manually"
+											class="grey-button"
+											(click)="openPopUpTestCase()"
+											matRipple
+											[disabled]="userRole !== 'tester'"
+											[matTooltip]="userRole !== 'tester' ? 'Only a Tester can do this action!' : ''"
+										>
+											Create test case
+										</button>
+									}
 								</div>
 							</div>
 						}

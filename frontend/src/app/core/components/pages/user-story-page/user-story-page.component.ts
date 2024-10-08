@@ -30,6 +30,8 @@ import { Action } from "rxjs/internal/scheduler/Action";
 import { TestcaseStepComposite } from "forge-shared/dto/composite/testcasestepcomposite.dto";
 import { AcceptanceCriteriaService } from "../../../services/acceptance-criteria.service";
 import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
+import { UserApiService } from "../../../services/user-api.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
 	selector: "app-user-story-page",
@@ -52,6 +54,7 @@ import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/accept
 		TaskDetailsComponent,
 		TaskPopupComponent,
 		MatRippleModule,
+		MatTooltipModule,
 	],
 	templateUrl: "./user-story-page.component.html",
 	styleUrl: "./user-story-page.component.scss",
@@ -87,6 +90,8 @@ export class UserStoryPageComponent implements OnInit {
 
 	private subscriptions = new Subscription();
 
+	userRole: string = "";
+
 	constructor(
 		private route: ActivatedRoute,
 		private router: Router,
@@ -95,9 +100,11 @@ export class UserStoryPageComponent implements OnInit {
 		private projectApiService: ProjectApiService,
 		private testCaseService: TestCaseService,
 		private acceptanceCriteriaService: AcceptanceCriteriaService,
+		private userApiService: UserApiService,
 	) {}
 
 	ngOnInit(): void {
+		this.getUserRole();
 		this.getProject();
 		this.loadMembersData();
 		this.loadAllAcceptanceCriteria();
@@ -283,6 +290,17 @@ export class UserStoryPageComponent implements OnInit {
 			default:
 				return "";
 		}
+	}
+
+	getUserRole() {
+		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
+			next: (role) => {
+				this.userRole = role!.toLowerCase();
+			},
+			error: (error) => {
+				console.log(error.error.message);
+			},
+		});
 	}
 
 	getProject() {

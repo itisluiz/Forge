@@ -12,8 +12,16 @@
 				</ul>
 				<h1>Epics</h1>
 				<div class="buttons-header">
-					@if (userRole === "scrum master") {
-						<button id="button-create-epic" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					@if (userRole !== "") {
+						<button
+							id="button-create-epic"
+							(click)="openPopUpCreateEpic()"
+							matRipple
+							[disabled]="userRole !== 'scrum master'"
+							[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+						>
+							Create new Epic
+						</button>
 					}
 					<button mat-icon-button class="mat-icon-button">
 						<mat-icon>more_vert</mat-icon>
@@ -95,9 +103,17 @@
 				</mat-accordion>
 			} @else {
 				<div class="no-epics">
-					<h3>No epics available.</h3>
-					@if (userRole === "scrum master") {
-						<button class="green-button" (click)="openPopUpCreateEpic()" matRipple>Create new Epic</button>
+					<h3>No epics available. Please, create a new epic.</h3>
+					@if (userRole !== "") {
+						<button
+							class="green-button"
+							(click)="openPopUpCreateEpic()"
+							matRipple
+							[disabled]="userRole !== 'scrum master'"
+							[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+						>
+							Create new Epic
+						</button>
 					}
 				</div>
 			}
