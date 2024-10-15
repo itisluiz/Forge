@@ -21,6 +21,8 @@ import { TaskUpdateRequest } from "forge-shared/dto/request/taskupdaterequest.dt
 import { UserstoryApiService } from "../../services/userstory-api.service";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { UserPermsService } from "../../services/user-perms.service";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Component({
 	selector: "app-task-popup",
@@ -47,7 +49,7 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	@Input() projectEid: string = "";
 	@Input() userStoryEid: string = "";
 	@Input() taskEditData!: TaskResponse;
-	@Input() userRole!: string;
+	@Input() userMembership?: ProjectMemberComposite;
 	@Output() closePopUpEmitter = new EventEmitter<void>();
 	@Output() handleTaskAndClosePopupEmitter: EventEmitter<TaskResponse> = new EventEmitter();
 	@Output() handleEditedTaskAndClosePopupEmitter: EventEmitter<void> = new EventEmitter();
@@ -59,14 +61,18 @@ export class TaskPopupComponent implements OnInit, OnDestroy {
 	projectMembersMap: Record<string, ProjectMemberComposite> = {};
 	projectMembers: ProjectMemberComposite[] = [];
 	maxComplexity: number = 0;
-
 	disableButtonDuringRequest: boolean = false;
+
+	public checkUserPerms(allowedRoles: ProjectRole[]) {
+		return this.userPermsService.checkUserPerms(this.userMembership, allowedRoles);
+	}
 
 	constructor(
 		private formBuilder: FormBuilder,
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
 		private userstoryApiService: UserstoryApiService,
+		private userPermsService: UserPermsService,
 	) {}
 
 	ngOnInit(): void {
