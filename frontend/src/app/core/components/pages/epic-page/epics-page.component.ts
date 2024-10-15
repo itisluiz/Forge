@@ -27,6 +27,9 @@ import { MatRippleModule } from "@angular/material/core";
 import { ProjectResponse } from "forge-shared/dto/response/projectresponse.dto";
 import { ProjectApiService } from "../../../services/project-api.service";
 import { UserApiService } from "../../../services/user-api.service";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
+import { UserPermsService } from "../../../services/user-perms.service";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Component({
 	selector: "app-kanban-page",
@@ -78,7 +81,10 @@ export class EpicsPageComponent implements OnInit {
 
 	disableButtonDuringRequest: boolean = false;
 
-	userRole: string = "";
+	userMembership?: ProjectMemberComposite;
+	public checkUserPerms(allowedRoles: ProjectRole[]) {
+		return this.userPermsService.checkUserPerms(this.userMembership, allowedRoles);
+	}
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -87,10 +93,11 @@ export class EpicsPageComponent implements OnInit {
 		private epicApiService: EpicApiService,
 		private projectApiService: ProjectApiService,
 		private userApiService: UserApiService,
+		private userPermsService: UserPermsService,
 	) {}
 
 	ngOnInit(): void {
-		this.getUserRole();
+		this.getUserMembership();
 		this.getProject();
 		this.userStoriesMap$ = this.epics$.pipe(
 			switchMap((epics) => {
@@ -314,14 +321,12 @@ export class EpicsPageComponent implements OnInit {
 		this.closePopUpIssue();
 	}
 
-	getUserRole() {
-		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
-			next: (role) => {
-				this.userRole = role!.toLowerCase();
+	getUserMembership() {
+		this.userApiService.membership(this.projectEid).subscribe({
+			next: (userMembership) => {
+				this.userMembership = userMembership;
 			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
+			error: (error) => {},
 		});
 	}
 

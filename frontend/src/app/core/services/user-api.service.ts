@@ -8,6 +8,7 @@ import { UserSigninResponse } from "forge-shared/dto/response/usersigninresponse
 import { UserSignupRequest } from "forge-shared/dto/request/usersignuprequest.dto";
 import { ProjectApiService } from "./project-api.service";
 import { ProjectRole } from "forge-shared/enum/projectrole.enum";
+import { ProjectMemberComposite } from "forge-shared/dto/composite/projectmembercomposite.dto";
 
 @Injectable({
 	providedIn: "root",
@@ -47,34 +48,15 @@ export class UserApiService {
 		return this.apiService.call<UserSelfResponse>("GET", "user/self");
 	}
 
-	public getUserRoleForProject(projectEid: string): Observable<String | undefined> {
+	public membership(projectEid: string): Observable<ProjectMemberComposite | undefined> {
 		return this.self().pipe(
-			switchMap((user) => {
-				return this.projectApiService.getEspecificProject(projectEid).pipe(
+			switchMap((user) =>
+				this.projectApiService.getEspecificProject(projectEid).pipe(
 					map((project) => {
-						let memberRole = project.members.find((member) => member.eid === user.eid)?.role;
-						let stringRole = "";
-						switch (memberRole) {
-							case ProjectRole.PRODUCT_OWNER:
-								stringRole = "Product Owner";
-								break;
-							case ProjectRole.SCRUM_MASTER:
-								stringRole = "Scrum Master";
-								break;
-							case ProjectRole.DEVELOPER:
-								stringRole = "Developer";
-								break;
-							case ProjectRole.TESTER:
-								stringRole = "Tester";
-								break;
-							default:
-								stringRole = "No role";
-								break;
-						}
-						return stringRole;
+						return project.members.find((member) => member.eid === user.eid);
 					}),
-				);
-			}),
+				),
+			),
 		);
 	}
 }

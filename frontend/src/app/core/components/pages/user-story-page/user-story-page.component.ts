@@ -32,6 +32,8 @@ import { AcceptanceCriteriaService } from "../../../services/acceptance-criteria
 import { AcceptanceCriteriaSelfResponse } from "forge-shared/dto/response/acceptancecriteriaselfresponse.dto";
 import { UserApiService } from "../../../services/user-api.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { UserPermsService } from "../../../services/user-perms.service";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Component({
 	selector: "app-user-story-page",
@@ -90,7 +92,10 @@ export class UserStoryPageComponent implements OnInit {
 
 	private subscriptions = new Subscription();
 
-	userRole: string = "";
+	userMembership?: ProjectMemberComposite;
+	public checkUserPerms(allowedRoles: ProjectRole[]) {
+		return this.userPermsService.checkUserPerms(this.userMembership, allowedRoles);
+	}
 
 	constructor(
 		private route: ActivatedRoute,
@@ -101,10 +106,11 @@ export class UserStoryPageComponent implements OnInit {
 		private testCaseService: TestCaseService,
 		private acceptanceCriteriaService: AcceptanceCriteriaService,
 		private userApiService: UserApiService,
+		private userPermsService: UserPermsService,
 	) {}
 
 	ngOnInit(): void {
-		this.getUserRole();
+		this.getUserMembership();
 		this.getProject();
 		this.loadMembersData();
 		this.loadAllAcceptanceCriteria();
@@ -292,14 +298,12 @@ export class UserStoryPageComponent implements OnInit {
 		}
 	}
 
-	getUserRole() {
-		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
-			next: (role) => {
-				this.userRole = role!.toLowerCase();
+	getUserMembership() {
+		this.userApiService.membership(this.projectEid).subscribe({
+			next: (userMembership) => {
+				this.userMembership = userMembership;
 			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
+			error: (error) => {},
 		});
 	}
 

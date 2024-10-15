@@ -40,6 +40,8 @@ import { DeletePopupComponent } from "../../delete-popup/delete-popup.component"
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
 import { UserApiService } from "../../../services/user-api.service";
+import { UserPermsService } from "../../../services/user-perms.service";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Component({
 	selector: "app-backlog-page",
@@ -95,9 +97,13 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatTable)
 	table!: MatTable<History>;
 
-	userRole: string = "";
+	userMembership?: ProjectMemberComposite;
+	public checkUserPerms(allowedRoles: ProjectRole[]) {
+		return this.userPermsService.checkUserPerms(this.userMembership, allowedRoles);
+	}
 
 	constructor(
+		@Inject(DOCUMENT) private document: Document,
 		private route: ActivatedRoute,
 		private epicApiService: EpicApiService,
 		private formBuilder: FormBuilder,
@@ -105,12 +111,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 		private projectApiService: ProjectApiService,
 		private sprintApiService: SprintApiService,
 		private userstoryApiService: UserstoryApiService,
-		@Inject(DOCUMENT) private document: Document,
 		private userApiService: UserApiService,
+		private userPermsService: UserPermsService,
 	) {}
 
 	ngOnInit(): void {
-		this.getUserRole();
+		this.getUserMembership();
 		this.loadSprintData();
 		this.getProject()
 			.pipe(
@@ -124,11 +130,12 @@ export class BacklogPageComponent implements AfterViewInit, OnInit {
 			.subscribe();
 	}
 
-	getUserRole() {
-		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
-			next: (role) => {
-				this.userRole = role!.toLowerCase();
+	getUserMembership() {
+		this.userApiService.membership(this.projectEid).subscribe({
+			next: (userMembership) => {
+				this.userMembership = userMembership;
 			},
+			error: (error) => {},
 		});
 	}
 
