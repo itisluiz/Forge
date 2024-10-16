@@ -40,6 +40,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
 import { KanbanColumnComponent } from "../../kanban-column/kanban-column.component";
 import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.dto";
+import { MatMenuModule } from "@angular/material/menu";
+import { SprintPopupComponent } from "../../sprint-popup/sprint-popup.component";
 
 @Component({
 	selector: "app-kanban-page",
@@ -69,6 +71,8 @@ import { TaskSelfComposite } from "forge-shared/dto/composite/taskselfcomposite.
 		MatRippleModule,
 		RouterModule,
 		KanbanColumnComponent,
+		MatMenuModule,
+		SprintPopupComponent,
 	],
 	templateUrl: "./kanban-page.component.html",
 	styleUrl: "./kanban-page.component.scss",
@@ -82,7 +86,9 @@ export class KanbanPageComponent implements OnInit {
 	userstoryExpanded: { [key: string]: string[] } = {};
 	project?: ProjectResponse;
 	popUpTask: boolean = false;
+	popUpUpdateSprint: boolean = false;
 	selectedTask!: TaskResponse;
+	eidSelectedSprint: string = "";
 
 	constructor(
 		private route: ActivatedRoute,
@@ -117,6 +123,8 @@ export class KanbanPageComponent implements OnInit {
 	}
 
 	loadSprintData() {
+		this.detailedSprints = {};
+		this.userStoriesPerSprint = {};
 		this.userstoryDropListIds = {};
 
 		this.sprintApiService.self(this.projectEid).subscribe({
@@ -168,6 +176,22 @@ export class KanbanPageComponent implements OnInit {
 
 	navigateTo(path: string) {
 		this.router.navigate([path]);
+	}
+
+	openPopUpUpdateSprint(sprintEid: string) {
+		this.eidSelectedSprint = sprintEid;
+		this.popUpUpdateSprint = true;
+		document.body.style.overflow = "hidden";
+	}
+
+	loadSprintDataAndClosePopUp() {
+		this.loadSprintData();
+		this.closePopUpUpdateSprint();
+	}
+
+	closePopUpUpdateSprint() {
+		this.popUpUpdateSprint = false;
+		document.body.style.overflow = "auto";
 	}
 
 	closePopUpTask() {
