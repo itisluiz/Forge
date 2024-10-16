@@ -17,7 +17,10 @@ a "[sprintperiodstatus]" sprint. Here's an overview of the userstories and tasks
 Provide an overview of the sprint that is clear and concise, in the same language as the data inside the work items. Your response should be clear text,
 without any markdown, line breaks, or special formatting. Use no more than 512 characters, do not return entire dates, instead, prefer using relative terms,
 like "today", "tomorrow", "yesterday", "in N days", etc, but in the same language as the data inside the work items/quoted items in this prompt. Do not put
-the data between quotes everywhere as seen in this prompt, just use the data as is, in natural language.`;
+the data between quotes everywhere as seen in this prompt, just use the data as is, in natural language. Once again, DO NOT use quotes '"' / QUOTATION MARKS
+AS I DID AROUND DATA, also, when I gave you details about the project data, I separated some data with a comma, that was used to separate titles and descriptions
+and such, so prefer to only refer to the data by it's title. DO NOT USE QUOTATION MARKS!, if using a different language, also translate the status names, but
+don't translate key terms like "sprint" or "userstory".`;
 
 const userstoryPrompt = `# The userstory "[userstory]" with the effort score of "[effortscore]" is in the sprint with the following tasks:
 [tasks]`;
@@ -31,7 +34,7 @@ function populateBasePrompt(sprint: Model<any, any>): string {
 
 	const replacements = {
 		project: `${project.dataValues.title}, ${project.dataValues.description}`,
-		now: new Date().toISOString(),
+		now: new Date().toString(),
 		sprintstart: sprint.dataValues.startsAt,
 		sprintend: sprint.dataValues.endsAt,
 		sprintstatus: strSprintStatus(sprint.dataValues.esprintstatusId),
