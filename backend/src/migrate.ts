@@ -13,7 +13,7 @@ if (isProduction) {
 }
 
 const sequelize = await getSequelize();
-await sequelize.sync({ force: true });
+await sequelize.sync({ force: false });
 await sequelize.close();
 
 try {
