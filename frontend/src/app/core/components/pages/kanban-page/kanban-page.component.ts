@@ -117,6 +117,8 @@ export class KanbanPageComponent implements OnInit {
 	}
 
 	loadSprintData() {
+		this.userstoryDropListIds = {};
+
 		this.sprintApiService.self(this.projectEid).subscribe({
 			next: (sprintSelfResponse) => {
 				this.sprints = sprintSelfResponse.sprints;
