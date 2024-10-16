@@ -26,7 +26,7 @@ export function authorizeProject(admin = false, roles: ProjectRole[] | null = nu
 				throw new UnauthorizedError("You must be a project admin to perform this action");
 			}
 
-			if (roles && !roles.includes(projectMember.dataValues.projectmembership.eprojectroleId)) {
+			if (!admin && roles && !roles.includes(projectMember.dataValues.projectmembership.eprojectroleId)) {
 				throw new UnauthorizedError("You don't have the required role to perform this action");
 			}
 
