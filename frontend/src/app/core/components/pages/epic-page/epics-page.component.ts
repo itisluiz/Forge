@@ -80,6 +80,8 @@ export class EpicsPageComponent implements OnInit {
 
 	userRole: string = "";
 
+	loading: boolean = false;
+
 	constructor(
 		private formBuilder: FormBuilder,
 		private route: ActivatedRoute,
@@ -221,6 +223,7 @@ export class EpicsPageComponent implements OnInit {
 
 	submitForm() {
 		this.disableButtonDuringRequest = true;
+		this.loading = true;
 		const name = this.createEpicForm.get("name");
 		const description = this.createEpicForm.get("description");
 
@@ -243,10 +246,12 @@ export class EpicsPageComponent implements OnInit {
 		this.epicApiService.newEpic(epicNewRequest, this.projectEid).subscribe({
 			next: (result) => {
 				this.disableButtonDuringRequest = false;
+				this.loading = false;
 				this.setUpdatedEpics();
 				// TODO: Toaster success
 			},
 			error: (error) => {
+				this.loading = false;
 				// TODO: Toaster error
 				console.log(error.error.message);
 			},
@@ -254,6 +259,7 @@ export class EpicsPageComponent implements OnInit {
 	}
 
 	submitEditEpicForm() {
+		this.loading = true;
 		const name = this.editEpicForm.get("name");
 		const description = this.editEpicForm.get("description");
 
@@ -271,10 +277,12 @@ export class EpicsPageComponent implements OnInit {
 	editEpic(epicUpdateRequest: EpicUpdateRequest) {
 		this.epicApiService.updateEpic(epicUpdateRequest, this.projectEid, this.eidSelectedEpic).subscribe({
 			next: (result) => {
+				this.loading = false;
 				this.setUpdatedEpics();
 				// TODO: Toaster success
 			},
 			error: (error) => {
+				this.loading = false;
 				// TODO: Toaster error
 				console.log(error.error.message);
 			},

@@ -16,7 +16,10 @@
 					<h1 id="user-story-title">{{ testCase.description }}</h1>
 
 					<div class="buttons-header">
-						<button id="button-edit-page" class="grey-button" (click)="openPopUpTestCase()" matRipple>Edit Test Case</button>
+						<button id="button-edit-page" class="grey-button" (click)="openPopUpTestCase()" matRipple [disabled]="loading">
+							Edit Test Case
+							<span *ngIf="loading" class="loading-spinner"></span>
+						</button>
 						<button mat-icon-button class="mat-icon-button" matRipple [matMenuTriggerFor]="menu">
 							<mat-icon>more_vert</mat-icon>
 						</button>
@@ -66,8 +69,9 @@
 							</p>
 
 							<div class="test-case-buttons">
-								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple>
+								<button id="button-create-test-manually" class="grey-button" (click)="openPopUpTestCase()" matRipple [disabled]="loading">
 									Create test case
+									<span *ngIf="loading" class="loading-spinner"></span>
 								</button>
 							</div>
 						</div>
