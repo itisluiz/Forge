@@ -12,17 +12,13 @@
 				</ul>
 				<h1>Backlog</h1>
 				<div class="buttons-header">
-					@if (userRole !== "") {
+					@if (userMembership) {
 						<button
 							id="button-create-epic"
 							(click)="openPopUpCreateSprint()"
 							matRipple
-							[disabled]="userRole !== 'scrum master' && userRole !== 'product owner'"
-							[matTooltip]="
-								userRole !== 'scrum master' && userRole !== 'product owner'
-									? 'Only a Scrum Master or PO can do this action!'
-									: ''
-							"
+							[disabled]="!checkUserPerms([1, 2])"
+							[matTooltip]="!checkUserPerms([1, 2]) ? 'Only a Scrum Master or PO can do this action!' : ''"
 						>
 							Create new Sprint
 						</button>
@@ -86,14 +82,14 @@
 									<mat-panel-title> {{ userstory.code }} </mat-panel-title>
 									<mat-panel-title> {{ userstory.title | maxLength: 40 }} </mat-panel-title>
 									<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
-									@if (userRole !== "") {
+									@if (userMembership) {
 										<mat-panel-description>
 											<button
 												class="grey-button"
 												(click)="openPopUpRemoveFromSprint(userstory.eid)"
 												matRipple
-												[disabled]="userRole !== 'scrum master'"
-												[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+												[disabled]="!checkUserPerms([2])"
+												[matTooltip]="!checkUserPerms([2]) ? 'Only a Scrum Master can do this action!' : ''"
 											>
 												Remove from sprint
 											</button>
@@ -183,17 +179,13 @@
 			} @else {
 				<div class="no-sprint">
 					<h3>No current sprint available. Please create a new sprint.</h3>
-					@if (userRole !== "") {
+					@if (userMembership) {
 						<button
 							class="green-button"
 							(click)="openPopUpCreateSprint()"
 							matRipple
-							[disabled]="userRole !== 'scrum master' && userRole !== 'product owner'"
-							[matTooltip]="
-								userRole !== 'scrum master' && userRole !== 'product owner'
-									? 'Only a Scrum Master or PO can do this action!'
-									: ''
-							"
+							[disabled]="!checkUserPerms([1, 2])"
+							[matTooltip]="!checkUserPerms([1, 2]) ? 'Only a Scrum Master or PO can do this action!' : ''"
 						>
 							Create new Sprint
 						</button>
@@ -232,14 +224,14 @@
 								<mat-panel-title> {{ userstory.title | maxLength: 35 }} </mat-panel-title>
 								<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 								@if (currentSprint.eid || futureSprints.length > 0) {
-									@if (userRole !== "") {
+									@if (userMembership) {
 										<mat-panel-description>
 											<button
 												class="green-button"
 												(click)="openPopUpAddToSprint(userstory.eid)"
 												matRipple
-												[disabled]="userRole !== 'scrum master'"
-												[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+												[disabled]="!checkUserPerms([2])"
+												[matTooltip]="!checkUserPerms([2]) ? 'Only a Scrum Master can do this action!' : ''"
 											>
 												Add to a sprint
 											</button>
@@ -433,13 +425,13 @@
 							<mat-panel-description> {{ userstory.description | maxLength: 50 }} </mat-panel-description>
 							@if (buttonsAvailable) {
 								<mat-panel-description>
-									@if (userRole !== "") {
+									@if (userMembership) {
 										<button
 											class="grey-button"
 											(click)="openPopUpRemoveFromSprint(userstory.eid)"
 											matRipple
-											[disabled]="userRole !== 'scrum master'"
-											[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+											[disabled]="!checkUserPerms([2])"
+											[matTooltip]="!checkUserPerms([2]) ? 'Only a Scrum Master can do this action!' : ''"
 										>
 											Remove from sprint
 										</button>

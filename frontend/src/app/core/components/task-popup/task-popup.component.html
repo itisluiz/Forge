@@ -51,7 +51,7 @@
 					<option value="3">High</option>
 				</select>
 			</div>
-			@if (userRole !== "product owner") {
+			@if (checkUserPerms([1])) {
 				@if (userStory && isEditMode) {
 					<div class="input-wrapper">
 						<label for="task-complexity">Effort Score</label>

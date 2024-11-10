@@ -14,6 +14,8 @@ import { TaskPopupComponent } from "../task-popup/task-popup.component";
 import { ProjectApiService } from "../../services/project-api.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { UserApiService } from "../../services/user-api.service";
+import { UserPermsService } from "../../services/user-perms.service";
+import { ProjectRole } from "forge-shared/enum/projectrole.enum";
 
 @Component({
 	selector: "app-task-details",
@@ -39,7 +41,10 @@ export class TaskDetailsComponent implements OnInit {
 	@ViewChildren("statusPopUp")
 	statusPopUp?: QueryList<ElementRef>;
 
-	userRole: string = "";
+	userMembership?: ProjectMemberComposite;
+	public checkUserPerms(allowedRoles: ProjectRole[]) {
+		return this.userPermsService.checkUserPerms(this.userMembership, allowedRoles);
+	}
 
 	constructor(
 		private router: Router,
@@ -47,22 +52,21 @@ export class TaskDetailsComponent implements OnInit {
 		private taskApiService: TaskApiService,
 		private projectApiService: ProjectApiService,
 		private userApiService: UserApiService,
+		private userPermsService: UserPermsService,
 	) {}
 
 	ngOnInit(): void {
-		this.getUserRole();
+		this.getUserMembership();
 		this.loadUserStory();
 		this.loadMembersData();
 	}
 
-	getUserRole() {
-		this.userApiService.getUserRoleForProject(this.projectEid).subscribe({
-			next: (role) => {
-				this.userRole = role!.toLowerCase();
+	getUserMembership() {
+		this.userApiService.membership(this.projectEid).subscribe({
+			next: (userMembership) => {
+				this.userMembership = userMembership;
 			},
-			error: (error) => {
-				console.log(error.error.message);
-			},
+			error: (error) => {},
 		});
 	}
 

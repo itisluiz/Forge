@@ -12,13 +12,13 @@
 				</ul>
 				<h1>Epics</h1>
 				<div class="buttons-header">
-					@if (userRole !== "") {
+					@if (userMembership) {
 						<button
 							id="button-create-epic"
 							(click)="openPopUpCreateEpic()"
 							matRipple
-							[disabled]="userRole !== 'scrum master'"
-							[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+							[disabled]="!checkUserPerms([2])"
+							[matTooltip]="!checkUserPerms([2]) ? 'Only a Scrum Master can do this action!' : ''"
 						>
 							Create new Epic
 						</button>
@@ -56,10 +56,10 @@
 								<mat-panel-title> {{ epic.code }} </mat-panel-title>
 								<mat-panel-title> {{ epic.title | maxLength: 40 }} </mat-panel-title>
 								<mat-panel-description> {{ epic.description | maxLength: 50 }} </mat-panel-description>
-								<mat-panel-description *ngIf="userRole === 'scrum master'" class="epic-action">
+								<mat-panel-description *ngIf="checkUserPerms([2])" class="epic-action">
 									<mat-icon (click)="openPopUpEditEpic(epic.eid)">edit</mat-icon>
 								</mat-panel-description>
-								<mat-panel-description *ngIf="userRole === 'scrum master'" class="epic-action">
+								<mat-panel-description *ngIf="checkUserPerms([2])" class="epic-action">
 									<mat-icon (click)="openPopUpDeleteEpic(epic.eid)">delete</mat-icon>
 								</mat-panel-description>
 							</mat-expansion-panel-header>
@@ -95,7 +95,7 @@
 									<tr class="type-color" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 								</table>
 							}
-							@if (userRole === "scrum master") {
+							@if (checkUserPerms([2])) {
 								<div class="add-issue" (click)="openPopUpIssue(epic.eid)">+ Add another issue</div>
 							}
 						</mat-expansion-panel>
@@ -104,13 +104,13 @@
 			} @else {
 				<div class="no-epics">
 					<h3>No epics available. Please, create a new epic.</h3>
-					@if (userRole !== "") {
+					@if (userMembership) {
 						<button
 							class="green-button"
 							(click)="openPopUpCreateEpic()"
 							matRipple
-							[disabled]="userRole !== 'scrum master'"
-							[matTooltip]="userRole !== 'scrum master' ? 'Only a Scrum Master can do this action!' : ''"
+							[disabled]="!checkUserPerms([2])"
+							[matTooltip]="!checkUserPerms([2]) ? 'Only a Scrum Master can do this action!' : ''"
 						>
 							Create new Epic
 						</button>

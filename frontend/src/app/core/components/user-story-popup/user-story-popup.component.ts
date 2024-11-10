@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from "@angular/core";
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from "@angular/core";
 import {
 	AbstractControl,
 	FormArray,
@@ -147,7 +147,6 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 	}
 
 	submitSecondForm() {
-		this.disableButtonDuringRequest = true;
 		this.formSubmitted = true;
 
 		if (this.secondFormGroup.valid && this.firstFormGroup.valid) {
@@ -162,6 +161,7 @@ export class UserStoryPopupComponent implements OnInit, OnDestroy {
 	}
 
 	private buildUserStoryNewRequest(): UserstoryNewRequest {
+		this.disableButtonDuringRequest = true;
 		return {
 			epicEid: this.epicEid,
 			title: this.firstFormGroup.get("summary")?.value,

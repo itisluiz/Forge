@@ -65,7 +65,7 @@ async function internalAIPrompt(options: ChatCompletionCreateParamsNonStreaming)
 
 export async function promptAIText(messages: ChatCompletionMessageParam[]) {
 	const completion = await internalAIPrompt({
-		model: "gpt-4o-mini",
+		model: "gpt-4o",
 		messages: messages,
 	});
 
@@ -86,7 +86,7 @@ export async function promptAIObject<T>(
 	};
 
 	const completion = await internalAIPrompt({
-		model: "gpt-4o-mini",
+		model: "gpt-4o",
 		messages: messages,
 		response_format: {
 			type: "json_schema",

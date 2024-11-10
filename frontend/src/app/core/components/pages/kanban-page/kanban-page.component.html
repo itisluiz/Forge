@@ -73,9 +73,14 @@
 					</div>
 
 					<div class="right">
-						<button mat-icon-button>
+						<button mat-icon-button [matMenuTriggerFor]="menu" matRipple>
 							<mat-icon>more_horiz</mat-icon>
 						</button>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item (click)="openPopUpUpdateSprint(sprint.eid)">
+								<span>Update sprint</span>
+							</button>
+						</mat-menu>
 
 						@if (sprint.periodStatus == 1) {
 							<p class="sprint-date">
@@ -148,4 +153,15 @@
 		(closePopUpEmitterDeletedTask)="loadSprintData()"
 		(closePopUpEmitterEditedTask)="loadSprintData()"
 	></app-task-details>
+}
+
+@if (popUpUpdateSprint) {
+	<div class="pop-up-background" (click)="closePopUpUpdateSprint()"></div>
+	<app-sprint-popup
+		[isEditMode]="true"
+		[projectEid]="projectEid"
+		[sprintEid]="eidSelectedSprint"
+		(handleEditedSprintAndClosePopupEmitter)="loadSprintDataAndClosePopUp()"
+		(closePopUpEmitter)="closePopUpUpdateSprint()"
+	></app-sprint-popup>
 }
