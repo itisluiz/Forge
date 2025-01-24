@@ -10,6 +10,7 @@ import { UserStoryPageComponent } from "./core/components/pages/user-story-page/
 import { UserStoryPopupComponent } from "./core/components/user-story-popup/user-story-popup.component";
 import { PlanningPokerPageComponent } from "./core/components/pages/planning-poker-page/planning-poker-page.component";
 import { TestCasePageComponent } from "./core/components/pages/test-case-page/test-case-page.component";
+import { DayZTimePageComponent } from "./core/components/pages/dayz-time-page/dayz-time-page.component";
 
 export const routes: Routes = [
 	{ path: ":projectEid/sprint-details", component: MainPageComponent },
@@ -24,5 +25,6 @@ export const routes: Routes = [
 	{ path: ":projectEid/planning-poker", component: PlanningPokerPageComponent },
 	{ path: "planning-poker/:projectEid/:session", component: PlanningPokerPageComponent },
 	{ path: ":projectEid/:testcaseEid/testcase", component: TestCasePageComponent },
+	{ path: "dayz/time", component: DayZTimePageComponent },
 	{ path: "**", redirectTo: "/select-project" },
 ];
