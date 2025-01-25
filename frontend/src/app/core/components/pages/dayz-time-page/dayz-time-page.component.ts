@@ -2,6 +2,7 @@ import { Component, OnDestroy } from "@angular/core";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { Title } from "@angular/platform-browser";
 import { DayZApiService } from "../../../services/dayz-api.service";
+import { DayZTimeResponse } from "forge-shared/dto/response/dayztimeresponse.dto";
 
 @Component({
 	selector: "app-dayz-time-page",
@@ -11,7 +12,7 @@ import { DayZApiService } from "../../../services/dayz-api.service";
 	styleUrl: "./dayz-time-page.component.scss",
 })
 export class DayZTimePageComponent implements OnDestroy {
-	public time?: string;
+	public dayZTimeResponse?: DayZTimeResponse;
 	private intervalId?: ReturnType<typeof setInterval>;
 
 	public constructor(
@@ -26,7 +27,7 @@ export class DayZTimePageComponent implements OnDestroy {
 	updateTime() {
 		this.dayZApiService.getTime().subscribe({
 			next: (response) => {
-				this.time = response.time;
+				this.dayZTimeResponse = response;
 				this.updateTabTitle();
 			},
 			error: (error) => {
@@ -37,12 +38,16 @@ export class DayZTimePageComponent implements OnDestroy {
 
 	// Update the browser tab's title
 	private updateTabTitle() {
-		this.titleService.setTitle(this.time ? `Time: ${this.time}` : "Fetching time...");
+		this.titleService.setTitle(
+			this.dayZTimeResponse
+				? `DayZ ${this.dayZTimeResponse.time} (${this.dayZTimeResponse.players}/${this.dayZTimeResponse.maxPlayers})`
+				: "Fetching dayZ...",
+		);
 	}
 
 	// Start the interval for auto-refresh
 	private startAutoRefresh() {
-		this.intervalId = setInterval(() => this.updateTime(), 180_000); // 3 minutes
+		this.intervalId = setInterval(() => this.updateTime(), 120_000); // 2 minutes
 	}
 
 	// Cleanup the interval when the component is destroyed

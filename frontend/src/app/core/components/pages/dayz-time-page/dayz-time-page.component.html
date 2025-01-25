@@ -1,6 +1,9 @@
 <div class="time-label">
-	@if (time) {
-		<span>{{ time }}</span>
+	@if (dayZTimeResponse) {
+		<span>{{ dayZTimeResponse.time }}</span>
+		<span class="players"
+			><b>{{ dayZTimeResponse.players }}/{{ dayZTimeResponse.maxPlayers }}</b> players</span
+		>
 	} @else {
 		<mat-spinner />
 	}
