@@ -1,39 +1,35 @@
 import { Request, Response } from "express";
-import { queryGameServerInfo } from "steam-server-query";
-import { ExternalServiceError } from "../../error/internalhandling.error.js";
+import { InfoResponse, queryGameServerInfo } from "steam-server-query";
 import { DayZTimeResponse } from "forge-shared/dto/response/dayztimeresponse.dto";
 
 // Cache object to store the result and timestamp
-let cachedResult: { time: string; timestamp: number } | null = null;
+let cachedResult: { response: InfoResponse; timestamp: number } | null = null;
 
-// Cache expiration time in milliseconds (3 minutes)
-const CACHE_EXPIRATION = 3 * 60 * 1000;
+// Cache expiration time in milliseconds (2 minutes)
+const CACHE_EXPIRATION = 2 * 60 * 1000;
 
 export default async function (req: Request, res: Response) {
 	// Check if the cache is valid
 	const now = Date.now();
+
+	let result: InfoResponse | null = null;
+
 	if (cachedResult && now - cachedResult.timestamp < CACHE_EXPIRATION) {
-		// Return the cached result
-		const response: DayZTimeResponse = { time: cachedResult.time };
-		res.status(200).send(response);
-		return;
+		result = cachedResult.response;
+	} else {
+		result = await queryGameServerInfo("31.214.158.202:10101");
+		cachedResult = {
+			response: result,
+			timestamp: now,
+		};
 	}
-
-	// Fetch new data
-	let result = await queryGameServerInfo("31.214.158.196:10801");
-	const time = result.keywords?.split(",").find((keyword) => /^\d{2}:\d{2}$/.test(keyword));
-
-	if (!time) {
-		throw new ExternalServiceError("Failed to fetch server time");
-	}
-
-	// Update the cache
-	cachedResult = {
-		time,
-		timestamp: now,
-	};
 
 	// Send the response
-	const response: DayZTimeResponse = { time };
+	const response: DayZTimeResponse = {
+		time: result.keywords?.split(",").find((keyword) => /^\d{2}:\d{2}$/.test(keyword))!,
+		players: result.players,
+		maxPlayers: result.maxPlayers,
+	};
+
 	res.status(200).send(response);
 }
